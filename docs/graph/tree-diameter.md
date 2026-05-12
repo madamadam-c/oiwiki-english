@@ -1,105 +1,105 @@
-树上任意两节点之间最长的简单路径即为树的「直径」．
+The **diameter** of a tree is the longest simple path between any two nodes.
 
-前置知识：[树基础](./tree-basic.md)．
+Prerequisites: [Tree Basics](./tree-basic.md).
 
-## 引入
+## Introduction
 
-显然，一棵树可以有多条直径，他们的长度相等．
+Clearly, a tree can have multiple diameters, but they all have the same length.
 
-可以用两次 DFS 或者树形 DP 的方法在 $O(n)$ 时间求出树的直径．
+The tree diameter can be found in $O(n)$ time using either two DFS/BFS passes or tree DP.
 
-## 两次 DFS
+## Two DFS/BFS
 
-首先从任意节点 $y$ 开始进行第一次 DFS，到达距离其最远的节点，记为 $z$，然后再从 $z$ 开始做第二次 DFS，到达距离 $z$ 最远的节点，记为 $z'$，则 $\delta(z,z')$ 即为树的直径．
+First, start a DFS from any node $y$, and find the farthest node from $y$, call it $z$. Then start a second DFS from $z$, and find the node $z'$ that is farthest from $z$. Then $\delta(z, z')$ is the tree diameter.
 
-显然，如果第一次 DFS 到达的节点 $z$ 是直径的一端，那么第二次 DFS 到达的节点 $z'$ 一定是直径的一端．我们只需证明在任意情况下，$z$ 必为直径的一端．
+Obviously, if node $z$ from the first DFS is one endpoint of a diameter, then node $z'$ from the second DFS is the other endpoint. We only need to prove that under any circumstance, $z$ is always an endpoint of some diameter.
 
-定理：在一棵树上，从任意节点 $y$ 开始进行一次 DFS，到达的距离其最远的节点 $z$ 必为直径的一端．
+Theorem: In any tree, starting from an arbitrary node $y$, the node $z$ farthest from $y$ (found by a DFS) is always an endpoint of a diameter.
 
-???+ note "证明"
-    使用反证法．记出发节点为 $y$．设真实的直径是 $\delta(s,t)$，而从 $y$ 进行的第一次 DFS 到达的距离其最远的节点 $z$ 不为 $t$ 或 $s$．共分三种情况：
-    
-    -   若 $y$ 在 $\delta(s,t)$ 上：
-    
-    ![y 在 s-t 上](./images/tree-diameter1.svg)
-    
-    有 $\delta(y,z) > \delta(y,t) \Longrightarrow \delta(x,z) > \delta(x,t) \Longrightarrow \delta(s,z) > \delta(s,t)$，与 $\delta(s,t)$ 为树上任意两节点之间最长的简单路径矛盾．
-    
-    -   若 $y$ 不在 $\delta(s,t)$ 上，且 $\delta(y,z)$ 与 $\delta(s,t)$ 存在重合路径：
-    
-    ![y 不在 s-t 上，y-z 与 s-t 存在重合路径](./images/tree-diameter2.svg)
-    
-    有 $\delta(y,z) > \delta(y,t) \Longrightarrow \delta(x,z) > \delta(x,t) \Longrightarrow \delta(s,z) > \delta(s,t)$，与 $\delta(s,t)$ 为树上任意两节点之间最长的简单路径矛盾．
-    
-    -   若 $y$ 不在 $\delta(s,t)$ 上，且 $\delta(y,z)$ 与 $\delta(s,t)$ 不存在重合路径：
-    
-    ![y 不在 s-t 上，y-z 与 s-t 不存在重合路径](./images/tree-diameter3.svg)
-    
-    有 $\delta(y,z) > \delta(y,t) \Longrightarrow \delta(x',z) > \delta(x',t) \Longrightarrow \delta(x,z) > \delta(x,t) \Longrightarrow \delta(s,z) > \delta(s,t)$，与 $\delta(s,t)$ 为树上任意两节点之间最长的简单路径矛盾．
-    
-    综上，三种情况下假设均会产生矛盾，故原定理得证．
+???+ note "Proof"
+    Proof by contradiction. Let the starting node be $y$. Let the actual diameter be $\delta(s, t)$, and let $z$ be the farthest node from $y$. Suppose $z$ is neither $t$ nor $s$. There are three cases:
 
-???+ warning "负权边"
-    上述证明过程建立在所有路径均不为负的前提下．如果树上存在负权边，则上述证明不成立．故若存在负权边，则无法使用两次 DFS 的方式求解直径．
+    - If $y$ lies on $\delta(s, t)$:
 
-如果需要求出一条直径上所有的节点，则可以在第二次 DFS 的过程中，记录每个点的前序节点，即可从直径的一端一路向前，遍历直径上所有的节点．
+    ![y on s-t path](./images/tree-diameter1.svg)
 
-## 树形 DP
+    We have $\delta(y, z) > \delta(y, t) \Longrightarrow \delta(x, z) > \delta(x, t) \Longrightarrow \delta(s, z) > \delta(s, t)$, which contradicts that $\delta(s, t)$ is the longest simple path between any two nodes.
 
-### 方法 1
+    - If $y$ is not on $\delta(s, t)$, and $\delta(y, z)$ shares some common path with $\delta(s, t)$:
 
-我们记录当 $1$ 为树的根时，每个节点作为子树的根向下，所能延伸的最长路径长度 $d_1$ 与次长路径（与最长路径无公共边）长度 $d_2$，那么直径就是对于每一个点，该点 $d_1 + d_2$ 能取到的值中的最大值．
+    ![y not on s-t, y-z shares path with s-t](./images/tree-diameter2.svg)
 
-树形 DP 可以在存在负权边的情况下求解出树的直径．
+    We have $\delta(y, z) > \delta(y, t) \Longrightarrow \delta(x, z) > \delta(x, t) \Longrightarrow \delta(s, z) > \delta(s, t)$, which contradicts that $\delta(s, t)$ is the longest simple path.
 
-如果需要求出一条直径上所有的节点，则可以在 DP 的过程中，记录下每个节点能向下延伸的最长路径与次长路径（定义同上）所对应的子节点，在求 $d$ 的同时记下对应的节点 $u$，使得 $d = d_1[u] + d_2[u]$，即可分别沿着从 $u$ 开始的最长路径的次长路径对应的子节点一路向某个方向（对于无根树，虽然这里指定了 $1$ 为树的根，但仍需记录每点跳转的方向；对于有根树，一路向上跳即可），遍历直径上所有的节点．
+    - If $y$ is not on $\delta(s, t)$, and $\delta(y, z)$ shares no common path with $\delta(s, t)$:
 
-### 方法 2
+    ![y not on s-t, y-z shares no path with s-t](./images/tree-diameter3.svg)
 
-这里提供一种只使用一个数组进行的树形 DP 方法．
+    We have $\delta(y, z) > \delta(y, t) \Longrightarrow \delta(x', z) > \delta(x', t) \Longrightarrow \delta(x, z) > \delta(x, t) \Longrightarrow \delta(s, z) > \delta(s, t)$, again contradicting that $\delta(s, t)$ is the longest simple path.
 
-我们定义 $dp[u]$ 为以 $u$ 为根的子树中，从 $u$ 出发的最长路径．那么容易得出转移方程：$dp[u] = \max(dp[u], dp[v] + w(u, v))$，其中的 $v$ 为 $u$ 的子节点，$w(u, v)$ 表示所经过边的权重．
+    In all three cases, the assumption leads to contradiction, so the theorem is proven.
 
-对于树的直径，实际上是可以通过枚举从某个节点出发不同的两条路径相加的最大值求出．因此，在 DP 求解的过程中，我们只需要在更新 $dp[u]$ 之前，计算 $d = \max(d, dp[u] + dp[v] + w(u, v))$ 即可算出直径 $d$．
+???+ warning "Negative Weight Edges"
+    The proof above assumes no edge has negative weight. If the tree contains negative weight edges, the proof does not hold. Therefore, the two DFS/BFS method cannot be used when negative weight edges exist.
 
-## 例题
+If you need to output all nodes on a diameter, you can record the parent of each node during the second DFS, then trace back from one endpoint to reconstruct the entire diameter.
 
-???+ example "[Luogu B4016 树的直径](https://www.luogu.com.cn/problem/B4016)"
-    给定一棵 $n$ 个节点的树，求其直径的长度．$1\leq n\leq 10^5$．
+## Tree DP
 
-??? note "两次 DFS 的参考实现"
+### Method 1
+
+We maintain, for each node as the root, the longest path length $d_1$ and the second longest path length $d_2$ (which has no edges in common with the longest path) within its subtree. The diameter is the maximum value of $d_1 + d_2$ over all nodes.
+
+Tree DP can find the diameter even when negative weight edges are present.
+
+If you need to output all nodes on a diameter, record the child nodes corresponding to the longest and second longest paths for each node during the DP. When computing $d$, also record the node $u$ such that $d = d_1[u] + d_2[u]$. Then trace along the corresponding child from $u$ in the appropriate direction (for a rooted tree, follow upward; for an unrooted tree, note the direction recorded for each node).
+
+### Method 2
+
+This is a tree DP method using only one array.
+
+Define $dp[u]$ as the length of the longest path starting from $u$ within the subtree rooted at $u$. The recurrence is: $dp[u] = \max(dp[u], dp[v] + w(u, v))$, where $v$ is a child of $u$, and $w(u, v)$ is the edge weight.
+
+The tree diameter can be found by enumerating the sum of two paths from some node. Therefore, during DP, before updating $dp[u]$, compute $d = \max(d, dp[u] + dp[v] + w(u, v))$ to obtain the diameter $d$.
+
+## Examples
+
+???+ example "[Luogu B4016 Tree Diameter](https://www.luogu.com.cn/problem/B4016)"
+    Given a tree with $n$ nodes, find the length of its diameter. $1 \leq n \leq 10^5$.
+
+??? note "Two DFS/BFS Reference Implementation"
     ```cpp
     --8<-- "docs/graph/code/tree-diameter/tree-diameter_1.cpp"
     ```
 
-??? note "使用两个数组的树形 DP 参考实现"
+??? note "Tree DP with Two Arrays Reference Implementation"
     ```cpp
     --8<-- "docs/graph/code/tree-diameter/tree-diameter_2.cpp"
     ```
 
-??? note "使用一个数组的树形 DP 参考实现"
+??? note "Tree DP with One Array Reference Implementation"
     ```cpp
     --8<-- "docs/graph/code/tree-diameter/tree-diameter_3.cpp"
     ```
 
-## 性质
+## Properties
 
-树的直径具有如下性质：若树上所有边边权均为正，则树的所有直径中点重合．
+The tree diameter has the following property: if all edge weights are positive, then all diameters share the same midpoint.
 
-???+ note "证明"
-    证明：使用反证法．设两条中点不重合的直径分别为 $\delta(s,t)$ 与 $\delta(s',t')$，中点分别为 $x$ 与 $x'$．显然，$\delta(s,x) = \delta(x,t) = \delta(s',x') = \delta(x',t')$．
-    
-    ![无负权边的树所有直径的中点重合](./images/tree-diameter4.svg)
-    
-    有 $\delta(s,t') = \delta(s,x) + \delta(x,x') + \delta(x',t') > \delta(s,x) + \delta(x,t) = \delta(s,t)$，与 $\delta(s,t)$ 为树上任意两节点之间最长的简单路径矛盾，故性质得证．
+???+ note "Proof"
+    Proof by contradiction. Let two diameters with different midpoints be $\delta(s, t)$ and $\delta(s', t')$, with midpoints $x$ and $x'$ respectively. Clearly, $\delta(s, x) = \delta(x, t) = \delta(s', x') = \delta(x', t')$.
 
-## 习题
+    ![All diameters of a tree with positive edge weights share the same midpoint](./images/tree-diameter4.svg)
 
--   [CodeChef, Diameter of Tree](https://www.codechef.com/problems/DTREE)
--   [Educational Codeforces Round 35, Problem F, Tree Destruction](https://codeforces.com/contest/911/problem/F)
--   [ZOJ 3820 Building Fire Stations](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?problemSetProblemId=91827369872&page=28)
--   [CEOI2019/CodeForces 1192B. Dynamic Diameter](https://codeforces.com/contest/1192/problem/B)
--   [ICPC 2019 上海赛区网络赛 Lightning Routing I](https://vjudge.net/problem/%E8%AE%A1%E8%92%9C%E5%AE%A2-A2290)
--   [NOIP2007 提高组 树网的核](https://www.luogu.com.cn/problem/P1099)
--   [SDOI2011 消防](https://www.luogu.com.cn/problem/P2491)
--   [APIO2010 巡逻](https://www.luogu.com.cn/problem/P3629)
+    We have $\delta(s, t') = \delta(s, x) + \delta(x, x') + \delta(x', t') > \delta(s, x) + \delta(x, t) = \delta(s, t)$, contradicting that $\delta(s, t)$ is the longest simple path. Hence the property holds.
+
+## Exercises
+
+- [CodeChef, Diameter of Tree](https://www.codechef.com/problems/DTREE)
+- [Educational Codeforces Round 35, Problem F, Tree Destruction](https://codeforces.com/contest/911/problem/F)
+- [ZOJ 3820 Building Fire Stations](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?problemSetProblemId=91827369872&page=28)
+- [CEOI2019/CodeForces 1192B. Dynamic Diameter](https://codeforces.com/contest/1192/problem/B)
+- [ICPC 2019 Shanghai Regional Preliminary, Lightning Routing I](https://vjudge.net/problem/%E8%AE%A1%E8%92%9C%E5%AE%A2-A2290)
+- [NOIP2007 Senior Group Tree Core](https://www.luogu.com.cn/problem/P1099)
+- [SDOI2011 Fire Protection](https://www.luogu.com.cn/problem/P2491)
+- [APIO2010 Patrol](https://www.luogu.com.cn/problem/P3629)

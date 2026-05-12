@@ -1,30 +1,30 @@
-本页面将简要介绍选择排序．
+This page will briefly introduce selection sort.
 
-## 定义
+## Definition
 
-选择排序（英语：Selection sort）是一种简单直观的排序算法．它的工作原理是每次找出第 $i$ 小的元素（也就是 $A_{i..n}$ 中最小的元素），然后将这个元素与数组第 $i$ 个位置上的元素交换．
+Selection sort (English: Selection sort) is a simple and intuitive sorting algorithm. Its working principle is to find the $i$-th smallest element (that is, the smallest element in $A_{i..n}$) each time, and then swap this element with the element at position $i$ in the array.
 
 ![selection sort animate example](images/selection-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-选择排序的稳定性取决于其具体实现．
+The stability of selection sort depends on its specific implementation.
 
-倘若使用链表实现，由于链表的任意位置插入和删除均为 $O(1)$，故无需使用 swap（交换两个元素）操作：每次从未排序部分选择最小元素（若有多个，选取第 1 个）后，将其插入到未排序部分的第 1 个元素之前，这样就能够保证稳定性．
+If implemented using a linked list, since inserting and deleting at any position in a linked list are both $O(1)$, there is no need to use swap (swapping two elements) operations: each time after selecting the smallest element from the unsorted part (if there are multiple, select the first one), insert it before the first element of the unsorted part, which can guarantee stability.
 
-假如使用数组实现（OI 中一般的实现方式），由于数组任意位置插入和删除均为 $O(n)$，故只能使用 swap 将未排序部分的元素移到已排序部分．swap 操作使得数组实现的选择排序不稳定．
+If implemented using an array (the usual implementation in OI), since inserting and deleting at any position in an array are both $O(n)$, we can only use swap to move elements from the unsorted part to the sorted part. The swap operation makes the array implementation of selection sort unstable.
 
-下面给出的实现示例均是基于数组元素的交换，因此均为 **不稳定的**．
+All the implementation examples given below are based on swapping array elements, so they are all **unstable**.
 
-### 时间复杂度
+### Time Complexity
 
-选择排序的最优时间复杂度、平均时间复杂度和最坏时间复杂度均为 $O(n^2)$．
+The optimal time complexity, average time complexity, and worst-case time complexity of selection sort are all $O(n^2)$.
 
-## 代码实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -52,7 +52,7 @@ $$
 
 === "Java"
     ```java
-    // arr代码下标从 1 开始索引
+    // arr code index starts from 1
     static void selection_sort(int[] arr, int n) {
         for (int i = 1; i < n; i++) {
             int ith = i;

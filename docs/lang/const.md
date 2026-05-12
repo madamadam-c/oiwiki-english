@@ -1,22 +1,22 @@
-C++ 定义了一套完整的只读量定义方法，被 `const` 修饰的变量都是只读量，编译器会在编译期进行冲突检查，避免对只读量的修改，同时可能会执行一些优化．
+C++ defines a complete set of ways to define read-only values. Variables modified by `const` are read-only values. The compiler checks for conflicts at compile time to prevent modifications to read-only values, and it may also perform some optimizations.
 
-在通常情况下，应该尽可能使用 `const` 修饰变量、参数，提高代码健壮性．
+In general, use `const` to modify variables and parameters whenever possible to improve code robustness.
 
-## `const` 类型限定符
+## The `const` Type Qualifier
 
-### 常量
+### Constants
 
-const 修饰的变量在初始化后不可改变值
+A variable modified by `const` cannot have its value changed after initialization.
 
 ```cpp
-const int a = 0;  // a 的类型为 const int
+const int a = 0;  // The type of a is const int
 
-// a = 1; // 不能修改常量
+// a = 1; // Cannot modify a constant
 ```
 
-### 常量引用、常量指针
+### References to Const and Pointers to Const
 
-常量引用和常量指针均限制了对指向的值的修改
+References to const and pointers to const both restrict modification of the pointed-to value.
 
 ```cpp
 int a = 0;
@@ -25,43 +25,43 @@ const int b = 0;
 int *p1 = &a;
 *p1 = 1;
 const int *p2 = &a;
-// *p2 = 2; // 不能通过常量指针修改变量
-// int *p3 = &b; // 不能用 int* 指向 const int 变量
+// *p2 = 2; // Cannot modify a variable through a pointer to const
+// int *p3 = &b; // Cannot point an int* to a const int variable
 const int *p4 = &b;
 
 int &r1 = a;
 r1 = 1;
 const int &r2 = a;
-// r2 = 2; // 不能通过常量引用修改变量
-// int &p3 = b; // 不能用 int& 引用 const int变量
+// r2 = 2; // Cannot modify a variable through a reference to const
+// int &p3 = b; // Cannot bind an int& to a const int variable
 const int &r4 = b;
 ```
 
-另外需要区分开的是常量指针（`const t*`）和指针常量（`t* const`），例如下列声明
+Another distinction to make is between a pointer to const (`const t*`) and a const pointer (`t* const`), as in the following declarations:
 
 ```cpp
-int* const p1;  // 指针常量，初始化后指向地址不可改，可更改指向的值
-const int* p2;  // 常量指针，解引用的值不可改，可指向其他 int 变量
-const int* const p3;  // 常量指针常量，值不可改，指向地址不可改
+int* const p1;  // Const pointer: the pointed-to address cannot change after initialization, but the pointed-to value can change
+const int* p2;  // Pointer to const: the dereferenced value cannot change, but it can point to another int variable
+const int* const p3;  // Const pointer to const: the value cannot change, and the pointed-to address cannot change
 
-// 使用别名能更好提高可读性
+// Using aliases can improve readability
 using const_int = const int;
 using ptr_to_const_int = const_int*;
 using const_ptr_to_const_int = const ptr_to_const_int;
 ```
 
-在函数参数里使用 `const` 限定参数类型，可以避免变量被错误地修改，同时增加代码可读性
+Using `const` to qualify parameter types in function parameters can prevent variables from being modified incorrectly and improve code readability.
 
 ```cpp
 void sum(const std::vector<int> &data, int &total) {
   for (auto iter = data.begin(); iter != data.end(); ++iter)
-    total += *iter;  // iter 是迭代器，解引用后的类型是 const int
+    total += *iter;  // iter is an iterator, and the dereferenced type is const int
 }
 ```
 
-## `const` 成员函数
+## `const` Member Functions
 
-类型中 `const` 限定的成员函数，可以用来限制对成员的修改．
+Member functions qualified with `const` in a type can restrict modifications to members.
 
 ```cpp
 #include <iostream>
@@ -74,10 +74,10 @@ struct ConstMember {
   void constFunc1() const { std::cout << "Const Function 1" << std::endl; }
 
   void constFunc2(int ss) const {
-    // func(); // const 成员函数不能调用非 const 成员函数
+    // func(); // A const member function cannot call a non-const member function
     constFunc1();
 
-    // s = ss; // const 成员函数不能修改成员变量
+    // s = ss; // A const member function cannot modify member variables
   }
 };
 
@@ -85,33 +85,33 @@ int main() {
   int b = 1;
   ConstMember c{};
   const ConstMember d = c;
-  // d.func(); // 常量不能调用非 const 成员函数
+  // d.func(); // A const object cannot call a non-const member function
   d.constFunc2(b);
   return 0;
 }
 ```
 
-## 常量表达式 `constexpr`（C++11）
+## Constant Expressions `constexpr` (C++11)
 
-常量表达式是指编译时能计算出结果的表达式，`constexpr` 则要求编译器能在编译时求得函数或变量的值．
+A constant expression is an expression whose result can be computed at compile time. `constexpr` requires the compiler to be able to compute the value of a function or variable at compile time.
 
-编译时计算能允许更好的优化，比如将结果硬编码到汇编中，消除运行时计算开销．与 `const` 的带来的优化不同，当 `constexpr` 修饰的变量满足常量表达式的条件，就强制要求编译器在编译时计算出结果而非运行时．
+Compile-time computation allows better optimization, such as hard-coding results into assembly and eliminating runtime computation costs. Unlike optimizations brought by `const`, when a variable modified by `constexpr` satisfies the conditions for a constant expression, the compiler is forced to compute the result at compile time rather than at runtime.
 
-???+ note "更直观的理解是把 `const` 理解成「只读」，`constexpr` 理解成「不可变」"
+???+ note "A more intuitive understanding is to treat `const` as \"read-only\" and `constexpr` as \"immutable\""
     ```cpp
-    constexpr int a = 10;  // 直接定义常量
+    constexpr int a = 10;  // Define a constant directly
     
     constexpr int FivePlus(int x) { return 5 + x; }
     
     void test(const int x) {
-      std::array<int, x> c1;            // 错误，x在编译时不可知
-      std::array<int, FivePlus(6)> c2;  // 可行，FivePlus编译时可知
+      std::array<int, x> c1;            // Error: x is not known at compile time
+      std::array<int, FivePlus(6)> c2;  // OK: FivePlus is known at compile time
     }
     ```
 
-以下例子很好说明了 `const` 和 `constexpr` 的区别，代码使用递归实现计算斐波那契数列，并用控制流输出．
+The following example clearly illustrates the difference between `const` and `constexpr`. The code computes Fibonacci numbers recursively and outputs them using control flow.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     #include <iostream>
     
@@ -133,7 +133,7 @@ int main() {
     }
     ```
 
-???+ note "编译后的可能的汇编代码（使用 Compiler Explorer，Clang 19）"
+???+ note "Possible assembly after compilation (using Compiler Explorer, Clang 19)"
     ```nasm
     fib1(unsigned int):
             push    r14
@@ -164,11 +164,11 @@ int main() {
             push    rbx
             push    rax
             mov     edi, 9
-            call    fib1(unsigned int) # `v1` 的初始化进行了函数调用
+            call    fib1(unsigned int) # Initialization of `v1` performs a function call
             mov     ebx, eax
             mov     r14, qword ptr [rip + std::__1::cout@GOTPCREL]
             mov     rdi, r14
-            mov     esi, 55 # `v0` 被最终计算结果替代
+            mov     esi, 55 # `v0` is replaced by the final computed result
             call    std::__1::basic_ostream<char, std::__1::char_traits<char>>::operator<<(unsigned int)@PLT
             mov     byte ptr [rsp + 7], 32
             lea     rsi, [rsp + 7]
@@ -176,7 +176,7 @@ int main() {
             mov     rdi, r14
             call    std::__1::basic_ostream<char, std::__1::char_traits<char>>& std::__1::__put_character_sequence[abi:ne200000]<char, std::__1::char_traits<char>>(std::__1::basic_ostream<char, std::__1::char_traits<char>>&, char const*, unsigned long)
             mov     rdi, r14
-            mov     esi, ebx # 读取了变量值
+            mov     esi, ebx # Reads the variable value
             call    std::__1::basic_ostream<char, std::__1::char_traits<char>>::operator<<(unsigned int)@PLT
             xor     eax, eax
             add     rsp, 8
@@ -185,17 +185,16 @@ int main() {
             ret
     ```
 
-`constexpr` 修饰的 `fib0` 函数在唯一的调用处用了常量参数，使得整个函数仅在编译期运行．由于函数没有运行时执行，编译器也就判断不需要生成汇编代码．
+The `fib0` function modified by `constexpr` is called only with a constant argument, so the entire function runs only at compile time. Since the function has no runtime execution, the compiler determines that no assembly code needs to be generated for it.
 
-在同时注意到汇编中，`v0` 没有初始化代码，在调用 `cout` 输出 `v0` 的代码中，`v0` 已被最终结算结果替代，说明变量值已在编译时求出，优化掉了运行时运算．
-而 `v1` 的初始化还是普通的 `fib1` 递归调用．
+Also note that in the assembly, `v0` has no initialization code. In the code that calls `cout` to output `v0`, `v0` has been replaced by the final computed result, showing that the variable value was computed at compile time and the runtime operation was optimized away. By contrast, the initialization of `v1` is still an ordinary recursive call to `fib1`.
 
-所以 `constexpr` 可以用来替换宏定义的常量，规避 [宏定义的风险](./basic.md#define-命令)．
+Therefore, `constexpr` can be used to replace constants defined by macros and avoid the [risks of macro definitions](./basic.md#the-define-command).
 
-算法题中可以使用 `constexpr` 存储数据规模较小的变量，以消除对应的运行时计算开销．尤为常见在「[打表](../contest/dictionary.md)」技巧中，使用 `constexpr` 修饰的数组等容器存储答案．
+In algorithm problems, `constexpr` can be used to store variables with small data sizes to eliminate corresponding runtime computation costs. It is especially common in the "[table lookup](../contest/dictionary.md)" technique, where arrays and other containers modified by `constexpr` store answers.
 
-???+ note "编译时计算量过大会导致编译错误"
-    编译器会限制编译时计算的开销，如果计算量过大会导致无法通过编译，应该考虑使用 `const`．
+???+ note "Excessive compile-time computation can cause compile errors"
+    The compiler limits the cost of compile-time computation. If the computation is too large, compilation may fail, and you should consider using `const`.
     
     ```cpp
     #include <iostream>
@@ -214,7 +213,7 @@ int main() {
     }
     ```
 
-???+ note "使用 constexpr 时 Clang 给出的编译错误"
+???+ note "Compile error reported by Clang when using constexpr"
     ```text
     <source>:10:20: error: constexpr variable 'v' must be initialized by a constant expression
         10 |     constexpr auto v = fib(32);
@@ -228,7 +227,7 @@ int main() {
     <source>:6:25: note: in call to ...
     ```
 
-## 参考资料
+## References
 
--   [C++ 关键字——const](https://zh.cppreference.com/w/cpp/keyword/const)
--   [C++ 关键字——constexpr](https://zh.cppreference.com/w/cpp/keyword/constexpr)
+-   [C++ keyword: const](https://en.cppreference.com/w/cpp/keyword/const)
+-   [C++ keyword: constexpr](https://en.cppreference.com/w/cpp/keyword/constexpr)

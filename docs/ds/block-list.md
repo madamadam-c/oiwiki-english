@@ -2,14 +2,14 @@ author: HeRaNO, konnyakuxzy, littlefrog
 
 ![./images/kuaizhuanglianbiao.png](./images/kuaizhuanglianbiao.png "./images/kuaizhuanglianbiao.png")
 
-块状链表大概就长这样……
+A block linked list roughly looks like this...
 
-不难发现块状链表就是一个链表，每个节点指向一个数组．
-我们把原来长度为 n 的数组分为 $\sqrt{n}$ 个节点，每个节点对应的数组大小为 $\sqrt{n}$．
-所以我们这么定义结构体，代码见下．
-其中 `sqn` 表示 `sqrt(n)` 即 $\sqrt{n}$，`pb` 表示 `push_back`，即在这个 `node` 中加入一个元素．
+It is easy to see that a block linked list is a linked list where each node points to an array.
+We split the original array of length n into $\sqrt{n}$ nodes, and each node corresponds to an array of size $\sqrt{n}$.
+Therefore, we define the structure as shown below.
+Here `sqn` means `sqrt(n)`, i.e. $\sqrt{n}$, and `pb` means `push_back`, i.e. adding an element into this `node`.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     struct node {
       node* nxt;
@@ -22,57 +22,57 @@ author: HeRaNO, konnyakuxzy, littlefrog
     };
     ```
 
-块状链表应该至少支持：分裂、插入、查找．
-什么是分裂？分裂就是分裂一个 `node`，变成两个小的 `node`，以保证每个 `node` 的大小都接近 $\sqrt{n}$（否则可能退化成普通数组）．当一个 `node` 的大小超过 $2\times \sqrt{n}$ 时执行分裂操作．
+A block linked list should at least support splitting, insertion, and lookup.
+What is splitting? Splitting means splitting one `node` into two smaller `node`s, so that the size of every `node` remains close to $\sqrt{n}$ (otherwise it may degenerate into an ordinary array). When a `node`'s size exceeds $2\times \sqrt{n}$, perform a split operation.
 
-分裂操作怎么做呢？先新建一个节点，再把被分裂的节点的后 $\sqrt{n}$ 个值 `copy` 到新节点，然后把被分裂的节点的后 $\sqrt{n}$ 个值删掉（`size--`），最后把新节点插入到被分裂节点的后面即可．
+How is splitting done? First create a new node, then `copy` the last $\sqrt{n}$ values of the split node into the new node, delete those last $\sqrt{n}$ values from the split node (`size--`), and finally insert the new node after the split node.
 
-块状链表的所有操作的复杂度都是 $\sqrt{n}$ 的．
+All operations on a block linked list have complexity $\sqrt{n}$.
 
-还有一个要说的．
-随着元素的插入（或删除），$n$ 会变，$\sqrt{n}$ 也会变．这样块的大小就会变化，我们难道还要每次维护块的大小？
+There is one more point to mention.
+As elements are inserted (or deleted), $n$ changes, and so does $\sqrt{n}$. This means the block size changes. Do we need to maintain the block size every time?
 
-其实不然，把 $\sqrt{n}$ 设置为一个定值即可．比如题目给的范围是 $10^6$，那么 $\sqrt{n}$ 就设置为大小为 $10^3$ 的常量，不用更改它．
+Actually, no. Just set $\sqrt{n}$ to a fixed value. For example, if the problem's limit is $10^6$, set $\sqrt{n}$ to a constant of size $10^3$ and do not change it.
 
 ```cpp
 list<vector<char>> orz_list;
 ```
 
-## libstdc++ 中的 `rope`
+## `rope` in libstdc++
 
-### 导入
+### Importing
 
-libstdc++ 中的 `rope` 也起到块状链表的作用，它采用可持久化平衡树实现，可完成随机访问和插入、删除元素的操作．
+The `rope` in libstdc++ also plays the role of a block linked list. It is implemented with a persistent balanced tree and can support random access, insertion, and deletion of elements.
 
-由于 `rope` 并不是真正的用块状链表来实现，所以它的时间复杂度并不等同于块状链表，而是相当于可持久化平衡树的复杂度（即 $O(\log n)$）．
+Since `rope` is not truly implemented with a block linked list, its time complexity is not the same as a block linked list. Instead, it is equivalent to the complexity of a persistent balanced tree, i.e. $O(\log n)$.
 
-可以使用如下方法来引入：
+It can be imported as follows:
 
 ```cpp
 #include <ext/rope>
 using namespace __gnu_cxx;
 ```
 
-???+ warning "关于双下划线开头的库函数"
-    OI 中，关于能否使用双下划线开头的库函数曾经一直不确定，2021 年 CCF 发布的 [关于 NOI 系列活动中编程语言使用限制的补充说明](https://www.noi.cn/xw/2021-09-01/735729.shtml) 中提到「允许使用以下划线开头的库函数或宏，但具有明确禁止操作的库函数和宏除外」．故 `rope` 目前可以在 OI 中正常使用．
+???+ warning "About library functions starting with double underscores"
+    In OI, whether library functions starting with double underscores could be used was once uncertain. In 2021, CCF published the [Supplementary Explanation on Programming Language Restrictions in NOI Series Events](https://www.noi.cn/xw/2021-09-01/735729.shtml), mentioning that "library functions or macros starting with an underscore are allowed, except for library functions and macros with explicitly prohibited operations." Therefore, `rope` can currently be used normally in OI.
 
-### 基本操作
+### Basic Operations
 
-|             操作            |               作用              |
-| :-----------------------: | :---------------------------: |
-|       `rope<int> a`       | 初始化 `rope`（与 `vector` 等容器很相似） |
-|      `a.push_back(x)`     |       在 `a` 的末尾添加元素 `x`       |
-|     `a.insert(pos, x)`    |   在 `a` 的 `pos` 个位置添加元素 `x`   |
-|     `a.erase(pos, x)`     |  在 `a` 的 `pos` 个位置删除 `x` 个元素  |
-|     `a.at(x)` 或 `a[x]`    |       访问 `a` 的第 `x` 个元素       |
-| `a.length()` 或 `a.size()` |           获取 `a` 的大小          |
+| Operation | Effect |
+| :-------: | :-----: |
+| `rope<int> a` | Initialize a `rope` (very similar to containers such as `vector`) |
+| `a.push_back(x)` | Add element `x` to the end of `a` |
+| `a.insert(pos, x)` | Insert element `x` at position `pos` in `a` |
+| `a.erase(pos, x)` | Delete `x` elements starting at position `pos` in `a` |
+| `a.at(x)` or `a[x]` | Access the `x`-th element of `a` |
+| `a.length()` or `a.size()` | Get the size of `a` |
 
-## 例题
+## Example
 
 [POJ2887 Big String](http://poj.org/problem?id=2887)
 
-题解：
-很简单的模板题．代码如下：
+Solution:
+This is a simple template problem. The code is as follows:
 
 ```cpp
 --8<-- "docs/ds/code/block-list/block-list_1.cpp"

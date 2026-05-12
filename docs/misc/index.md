@@ -1,1 +1,1 @@
-这个板块主要介绍的是一些难以分类的算法及 OI 相关知识．
+This section mainly introduces algorithms and OI-related knowledge that are hard to classify.

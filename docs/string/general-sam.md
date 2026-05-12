@@ -1,59 +1,59 @@
-## 前置知识
+## Prerequisites
 
-广义后缀自动机基于下面的知识点
+The generalized suffix automaton is based on the following knowledge points:
 
--   [字典树（Trie 树）](./trie.md)
--   [后缀自动机](./sam.md)
+-   [Trie (Trie tree)](./trie.md)
+-   [Suffix Automaton](./sam.md)
 
-请务必对上述两个知识点非常熟悉之后，再来阅读本文，特别是对于 **后缀自动机** 中的 **后缀链接** 能够有一定的理解
+Make sure you are very familiar with both of the above knowledge points before reading this article, especially understanding the **suffix links** in the **suffix automaton**.
 
-## 引入
+## Introduction
 
-### 起源
+### Origin
 
-广义后缀自动机是由刘研绎在其 2015 国家队论文《后缀自动机在字典树上的拓展》上提出的一种结构，即将后缀自动机直接建立在字典树上．
+The generalized suffix automaton (GSA) is a structure proposed by Liu Yanyi in his 2015 national team paper "Extension of Suffix Automaton on Trie", which builds a suffix automaton directly on a trie.
 
-> 大部分可以用后缀自动机处理的字符串的问题均可扩展到 Trie 树上．——刘研绎
+> Most string problems that can be solved with suffix automaton can be extended to Trie trees. — Liu Yanyi
 
-### 约定
+### Conventions
 
-参考 [字符串约定](./basic.md)
+Refer to [String Conventions](./basic.md).
 
-字符串个数为 $k$ 个，即 $S_1, S_2, S_3 \dots S_k$
+The number of strings is $k$, i.e., $S_1, S_2, S_3 \dots S_k$.
 
-约定字典树和广义后缀自动机的根节点为 $0$ 号节点
+The root node of the trie and the generalized suffix automaton is node $0$.
 
-### 概述
+### Overview
 
-后缀自动机 (suffix automaton, SAM) 是用于处理单个字符串的子串问题的强力工具．
+The suffix automaton (SAM) is a powerful tool for handling substring problems of a single string.
 
-而广义后缀自动机 (General Suffix Automaton) 则是将后缀自动机整合到字典树中来解决对于多个字符串的子串问题
+The generalized suffix automaton integrates the suffix automaton into a trie to solve substring problems for multiple strings.
 
-## 常见的伪广义后缀自动机
+## Common Pseudo-Generalized Suffix Automata
 
-1.  通过用特殊符号将多个串直接连接后，再建立 SAM
-2.  对每个串，重复在同一个 SAM 上进行建立，每次建立前，将 `last` 指针置零
+1.  Directly connecting multiple strings with special symbols, then building a SAM
+2.  For each string, repeatedly building on the same SAM, setting the `last` pointer to zero before each build
 
-方法 1 和方法 2 的实现方式简单，而且在面对题目时通常可以达到和广义后缀自动机一样的正确性．所以在网络上很多人会选择此类写法，例如在后缀自动机一文中最后一个应用，便使用了方法 1 [（原文链接）](./sam.md)
+Method 1 and method 2 are simple to implement and usually achieve the same correctness as the generalized suffix automaton when facing problems. So many people choose such approaches online. For example, the last application in the suffix automaton article uses method 1 [(original link)](./sam.md).
 
-但是无论方法 1 还是方法 2，其时间复杂度较为危险
+However, both method 1 and method 2 have dangerously high time complexity.
 
-## 构造广义后缀自动机
+## Building a Generalized Suffix Automaton
 
-根据原论文的描述，应当在多个字符串上先建立字典树，然后在字典树的基础上建立广义后缀自动机．
+According to the original paper, a trie should first be built on multiple strings, and then the generalized suffix automaton should be built on top of the trie.
 
-### 字典树的使用
+### Using a Trie
 
-首先应对多个串创建一棵字典树，这不是什么难事，如果你已经掌握了前置知识的前提下，可以很快的建立完毕．这里为了统一上下文的代码，给出一个可能的字典树代码．
+First, create a trie for multiple strings. This is not difficult if you have mastered the prerequisites. Here, to unify the context code, we provide a possible trie implementation.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     constexpr int MAXN = 2000000;
     constexpr int CHAR_NUM = 30;
     
     struct Trie {
-      int next[MAXN][CHAR_NUM];  // 转移
-      int tot;                   // 节点总数：[0, tot)
+      int next[MAXN][CHAR_NUM];  // transitions
+      int tot;                   // total nodes: [0, tot)
     
       void init() { tot = 1; }
     
@@ -69,56 +69,56 @@
     };
     ```
 
-这里我们得到了一棵依赖于 `next` 数组建立的一棵字典树．
+Here we have a trie built based on the `next` array.
 
-### 后缀自动机的建立
+### Building the Suffix Automaton
 
-如果我们把这样一棵树直接认为是一个后缀自动机，则我们可以得到如下结论
+If we directly consider such a tree as a suffix automaton, we can draw the following conclusions:
 
--   对于节点 `i`，其 `len[i]` 和它在字典树中的深度相同
--   如果我们对字典树进行拓扑排序，我们可以得到一串根据 `len` 不递减的序列．BFS 的结果相同
+-   For node `i`, its `len[i]` is the same as its depth in the trie.
+-   If we perform topological sort on the trie, we can obtain a sequence of nodes with non-decreasing `len`. The BFS result is the same.
 
-而后缀自动机在建立的过程中，可以视为不断的插入 `len` 严格递增的值，且差值为 $1$．所以我们可以将对字典树进行拓扑排序后的结果做为一个队列，然后按照这个队列的顺序不断地插入到后缀自动机中．
+During the construction of the suffix automaton, it can be viewed as continuously inserting values with strictly increasing `len` and a difference of $1$. So we can use the result of topological sorting on the trie as a queue, and then insert nodes into the suffix automaton in the order of this queue.
 
-由于在普通后缀自动机上，其前一个节点的 `len` 值为固定值，即为 `last` 节点的 `len`．但是在广义后缀自动机中，插入的队列是一个不严格递增的数列．所以对于每一个值，对于它的 `last` 应该是已知而且固定的，在字典树上，即为其父亲节点．
+Since in a normal suffix automaton, the `len` value of the previous node is fixed, which is the `len` of the `last` node. However, in a generalized suffix automaton, the inserted queue is a non-strictly increasing sequence. So for each value, its `last` should be known and fixed, which in the trie is its parent node.
 
-由于在字典树中，已经建立了一个近似的后缀自动机，所以只需要对整个字典树的结构进行一定的处理即可转化为广义后缀自动机．我们可以按照前面提出的队列顺序来对整个字典树上的每一个节点进行更新操作．最终我们可以得到广义后缀自动机．
+Since a pseudo-suffix automaton has already been built in the trie, we only need to perform certain processing on the entire trie structure to convert it into a generalized suffix automaton. We can update each node on the trie according to the queue order proposed earlier. Finally, we can obtain the generalized suffix automaton.
 
-对于每个点的更新操作，我们可以稍微修改一下 SAM 中的插入操作来得到．
+For the update operation of each node, we can slightly modify the insertion operation in SAM.
 
-对于整个插入的过程，需要注意的是，由于插入是按照 `len` 不递减的顺序插入，在进行 `clone` 后的数据复制过程中，不可以复制其 `len` 小于当前 `len` 的数据．
+For the entire insertion process, note that since insertion is performed in non-decreasing order of `len`, during data copying after `clone`, we should not copy data whose `len` is less than the current `len`.
 
-### 过程
+### Process
 
-根据上述的逻辑，可以将整个构建过程描述为如下操作
+Based on the above logic, the entire construction process can be described as follows:
 
-1.  将所有字符串插入到字典树中
-2.  从字典树的根节点开始进行 BFS，记录下顺序以及每个节点的父亲节点
-3.  将得到的 BFS 序列按照顺序，对每个节点在原字典树上进行构建，注意不能将 `len` 小于当前 `len` 的数据进行操作
+1.  Insert all strings into the trie.
+2.  Start BFS from the root of the trie, recording the order and the parent node of each node.
+3.  For each node in the BFS sequence, construct it on the original trie in order. Note that we should not operate on data whose `len` is less than the current `len`.
 
-### 对操作次数为线性的证明
+### Proof of Linear Number of Operations
 
-由于仅处理 BFS 得到的序列，可以保证字典树上所有节点仅经过一次．
+Since we only process the sequence obtained from BFS, we can guarantee that all nodes in the trie are visited only once.
 
-对于最坏情况，考虑字典树本身节点个数最多的情况，即任意两个字符串没有相同的前缀，则节点个数为 $\sum_{i=1}^{k}|S_i|$，即所有的字符串长度之和．
+For the worst case, consider the maximum number of nodes in the trie itself, i.e., if any two strings have no common prefix, then the number of nodes is $\sum_{i=1}^{k}|S_i|$, which is the sum of all string lengths.
 
-而在后缀自动机的更新操作的复杂度已经在 [后缀自动机](./sam.md) 中证明
+The complexity of the update operations in the suffix automaton has already been proven in [Suffix Automaton](./sam.md).
 
-所以可以证明其最坏复杂度为线性
+Therefore, it can be proven that its worst-case complexity is linear.
 
-而通常伪广义后缀自动机的平均复杂度等同于广义后缀自动机的最差复杂度，面对对于大量的字符串时，伪广义后缀自动机的效率远不如标准的广义后缀自动机
+And usually, the average complexity of pseudo-generalized suffix automata is equal to the worst-case complexity of the generalized suffix automaton. When dealing with a large number of strings, the efficiency of pseudo-generalized suffix automata is far inferior to that of standard generalized suffix automata.
 
-### 实现
+### Implementation
 
-对插入函数进行少量必要的修改即可得到所需要的函数
+We can obtain the required function by making a few necessary modifications to the insert function.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     struct GSA {
-      int len[MAXN];             // 节点长度
-      int link[MAXN];            // 后缀链接，link
-      int next[MAXN][CHAR_NUM];  // 转移
-      int tot;                   // 节点总数：[0, tot)
+      int len[MAXN];             // node length
+      int link[MAXN];            // suffix link
+      int next[MAXN][CHAR_NUM];  // transitions
+      int tot;                   // total nodes: [0, tot)
     
       int insertSAM(int last, int c) {
         int cur = next[last][c];
@@ -169,43 +169,43 @@
     }
     ```
 
--   由于整个 BFS 的过程得到的顺序，其父节点始终在变化，所以并不需要保存 `last` 指针．
--   插入操作中，`int cur = next[last][c];` 与正常后缀自动机的 `int cur = tot++;` 有差异，因为我们插入的节点已经在树型结构中完成了，所以只需要直接获取即可
--   在 `clone` 后的数据拷贝中，有这样的判断 `next[clone][i] = len[next[q][i]] != 0 ? next[q][i] : 0;` 这与正常的后缀自动机的直接赋值 `next[clone][i] = next[q][i];` 有一定差异，此次是为了避免更新了 `len` 大于当前节点的值．由于数组中 `len` 当且仅当这个值被 BFS 遍历并插入到后缀自动机后才会被赋值
+-   Since the parent node is always changing during the entire BFS process, we don't need to save the `last` pointer.
+-   In the insert operation, `int cur = next[last][c];` differs from the normal suffix automaton's `int cur = tot++;` because the nodes we insert already exist in the tree structure, so we can directly retrieve them.
+-   In the data copy after `clone`, there is such a judgment `next[clone][i] = len[next[q][i]] != 0 ? next[q][i] : 0;` which differs from the normal suffix automaton's direct assignment `next[clone][i] = next[q][i];`. This is to avoid updating values whose `len` is greater than the current node's `len`. Since in the array, `len` is only assigned after the node is traversed by BFS and inserted into the suffix automaton.
 
-## 性质
+## Properties
 
-1.  广义后缀自动机与后缀自动机的结构一致，在后缀自动机上的性质绝大部分均可在广义后缀自动机上生效（[后缀自动机的性质](./sam.md)）
-2.  当广义后缀自动机建立后，通常字典树结构将会被破坏，即通常不可以用广义后缀自动机来解决字典树问题．当然也可以选择准备双倍的空间，将后缀自动机建立在另外一个空间上．
+1.  The structure of the generalized suffix automaton is consistent with the suffix automaton. Most properties of the suffix automaton apply to the generalized suffix automaton ([Properties of Suffix Automaton](./sam.md)).
+2.  After building the generalized suffix automaton, the trie structure is usually destroyed, meaning the generalized suffix automaton cannot usually be used to solve trie problems. Of course, you can choose to prepare double the space and build the suffix automaton in another space.
 
-## 应用
+## Applications
 
-### 所有字符中不同子串个数
+### Number of Different Substrings Across All Characters
 
-可以根据后缀自动机的性质得到，以点 $i$ 为结束节点的子串个数等于 $len[i] - len[link[i]]$
+Based on the properties of the suffix automaton, the number of substrings ending at node $i$ equals $len[i] - len[link[i]]$.
 
-所以可以遍历所有的节点求和得到
+So we can iterate through all nodes and sum them up.
 
-例题：[【模板】广义后缀自动机（广义 SAM）](https://www.luogu.com.cn/problem/P6139)
+Problem: [【Template】Generalized Suffix Automaton (Generalized SAM)](https://www.luogu.com.cn/problem/P6139)
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/string/code/general-sam/general-sam_1.cpp"
     ```
 
-### 多个字符串间的最长公共子串
+### Longest Common Substring Among Multiple Strings
 
-我们需要对每个节点建立一个长度为 $k$ 的数组 `flag`（对于本题而言，可以仅为标记数组，若需要求出此子串的个数，则需要改成计数数组）
+We need to build an array `flag` of length $k$ for each node (for this problem, it can be just a marker array; if we need to find the number of such substrings, we need to change it to a counting array).
 
-在字典树插入字符串时，对所有节点进行计数，保存在当前字符串所在的数组
+When inserting strings into the trie, count all nodes and store them in the array for the current string.
 
-然后按照 `len` 递减的顺序遍历，通过后缀链接将当前节点的 `flag` 与其他节点的合并
+Then traverse in decreasing order of `len`, and merge the `flag` of the current node with other nodes through suffix links.
 
-遍历所有的节点，找到一个 `len` 最大且满足对于所有的 `k`，其 `flag` 的值均为非 $0$ 的节点，此节点的 $len$ 即为解
+Traverse all nodes and find one with the maximum `len` such that for all $k$, its `flag` value is non-zero. The `len` of this node is the answer.
 
-例题：[SPOJ Longest Common Substring II](https://www.spoj.com/problems/LCS2/)
+Problem: [SPOJ Longest Common Substring II](https://www.spoj.com/problems/LCS2/)
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/string/code/general-sam/general-sam_2.cpp"
     ```

@@ -1,223 +1,223 @@
-本部分将介绍基础的计算理论的知识．这部分内容在 OI 中作用不大（但还是略有作用：如果你遇到了一个 NP-hard 问题，你可以认为它是不存在多项式复杂度的解法的），可以作为兴趣了解，或者为以后的学习做准备．
+This section will introduce basic computing theory knowledge. This part of the content is not very useful in OI (but it is still slightly useful: if you encounter an NP-hard problem, you can think that it does not have a solution with polynomial complexity), and can be learned as an interest, or to prepare for future learning.
 
-本文中许多结论都是不加证明的，如果有兴趣的话可以自行查阅相关证明．
+Many conclusions in this article are without proof. If you are interested, you can check the relevant proofs by yourself.
 
-前置知识：[时间复杂度](../basic/complexity.md)．
+Prerequisite knowledge: [Time complexity](../basic/complexity.md).
 
-## 问题
+## question
 
-### 语言
+### language
 
-一个 **字母表（alphabet）** 是一个非空有限集合，该集合中的元素称为 **符号/字符（symbol）**．
+An **alphabet** is a non-empty finite set whose elements are called **symbols**.
 
-令 $\Sigma^\ast$ 表示非负整数个 $\Sigma$ 中的字符连接而成的串，字母表 $\Sigma$ 上的一个 **语言（language）** 是 $\Sigma^\ast$ 的一个子集．
+Let $\Sigma^\ast$ represent a string formed by concatenating a non-negative integer number of characters in $\Sigma$. A **language (language)** on the alphabet $\Sigma$ is a subset of $\Sigma^\ast$.
 
-需要注意的是，这里的「语言」是一个抽象的概念，通常意义上的字符串是语言，所有的有向无环图也可以是一个语言（01 串与有向图之间可以建立双射，具体方式无需了解）．
+It should be noted that "language" here is an abstract concept. In the usual sense, a string is a language, and all directed acyclic graphs can also be a language (01 A bijection can be established between a string and a directed graph, and there is no need to understand the specific method).
 
-由于任何语言都可以转化成 01 串的形式，所以在下文中不加说明时 $\Sigma=\{0, 1\}$．
+Since any language can be converted into the form of 01 string, $\Sigma=\{0, 1\}$.
 
-### 判定问题
+### Determine the problem
 
-判定问题就是只能用 YES/NO 回答的问题，本质上是判定一个串是否属于一个语言，即：$f:\Sigma^\ast\rightarrow\{0, 1\}, f(x)=1\iff x\in L$ 是一个关于字母表 $\Sigma$ 和语言 $L$ 的判定问题．如，「判定一张图是不是一个有向无环图」就是一个判定问题．
+The decision question is a question that can only be answered with YES/NO. It is essentially a question of determining whether a string belongs to a language, that is: $f:\Sigma^\ast\rightarrow\{0, 1\}, f(x)=1\iff x\in L$ is a decision question about the alphabet $\Sigma$ and the language $L$. For example, "determining whether a graph is a directed acyclic graph" is a determination problem.
 
-判定问题由于其简洁性而常常被作为计算理论研究的对象．本文中不加说明时，「问题」都指「判定问题」，当然，有时一些命题也能简单地推广到其它问题上．
+Decision problems are often the object of computational theory research due to their simplicity. Unless otherwise stated in this article, "problem" refers to "decision problem". Of course, sometimes some propositions can be simply extended to other problems.
 
-一个语言也可以代指「判定一个串是否属于这个语言」这个判定问题，因此，「语言」和「问题」可以视作同义词．
+A language can also refer to the decision problem of "determining whether a string belongs to this language". Therefore, "language" and "problem" can be regarded as synonyms.
 
-### 功能性问题
+### functional issues
 
-功能性问题的回答不止 YES/NO，可以是一个数或是其它．如，「求两个数的和」就是一个功能性问题．
+The answer to functional questions is not just YES/NO, it can be a number or something else. For example, "finding the sum of two numbers" is a functional problem.
 
-任何功能性问题都可以转化为一个判定问题，如，「求两个数的和」可以转化为「判定两个数的和是否等于第三个数」．
+Any functional problem can be transformed into a decision problem. For example, "find the sum of two numbers" can be transformed into "determine whether the sum of two numbers is equal to a third number."
 
-判定问题也可以转化为一个功能性问题：求这个判定问题的指示函数，即上文中判定问题定义里的 $f$．
+The decision problem can also be transformed into a functional problem: find the indicator function of this decision problem, which is $f$ in the definition of the decision problem above.
 
-## 图灵机
+## Turing machine
 
-### 确定性图灵机
+### Deterministic Turing Machine
 
-不加说明时，「图灵机」往往指「确定性图灵机」，本文中也是如此．
+Without explanation, "Turing machine" often refers to "deterministic Turing machine", which is also the case in this article.
 
-图灵机有很多不同的定义，这里选取其中一种，其它定义下的图灵机往往与下面这种定义的图灵机计算能力等价．
+There are many different definitions of Turing machines. Here we choose one of them. Turing machines under other definitions are often equivalent to the computing power of Turing machines defined below.
 
-图灵机是一个在一条可双向无限延伸且被划分为若干格子的纸带上进行操作的机器，其有内部状态，还有一个可以在纸带上进行修改与移动的磁针．
+A Turing machine is a machine that operates on a paper tape that can be infinitely extended in both directions and is divided into a number of grids. It has an internal state and a magnetic needle that can be modified and moved on the paper tape.
 
-正式地说，图灵机是一个七元组 $M=\langle Q,\Gamma,b,\Sigma,\delta,q_0,F\rangle$，其中：
+Formally, a Turing machine is a seven-tuple $M=\langle Q,\Gamma,b,\Sigma,\delta,q_0,F\rangle$, where:
 
--   $Q$ 是一个有限非空的 **状态集合**；
--   $\Gamma$ 是一个有限非空的 **磁带字母表**；
--   $b\in\Gamma$ 是 **空字符**，它是唯一一个在计算过程中可以在磁带上无限频繁地出现的字符；
--   $\Sigma\subseteq(\Gamma\setminus\{b\})$ 是 **输入符号集**，是可以出现在初始磁带（即输入）上的字符；
--   $q_0\in Q$ 是 **初始状态**；
--   $F\subseteq Q$ 是 **接受状态**，如果一个图灵机在某个接受状态停机，则称初始磁带上的内容被这个图灵机 **接受**．
--   $\delta :(Q\setminus F)\times \Gamma \not \to Q\times \Gamma \times \{L,R\}$ 是一个被称作 **转移函数** 的 partial function（即只对定义域的一个子集有定义的函数）．如果 $\delta$ 在当前状态下没有定义，则图灵机停机．
+-   $Q$ is a finite non-empty **state set**;
+-   $\Gamma$ is a finite non-empty **tape alphabet**;
+-   $b\in\Gamma$ is the **null character**, which is the only character that can appear infinitely frequently on the tape during calculations;
+-   $\Sigma\subseteq(\Gamma\setminus\{b\})$ is the **input symbol set**, which are characters that can appear on the initial tape (i.e. input);
+-   $q_0\in Q$ is **initial state**;
+-   $F\subseteq Q$ is the **accepting state**. If a Turing machine stops in a certain accepting state, it is said that the content on the initial tape is **accepted** by the Turing machine.
+-   $\delta :(Q\setminus F)\times \Gamma \not \to Q\times \Gamma \times \{L,R\}$ is a partial function called a **transfer function** (that is, a function defined only for a subset of the domain). If $\delta$ is not defined in the current state, the Turing machine stops.
 
-图灵机从初始状态与纸带起点起，每次根据当前的内部状态 $x$ 和当前磁针指向的纸带上的单元格中的字符 $y$ 进行操作：若 $\delta(x, y)$ 没有定义则停机，否则若 $\delta(x, y)=(a, b, c)$，则将内部状态修改为 $a$，将磁针指向的格子中的字符修改为 $b$，若 $c$ 为 $L$ 则向左移动一格，为 $R$ 则向右移动一格．
+Starting from the initial state and the starting point of the paper tape, the Turing machine operates each time based on the current internal state $x$ and the character $y$ in the cell on the tape pointed by the current magnetic needle: if $\delta(x, y)$ is not defined, it will stop, otherwise if $\delta(x, y)=(a, b, c)$, the internal state will be modified to $a$, and the character in the grid pointed by the magnetic needle will be modified to $b$. If $c$ is If it is $L$, it will move one space to the left, and if it is $R$, it will move one space to the right.
 
-其实，知道图灵机的工作细节是不必要的，只需建立直观理解即可．
+In fact, it is not necessary to know the details of the working of Turing machines, just establish an intuitive understanding.
 
-图灵机 $M$ 在输入 $x$ 下的输出记作 $M(x)$（$M(x)=1$ 当且仅当 $M$ 接受 $x$，$M(x)=0$ 当且仅当 $M$ 在输入 $x$ 下在有限步骤内停机且 $M$ 不接受 $x$），也可以在括号内包含多个参数，用逗号隔开，具体实现时可以向字母表中添加一个元素表示逗号来隔开各个参数．
+The output of Turing machine $M$ under input $x$ is denoted as $M(x)$ ($M(x)=1$ if and only if $M$ accepts $x$, $M(x)=0$ if and only if $M$ halts in finite steps under input $x$ and $M$ does not accept $x$), you can also include multiple parameters in brackets, separated by commas. During specific implementation, you can add an element to the alphabet to represent commas to separate each parameter.
 
-图灵机与冯·诺依曼计算机解决问题的时间复杂度差别在多项式级别内，所以研究复杂度类时可以使用图灵机作为计算模型．
+The time complexity difference between a Turing machine and a von Neumann computer in solving problems is within the polynomial level, so the Turing machine can be used as a computing model when studying complexity classes.
 
-### 非确定性图灵机
+### non-deterministic Turing machine
 
-非确定型图灵机是图灵机的一种，它与确定型图灵机的不同在于：确定型图灵机的每一步只能转移到一个状态，而非确定型图灵机可以「同时」转移到多个状态，从而在多个「分支」并行计算，一旦这些「分支」中有一个在接受状态停机，则此非确定性图灵机接受这个输入．
+The non-deterministic Turing machine is a type of Turing machine. The difference between it and the deterministic Turing machine is that each step of the deterministic Turing machine can only transfer to one state, while the non-deterministic Turing machine can transfer to multiple states "simultaneously", thereby computing in multiple "branches" in parallel. Once one of these "branches" stops in the accepting state, the non-deterministic Turing machine accepts this input.
 
-事实上，任何确定型图灵机都可以用类似于迭代加深搜索的方式在指数级时间内模拟一台非确定型图灵机多项式时间内的行为．
+In fact, any deterministic Turing machine can simulate the polynomial-time behavior of a non-deterministic Turing machine in exponential time using a method similar to iterative deepening search.
 
-在现实生活中，确定型图灵机相当于单核处理器，只支持串行处理；而非确定型图灵机相当于理想的多核处理器，支持无限大小的并行处理．
+In real life, a deterministic Turing machine is equivalent to a single-core processor and only supports serial processing; a non-deterministic Turing machine is equivalent to an ideal multi-core processor and supports unlimited parallel processing.
 
-### 多带图灵机
+### Multi-band Turing machine
 
-标准的图灵机只能在一条纸带上进行操作，但为了方便，本文中研究多带图灵机．对于一个 $k$ 带图灵机，其中一条纸带是只读的输入带，而剩下的 $k-1$ 条纸带可以进行读写，并且这 $k-1$ 条纸带中还有一条纸带用作输出．
+The standard Turing machine can only operate on one paper tape, but for convenience, multi-tape Turing machines are studied in this article. For a $k$ Turing machine, one of the paper tapes is a read-only input tape, while the remaining $k-1$ paper tapes can be read and written, and one of the $k-1$ paper tapes is used as output.
 
-多带图灵机的纸带数必须是有限的．
+The number of tapes in a multi-tape Turing machine must be limited.
 
-对于一个多带图灵机，它使用的空间是磁头在除输入带外的其它纸带上所访问过的单元格数目．
+For a multi-tape Turing machine, the space it uses is the number of cells that the head has visited on other tapes except the input tape.
 
-### 图灵机的编码
+### Coding of Turing Machine
 
-图灵机可以被自然数编码，即存在满射函数 $f:\mathbb{N}\to\mathbb{M}$，使得每个自然数都对应一个图灵机，而每个图灵机都有无数个编码．因此，由若干图灵机构成的集合可以是一个语言．
+Turing machines can be encoded by natural numbers, that is, there is a surjective function $f:\mathbb{N}\to\mathbb{M}$, so that each natural number corresponds to a Turing machine, and each Turing machine has countless codes. Therefore, a set of several Turing machines can be a language.
 
-记由自然数 $\alpha$ 编码的图灵机为 $M_{\alpha}$．
+The Turing machine encoded by the natural number $\alpha$ is $M_{\alpha}$.
 
-### 通用图灵机
+### universal turing machine
 
-存在一台图灵机 $\mathcal U$ 满足：
+There exists a Turing machine $\mathcal U$ that satisfies:
 
-1.  若 $M_{\alpha}$ 在输入 $x$ 下在有限时间内停机，则 $\mathcal{U}(x, \alpha)=M_{\alpha}(x)$，否则 $\mathcal{U}(x, \alpha)$ 不会在有限时间内停机；
-2.  如果对于任意 $x\in\{0, 1\}^\ast$，$M_\alpha$ 在输入 $x$ 下在 $T(|x|)$ 时间内停机，则对于任意 $x\in\{0, 1\}^\ast$，$\mathcal{U}(x, \alpha)$ 在 $O(T(|x|)\log T(|x|))$ 时间内停机．
+1.  If $M_{\alpha}$ stops within a limited time under input $x$, then $\mathcal{U}(x, \alpha)=M_{\alpha}(x)$, otherwise $\mathcal{U}(x, \alpha)$ will not stop within a limited time;
+2.  If for any $x\in\{0, 1\}^\ast$, $M_\alpha$ stops within $T(|x|)$ time under input $x$, then for any $x\in\{0, 1\}^\ast$, $\mathcal{U}(x, \alpha)$ stops within $O(T(|x|)\log T(|x|))$ time.
 
-即：存在一台通用图灵机，它能模拟任何一台图灵机，且花费的时间只会比这台被模拟的图灵机慢其运行时间的对数．
+That is: there is a universal Turing machine, which can simulate any Turing machine, and the time it takes will only be slower than the logarithm of the running time of the simulated Turing machine.
 
-## 可计算性
+## computability
 
-### 不可计算问题
+### uncomputable problem
 
-对于一个判定问题，若存在一个总是在有限步内停机且能够正确进行判定的图灵机，则这个问题是一个 **图灵可计算** 的问题，否则这个问题是一个 **图灵不可计算** 的问题．
+For a decision problem, if there is a Turing machine that always stops within a finite step and can make correct decisions, then the problem is a **Turing computable** problem, otherwise the problem is a **Turing uncomputable** problem.
 
-由于图灵机可以被自然数编码，所以图灵机的个数是可数无穷，而语言（即二进制串的集合）的个数是不可数无穷，而每个图灵机最多判定一个语言，所以一定存在图灵不可计算的问题．
+Since Turing machines can be encoded by natural numbers, the number of Turing machines is countably infinite, and the number of languages ​​(i.e., sets of binary strings) is uncountable and infinite. Each Turing machine can determine at most one language, so there must be a problem that Turing is not computable.
 
-### 停机问题
+### Downtime issues
 
-停机问题是一个经典的图灵不可计算问题：给定 $\alpha$ 和 $x$，判定 $M_{\alpha}$ 在输入为 $x$ 时是否会在有限步内停机．
+The halting problem is a classic Turing uncomputable problem: given $\alpha$ and $x$, determine whether $M_{\alpha}$ will halt within a finite step when the input is $x$.
 
-??? note "停机问题是图灵不可计算的证明"
-    定义函数 $\mathsf{UC}:\{0,1\}^\ast\to\{0,1\}$ 为：
+??? note "Halting problem is proof that Turing is not computable"
+    Define function $\mathsf{UC}:\{0,1\}^\ast\to\{0,1\}$ as:
     
     $$
     \mathsf{UC}(\alpha)=\begin{cases}0&M_\alpha(\alpha)=1\\1&\text{otherwise}\end{cases}
     $$
     
-    我们先证明 $\mathsf{UC}$ 函数是图灵不可计算的：
+    We first prove that the $\mathsf{UC}$ function is Turing uncomputable:
     
-    假设存在一台图灵机 $M_{\beta}$ 能够计算 $\mathsf{UC}$，那么根据 $\mathsf{UC}$ 的定义可以得到 $\mathsf{UC}(\beta)=1\iff M_\beta(\beta)\neq 1$，而根据 $M_{\beta}$ 能够计算 $\mathsf{UC}$ 可以得到 $M_{\beta}(\beta)=\mathsf{UC}(\beta)$，产生了矛盾，所以假设不成立，不存在可以计算 $\mathsf{UC}$ 的图灵机．
+    Suppose there is a Turing machine $M_{\beta}$ that can calculate $\mathsf{UC}$, then according to the definition of $\mathsf{UC}$ we can get $\mathsf{UC}(\beta)=1\iff M_\beta(\beta)\neq 1$, and according to $M_{\beta}$ we can calculate $\mathsf{UC}$ we can get $M_{\beta}(\beta)=\mathsf{UC}(\beta)$, which creates a contradiction, so the assumption is not true, there is no Turing machine that can calculate $\mathsf{UC}$.
     
-    令 $M_{\mathsf{HALT}}$ 是一个可以解决停机问题的图灵机，$M_{\mathsf{HALT}}(x,\alpha)$ 的值是判定问题 $M_\alpha$ 在输入为 $x$ 时是否会在有限步内停机的解，那么我们可以构造出一台能够计算 $\mathsf{UC}$ 函数的图灵机 $M_{\mathsf{UC}}$：
+    Let $M_{\mathsf{HALT}}$ be a Turing machine that can solve the halting problem, and the value of $M_{\mathsf{HALT}}(x,\alpha)$ is the solution to the decision problem whether $M_\alpha$ will halt within a finite step when the input is $x$. Then we can construct a Turing machine $M_{\mathsf{UC}}$ that can calculate the $\mathsf{UC}$ function:
     
-    $M_\mathsf{UC}$ 首先调用 $M_\mathsf{HALT}(α,α)$, 如果它输出 $0$, 则 $M_\mathsf{UC}(α)=1$；否则，$M_\mathsf{UC}$ 使用通用图灵机模拟计算得到答案．
+    $M_\mathsf{UC}$ first calls $M_\mathsf{HALT}(α,α)$, if it outputs $0$, then $M_\mathsf{UC}(α)=1$; otherwise, $M_\mathsf{UC}$ uses a universal Turing machine to simulate and calculate the answer.
     
-    由于 $\mathsf{UC}$ 函数是图灵不可计算的，所以 $M_\mathsf{HALT}$ 不存在，也就是说停机问题是图灵不可计算的．
+    Since the $\mathsf{UC}$ function is Turing-uncomputable, $M_\mathsf{HALT}$ does not exist, which means that the halting problem is Turing-uncomputable.
 
-## 丘奇 - 图灵论题
+## Church-Turing Thesis
 
-丘奇 - 图灵论题称，若一类问题有一个有效的方法解决，则这类问题可以被某个图灵机解决．
+The Church-Turing thesis states that if a type of problem has an efficient method to solve it, then this type of problem can be solved by a certain Turing machine.
 
-其中，「有效的方法」需要满足：
+Among them, "effective methods" need to meet:
 
-1.  包含有限条清晰的指令；
-2.  当用其解决这类问题的其中一个时，这个方法需要在有限步骤内结束，且得到正确的答案．
+1.  Contains a limited number of clear instructions;
+2.  When used to solve one of these problems, the method needs to end in a finite number of steps and get the correct answer.
 
-这个论题没有被证明，但其是计算理论的一条基本公理．
+This thesis has not been proven, but it is a basic axiom of computational theory.
 
-## 复杂度类
+## Complexity class
 
-复杂度类有很多，本文只会介绍其中较为常见的一小部分．
+There are many complexity classes, and this article will only introduce a small part of the more common ones.
 
-### R 和 RE
+### R and RE
 
-对于语言 $L$ 和图灵机 $M$，若 $M$ 在任何输入下都能在有限步骤内停机，且 $M(x)=1\iff x\in L$，则称 $M$ 能够 **判定**  $L$．
+For language $L$ and Turing machine $M$, if $M$ can halt in finite steps under any input, and $M(x)=1\iff x\in L$, then $M$ is said to be able to **determine** $L$.
 
-对于语言 $L$ 和图灵机 $M$，若对于任何属于 $L$ 的输入，$M$ 都在有限步骤内停机，且 $M(x)=1\iff x\in L$，则称 $M$ 能够 **识别**  $L$．
+For the language $L$ and the Turing machine $M$, if for any input belonging to $L$, $M$ stops within finite steps, and $M(x)=1\iff x\in L$, then it is said that $M$ can **recognize** $L$.
 
-复杂度类 $\mathsf R$ 表示那些可以被某台图灵机判定的语言的集合，即所有图灵可计算的语言．
+The complexity class $\mathsf R$ represents the set of languages ​​that can be judged by a certain Turing machine, that is, all Turing-computable languages.
 
-复杂度类 $\mathsf{RE}$ 表示那些可以被某台图灵机识别的语言的集合．$\mathsf{RE}$ 也被称作递归可枚举语言．
+The complexity class $\mathsf{RE}$ represents the set of languages ​​that can be recognized by a certain Turing machine. $\mathsf{RE}$ is also called a recursively enumerable language.
 
-由定义可以得到 $\mathsf{R}\subseteq\mathsf{RE}$．
+From the definition we can get $\mathsf{R}\subseteq\mathsf{RE}$.
 
 ### DTIME
 
-如果存在一台确定性图灵机能够判定一个语言，且对于任何输入 $x$，这台图灵机可以在 $O(f(|x|))$ 的时间内停机，那么这个语言属于 $\mathsf{DTIME}(f(n))$ 类．
+If there is a deterministic Turing machine that can determine a language, and for any input $x$, this Turing machine can stop in $O(f(|x|))$ time, then this language belongs to the $\mathsf{DTIME}(f(n))$ class.
 
 ### P
 
-复杂度类 $\mathsf P$ 表示可以由确定性图灵机在多项式时间内解决的判定问题，即：
+The complexity class $\mathsf P$ represents decision problems that can be solved by a deterministic Turing machine in polynomial time, namely:
 
 $$
 \mathsf{P}=\bigcup\limits_{k\in\mathbb{N}}\mathsf{DTIME}(n^k)
 $$
 
-线性规划、计算最大公约数、求图的最大匹配的判定版本都是 $\mathsf P$ 类问题．
+The decision versions of linear programming, calculating the greatest common divisor, and finding the maximum matching of a graph are all $\mathsf P$ problems.
 
 ### EXPTIME
 
-复杂度类 $\mathsf{EXPTIME}$ 表示可以由确定性图灵机在指数级时间内解决的判定问题，即：
+The complexity class $\mathsf{EXPTIME}$ represents a decision problem that can be solved by a deterministic Turing machine in exponential time, that is:
 
 $$
 \mathsf{EXPTIME}=\bigcup\limits_{k\in\mathbb{N}}\mathsf{DTIME}(2^{n^k})
 $$
 
-停机问题的弱化版——给定一个图灵机的编码以及一个正整数 $k$，判定这个图灵机是否在 $k$ 步内停机，是一个 $\mathsf{EXPTIME}$ 类的问题．因为这个问题的解法需要 $O(k)$ 的时间，而数字 $k$ 可以被编码为长度为 $O(\log k)$ 的二进制串．
+A weakened version of the halting problem - given the encoding of a Turing machine and a positive integer $k$, determining whether the Turing machine halts within $k$ steps is a $\mathsf{EXPTIME}$ problem. Because the solution of this problem takes $O(k)$ time, and the number $k$ can be encoded as a binary string of length $O(\log k)$.
 
 ### NTIME
 
-如果存在一台非确定性图灵机能够判定一个语言，且对于任何输入 $x$，这台图灵机可以在 $O(f(|x|))$ 的时间内停机，那么这个语言属于 $\mathsf{NTIME}(f(n))$ 类．
+If there is a non-deterministic Turing machine that can determine a language, and for any input $x$, this Turing machine can stop in $O(f(|x|))$ time, then this language belongs to the $\mathsf{NTIME}(f(n))$ class.
 
 ### NP
 
-复杂度类 $\mathsf{NP}$ 表示可以由非确定性图灵机在多项式时间内解决的判定问题，即：
+The complexity class $\mathsf{NP}$ represents decision problems that can be solved by a non-deterministic Turing machine in polynomial time, namely:
 
 $$
 \mathsf{NP}=\bigcup\limits_{k\in\mathbb{N}}\mathsf{NTIME}(n^k)
 $$
 
-所有 $\mathsf P$ 类问题都是 $\mathsf{NP}$ 类问题．更多 $\mathsf{NP}$ 类问题请参见下文中的 NPC 问题以及 NP-intermediate 问题．
+All problems of type $\mathsf P$ are problems of type $\mathsf{NP}$. For more $\mathsf{NP}$ problems, please see the NPC problem and NP-intermediate problem below.
 
 #### NP-hard
 
-如果所有 $\mathsf{NP}$ 类问题都可以在多项式时间内规约到问题 $H$，那么问题 $H$ 是 NP-hard 的．
+If all problems of class $\mathsf{NP}$ can be reduced to problem $H$ in polynomial time, then problem $H$ is NP-hard.
 
-换句话说，如果可以在一单位的时间内解决 NP-hard 的问题 $H$，那么所有 $\mathsf{NP}$ 类问题都可以在多项式单位的时间内解决．
+In other words, if the NP-hard problem $H$ can be solved in one unit of time, then all $\mathsf{NP}$ problems can be solved in polynomial unit time.
 
 #### NP-complete
 
-如果一个问题既是 $\mathsf{NP}$ 类问题又是 NP-hard 的，那么这个问题是 NP 完全 (NP-complete) 的，或者说这是一个 NPC 问题．
+If a problem is both a $\mathsf{NP}$ problem and NP-hard, then the problem is NP-complete, or it is an NPC problem.
 
-一些经典的 NPC 问题：旅行商问题的判定版本、最大独立集问题的判定版本、最小点覆盖问题的判定版本、最长路问题的判定版本、0-1 整数规划问题的判定版本、集合覆盖问题、图着色问题、背包问题、三维匹配问题、最大割问题的判定版本．
+Some classic NPC problems: the decision version of the traveling salesman problem, the decision version of the maximum independent set problem, the decision version of the minimum point covering problem, the decision version of the longest path problem, the decision version of the 0-1 integer programming problem, the set covering problem, the graph coloring problem, the knapsack problem, the three-dimensional matching problem, the decision version of the maximum cut problem.
 
-NPC 问题的功能性版本往往是 NP-hard 的，例如：「判定一张图中是否存在大小为 $k$ 的团」既是一个 $\mathsf{NP}$ 类问题又是 NP-hard 的，从而它是一个 NPC 问题，而它的功能性版本「求一张图的最大团」不是 NPC 问题，但这个功能性版本依然是 NP-hard 的．
+The functional version of the NPC problem is often NP-hard. For example: "Determine whether there is a clique of size $k$ in a graph" is both a $\mathsf{NP}$ problem and NP-hard, so it is an NPC problem, and its functional version "Find the largest clique in a graph" is not an NPC problem, but this functional version is still NP-hard.
 
-类似地，其它复杂度类也会有「XX-complete」，如所有 $\mathsf{EXPTIME}$ 类的问题都能在多项式时间内规约到 EXPTIME-complete 的问题．
+Similarly, other complexity classes will also have "XX-complete", for example, all $\mathsf{EXPTIME}$ class problems can be reduced to EXPTIME-complete problems in polynomial time.
 
 #### co-NP
 
-一个问题是 $\mathsf{co-NP}$ 类问题，当且仅当它的补集是 $\mathsf{NP}$ 类问题．如果将「问题」理解为「语言」，而「语言」是 $\Sigma^\ast$ 的子集，就能理解「补集」了．
+A problem is a problem of type $\mathsf{co-NP}$ if and only if its complement is a problem of type $\mathsf{NP}$. If you understand "problem" as "language", and "language" is a subset of $\Sigma^\ast$, you can understand the "complement".
 
-例如：「给定 $n$ 个子集，判断是否能够从中选取 $k$ 个，覆盖整个集合」是一个 NPC 问题，而其补集「给定 $n$ 个子集，判断是否从中任取 $k$ 个都不能覆盖整个集合」是一个 $\mathsf{co-NP}$ 类问题．如果第一个问题的答案是「是」，那么相当于找到了第二个问题的一组反例，从而第二个问题的答案是「否」．
+For example: "Given the $n$ subset, determine whether $k$ can be selected from it to cover the entire set" is an NPC problem, and its complement "Given the $n$ subset, determine whether any $k$ selected from it cannot cover the entire set" is a $\mathsf{co-NP}$ problem. If the answer to the first question is "yes", then it is equivalent to finding a set of counterexamples to the second question, so the answer to the second question is "no".
 
 #### NP-intermediate
 
-如果一个问题是 $\mathsf{NP}$ 类问题，但它既不是 $\mathsf{P}$ 类问题也不是 NPC 问题，则称其为 NP-intermediate 问题．
+If a problem is a $\mathsf{NP}$ type problem, but it is neither a $\mathsf{P}$ type problem nor an NPC problem, it is called an NP-intermediate problem.
 
-就人们目前的了解，图同构问题、离散对数问题和因数分解问题可能是 NP-intermediate 的．
+As far as people's current understanding is concerned, graph isomorphism problems, discrete logarithm problems and factorization problems may be NP-intermediate.
 
-Ladner 定理指出，如果 $\mathsf{P}\ne\mathsf{NP}$，则一定存在问题是 NP-intermediate 的．
+Ladner's theorem states that if $\mathsf{P}\ne\mathsf{NP}$, then there must be a problem that is NP-intermediate.
 
 ### NEXPTIME
 
-复杂度类 $\mathsf{NEXPTIME}$ 表示可以由非确定性图灵机在指数级时间内解决的判定问题，即：
+The complexity class $\mathsf{NEXPTIME}$ represents a decision problem that can be solved by a non-deterministic Turing machine in exponential time, that is:
 
 $$
 \mathsf{NEXPTIME}=\bigcup\limits_{k\in\mathbb{N}}\mathsf{NTIME}(2^{n^k})
@@ -225,17 +225,17 @@ $$
 
 ### #P
 
-$\mathsf{\#P}$ 类问题不是判定问题，而是关于 $\mathsf{NP}$ 类问题的计数问题：数一个 $\mathsf{NP}$ 类问题的解的个数是一个 $\mathsf{\#P}$ 类的问题．换句话说，数一个串在一个总是在多项式时间内停机的非确定性图灵机的多少个分支处被接受是一个 $\mathsf{\#P}$ 类的问题．
+The $\mathsf{\#P}$ type problem is not a decision problem, but a counting problem about the $\mathsf{NP}$ type problem: counting the number of solutions to a $\mathsf{NP}$ type problem is a $\mathsf{\#P}$ type problem. In other words, counting how many branches a string is accepted in a nondeterministic Turing machine that always halts in polynomial time is a $\mathsf{\#P}$ problem.
 
-求一张普通图或二分图的匹配或完美匹配个数都是 #P 完全的，对应的判定问题为「判定一张图是否存在（完美）匹配」．
+Finding the number of matches or perfect matches for an ordinary graph or a bipartite graph is #P complete, and the corresponding determination problem is "determine whether there is a (perfect) match in a graph".
 
 ### DSPACE
 
-如果存在一台确定性图灵机能够在输入为 $x$ 时在 $O(f(|x|))$ 的空间内判定一个语言，那么这个语言属于 $\mathsf{DSPACE}(f(n))$ 类．
+If there is a deterministic Turing machine that can determine a language in the space of $O(f(|x|))$ when the input is $x$, then this language belongs to the $\mathsf{DSPACE}(f(n))$ class.
 
--   $\mathsf{REG}=\mathsf{DSPACE}(O(1))$，即正则语言，也就是自动机能够判定的语言．
+-   $\mathsf{REG}=\mathsf{DSPACE}(O(1))$ is a regular language, which is a language that an automaton can determine.
 
--   $\mathsf{L}=\mathsf{DSPACE}(O(\log n))$，需要注意的是图灵机使用的空间不包括输入占用的空间．
+-   $\mathsf{L}=\mathsf{DSPACE}(O(\log n))$, it should be noted that the space used by the Turing machine does not include the space occupied by the input.
 
 -   $\mathsf{PSPACE}=\bigcup\limits_{k\in\mathbb N}\mathsf{DSPACE}(n^k)$
 
@@ -243,130 +243,130 @@ $\mathsf{\#P}$ 类问题不是判定问题，而是关于 $\mathsf{NP}$ 类问�
 
 ### NSPACE
 
-如果存在一台非确定性图灵机能够在输入为 $x$ 时在 $O(f(|x|))$ 的空间内判定一个语言，那么这个语言属于 $\mathsf{NSPACE}(f(n))$ 类．
+If there is a non-deterministic Turing machine that can determine a language in the space of $O(f(|x|))$ when the input is $x$, then this language belongs to the $\mathsf{NSPACE}(f(n))$ class.
 
 -   $\mathsf{REG}=\mathsf{DSPACE}(O(1))=\mathsf{NSPACE}(O(1))$
 
 -   $\mathsf{NL}=\mathsf{NSPACE}(O(\log n))$
 
--   $\mathsf{CSL}=\mathsf{NSPACE}(O(n))$，即上下文相关语言．
+-   $\mathsf{CSL}=\mathsf{NSPACE}(O(n))$, context-sensitive language.
 
 -   $\mathsf{PSPACE}=\mathsf{NPSPACE}=\bigcup\limits_{k\in\mathbb N}\mathsf{NSPACE}(n^k)$
 
 -   $\mathsf{EXPSPACE}=\mathsf{NEXPSPACE}=\bigcup\limits_{k\in\mathbb N}\mathsf{NSPACE}(2^{n^k})$
 
-## 多项式时间
+## polynomial time
 
-简单来说，如果存在正数 $k$ 使得一个算法的时间复杂度为 $O(n^k)$（注意，不是 $\Theta(n^k)$），其中 $n$ 为问题规模（输入的长度），则称这个算法是 **多项式时间** 的．如果一个问题有（确定性图灵机上的）多项式时间的算法来解决，则这个问题属于复杂度类 $\mathsf{P}$．
+Simply put, if there is a positive number $k$ such that the time complexity of an algorithm is $O(n^k)$ (note, not $\Theta(n^k)$), where $n$ is the problem size (length of input), then the algorithm is said to be **polynomial time**. If a problem can be solved by a polynomial-time algorithm (on a deterministic Turing machine), then the problem belongs to complexity class $\mathsf{P}$.
 
-多项式时间可分为强多项式时间和弱多项式时间，除此之外还有伪多项式时间．
+Polynomial time can be divided into strong polynomial time and weak polynomial time. In addition, there is pseudo-polynomial time.
 
-### Strongly polynomial time 强多项式时间
+### Strongly polynomial time Strongly polynomial time
 
-我们先定义一个计算模型，称作算术模型．在算术模型中，数字之间的算术运算（加减乘除、比较大小）可以在单位时间内完成（即 $O(1)$ 时间内完成，与数字大小无关）．
+We first define a calculation model, called an arithmetic model. In the arithmetic model, arithmetic operations between numbers (addition, subtraction, multiplication, division, comparison of sizes) can be completed within unit time (that is, $O(1)$ time, regardless of the size of the numbers).
 
-如果一个算法在算术模型下的操作数是输入中的数字个数的多项式，并且空间复杂度是输入规模（而非数字个数）的多项式，则这个算法是 **强多项式时间** 的．由于算术操作在一般的计算模型下可以在输入规模（即数字大小的对数）的多项式时间内完成，强多项式时间的算法一定是多项式时间的．
+An algorithm is **strongly polynomial time** if its operands under the arithmetic model are polynomials in the number of digits in the input, and its space complexity is polynomial in the size of the input (not the number of digits). Since arithmetic operations can be completed in polynomial time in the input size (i.e. the logarithm of the number size) under the general computing model, strong polynomial time algorithms must be polynomial time.
 
-一般来说，强多项式时间的算法的时间复杂度与值域无关．
+Generally speaking, the time complexity of a strong polynomial-time algorithm has nothing to do with the range.
 
-### Weakly polynomial time 弱多项式时间
+### Weakly polynomial time Weakly polynomial time
 
-如果一个算法是多项式时间的但不是强多项式时间的，则它是 **弱多项式时间** 的．
+If an algorithm is polynomial time but not strongly polynomial time, then it is **weakly polynomial time**.
 
-例如，计算最大公约数的欧几里得算法，时间复杂度为 $O(\log a + \log b)$（$a$ 和 $b$ 为输入的数的大小），是弱多项式时间的．
+For example, the Euclidean algorithm for calculating the greatest common divisor has a time complexity of $O(\log a + \log b)$ ($a$ and $b$ are the sizes of the input numbers), which is weak polynomial time.
 
-### Pseudo-polynomial time 伪多项式时间
+### Pseudo-polynomial time
 
-如果一个算法的用时是值域的多项式，则称它是 **伪多项式时间** 的．伪多项式时间的算法可能是多项式时间的也可能不是，可能不是多项式时间是因为表示一个大小为 $n$ 的正整数一般只需要 $O(\log n)$ 个二进制位，所以关于值域多项式时间的算法往往关于输入长度是指数级时间的．虽然从定义上来说伪多项式时间也可能是多项式时间，但当我们说一个算法是伪多项式时间的，一般都是说这个算法不是多项式时间的．
+If the time of an algorithm is a polynomial in the range, it is said to be **pseudopolynomial time**. Pseudo-polynomial time algorithms may or may not be polynomial time. They may not be polynomial time because representing a positive integer of size $n$ generally only requires $O(\log n)$ binary bits, so polynomial-time algorithms on the range often take exponential time on the input length. Although pseudopolynomial time may also be polynomial time by definition, when we say that an algorithm is pseudopolynomial time, we generally mean that the algorithm is not polynomial time.
 
-例如，背包问题是 NP-hard 问题，但它有基于动态规划的伪多项式时间的解法．
+For example, the knapsack problem is an NP-hard problem, but it has a pseudopolynomial-time solution based on dynamic programming.
 
-如果一个 NPC/NP-hard 问题有伪多项式时间的解法，则称这个问题是 **弱 NPC**/**弱 NP-hard** 问题．如果一个 NPC/NP-hard 问题在 $\mathsf{P} \ne \mathsf{NP}$ 的前提下没有伪多项式时间的解法，则称这个问题是 **强 NPC**/**强 NP-hard** 问题．
+If an NPC/NP-hard problem has a pseudopolynomial-time solution, the problem is said to be a **weak NPC**/**weak NP-hard** problem. If an NPC/NP-hard problem has no pseudo-polynomial time solution under the premise $\mathsf{P} \ne \mathsf{NP}$, then the problem is said to be a **strong NPC**/**strong NP-hard** problem.
 
-## 可构造函数
+## Constructable function
 
-### 时间可构造函数
+### time constructor
 
-有时，我们想让图灵机知道自己用了多长的时间，例如，强制图灵机在进行 $T(n)$ 步计算后停机．但如果计算 $T(n)$ 的用时就超过了 $T(n)$，这便是不可做到的．为此，定义了时间可构造函数，来避免这样的麻烦．
+Sometimes, we want the Turing machine to know how long it took, for example, to force the Turing machine to stop after performing $T(n)$ steps of calculation. But if the time taken to calculate $T(n)$ exceeds $T(n)$, this is impossible. For this reason, a time constructor function is defined to avoid such trouble.
 
-如果存在图灵机 $M$，使得输入为 $1^n$($n$ 个 1) 时 $M$ 能在 $O(f(n))$ 的时间内停机并且输出 $f(n)$ 的二进制表示（注意，这里的图灵机的输出不是接受/不接受，而是一个串，输出可以在纸带上进行），则 $f(n)$ 是一个 **时间可构造函数**．
+If there is a Turing machine $M$, so that when the input is $1^n$ ($n$ 1), $M$ can stop within the time of $O(f(n))$ and output the binary representation of $f(n)$ (note that the output of the Turing machine here is not accept/not accept, but a string, and the output can be performed on paper tape), then $f(n)$ is a **time constructible function**.
 
-由于读入需要 $O(n)$ 的时间，$o(n)$ 的非常值函数都不是时间可构造函数．
+Since reading requires $O(n)$ time, none of the non-valued functions of $o(n)$ are time constructible functions.
 
-### 空间可构造函数
+### space constructor
 
-类似地可以定义空间可构造函数．
+Similarly, spatial constructible functions can be defined.
 
-如果存在图灵机 $M$，使得输入为 $1^n$($n$ 个 1) 时 $M$ 能在 $O(f(n))$ 的空间内停机并且输出 $f(n)$ 的二进制表示，则 $f(n)$ 是一个 **空间可构造函数**．
+If there is a Turing machine $M$, so that when the input is $1^n$ ($n$ 1), $M$ can stop in the space of $O(f(n))$ and output the binary representation of $f(n)$, then $f(n)$ is a **space constructible function**.
 
-## 复杂度类之间的关系
+## Relationships between complexity classes
 
-### 时间谱系定理
+### time genealogy theorem
 
-#### 确定性时间谱系定理
+#### Deterministic time genealogy theorem
 
-若 $f(n)$ 是一个时间可构造函数，则：
+If $f(n)$ is a time constructible function, then:
 
 $$
 \mathsf {DTIME}\left(o\left({\frac {f(n)}{\log f(n)}}\right)\right)\subsetneq \mathsf {DTIME}(f(n))
 $$
 
-由确定性时间谱系定理可以得到 $\mathsf{P}\subsetneq\mathsf{EXPTIME}$．
+From the deterministic time spectrum theorem, we can get $\mathsf{P}\subsetneq\mathsf{EXPTIME}$.
 
-??? note "确定性时间谱系定理的证明"
-    定义语言 $L=\{(x, y)|\mathcal{U}((x, y), x)\text{ 在 }f(|x|+|y|)\text{ 时间内停机并拒绝}\}$，由于 $f(n)$ 是一个时间可构造函数，可以根据定义进行计算来判定 $L$，用时为 $O(f(|x|+|y|))$，所以 $L\in\mathsf{DTIME}(f(n))$．
+??? note "Proof of Deterministic Time Genealogy Theorem"
+    Definition language $L=\{(x, y)|\mathcal{U}((x, y), x)\text{ 在 }f(|x|+|y|)\text{ 时间内停机并拒绝}\}$, since $f(n)$ is a time constructible function, it can be calculated according to the definition to determine $L$, and the time taken is $O(f(|x|+|y|))$, so $L\in\mathsf{DTIME}(f(n))$.
     
-    现在假设 $L\in\mathsf{DTIME}(o\left({\dfrac {f(n)}{\log f(n)}}\right))$，设 $M_z$ 就是那台在 $o\left({\dfrac {f(n)}{\log f(n)}}\right)$ 的时间内判定 $L$ 的图灵机．
+    Now suppose $L\in\mathsf{DTIME}(o\left({\dfrac {f(n)}{\log f(n)}}\right))$, let $M_z$ be the Turing machine that determines $L$ in $o\left({\dfrac {f(n)}{\log f(n)}}\right)$ time.
     
-    令通用图灵机 $\mathcal{U}(x, z)$ 关于 $x$ 的用时为 $g(|x|)$，由上文关于通用图灵机的介绍可以得到 $g(n)=o(f(n))$，所以，当 $y$ 足够大时，$g(|z|+|y|)<f(|z|+|y|)$．
+    Let the time of the universal Turing machine $\mathcal{U}(x, z)$ with respect to $x$ be $g(|x|)$. From the above introduction to the universal Turing machine, we can get $g(n)=o(f(n))$. Therefore, when $y$ is large enough, $g(|z|+|y|)<f(|z|+|y|)$.
     
-    令 $y'$ 是一个足够大的 $y$，那么 $\mathcal{U}((z, y'), z)$ 一定能在 $f(|z|+|y'|)$ 时间内停机，从而 $M_z(z, y')\ne M_z(z, y')$，产生矛盾，所以假设不成立，确定性时间谱系定理证毕．
+    Let $y'$ be a large enough $y$, then $\mathcal{U}((z, y'), z)$ must be able to stop within the time of $f(|z|+|y'|)$, thus $M_z(z, y')\ne M_z(z, y')$, resulting in a contradiction, so the assumption does not hold, and the deterministic time genealogy theorem has been proved.
 
-#### 非确定性时间谱系定理
+#### Non-deterministic time genealogy theorem
 
-若 $g(n)$ 是一个时间可构造函数，并且 $f(n+1)=o(g(n))$，则 $\mathsf{NTIME}(f(n))\subsetneq\mathsf{NTIME}(g(n))$．
+If $g(n)$ is a temporally constructible function and $f(n+1)=o(g(n))$, then $\mathsf{NTIME}(f(n))\subsetneq\mathsf{NTIME}(g(n))$.
 
-由非确定性时间谱系定理可以得到 $\mathsf{NP}\subsetneq\mathsf{NEXPTIME}$．
+From the nondeterministic time spectrum theorem, we can get $\mathsf{NP}\subsetneq\mathsf{NEXPTIME}$.
 
-### 空间谱系定理
+### space genealogy theorem
 
-若 $f(n)$ 是一个空间可构造函数且 $f(n)=\Omega(\log n)$，则 $\mathsf{SPACE}(o(f(n)))\subsetneq\mathsf{SPACE}(f(n))$．
+If $f(n)$ is a spatially constructible function and $f(n)=\Omega(\log n)$, then $\mathsf{SPACE}(o(f(n)))\subsetneq\mathsf{SPACE}(f(n))$.
 
-其中 $\mathsf{SPACE}$ 可以代指 $\mathsf{DSPACE}$ 或 $\mathsf{NSPACE}$．
+Among them, $\mathsf{SPACE}$ can refer to $\mathsf{DSPACE}$ or $\mathsf{NSPACE}$.
 
-由空间谱系定理可以得到 $\mathsf{PSPACE}\subsetneq\mathsf{EXPSPACE}$．
+From the space genealogy theorem, we can get $\mathsf{PSPACE}\subsetneq\mathsf{EXPSPACE}$.
 
-### 萨维奇定理
+### Savage's theorem
 
-一台确定性图灵机可以在一台非确定性图灵机所消耗空间的平方内模拟它（尽管消耗的时间可能多很多），即：
+A deterministic Turing machine can simulate it in the square of the space consumed by a non-deterministic Turing machine (although it may take much more time), that is:
 
-若 $f(n)=\Omega(\log n)$，则：
+If $f(n)=\Omega(\log n)$, then:
 
 $$
 \mathsf{NSPACE}\left(f\left(n\right)\right)\subseteq \mathsf {DSPACE}\left(\left(f\left(n\right)\right)^2\right)
 $$
 
-推论：$\mathsf{PSPACE}=\mathsf{NPSPACE}$，$\mathsf{EXPSPACE}=\mathsf{NEXPSPACE}$．
+Inference: $\mathsf{PSPACE}=\mathsf{NPSPACE}$, $\mathsf{EXPSPACE}=\mathsf{NEXPSPACE}$.
 
 ### P?=NP
 
-复杂度类 $\mathsf{P}$ 与 $\mathsf{NP}$ 是否相等是计算复杂度理论中一个著名的尚未解决的问题．
+Whether the complexity classes $\mathsf{P}$ and $\mathsf{NP}$ are equal is a well-known unsolved problem in computational complexity theory.
 
-若 $\mathsf{P}=\mathsf{NP}$，可以得到 $\mathsf{NP}=\mathsf{co-NP}$，但反之不行（目前没有基于 $\mathsf{NP}=\mathsf{co-NP}$ 证明 $\mathsf{P}=\mathsf{NP}$ 的方法）．
+If $\mathsf{P}=\mathsf{NP}$, you can get $\mathsf{NP}=\mathsf{co-NP}$, but not vice versa (there is currently no method to prove $\mathsf{P}=\mathsf{NP}$ based on $\mathsf{NP}=\mathsf{co-NP}$).
 
-???+ note "为什么 NP?=co-NP 不是显然的？"
-    由于 $\mathsf{NP}$ 问题和与其对应的 $\mathsf{co-NP}$ 问题答案相反，很容易有这种想法：对于一个 $\mathsf{co-NP}$ 问题，我只要将解决其补集的非确定性图灵机的输出反过来，就解决了该 $\mathsf{co-NP}$ 问题，所以 $\mathsf{NP}=\mathsf{co-NP}$．
+???+ note "Why isn't NP?=co-NP obvious?"
+    Since the $\mathsf{NP}$ problem has the opposite answer to its corresponding $\mathsf{co-NP}$ problem, it is easy to think that for a $\mathsf{co-NP}$ problem, I can solve the $\mathsf{co-NP}$ problem by just inverting the output of the nondeterministic Turing machine that solves its complement, so $\mathsf{NP}=\mathsf{co-NP}$.
     
-    实际上，上面所说的这种方法确实能够解决该 $\mathsf{co-NP}$ 问题，但并没有找到一个非确定性图灵机来解决它：如果一个图灵机所做的事情是将一个非确定性图灵机的输出反过来，该图灵机并不是一个非确定性图灵机．因为，非确定性图灵机接受是在某个分支处接受，而拒绝是在所有分支处拒绝；而将其输出反过来，就变成了接受是在所有分支处，而拒绝是在一个分支处，而这样就不符合非确定性图灵机的定义了，所以能用该图灵机解决这个 $\mathsf{co-NP}$ 问题并不能使这个 $\mathsf{co-NP}$ 问题变成一个 $\mathsf{NP}$ 问题．
+    In fact, the method mentioned above can indeed solve the $\mathsf{co-NP}$ problem, but a non-deterministic Turing machine has not been found to solve it: if what a Turing machine does is to reverse the output of a non-deterministic Turing machine, the Turing machine is not a non-deterministic Turing machine. Because the non-deterministic Turing machine accepts at a certain branch, and rejects at all branches; and inverting its output, it becomes acceptance at all branches, and rejects at one branch, and this does not meet the definition of a non-deterministic Turing machine, so being able to use this Turing machine to solve this $\mathsf{co-NP}$ problem does not make this $\mathsf{co-NP}$ problem become a $\mathsf{NP}$ problem.
 
-若 $\mathsf{P}=\mathsf{NP}$，还可以得到 $\mathsf{EXPTIME}=\mathsf{NEXPTIME}$．
+If $\mathsf{P}=\mathsf{NP}$, you can also get $\mathsf{EXPTIME}=\mathsf{NEXPTIME}$.
 
-若 $\mathsf{P}\ne\mathsf{NP}$，可以得到 NP-intermediate 不为空．
+If $\mathsf{P}\ne\mathsf{NP}$, it can be obtained that NP-intermediate is not empty.
 
-## 参考资料
+## References
 
-1.  [计算复杂性（1）Warming Up: 自动机模型](https://lingeros-tot.github.io/2019/03/05/Warming-Up-自动机模型/)；
+1.  [Computational complexity (1) Warming Up: Automata model](https://lingeros-tot.github.io/2019/03/05/Warming-Up-自动机模型/);
 
-2.  [计算复杂性（2）图灵机计算模型](https://lingeros-tot.github.io/2019/03/05/图灵机模型与可计算性/)；
+2.  [Computational complexity (2) Turing machine computing model](https://lingeros-tot.github.io/2019/03/05/图灵机模型与可计算性/);
 
-3.  [Wikipedia](https://en.wikipedia.org/) 的相关词条以及这些词条的参考资料．
+3.  [Wikipedia](https://en.wikipedia.org/) related entries and reference materials for these entries.

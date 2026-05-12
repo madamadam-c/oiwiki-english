@@ -26,9 +26,9 @@ struct Complex {
 };
 
 /*
- * 进行 FFT 和 IFFT 前的反置变换
- * 位置 i 和 i 的二进制反转后的位置互换
- *len 必须为 2 的幂
+ * Bit-reversal transform before FFT and IFFT
+ * Swap position i with the position of the bit-reversal of i
+ *len must be a power of 2
  */
 void change(Complex y[], int len) {
   int i, j, k;
@@ -36,8 +36,8 @@ void change(Complex y[], int len) {
   for (int i = 1, j = len / 2; i < len - 1; i++) {
     if (i < j) std::swap(y[i], y[j]);
 
-    // 交换互为小标反转的元素，i<j 保证交换一次
-    // i 做正常的 + 1，j 做反转类型的 + 1，始终保持 i 和 j 是反转的
+    // Swap elements whose indices are bit-reversals; i<j ensures one swap
+    // i increments normally, while j increments in bit-reversed order, keeping i and j reversed
     k = len / 2;
 
     while (j >= k) {
@@ -50,9 +50,9 @@ void change(Complex y[], int len) {
 }
 
 /*
- * 做 FFT
- *len 必须是 2^k 形式
- *on == 1 时是 DFT，on == -1 时是 IDFT
+ * Perform FFT
+ *len must be of the form 2^k
+ *on == 1 means DFT, on == -1 means IDFT
  */
 void fft(Complex y[], int len, int on) {
   change(y, len);

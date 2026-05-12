@@ -1,10 +1,10 @@
-本页介绍图上随机游走问题．主要从网格图、稀疏图、一般图三个角度进行探究，介绍了解决这类问题的各种方法，并对比了它们在解决各种问题时的优缺点．
+This page introduces random walk problems on graphs. We explore this topic from three perspectives: grid graphs, sparse graphs, and general graphs. Various methods for solving such problems are introduced, along with comparisons of their advantages and disadvantages.
 
-## 定义
+## Definition
 
-给定一张有向简单图 $G=(V, E)(V=\{v_1, v_2, \cdots, v_{|V|}\})$ 和起点 $s \in V$，终点 $t \in V$，每条边 $e=\left(x, y\right)$ 有正权值 $w_e$，满足 $\forall x \in V \backslash\left\{t\right\}$，$\sum_{\left(x, y\right) \in E} w_{\left(x, y\right)}=1$，且对于任意点 $x$ 都存在一条从 $x$ 出发到达 $t$ 的路径．有一枚棋子从起点出发，每秒从当前所在点 $x$ 以 $w_{(x, y)}$ 的概率选择出边 $\left(x, y\right)$ 并走向 $y$，到达终点则停止，求期望花费时间．
+Given a directed simple graph $G=(V, E)(V=\{v_1, v_2, \cdots, v_{|V|}\})$, a start node $s \in V$, and an end node $t \in V$, each edge $e=\left(x, y\right)$ has a positive weight $w_e$, satisfying $\forall x \in V \backslash\left\{t\right\}$, $\sum_{\left(x, y\right) \in E} w_{\left(x, y\right)}=1$, and for any node $x$ there exists a path from $x$ to $t$. A token starts at the start node. Each second, from the current node $x$, it chooses edge $\left(x, y\right)$ with probability $w_{(x, y)}$ and moves to $y$. The process stops when reaching the end node. Find the expected time.
 
-事实上，这个问题也可以写成矩阵的形式．定义矩阵 $P$：
+Actually, this problem can also be expressed in matrix form. Define matrix $P$:
 
 $$
 P_{x, y}=
@@ -14,27 +14,27 @@ w_{(x, y)} & \text{if } (x, y) \in E \text{ and } x \neq t \\
 \end{cases}
 $$
 
-要求的答案即为：
+The answer we want is:
 
 $$
 \sum_{k \geq 0} k \times\left(P^k\right)_{s, t}
 $$
 
-其中 $\left(P^k\right)_{s, t}$ 表示走了 $k$ 步第一次到达终点的概率．当图有限且所有点都能到达终点时，由 $P$ 的定义可以证明其特征值都小于 1，所以答案一定是收敛的．
+Here, $\left(P^k\right)_{s, t}$ represents the probability of reaching the end node for the first time after exactly $k$ steps. When the graph is finite and all nodes can reach the end node, it can be proven from the definition of $P$ that all eigenvalues are less than 1, so the answer converges.
 
-为了方便描述，在本页中如无特殊说明，均用 $n$ 代指 $|V|$，$m$ 代指 $|E|$．
+For convenience, in this page, unless specified otherwise, $n$ denotes $|V|$ and $m$ denotes $|E|$.
 
-另外，在本页中，稀疏图指边数和点数同阶的图．
+Also in this page, a sparse graph refers to a graph where the number of edges is on the same order as the number of nodes.
 
-## 网格图
+## Grid Graphs
 
-???+ note "例题 1 [Circles of Waiting](https://codeforces.com/problemset/problem/963/E)"
-    有一枚棋子起始被放在平面直角坐标系的 $(0,0)$ 点．每秒棋子会随机移动．假设它当前在 $(x, y)$，它下一秒有 $p_1$ 的概率移动到 $(x-1, y)$，$p_2$ 的概率移动到 $(x, y-1)$，$p_3$ 的概率移动到 $(x+1, y)$，$p_4$ 的概率移动到 $(x, y+1)$．保证 $p_1+p_2+p_3+p_4=1$．
-    求期望经过多少时间它会移动到一个离原点的欧几里得距离大于 $R$ 的位置．$0 \leq R \leq 50$，$p_1, p_2, p_3, p_4>0$，答案对 $10^9+7$ 取模．
+???+ note "Problem 1 [Circles of Waiting](https://codeforces.com/problemset/problem/963/E)"
+    A token starts at point $(0,0)$ in the Cartesian coordinate plane. Each second, the token moves randomly. If it is currently at $(x, y)$, it has probability $p_1$ to move to $(x-1, y)$, probability $p_2$ to move to $(x, y-1)$, probability $p_3$ to move to $(x+1, y)$, and probability $p_4$ to move to $(x, y+1)$. It is guaranteed that $p_1+p_2+p_3+p_4=1$.
+    Find the expected time until the token moves to a position whose Euclidean distance from the origin exceeds $R$. $0 \leq R \leq 50$, $p_1, p_2, p_3, p_4>0$, answer modulo $10^9+7$.
 
-### 朴素做法
+### Naive Approach
 
-记 $f(i, j)$ 表示在棋子在 $(i, j)$ 时移动到一个离原点的欧几里得距离大于 $R$ 的位置的期望时间，转移方程为：
+Let $f(i, j)$ be the expected time for the token to reach a position whose Euclidean distance from the origin exceeds $R$ when starting from $(i, j)$. The transition is:
 
 $$
 f(i, j)=
@@ -44,184 +44,179 @@ p_1 f(i-1, j) + p_2 f(i, j-1) + p_3 f(i+1, j) + p_4 f(i, j+1) + 1 & i^2 + j^2 \l
 \end{cases}
 $$
 
-由于转移并不存在拓扑序，需要使用高斯消元求解．时间复杂度 $O\left(R^6\right)$，无法通过本题．
+Since the transitions do not follow a topological order, Gaussian elimination is needed. Time complexity is $O\left(R^6\right)$, which cannot pass this problem.
 
-### 直接消元法
+### Direct Elimination
 
-注意到需要消元的方程的系数大多数都是 0，消元时只对值非 0 的位置进行计算就可以降低复杂度．
+Notice that most coefficients in the equations to be eliminated are 0. We can reduce complexity by only computing for positions with non-zero values.
 
-考虑消元的过程，将方程按照在坐标系中从上到下，同一层中从左到右的顺序进行消元，将已经消元过的方程染成黄色，与黄色点相邻的点染成绿色，其余点染成黑色，如下图：
+Consider the elimination process, ordering equations from top to bottom in the coordinate plane, and within each row from left to right. Mark eliminated equations in yellow, cells adjacent to yellow cells in green, and the rest in black, as shown below:
 
 ![graph-random-walk-1](images/graph-random-walk-1.svg)
 
-接下来要对下一个绿色格子对应的方程进行消元．在这个方程中，只有绿色格子和它下方的第一个黑色格子对应的变量系数可能不为 0 ; 而只有绿色格子和它下方的第一个黑色格子对应的方程中，当前格子对应的变量系数可能不为 0．
+Now we eliminate the equation corresponding to the next green cell. In this equation, only the coefficients of variables corresponding to the green cell and the first black cell below it may be non-zero. Similarly, only in the equation of the first black cell below the green cell may the coefficient of the current cell's variable be non-zero.
 
-注意到绿色格子只有 $O(R)$ 个，所以单个方程消元的时间复杂度为 $O\left(R^2\right)$．一共只有 $O\left(R^2\right)$ 个方程，所以时间复杂度降低为 $O\left(R^4\right)$，可以通过本题．
+Notice that there are only $O(R)$ green cells, so the time complexity for eliminating a single equation is $O\left(R^2\right)$. There are $O\left(R^2\right)$ equations in total, so the time complexity is reduced to $O\left(R^4\right)$, which can pass this problem.
 
-### 主元法
+### Pivot Method
 
-方程和变量都有 $O\left(R^2\right)$ 个，如果能将规模缩小至 $O(R)$，那么朴素的高斯消元就能通过了．
+There are $O\left(R^2\right)$ equations and variables. If we can reduce the scale to $O(R)$, naive Gaussian elimination will work.
 
-将每行从左到右第一个格子对应的变量设为主元，共 $2 R+1$ 个，设法将其他格子对应的变量用关于这些主元的线性函数表示．从左到右逐列考虑，对于当前列的每个格子 $(i, j)$，注意到 $f(i, j)， f(i-1, j)， f(i, j-1)， f(i, j+1)$ 都是已知的关于主元的线性函数，将转移方程移项，有：
+Set the first cell in each row as the pivot variable, giving $2 R+1$ pivots. Express all other cell variables as linear functions of these pivots. Consider each column from left to right. For the current cell $(i, j)$, notice that $f(i, j)$, $f(i-1, j)$, $f(i, j-1)$, and $f(i, j+1)$ are all known linear functions of the pivots. Rearranging the transition equation:
 
 $$
 f(i+1, j)=\frac{f(i, j)-p_1 f(i-1, j)-p_2 f(i, j-1)-p_4 f(i, j+1)-1}{p_3}
 $$
 
-这样我们就能得到 $f(i+1, j)$ 关于主元的线性函数表示．如果 $(i+1, j)$ 已经离原点欧几里得距离超过 $R$ 了，则可以得到一个方程：$f(i+1, j)=0$．最终，会得到 $2 R+1$ 个方程，对这些方程进行高斯消元即可．
+This gives us $f(i+1, j)$ as a linear function of the pivots. If $(i+1, j)$ is already beyond Euclidean distance $R$ from the origin, we get an equation: $f(i+1, j)=0$. Eventually, we get $2 R+1$ equations, and Gaussian elimination on these gives the answer.
 
-在递推关于主元的线性函数的阶段，共有 $O\left(R^2\right)$ 个变量，递推单个变量需要花费 $O(R)$ 的时间；之后，将问题的规模缩减到了 $O(R)$．两部分的时间复杂度均为 $O\left(R^3\right)$，总的时间复杂度也为 $O\left(R^3\right)$，可以通过本题．
+During the propagation of linear functions of pivots, there are $O\left(R^2\right)$ variables, and propagating a single variable takes $O(R)$ time. Then the problem size is reduced to $O(R)$. Both parts have $O\left(R^3\right)$ complexity, so the total is $O\left(R^3\right)$, which can pass this problem.
 
-### 两种做法的对比
+### Comparison of the Two Approaches
 
-下面从多种方面对比两种做法：
+The following compares the two approaches from multiple perspectives:
 
-从时间复杂度方面，主元法在网格图上的最坏时间复杂度为 $O(n \sqrt{n})$（当网格图长和宽都为 $O(\sqrt{n})$ 级别时时间复杂度最高），直接消元法在网格图上最坏时间复杂度为 $O\left(n^2\right)$，主元法较优．
+From time complexity perspective, the pivot method has worst-case complexity $O(n \sqrt{n})$ on grid graphs (highest when both length and width are $O(\sqrt{n})$), while direct elimination has worst-case complexity $O\left(n^2\right)$, so the pivot method is better.
 
-从精度方面，对于一些需要进行实数计算而不是取模的题目，直接消元法的精度优于主元法．
+From numerical precision perspective, for problems requiring real number calculations rather than modular arithmetic, direct elimination has better precision than the pivot method.
 
-从适用性方面，两种做法适用于不同的方面．
+From applicability perspective, the two methods suit different scenarios.
 
-当网格图中存在障碍或者走某些边的概率为 $0$ 时，对于每个障碍或者概率为 $0$ 的边主元法需要增加一个主元，当障碍或者概率为 $0$ 的边的数量多于 $O(R)$ 时，主元法的时间复杂度会增加，而直接消元法的时间复杂度仍然不变．
+When there are obstacles in the grid graph or some edges have probability $0$, the pivot method requires adding a pivot for each obstacle or edge with probability $0$. When the number of such obstacles or edges exceeds $O(R)$, the pivot method's complexity increases, while direct elimination's complexity remains unchanged.
 
-但主元法还可以做类似于网格图的转移方程的消元，例如 $f(i, j)=p_1 f(i+1, j)+p_2 f(i, j+1)+p_3 f(\operatorname{pre}(i, j))+1$，其中 $\operatorname{pre}(i, j)=(x, y)(x \leq i, y \leq j)$ 是问题给定的值，而直接消元法的复杂度分析在这种模型中并不适用．
+However, the pivot method can also handle elimination of transition equations similar to those on grid graphs, such as $f(i, j)=p_1 f(i+1, j)+p_2 f(i, j+1)+p_3 f(\operatorname{pre}(i, j))+1$, where $\operatorname{pre}(i, j)=(x, y)(x \leq i, y \leq j)$ is a given value, whereas the complexity analysis of direct elimination does not apply to this model.
 
-除此以外，网格图邻接矩阵行列式的计算，也不能使用主元法，只能用直接消元法来优化时间复杂度．
+Additionally, computing the determinant of the adjacency matrix of a grid graph cannot use the pivot method; only direct elimination can optimize the time complexity.
 
-综上，两种做法各有所长，需要根据具体题目分析采用不同的做法．
+In summary, each method has its strengths, and the appropriate method should be chosen based on the specific problem.
 
-## 稀疏图
+## Sparse Graphs
 
-???+ note "例题 2 Expected Value"
-    给定一张简单无向连通稀疏图 $G=(V, E)$，有一枚棋子起始被放在 $v_1$，每秒棋子会从与当前点相连的边中等概率选择一条走到出边指向的点，求到达 $v_n$ 的期望时间．$n \leq 2000$，答案对 $p$ 取模，$p$ 是在区间 $\left[10^9, 1.01 \times 10^9\right]$ 内随机生成的一个质数．
+???+ note "Problem 2 Expected Value"
+    Given a simple undirected connected sparse graph $G=(V, E)$, a token starts at $v_1$. Each second, the token randomly chooses one of the edges connected to the current node with equal probability and moves to the adjacent node. Find the expected time to reach $v_n$. $n \leq 2000$, answer modulo $p$, where $p$ is a prime randomly generated in the interval $\left[10^9, 1.01 \times 10^9\right]$.
 
-### 基础知识
+### Background
 
-**定义 4.1.** 所有满足 $p(A) = 0$ 的多项式 $p(λ)$ 称为矩阵 $A$ 的零化多项式．
+**Definition 4.1.** A polynomial $p(\lambda)$ such that $p(A) = 0$ is called an annihilating polynomial of matrix $A$.
 
-**定义 4.2.** 记 $I_n$ 表示 $n$ 阶单位矩阵，定义一个 $n × n$ 矩阵 $A$ 的特征多项式为 $p(λ) = \det(λI_n - A)$，其中 $\det$ 表示一个矩阵的行列式．
-不难发现，一个 $n$ 阶矩阵 $A$ 的特征多项式的次数不超过 $n$．
+**Definition 4.2.** Let $I_n$ be the $n \times n$ identity matrix. The characteristic polynomial of an $n \times n$ matrix $A$ is defined as $p(\lambda) = \det(\lambda I_n - A)$, where $\det$ denotes the determinant of a matrix.
+It is easy to see that the characteristic polynomial of an $n \times n$ matrix has degree at most $n$.
 
-**定理 4.2.**（Cayley–Hamilton 定理）任意矩阵的特征多项式是它的零化多项式．
+**Theorem 4.2.** (Cayley-Hamilton Theorem) The characteristic polynomial of any matrix is its annihilating polynomial.
 
-所以，一个 $n$ 阶矩阵的次数最小的零化多项式的次数也不超过 $n$．
+Therefore, the minimal annihilating polynomial of an $n \times n$ matrix also has degree at most $n$.
 
-### 求解原问题
+### Solving the Original Problem
 
-注意到，期望走的时间 $E(t)=\sum_{i\geq0}\Pr[t>i]$，如果我们能求出走了 $i$ 步还没有结束的概率，对所有 $i ≥ 0$ 求和即为答案．
+Notice that the expected time $E(t)=\sum_{i\geq0}\Pr[t>i]$. If we can find the probability of not having finished after $i$ steps, summing over all $i \geq 0$ gives the answer.
 
-记 $f(i, j)$ 表示走了 $i$ 步，当前停留在 $j$，且没有走到过 $n$ 的概率，那么有：
+Let $f(i, j)$ be the probability that after $i$ steps, the token is at $j$ and has never visited $n$. Then:
 
 $$
 f(i,j)=\sum_{(k,j)\in E}\frac{f(i-1,k)}{\deg_k}(j\neq n)
 $$
 
-其中 $\deg_k$ 表示 $k$ 的度数．
+Here, $\deg_k$ denotes the degree of $k$.
 
-注意到 $f$ 的转移与 $i$ 无关，可以认为一次转移是乘上了一个矩阵，即 $f{i+1}=f_iM$．由于 $M$ 的最小零化多项式次数不超过 $n$，所以 $f$ 的最短递推式长度也不超过 $n$，故 $\Pr[t>i]=\sum_{j=1}^{n-1}f(i,j)$ 的最短递推式长度也不超过 $n$．我们可以在 $O(nm)$ 的时间求出 $\Pr[t>0],\Pr[t>1],\cdots,\Pr[t>3n]$，然后使用*Berlekamp–Massey*算法，在 $O(n^2)$ 的时间内求解出 $\Pr[t > i]$ 的最短递推式．
+Notice that the transition of $f$ does not depend on $i$. We can view one transition as multiplying by a matrix, i.e., $f{i+1}=f_iM$. Since the minimal annihilating polynomial of $M$ has degree at most $n$, the shortest recurrence for $f$ also has length at most $n$. Hence, the shortest recurrence for $\Pr[t>i]=\sum_{j=1}^{n-1}f(i,j)$ also has length at most $n$. We can compute $\Pr[t>0],\Pr[t>1],\cdots,\Pr[t>3n]$ in $O(nm)$ time, then use the *Berlekamp-Massey* algorithm to find the shortest recurrence for $\Pr[t > i]$ in $O(n^2)$ time.
 
-考虑求一个 $k$ 阶线性递推序列 $a$ 的生成函数．不妨设 $i ≥ i_0$ 时 $a_i=\sum_{j=1}^kc_ja_{i-j}$，记 $a$ 和 $c$ 的生成函数为 $A(x)$ 和 $C(x)$，那么 $A(x)=A(x)C(x)+A_0(x)$，其中 $A_0(x)$ 是由 $i < i_0$ 的项决定的．
+Consider finding the generating function of a $k$-order linear recurrence sequence $a$. Suppose for $i \geq i_0$, $a_i=\sum_{j=1}^kc_ja_{i-j}$. Let the generating functions of $a$ and $c$ be $A(x)$ and $C(x)$. Then $A(x)=A(x)C(x)+A_0(x)$, where $A_0(x)$ is determined by terms with $i < i_0$.
 
-回到原问题，由于我们能求出 $\Pr[t > i]$ 的最短递推式，则我们可以求出 $C(x)$ 和 $A_0(x)$（定义与上一段相同），移项得 $A(x)=\frac{A_0(x)}{1-C(x)}$．我们要求的是 $\sum_{i\geq0}[x^i]A(x)$，不难发现这个值就等于 $A(1)$，将 $x = 1$ 带入原问题求解即可．由于模数是随机质数，可以认为分母不会为 $0$．
+Back to the original problem. Since we can find the shortest recurrence for $\Pr[t > i]$, we can find $C(x)$ and $A_0(x)$ (same definitions as above). Rearranging, $A(x)=\frac{A_0(x)}{1-C(x)}$. We want $\sum_{i\geq0}[x^i]A(x)$. It is easy to see this equals $A(1)$, so we substitute $x = 1$ to solve. Since the modulus is a random prime, we can assume the denominator is not zero.
 
-这样，我们就在 $O(nm+n^2)$ 的时间复杂度内解决了本题．如果图 $G$ 的点数与边数同阶，本题中时间复杂度可以认为是 $O(n^2)$．
+Thus, we solve the problem in $O(nm+n^2)$ time. If the graph $G$ has a number of edges on the same order as the number of nodes, the time complexity is $O(n^2)$.
 
-## 一般图
+## General Graphs
 
-???+ note "例题 3 Frank"
-    给定一张简单强连通有向图 $G = (V, E)$，对于所有 $1 ≤ s ≤ n$，$1 ≤ t ≤ n$，$s ≠ t$．回答下面的问题：
-    有一枚棋子起始被放在 $v_s$，每秒棋子会从当前点的出边中等概率选择一条走到出边指向的点，求到达 $v_t$ 的期望时间．$3 ≤ n ≤ 400$．
+???+ note "Problem 3 Frank"
+    Given a simple strongly connected directed graph $G = (V, E)$. For all $1 \leq s \leq n$, $1 \leq t \leq n$, $s \neq t$, answer the following:
+    A token starts at $v_s$. Each second, the token randomly chooses one of the outgoing edges from the current node with equal probability and moves to the target node. Find the expected time to reach $v_t$. $3 \leq n \leq 400$.
 
-### 分析和转化
+### Analysis and Transformation
 
-记 $p_{i, j}$ 表示棋子在 $i$ 时，选择出边 $(i, j)$ 走到 $j$ 的概率，特别地，当出边不存在时概率为 $0$．记 $f_{i,j}$ 表示 $i$ 随机游走到 $j$ 的期望时间，特别地，$f_{i,i} = 0$．当 $i ≠ j$ 时，转移方程为：
+Let $p_{i, j}$ be the probability that when the token is at $i$, it chooses outgoing edge $(i, j)$ and moves to $j$. If there is no outgoing edge, the probability is $0$. Let $f_{i,j}$ be the expected time for a random walk from $i$ to $j$. In particular, $f_{i,i} = 0$. When $i \neq j$, the transition is:
 
 $$
 f_{i,j}=1+\sum_{1\leq k\leq n}p_{i,k}f_{k,j}
 $$
 
-当 $i = j$ 时，记 $g_i$ 表示从 $i$ 开始随机游走，第一次回到 $i$ 的期望时间，那么：
+When $i = j$, let $g_i$ be the expected time for a random walk starting from $i$ to return to $i$ for the first time. Then:
 
 $$
 f_{i,i}=1-g_i+\sum_{1\le k\le n}p_{i,k}f_{k,i}
 $$
 
-为了方便观察，我们将转移方程写成矩阵的形式．记 $P$ 表示这个图的转移矩阵，$F$ 表示答案矩阵，$I$ 表示 $n$ 阶单位矩阵，$J$ 表示 $n$ 阶全 $1$ 矩阵，$G$ 是一个 $n$ 阶矩阵，满足 $G_{i,i} = g_i$，其他位置为 $0$，则：
+For clarity, we write the transitions in matrix form. Let $P$ be the transition matrix of the graph, $F$ be the answer matrix, $I$ be the $n \times n$ identity matrix, $J$ be the $n \times n$ all-ones matrix, and $G$ be an $n \times n$ matrix with $G_{i,i} = g_i$ and 0 elsewhere. Then:
 
 $$
 F=J-G+PF
 $$
 
-如果我们能求出 $G$，那么我们只需要解方程：
+If we can find $G$, we just need to solve:
 
 $$
 (I − P)F = J − G
 $$
 
-### G 的求法
+### Finding $G$
 
-**定义 5.1.** 定义一个 $n$ 阶转移矩阵 $P$ 的稳态分布为一个 $n$ 维向量 $π$，满足 $\sum_{i=1}^{n}\pi_{i}=1$，$πP = π$．其中，$π$ 每一维的值都在区间 $[0,1]$ 内．
+**Definition 5.1.** A stationary distribution of an $n \times n$ transition matrix $P$ is an $n$-dimensional vector $π$ satisfying $\sum_{i=1}^{n}\pi_{i}=1$ and $πP = π$. Each component of $π$ lies in the interval $[0,1]$.
 
-我们很容易找出稳态分布的实际意义．如果某个时刻棋子有 $π_i$ 的概率停留在 $v_i$，则在之后的任意时刻，棋子仍然满足这个概率分布．我们可以在 $O(n^3)$ 的时间通过高斯消元解方程来求出 $π$，那么 $π$ 与 $G$ 有什么关系呢？
+The practical meaning of the stationary distribution is easy to see. If at some moment the token has probability $π_i$ of being at $v_i$, then at any later time, the token still satisfies this probability distribution. We can find $π$ by Gaussian elimination in $O(n^3)$ time. What is the relationship between $π$ and $G$?
 
-**定理 5.1.** 对于任意 $1 ≤ i ≤ n$，有 $π_ig_i = 1$．
+**Theorem 5.1.** For any $1 \leq i \leq n$, we have $π_ig_i = 1$.
 
-???+ note "证明"
-    由 $F = J - G + PF$，移项得：
+???+ note "Proof"
+    From $F = J - G + PF$, rearrange:
     
     $$
     G = PF + J − F
     $$
     
-    两边同时在左边乘上 $π$ 有：
+    Multiply by $π$ on the left:
     
     $$
     πG = πPF + πJ − πF
     $$
     
-    由 $π$ 的定义有 $πP = π$，故：
+    From the definition of $π$, $πP = π$, so:
     
     $$
     πG = πJ
     $$
     
-    所以：
+    Therefore:
     
     $$
     \pi_ig_i=\sum_{j=1}^n\pi_j=1  
     $$
+    
+    Q.E.D.
 
-原命题得证．
+Thus, by introducing the stationary distribution, we can find $G$ in $O(n^3)$ time.
 
-所以，通过引入稳态分布，我们可以在 $O(n^3)$ 的时间内求解 $G$．
+### Solving the Original Problem
 
-### 求解原问题
+During the solving process, we encounter a problem: $(I - P)$ is not full rank, so we cannot solve by multiplying the inverse matrix.
 
-在解方程的过程中，我们发现一个问题：$(I - P)$ 并不满秩，不能通过乘逆矩阵的方法求解．
+**Definition 5.2.** A spanning arborescence rooted at $r \in V$ of a directed graph $G = (V,E)$ is a subgraph $T = (V,A)$ satisfying:
 
-**定义 5.2.** 定义一个有向图 $G = (V,E)$ 的以 $r\in V$ 为根的有向生成树是 $G$ 的一个子图 $T = (V,A)$，满足：
+1.  For any $i \neq r$, vertex $i$ has outdegree $1$.
+2.  Vertex $r$ has outdegree $0$.
+3.  $T$ contains no cycles.
 
-1.  对于任意 $i ≠ r$，$i$ 的出度为 $1$．
-2.  $r$ 的出度为 $0$．
-3.  $T$ 中不存在环．
+**Lemma 5.1.** (Matrix-Tree Theorem for Directed Graphs) For a directed graph $G$, let $D$ be the outdegree matrix, where $D_{i,i} = d_i$, $D_{i,j} = 0(i \neq j)$, with $d_i$ being the outdegree of $i$. Let $A$ be the adjacency matrix. The number of spanning arborescences rooted at $r$ equals the determinant of $D - A$ after removing row $r$ and column $r$.
 
-**引理 5.1.**（有向图上的矩阵树定理）对于一个有向图 $G$，记 $D$ 表示其出度矩阵，即 $D_{i,i} = d_i$，$D_{i,j} = 0(i ≠ j)$，其中 $d_i$ 表示 $i$ 的出度，记 $A$ 表示其邻接矩阵，则其以 $r$ 为根的有向生成树个数为 $D - A$ 去掉第 $r$ 行第 $r$ 列后的行列式．
+**Theorem 5.2.** For the transition matrix $P$ of a strongly connected graph $G = (V,E)$, $(I - P)$ has rank $n - 1$.
 
-**定理 5.2.** 对于一个强连通图 $G = (V,E)$ 的转移矩阵 $P$，$(I - P)$ 的秩为 $n - 1$．
-
-???+ note "证明"
-    因为对矩阵某一行乘上一个非零常数其秩不改变，所以我们将 $(I - P)$ 的第 $i$ 行乘上 $v_i$ 的出度，得到一个新的矩阵 $L$，只需证明 $L$ 的秩为 $n - 1$ 即可．  
-    由于 $L$ 每行的和均为 $0$，对 $L$ 的所有列向量求和，会得到零向量，即这些向量线性相
-    关，所以 $L$ 的秩不为 $n$．  
-    不难发现 $L$ 等于图 $G$ 的出度矩阵减去其邻接矩阵，由引理 5.1 得 $L$ 去掉第 $i$ 行第 $i$ 列
-    后行列式表示以 $v_i$ 为根的有向生成树个数．  
-    由于 G 是强连通的，所以以任意点为根的有向生成树个数均不为 $0$，即 $L$ 去掉第 $i$ 行
-    第 $i$ 列之后仍然满秩．  
-    因为加上一列秩不会变小，所以 $L$ 去掉第 $i$ 行后所有行向量线性无关．故 $L$ 的秩为 $n - 1$．  
-    回到原问题，考虑求解原问题中的方程．为了方便，我们将方程写成 $AX = B$ 的形式，
-    其中 $A$，$B$ 已知，需要求解 $X$．由于 $A$ 不满秩，解有无数个，我们首先求出一组特解．
-    将 $A$ 和 $B$ 一起做高斯消元．把 $A$ 的前 $n - 1$ 行消成只有主对角线和第 $n$ 列有值的形
-    式，最后一行消成全 $0$，即下列形式：
+???+ note "Proof"
+    Since multiplying a row of a matrix by a non-zero constant does not change its rank, we multiply row $i$ of $(I - P)$ by the outdegree of $v_i$ to get a new matrix $L$. We only need to prove that $L$ has rank $n - 1$.  
+    Since each row of $L$ sums to 0, summing all column vectors of $L$ gives the zero vector, meaning these vectors are linearly dependent. Thus $L$ does not have full rank $n$.  
+    It is easy to see that $L$ equals the outdegree matrix minus the adjacency matrix of graph $G$. By Lemma 5.1, the determinant of $L$ after removing row $i$ and column $i$ equals the number of spanning arborescences rooted at $v_i$.  
+    Since $G$ is strongly connected, the number of spanning arborescences rooted at any vertex is non-zero. Therefore, $L$ remains full rank after removing row $i$ and column $i$.  
+    Since adding a column does not decrease rank, all row vectors of $L$ after removing row $i$ are linearly independent. Hence, $L$ has rank $n - 1$.  
+    Back to the original problem, consider solving the equation $AX = B$, where $A$ and $B$ are known and $X$ is to be found. Since $A$ is not full rank, there are infinitely many solutions. First, we find one particular solution.  
+    Perform Gaussian elimination on $A$ and $B$ together. Reduce the first $n - 1$ rows of $A$ to have values only on the main diagonal and column $n$, and the last row to all zeros, giving the following form:
     
     $$
     \begin{bmatrix}
@@ -240,10 +235,10 @@ $$
     \end{bmatrix}
     $$
     
-    令 $X_{n,i} = 0$，可以解出一组特解，记为 $Y$．接下来将特解调整为真正的解．  
-    注意到 $X_{n,i} = 0$，考虑组合意义有 $Y_{i,j} = 1 + Y_{j,j} + P_{i,k}X_{k,j}$，不难解出 $X_{i,j} = Y_{i,j} - Y_{j,j}$．
-    最终在 $O(n^3)$ 的时间复杂度内解决了这个问题．
+    Set $X_{n,i} = 0$, solve for a particular solution, and denote it as $Y$. Next, adjust the particular solution to the actual solution.  
+    Notice that $X_{n,i} = 0$. Considering the combinatorial meaning, $Y_{i,j} = 1 + Y_{j,j} + P_{i,k}X_{k,j}$. It is not hard to solve $X_{i,j} = Y_{i,j} - Y_{j,j}$.  
+    The problem is solved in $O(n^3)$ time complexity.
 
-## 参考
+## References
 
-1.  浅谈图模型上的随机游走问题．IOI2019 中国国家候选队论文集（pp. 17-26)
+1.  A Brief Discussion on Random Walk Problems on Graph Models. IOI 2019 China National Team Candidate Papers (pp. 17-26)

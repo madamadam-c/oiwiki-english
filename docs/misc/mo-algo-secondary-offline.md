@@ -1,58 +1,58 @@
 author: Lyccrius, AtomAlpaca
 
-## 综述
+## Overview
 
-有时我们会遇见一些题目，这些题目看起来很适合使用莫队算法处理，但是他们的单次转移并非是 $O(1)$ 的，这时直接使用莫队即使调整块长，也会导致复杂度不正确．
+Sometimes we encounter problems that seem very suitable for Mo's algorithm, but their single transition is not $O(1)$. In that case, directly using Mo's algorithm, even with adjusted block length, leads to incorrect complexity.
 
-此时，如果每次转移对答案的贡献可以进行差分，我们就可以将这些转移拆开离线下来，使用其它算法批量处理．
+If the contribution of each transition to the answer can be differenced, we can split these transitions and process them offline in batches with other algorithms.
 
-我们用 $f(x, l, r)$ 表示 $x$ 关于 $[l, r]$ 产生的贡献．
+Use $f(x, l, r)$ to denote the contribution of $x$ with respect to $[l, r]$.
 
-如我们在将当前区间 $[l, r]$ 扩展到 $[l, r + 1]$ 时，我们要求的是 $f(a_{r + 1}, l, r)$．如果可以差分，我们可以将其写成 $f(a_{r + 1}, 1, r) - f(a_{r + 1}, 1, l - 1)$，其中第一项我们可以对于每个 $r$ 都预处理出来，后一项我们可以把每个这样的项都离线存到对应的 $l - 1$ 上，然后从小到大枚举并扫描线处理．其它几个转移的方向也都可以类似地处理．
+For example, when extending the current interval $[l, r]$ to $[l, r + 1]$, we need $f(a_{r + 1}, l, r)$. If it can be differenced, we can write it as $f(a_{r + 1}, 1, r) - f(a_{r + 1}, 1, l - 1)$. The first term can be preprocessed for every $r$, and for the latter term, we can store each such term offline at the corresponding $l - 1$, then enumerate in increasing order and process with a sweep line. The other transition directions can be handled similarly.
 
-这一在莫队这个离线算法上，将转移再次离线处理的算法叫做莫队二次离线．
+This algorithm, which performs another layer of offline processing on transitions within Mo's offline algorithm, is called secondary offline Mo's algorithm.
 
-我们结合实际题目来理解．
+We explain it using concrete problems.
 
-## 例题
+## Examples
 
-???+ note "[Luogu P5047 \[Ynoi2019 模拟赛\] Yuno loves sqrt technology II](https://www.luogu.com.cn/problem/P5047)"
-    给你一个长为 $n$ 的序列 $a$，$m$ 次询问，每次查询一个区间的逆序对数．
+???+ note "[Luogu P5047 \[Ynoi2019 Mock Contest\] Yuno loves sqrt technology II](https://www.luogu.com.cn/problem/P5047)"
+    Given a sequence $a$ of length $n$ and $m$ queries, each query asks for the number of inversions in an interval.
     
-    数据范围：$1 \leq n,m \leq 10^5$，$0 \leq a_i \leq 10^9$．
+    Data range: $1 \leq n,m \leq 10^5$, $0 \leq a_i \leq 10^9$.
 
-直接莫队每次转移至少是 $O(\log n)$ 的，观察可以发现我们每次转移要求的信息是「一个数在某个区间内的排名」，而这一信息关于区间可以差分，因此考虑二次离线．
+Direct Mo's algorithm has at least $O(\log n)$ time per transition. Observe that the information needed for each transition is "the rank of a number within an interval", and this information can be differenced with respect to the interval, so we consider secondary offline processing.
 
-我们将 $[l, r]$ 拓展到 $[l, r + 1]$，要求的是 在 $[l, r]$ 区间内有多少比 $a_{r + 1}$ 大的数．
-我们用 $f(x, r)$ 表示 $[1, r]$ 区间内比 $a_x$ 大的数，$g(x, r)$ 表示 $[1, r]$ 区间内比 $a_x$ 小的数．则答案的变化量可以写作 $f(r + 1, r) - f(r + 1, l - 1)$．
+When extending $[l, r]$ to $[l, r + 1]$, we need the number of elements in interval $[l, r]$ that are greater than $a_{r + 1}$.
+Let $f(x, r)$ denote the number of elements greater than $a_x$ in interval $[1, r]$, and let $g(x, r)$ denote the number of elements smaller than $a_x$ in interval $[1, r]$. Then the change in the answer can be written as $f(r + 1, r) - f(r + 1, l - 1)$.
 
-同理 $[l, r]$ 缩小至 $[l, r - 1]$ 的变化量可以写作 $-f(r, r - 1) + f(r, l - 1)$；$[l, r]$ 拓展到 $[l - 1, r]$ 可以写作 $g(l - 1, r) - g(l - 1, l - 2)$,$[l, r]$ 缩小至 $[l + 1, r]$ 可以写作 $- g(l, r) + g(l, l - 1)$．
+Similarly, the change when shrinking $[l, r]$ to $[l, r - 1]$ can be written as $-f(r, r - 1) + f(r, l - 1)$; extending $[l, r]$ to $[l - 1, r]$ can be written as $g(l - 1, r) - g(l - 1, l - 2)$, and shrinking $[l, r]$ to $[l + 1, r]$ can be written as $- g(l, r) + g(l, l - 1)$.
 
-对于这些式子中的 $f(x, x - 1)$ 和 $g(x, x - 1)$，我们可以使用树状数组提前 $O(n \log n)$ 预处理出来；对于其余的 $f(x, p)$ 和 $g(x, p)$ 项，我们将 $x$ 离线存在 $l$ 进行批量处理．
+For $f(x, x - 1)$ and $g(x, x - 1)$ in these formulas, we can preprocess them with a Fenwick tree in $O(n \log n)$ time. For the remaining $f(x, p)$ and $g(x, p)$ terms, we store $x$ offline at $l$ and process them in batches.
 
-这里有一个优化空间的技巧：我们发现处理每个询问时，离线到 $p$ 上的 $x$ 都是连续的一段，因此我们不需要把每次移动都存下，只需要存下调整的一段即可．这样我们的空间可以从总次数 $O(n\sqrt{m})$ 下降到询问数 $O(m)$．
+There is a space optimization trick here: we find that when processing each query, the $x$ values offline at $p$ form a continuous segment, so we do not need to store every move; we only need to store the adjusted segment. This reduces the space from total movement count $O(n\sqrt{m})$ to query count $O(m)$.
 
-现在我们来处理我们二次离线下来的问题：向一个集合中加入数，查询一个数在集合中的排名．莫队总共移动端点的次数是 $O(n\sqrt{m})$ 的，而数组总共只有 $O(n)$ 的长度，因此我们考虑使用 $O(\sqrt{n})$ 插入、$O(1)$ 查询的值域分块解决这个问题．
+Now process the secondary offline problem: insert numbers into a set and query the rank of a number in the set. Mo's algorithm moves endpoints $O(n\sqrt{m})$ times in total, while the array length is only $O(n)$, so we can solve this problem with value-domain decomposition supporting $O(\sqrt{n})$ insertion and $O(1)$ query.
 
-至此，我们在 $O(n \sqrt{m} + n \sqrt{n})$ 的时间复杂度和 $O(n + m)$ 的空间复杂度下解决了此题．
+Thus, we solve this problem in time complexity $O(n \sqrt{m} + n \sqrt{n})$ and space complexity $O(n + m)$.
 
-最后值得注意的是，我们求得的是每次的答案变化量而非答案本身，需要对其进行前缀和才能得到最终的答案．
+Finally, note that what we obtain is the change in each answer, not the answer itself, so we need to take prefix sums to get the final answers.
 
-??? note "示例代码"
+??? note "Example Code"
     ```cpp
     --8<-- "docs/misc/code/mo-algo-secondary-offline/mo-algo-secondary-offline_1.cpp"
     ```
 
-???+ note "[Luogu P5501 \[LnOI2019\] 来者不拒，去者不追](https://www.luogu.com.cn/problem/P5501)"
-    多次询问区间中 $[l, r]$ 中所有数的「Abbi 值」之和．
+???+ note "[Luogu P5501 \[LnOI2019\] Those Who Come Are Welcome, Those Who Leave Are Not Pursued](https://www.luogu.com.cn/problem/P5501)"
+    Multiple queries ask for the sum of the "Abbi values" of all numbers in interval $[l, r]$.
     
-    Abbi 值定义为：若 $a_i$ 在询问区间 $[l,r]$ 中是第 $k$ 小，那么它的「Abbi 值」等于 $ka_i$．
+    The Abbi value is defined as follows: if $a_i$ is the $k$-th smallest number in the query interval $[l,r]$, then its "Abbi value" is $ka_i$.
 
-我们不妨令 $f(x,r)$ 是 $[1,r]$ 中比 $a_x$ 大的数之和，$g(x,r)$ 是 $[1,r]$ 中比 $a_x$ 大的数的数量，那么我们向右移动右端点时，产生的贡献为 $f(r,r-1)-f(r,l-1) + a_r(r-l+ 1-(g(r,r-1)-g(r,l-1)))$，其它几个方向可同理写出，在此不加赘述．
+Let $f(x,r)$ be the sum of numbers greater than $a_x$ in $[1,r]$, and let $g(x,r)$ be the count of numbers greater than $a_x$ in $[1,r]$. Then when moving the right endpoint right, the contribution is $f(r,r-1)-f(r,l-1) + a_r(r-l+ 1-(g(r,r-1)-g(r,l-1)))$. The other directions can be written similarly and are omitted here.
 
-上式中的 $f(r, r - 1)$ 和 $g(r, r - 1)$ 依旧可以进行预处理，其余的离线到另一端点上，进行扫描线处理．不难发现我们要处理的依然是 $O(n)$ 次插入、$O(n\sqrt{m})$ 次询问排名的问题，因此同样使用值域分块解决．
+The $f(r, r - 1)$ and $g(r, r - 1)$ in the formula above can still be preprocessed, and the rest are stored offline at the other endpoint and processed with a sweep line. It is not hard to find that what we still need to process is $O(n)$ insertions and $O(n\sqrt{m})$ rank queries, so value-domain decomposition can again be used.
 
-??? note "示例代码"
+??? note "Example Code"
     ```cpp
     --8<-- "docs/misc/code/mo-algo-secondary-offline/mo-algo-secondary-offline_2.cpp"
     ```

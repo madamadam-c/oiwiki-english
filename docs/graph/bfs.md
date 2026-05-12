@@ -1,23 +1,24 @@
 author: Ir1d, greyqz, yjl9903, Anguei, Marcythm, ChungZH, Xeonacid, ylxmf2005
 
-BFS 全称是 [Breadth First Search](https://en.wikipedia.org/wiki/Breadth-first_search)，中文名是宽度优先搜索，也叫广度优先搜索．
+BFS stands for [Breadth First Search](https://en.wikipedia.org/wiki/Breadth-first_search), also known as breadth-first search.
 
-是图上最基础、最重要的搜索算法之一．
+It is one of the most fundamental and important search algorithms on graphs.
 
-所谓宽度优先．就是每次都尝试访问同一层的节点．
-如果同一层都访问完了，再访问下一层．
+The idea of breadth-first is to try visiting all nodes at the same depth before moving to the next depth.
 
-这样做的结果是，BFS 算法找到的路径是从起点开始的 **最短** 合法路径．换言之，这条路径所包含的边数最小．
+If all nodes at the current depth have been visited, then move to the next depth.
 
-在 BFS 结束时，每个节点都是通过从起点到该点的最短路径访问的．
+As a result, the path found by BFS from the start node is the **shortest** valid path. In other words, this path contains the minimum number of edges.
 
-算法过程可以看做是图上火苗传播的过程：最开始只有起点着火了，在每一时刻，有火的节点都向它相邻的所有节点传播火苗．
+When BFS finishes, every node is visited via the shortest path from the start node.
 
-## 实现
+The algorithm can be visualized as the spread of fire on a graph: initially only the start node is on fire, and at each moment, every burning node spreads the fire to all adjacent nodes.
 
-下文中 C++ 与 Python 的代码实现是基于链式前向星的存图方式，其实现可参考 [图的存储](./save.md) 页面．
+## Implementation
 
-=== "伪代码"
+The C++ and Python implementations below use adjacency lists based on chained forward stars. For details, see the [Graph Storage](./save.md) page.
+
+=== "Pseudocode"
     ```text
     bfs(s) {
       q = new queue()
@@ -101,123 +102,123 @@ BFS 全称是 [Breadth First Search](https://en.wikipedia.org/wiki/Breadth-first
             print(res[i])
     ```
 
-具体来说，我们用一个队列 Q 来记录要处理的节点，然后开一个布尔数组 `vis[]` 来标记是否已经访问过某个节点．
+Specifically, we use a queue `Q` to record nodes to be processed, and a boolean array `vis[]` to mark whether a node has been visited.
 
-开始的时候，我们将所有节点的 `vis` 值设为 0，表示没有访问过；然后把起点 s 放入队列 Q 中并将 `vis[s]` 设为 1．
+Initially, we set all nodes' `vis` values to 0, indicating they have not been visited, then add the start node `s` to queue `Q` and set `vis[s]` to 1.
 
-之后，我们每次从队列 Q 中取出队首的节点 u，然后把与 u 相邻的所有节点 v 标记为已访问过并放入队列 Q．
+Then, each time we take the node at the front of queue `Q` (call it `u`), and mark all nodes adjacent to `u` as visited and add them to queue `Q`.
 
-循环直至当队列 Q 为空，表示 BFS 结束．
+Repeat until queue `Q` is empty, which indicates BFS is complete.
 
-在 BFS 的过程中，也可以记录一些额外的信息．例如上述代码中，d 数组用于记录起点到某个节点的最短距离（要经过的最少边数），p 数组记录是从哪个节点走到当前节点的．
+During BFS, we can also record additional information. In the code above, the `d` array records the shortest distance from the start node to any node (minimum number of edges), and the `p` array records which node we came from to reach the current node.
 
-有了 d 数组，可以方便地得到起点到一个节点的距离．
+With the `d` array, we can easily get the distance from the start node to any node.
 
-有了 p 数组，可以方便地还原出起点到一个点的最短路径．上述代码中的 `restore` 函数使用该数组依次输出从起点到节点 x 的最短路径所经过的节点．
+With the `p` array, we can easily reconstruct the shortest path from the start node to a node. The `restore` function in the code above uses this array to output all nodes on the shortest path from the start node to node `x`.
 
-时间复杂度 $O(n + m)$
+Time complexity: $O(n + m)$
 
-空间复杂度 $O(n)$（`vis` 数组和队列）
+Space complexity: $O(n)$ (`vis` array and queue)
 
-## open-closed 表
+## Open-Closed Table
 
-在实现 BFS 的时候，本质上我们把未被访问过的节点放在一个称为 open 的容器中，而把已经访问过了的节点放在一个称为 closed 容器中．
+When implementing BFS, we essentially place unvisited nodes in a container called "open", and visited nodes in a container called "closed".
 
-## 在树/图上 BFS
+## BFS on Trees/Graphs
 
-### BFS 序列
+### BFS Sequence
 
-类似 DFS 序列，BFS 序列是指在 BFS 过程中访问的节点编号的序列．
+Similar to DFS sequence, a BFS sequence is the sequence of node numbers visited during BFS.
 
-### 一般图上 BFS
+### BFS on General Graphs
 
-如果原图不连通，只能访问到从起点出发能够到达的点．
+If the original graph is disconnected, we can only reach nodes reachable from the start node.
 
-BFS 序列通常也不唯一．
+BFS sequences are generally not unique.
 
-类似的我们也可以定义 BFS 树：在 BFS 过程中，通过记录每个节点从哪个点访问而来，可以建立一个树结构，即为 BFS 树．
+Similarly, we can define a BFS tree: during BFS, by recording which node each node was visited from, we can build a tree structure, which is the BFS tree.
 
-## 应用
+## Applications
 
--   在一个无权图上求从起点到其他所有点的最短路径．
--   在 $O(n+m)$ 时间内求出所有连通块．（我们只需要从每个没有被访问过的节点开始做 BFS，显然每次 BFS 会走完一个连通块）
--   如果把一个游戏的动作看做是状态图上的一条边（一个转移），那么 BFS 可以用来找到在游戏中从一个状态到达另一个状态所需要的最小步骤．
--   在一个有向无权图中找最小环．（从每个点开始 BFS，在我们即将抵达一个之前访问过的点开始的时候，就知道遇到了一个环．图的最小环是每次 BFS 得到的最小环的平均值．）
--   找到一定在 $(a, b)$ 最短路上的边．（分别从 a 和 b 进行 BFS，得到两个 d 数组．之后对每一条边 $(u, v)$，如果 $d_a[u]+1+d_b[v]=d_a[b]$，则说明该边在最短路上）
--   找到一定在 $(a, b)$ 最短路上的点．（分别从 a 和 b 进行 BFS，得到两个 d 数组．之后对每一个点 v，如果 $d_a[v]+d_b[v]=d_a[b]$，则说明该点在某条最短路上）
--   找到一条长度为偶数的最短路．（我们需要一个构造一个新图，把每个点拆成两个新点，原图的边 $(u, v)$ 变成 $((u, 0), (v, 1))$ 和 $((u, 1), (v, 0))$．对新图做 BFS，$(s, 0)$ 和 $(t, 0)$ 之间的最短路即为所求）
--   在一个边权为 0/1 的图上求最短路，见下方双端队列 BFS．
+-   Finding shortest paths from the start node to all other nodes in an unweighted graph.
+-   Finding all connected components in $O(n+m)$ time. (We just start BFS from each unvisited node; each BFS will traverse one connected component)
+-   If we view a game's actions as edges in a state graph (transitions), BFS can be used to find the minimum number of steps to reach one state from another.
+-   Finding the minimum cycle in a directed unweighted graph. (Start BFS from each node; when we are about to reach a previously visited node, we have found a cycle. The minimum cycle of the graph is the average of the minimum cycles found in each BFS.)
+-   Finding edges that must be on the $(a, b)$ shortest path. (Run BFS from both `a` and `b` to get two `d` arrays. For each edge $(u, v)$, if $d_a[u]+1+d_b[v]=d_a[b]$, then this edge is on a shortest path.)
+-   Finding vertices that must be on the $(a, b)$ shortest path. (Run BFS from both `a` and `b` to get two `d` arrays. For each vertex `v`, if $d_a[v]+d_b[v]=d_a[b]$, then `v` is on some shortest path.)
+-   Finding a shortest path of even length. (Construct a new graph by splitting each vertex into two new vertices. For each edge $(u, v)$ in the original graph, create edges $((u, 0), (v, 1))$ and $((u, 1), (v, 0))$. Run BFS on the new graph. The shortest path between $(s, 0)$ and $(t, 0)$ is the answer.)
+-   Finding shortest paths on a graph with edge weights 0/1, see deque BFS below.
 
-## 双端队列 BFS
+## Deque BFS
 
-如果你不了解双端队列 `deque` 的话，请参阅 [deque 相关章节](../lang/csl/sequence-container.md#deque)．
+If you are not familiar with `deque`, see the [deque section](../lang/csl/sequence-container.md#deque).
 
-双端队列 BFS 又称 0-1 BFS．
+Deque BFS is also known as 0-1 BFS.
 
-### 适用范围
+### Scope
 
-边权值为可能有，也可能没有（由于 BFS 适用于权值为 1 的图，所以一般权值是 0 或 1），或者能够转化为这种边权值的最短路问题．
+Applicable to shortest path problems where edge weights may or may not exist (since BFS is suitable for graphs with weight 1, the weights are typically 0 or 1), or can be transformed to this form.
 
-例如在走迷宫问题中，你可以花 1 个金币走 5 步，也可以不花金币走 1 步，这就可以用 0-1 BFS 解决．
+For example, in a maze problem, you can either spend 1 coin to walk 5 steps, or walk 1 step for free. This can be solved with 0-1 BFS.
 
-### 实现
+### Implementation
 
-一般情况下，我们把没有权值的边扩展到的点放到队首，有权值的边扩展到的点放到队尾．这样即可保证像普通 BFS 一样整个队列队首到队尾权值单调不下降．
+Normally, we place nodes reached via unweighted edges at the front of the deque, and nodes reached via weighted edges at the back. This ensures that the weights from the front to the back of the deque are monotonically non-decreasing, just like regular BFS.
 
-下面是伪代码：
+Pseudocode:
 
 ```cpp
-while (队列不为空) {
-  int u = 队首;
-  弹出队首;
-  for (枚举 u 的邻居) {
-    更新数据
+while (queue not empty) {
+  int u = front;
+  pop front;
+  for (neighbors of u) {
+    update data
     if (...)
-      添加到队首;
+      add to front;
     else
-      添加到队尾;
+      add to back;
   }
 }
 ```
 
-### 例题
+### Example Problem
 
 ### [Codeforces 173B](http://codeforces.com/problemset/problem/173/B)
 
-一个 $n \times m$ 的图，现在有一束激光从左上角往右边射出，每遇到 '#'，你可以选择光线往四个方向射出，或者什么都不做，问最少需要多少个 '#' 往四个方向射出才能使光线在第 $n$ 行往右边射出．
+Given an $n \times m$ grid, a laser starts from the top-left corner heading right. Each time it encounters a '#', you can choose to shoot the laser in four directions, or do nothing. Find the minimum number of '#' that need to shoot in four directions so that the laser exits from the right side of row $n$.
 
-此题目正解不是 0-1 BFS，但是适用 0-1 BFS，减小思维强度，赛时许多大佬都是这么做的．
+The intended solution is not 0-1 BFS, but 0-1 BFS is applicable and reduces mental effort. Many top competitors used this approach during contests.
 
-做法很简单，一个方向射出不需要花费（0），而往四个方向射出需要花费（1），然后直接来就可以了．
+The approach is simple: shooting in one direction costs nothing (0), while shooting in four directions costs (1). Then just run the algorithm.
 
-#### 代码
+#### Code
 
 ```cpp
 --8<-- "docs/graph/code/bfs/bfs_1.cpp"
 ```
 
-## 优先队列 BFS
+## Priority Queue BFS
 
-优先队列，相当于一个二叉堆，STL 中提供了 [`std::priority_queue`](../lang/csl/container-adapter.md)，可以方便我们使用优先队列．
+A priority queue is essentially a binary heap. STL provides [`std::priority_queue`](../lang/csl/container-adapter.md) for convenient priority queue usage.
 
-在基于优先队列的 BFS 中，我们每次从队首取出代价最小的结点进行进一步搜索．容易证明这个贪心思想是正确的，因为从这个结点开始扩展的搜索，一定不会更新原来那些代价更高的结点．换句话说，其余那些代价更高的结点，我们不回去考虑更新它．
+In priority queue BFS, we always extract the node with the minimum cost from the front for further search. This greedy approach can be proven correct, because expanding from this node will never update nodes with higher costs. In other words, for the other nodes with higher costs, we will not consider updating them.
 
-当然，每个结点可能会被入队多次，只是每次入队的代价不同．当该结点第一次从优先队列中取出，以后便无需再在该结点进行搜索，直接忽略即可．所以，优先队列的 BFS 当中，每个结点只会被处理一次．
+Of course, each node may be enqueued multiple times, each with a different cost. When a node is extracted from the priority queue for the first time, we don't need to search from that node again; we can simply ignore subsequent extractions. Therefore, in priority queue BFS, each node is processed exactly once.
 
-相对于普通队列的 BFS，时间复杂度多了一个 $\log n$，毕竟要维护这个优先队列嘛．不过普通 BFS 有可能每个结点入队、出队多次，时间复杂度会达到 $O(n^2)$，不是 $O(n)$．所以优先队列 BFS 通常还是快的．
+Compared to regular queue BFS, the time complexity has an additional $\log n$ factor for maintaining the priority queue. However, regular BFS may enqueue and dequeue each node multiple times, giving $O(n^2)$ time complexity, not $O(n)$. So priority queue BFS is usually faster.
 
-诶？这怎么听起来这么像堆优化的 [Dijkstra](./shortest-path.md#dijkstra-算法) 算法呢？事实上，堆优化 Dijkstra 就是优先队列 BFS．
+Hey? Doesn't this sound a lot like heap-optimized [Dijkstra](./shortest-path.md#dijkstra-algorithm)? Indeed, heap-optimized Dijkstra is essentially priority queue BFS.
 
-## 习题
+## Practice Problems
 
--   [「NOIP2017」奶酪](https://uoj.ac/problem/332)
+-   [NOIP2017 Cheese](https://uoj.ac/problem/332)
 
-双端队列 BFS：
+Deque BFS:
 
--   [CF1063B. Labyrinth](https://codeforces.com/problemset/problem/1063/B)
--   [CF173B. Chamber of Secrets](https://codeforces.com/problemset/problem/173/B)
--   [「BalticOI 2011 Day1」打开灯泡 Switch the Lamp On](https://loj.ac/p/2632)
+-   [CF1063B Labyrinth](https://codeforces.com/problemset/problem/1063/B)
+-   [CF173B Chamber of Secrets](https://codeforces.com/problemset/problem/173/B)
+-   [BalticOI 2011 Day1 Switch the Lamp On](https://loj.ac/p/2632)
 
-## 参考
+## References
 
 <https://cp-algorithms.com/graph/breadth-first-search.html>

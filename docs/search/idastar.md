@@ -1,37 +1,37 @@
-前置知识：[A\* 算法](./astar.md)、[迭代加深搜索](./iterative.md)
+Prerequisites: [A\* algorithm](./astar.md), [iterative deepening search](./iterative.md)
 
-本页面将简要介绍 IDA\* 算法．IDA\* 就是采用了迭代加深算法的 A\* 算法．
+This page briefly introduces the IDA\* algorithm. IDA\* is A\* using iterative deepening.
 
-## 过程
+## Process
 
-IDA\* 算法是迭代加深搜索的一种变形．迭代加深搜索在每次 DFS 中限制搜索深度，而 IDA\* 则限制单次 DFS 的路径成本．
+The IDA\* algorithm is a variant of iterative deepening search. Iterative deepening search limits the search depth in each DFS, while IDA\* limits the path cost of a single DFS.
 
-在一次迭代中，算法从起点 $s$ 开始进行 DFS，记录到达当前结点 $x$ 的实际成本 $g(x)$，并利用它到终点的最小成本估计 $h(x)$ 进行剪枝．如果沿着当前路径到达终点的总成本估计
+In one iteration, the algorithm starts DFS from the start point $s$, records the actual cost $g(x)$ to reach the current node $x$, and uses the estimate $h(x)$ of the minimum cost from it to the target for pruning. If the estimated total cost of reaching the target along the current path
 
 $$
 f(x) = g(x) + h(x)
 $$
 
-超过阈值 $C$，则停止对该分支的搜索．
+exceeds the threshold $C$, the search of this branch stops.
 
-阈值 $C$ 在迭代间动态更新．初始阈值取为起点的总成本估计值 $h(s)$．在一次迭代中，每当因超过阈值而停止时，就记录所有尚未访问的后继结点的总成本估计的最小值．迭代结束后，将阈值更新为这一最小值，继续下一轮搜索．
+The threshold $C$ is dynamically updated between iterations. The initial threshold is set to the total cost estimate of the start point, $h(s)$. In one iteration, whenever the search stops because the threshold is exceeded, record the minimum total cost estimate among all successor nodes that have not yet been visited. After the iteration ends, update the threshold to this minimum value and continue with the next round of search.
 
-## 性质
+## Properties
 
-由于使用了和 A\* 算法一样的剪枝策略，所以对 A\* 算法性质的讨论对 IDA\* 算法也适用．
+Because it uses the same pruning strategy as the A\* algorithm, the discussion of A\* algorithm properties also applies to IDA\*.
 
-和 A\* 算法相比，IDA\* 算法有如下优点：
+Compared with the A\* algorithm, IDA\* has the following advantages:
 
--   不需要判重，不需要排序，利于深度剪枝．
--   空间需求减少．每次迭代都是一个深度优先搜索，但是对搜索中的路径成本有限制，使用 DFS 可以减小空间消耗．
+-   It does not need duplicate detection or sorting, which helps depth-based pruning.
+-   It has lower space requirements. Each iteration is a depth-first search, but the path cost in the search is limited, and using DFS can reduce space consumption.
 
-同时，它也有缺点：
+At the same time, it also has disadvantages:
 
--   重复搜索．即使前后两次搜索相差微小，每次放宽限制都要再次从头搜索．
+-   Repeated search. Even if two consecutive searches differ only slightly, every relaxation of the limit requires searching again from the beginning.
 
-## 实现
+## Implementation
 
-设 $h$ 是一个合适的估价函数，$s$ 为搜索起点．完整的算法流程大致如下所示：
+Let $h$ be a suitable evaluation function, and let $s$ be the search start point. The complete algorithm process is roughly as follows:
 
 $$
 \begin{array}{l}
@@ -73,47 +73,47 @@ $$
 \end{array}
 $$
 
-## 例题
+## Examples
 
-???+ example "[埃及分数](https://www.luogu.com.cn/problem/P1763)"
-    在古埃及，人们使用互不相同的单位分数（即 $1/a$，$a\in\mathbf{N}_+$）的和表示一切有理数．例如，$\dfrac{2}{3}=\dfrac{1}{2}+\dfrac{1}{6}$，但不允许 $\dfrac{2}{3}=\dfrac{1}{3}+\dfrac{1}{3}$，因为在加数中不允许有相同的单位分数．
+???+ example "[Egyptian Fractions](https://www.luogu.com.cn/problem/P1763)"
+    In ancient Egypt, people represented every rational number as a sum of distinct unit fractions (that is, $1/a$, $a\in\mathbf{N}_+$). For example, $\dfrac{2}{3}=\dfrac{1}{2}+\dfrac{1}{6}$, but $\dfrac{2}{3}=\dfrac{1}{3}+\dfrac{1}{3}$ is not allowed, because repeated unit fractions are not allowed among the addends.
     
-    对于一个分数 $\dfrac{a}{b}$，表示方法有很多种．规定：同一个分数的不同表示方法中，加数少的比加数多的好；如果加数个数相同，则最小的分数越大越好．例如，$\dfrac{19}{45}=\dfrac{1}{5}+\dfrac{1}{6}+\dfrac{1}{18}$ 是最佳方案．
+    For a fraction $\dfrac{a}{b}$, there are many representations. The rule is: among different representations of the same fraction, one with fewer addends is better than one with more addends; if the number of addends is the same, the representation whose smallest fraction is larger is better. For example, $\dfrac{19}{45}=\dfrac{1}{5}+\dfrac{1}{6}+\dfrac{1}{18}$ is the best solution.
     
-    输入整数 $a,b$（$0<a<b<1000$），试编程计算最佳表达式．
+    Given integers $a,b$ ($0<a<b<1000$), write a program to compute the best expression.
 
-??? note "解题思路"
-    这道题目理论上可以用回溯法求解，但是解答树会非常「恐怖」——不仅深度没有明显的上界，而且加数的选择理论上也是无限的．换句话说，如果用宽度优先遍历，连一层都扩展不完，因为每一层都是无限大的．
+??? note "Solution idea"
+    In theory, this problem can be solved with backtracking, but the solution tree is very "terrifying": not only does the depth have no obvious upper bound, but the choices of addends are also theoretically infinite. In other words, if breadth-first traversal is used, even one layer cannot be fully expanded, because every layer is infinite.
     
-    解决方案是采用迭代加深搜索：从小到大枚举深度上限 $C$，每次搜索只考虑深度不超过 $C$ 的结点．这样，只要解的深度有限，则一定可以在有限时间内枚举到．
+    The solution is to use iterative deepening search: enumerate the depth limit $C$ from small to large, and each search only considers nodes whose depth does not exceed $C$. In this way, as long as the solution depth is finite, it can certainly be enumerated in finite time.
     
-    深度上限 $C$ 还可以用来剪枝．按照分母递增的顺序来进行扩展，如果扩展到 $i$ 层时，前 $i$ 个分数之和为 $\dfrac{c}{d}$，而第 $i$ 个分数为 $\dfrac{1}{e}$，则接下来至少还需要
+    The depth limit $C$ can also be used for pruning. Expand in increasing order of denominators. If at level $i$, the sum of the first $i$ fractions is $\dfrac{c}{d}$ and the $i$-th fraction is $\dfrac{1}{e}$, then at least
     
     $$
     h = \left(\dfrac{a}{b}-\dfrac{c}{d}\right)/\left(\dfrac{1}{e+1}\right)
     $$
     
-    个分数，总和才能达到 $\dfrac{a}{b}$．例如，当前搜索到 $\dfrac{19}{45}=\dfrac{1}{5}+\dfrac{1}{100}+\cdots$，则后面的分数每个最大为 $\dfrac{1}{101}$，至少需要 $\left({\dfrac{19}{45}-\dfrac{1}{5}}\right)/\left({\dfrac{1}{101}}\right)=23$ 项总和才能达到 $\dfrac{19}{45}$，因此前 $22$ 次迭代是根本不会考虑这棵子树的．这里的关键在于：可以估计至少还要多少步才能出解．
+    more fractions are needed for the sum to reach $\dfrac{a}{b}$. For example, suppose the current search has reached $\dfrac{19}{45}=\dfrac{1}{5}+\dfrac{1}{100}+\cdots$. Then each later fraction is at most $\dfrac{1}{101}$, and at least $\left({\dfrac{19}{45}-\dfrac{1}{5}}\right)/\left({\dfrac{1}{101}}\right)=23$ terms are needed for the sum to reach $\dfrac{19}{45}$. Therefore, the first $22$ iterations will not consider this subtree at all. The key here is that we can estimate how many more steps are at least needed before a solution can appear.
     
-    注意，这里使用「至少」一词表示估计是「乐观的」．和 A\* 算法一样，好的估计函数都需要是「乐观的」，也就是说，它不能高估实际成本．将迭代加深搜索中的深度限制 $g\le C$ 替换为更严格的限制 $g + h \le C$，就得到了本页面所讨论的 IDA\* 算法．因为本文中的路径成本就是它的长度，所以，IDA\* 算法同样是对路径长度进行限制，只是加上了对于还需要多少步的估计．更一般的问题中，根据具体要最小化的成本不同，还可以设计出其他的估计函数．
+    Note that the word "at least" here means the estimate is "optimistic". As with the A\* algorithm, a good estimation function must be "optimistic"; that is, it must not overestimate the actual cost. Replacing the depth limit $g\le C$ in iterative deepening search with the stricter limit $g + h \le C$ gives the IDA\* algorithm discussed on this page. Because the path cost in this article is its length, the IDA\* algorithm is also limiting the path length, but with an added estimate of how many more steps are needed. In more general problems, other estimation functions can be designed according to the specific cost to be minimized.
     
-    在实现中，对 IDA\* 算法进一步剪枝优化：
+    In the implementation, further pruning optimizations are applied to the IDA\* algorithm:
     
-    1.  扩展结点时，下一个要考虑的分母至少是 $\left(\dfrac{a}{b}-\dfrac{c}{d}\right)^{-1}$，可以以此改进枚举 $e$ 的起点．
-    2.  IDA\* 的路径成本限制可以变形为
+    1.  When expanding a node, the next denominator to consider is at least $\left(\dfrac{a}{b}-\dfrac{c}{d}\right)^{-1}$, which can be used to improve the starting point for enumerating $e$.
+    2.  The path cost limit of IDA\* can be transformed into
     
         $$
         e \le \left(\dfrac{a}{b}-\dfrac{c}{d}\right)^{-1}(C-g) - 1.
         $$
     
-        所以，不必枚举所有的后续分母再逐个判断，只需要枚举到这个上界即可．
-    3.  在搜索到最后两个分数时，直接利用二次方程计算是否可行，而非继续搜索．具体地，要找到 $e<x<y\le E_\text{max}$ 使得
+        Therefore, it is unnecessary to enumerate all subsequent denominators and check them one by one; it is enough to enumerate up to this upper bound.
+    3.  When the search reaches the last two fractions, directly use a quadratic equation to determine feasibility instead of continuing the search. Specifically, we need to find $e<x<y\le E_\text{max}$ such that
     
         $$
         \dfrac{1}{x} + \dfrac{1}{y} = \dfrac{p}{q} := \dfrac{a}{b}-\dfrac{c}{d},
         $$
     
-        只需要求解二元二次方程组
+        We only need to solve the system of two quadratic equations
     
         $$
         \begin{cases}
@@ -122,28 +122,28 @@ $$
         \end{cases}
         $$
     
-        即可，其中，$k\in\mathbf N_+$．由二次方程的知识可知，方程组在
+        where $k\in\mathbf N_+$. From the theory of quadratic equations, the system has two distinct real roots only when
     
         $$
         \Delta = k^2p^2-4kq > 0 \iff k > \dfrac{4q}{p^2}
         $$
     
-        时，才有两个不同的实根
+        holds:
     
         $$
         x = \dfrac{kp - \sqrt{\Delta}}{2},~ y = \dfrac{kp + \sqrt{\Delta}}{2}.
         $$
     
-        因此，可以直接枚举所有可行的 $k$，判断是否存在这样一组整数解．枚举 $k$ 时，上界通过 $y < E_\text{max}$ 判断．
-    4.  每次得到一组答案时，都将分母的上界 $M_e$ 调整到当前答案中的最大分母减一．
+        Therefore, we can directly enumerate all feasible $k$ values and determine whether such a set of integer solutions exists. When enumerating $k$, the upper bound is determined by $y < E_\text{max}$.
+    4.  Each time a solution is obtained, adjust the upper bound of the denominator $M_e$ to one less than the largest denominator in the current solution.
     
-    另外，实现中，直接记录了 $\dfrac{a}{b}-\dfrac{c}{d}$ 和 $C-g$ 的取值，前者的分子和分母分别存储在变量 `a` 和 `b` 中，后者则存储为变量 `d`．
+    In addition, the implementation directly records the values of $\dfrac{a}{b}-\dfrac{c}{d}$ and $C-g$. The numerator and denominator of the former are stored in variables `a` and `b`, respectively, while the latter is stored as variable `d`.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/search/code/idastar/idastar_1.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [UVa1343 旋转游戏](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4089)
+-   [UVa1343 The Rotation Game](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4089)

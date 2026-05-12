@@ -1,20 +1,20 @@
 author: LeverImmy, 383494
 
-本页面将介绍精确覆盖问题、重复覆盖问题，解决这两个问题的算法「X 算法」，以及用来优化 X 算法的双向十字链表 Dancing Link．本页也将介绍如何在建模的配合下使用 DLX 解决一些搜索题．
+This page introduces the exact cover problem, the repeated cover problem, Algorithm X for solving these two problems, and the doubly linked cross list Dancing Links used to optimize Algorithm X. This page also introduces how to use DLX with modeling to solve some search problems.
 
-## 精确覆盖问题
+## Exact Cover Problem
 
-### 定义
+### Definition
 
-精确覆盖问题（英文：Exact Cover Problem）是指给定许多集合 $S_i (1 \le i \le n)$ 以及一个集合 $X$，求满足以下条件的无序多元组 $(T_1, T_2, \cdots , T_m)$：
+The exact cover problem is: given many sets $S_i (1 \le i \le n)$ and a set $X$, find an unordered tuple $(T_1, T_2, \cdots , T_m)$ satisfying the following conditions:
 
 1.  $\forall i, j \in [1, m],T_i\bigcap T_j = \varnothing (i \neq j)$
 2.  $X = \bigcup\limits_{i = 1}^{m}T_i$
 3.  $\forall i \in[1, m], T_i \in \{S_1, S_2, \cdots, S_n\}$
 
-### 解释
+### Explanation
 
-例如，若给出
+For example, if we are given
 
 $$
 \begin{aligned}
@@ -28,14 +28,14 @@ $$
 \end{aligned}
 $$
 
-则 $(S_1, S_4, S_5)$ 为一组合法解．
+then $(S_1, S_4, S_5)$ is a valid solution.
 
-### 问题转化
+### Problem Transformation
 
-将 $\bigcup\limits_{i = 1}^{n}S_i$ 中的所有数离散化，可以得到这么一个模型：
+Discretizing all numbers in $\bigcup\limits_{i = 1}^{n}S_i$ gives the following model:
 
-> 给定一个 01 矩阵，你可以选择一些行（row），使得最终每列（column）[^note1]都恰好有一个 1．
-> 举个例子，我们对上文中的例子进行建模，可以得到这么一个矩阵：
+> Given a 01 matrix, you may choose some rows so that each column[^note1] has exactly one 1 in the end.
+> For example, modeling the example above gives the following matrix:
 
 $$
 \begin{pmatrix}
@@ -48,22 +48,22 @@ $$
 \end{pmatrix}
 $$
 
-> 其中第 $i$ 行表示着 $S_i$，而这一行的每个数依次表示 $[1 \in S_i],[3 \in S_i],[5 \in S_i],\cdots,[119 \in S_i]$．
+> Here row $i$ represents $S_i$, and the entries in this row represent $[1 \in S_i],[3 \in S_i],[5 \in S_i],\cdots,[119 \in S_i]$ in order.
 
-### 实现
+### Implementation
 
-#### 暴力 1
+#### Brute Force 1
 
-一种方法是枚举选择哪些行，最后检查这个方案是否合法．
+One method is to enumerate which rows are selected, and finally check whether the solution is valid.
 
-因为每一行都有选或者不选两种状态，所以枚举行的时间复杂度是 $O(2^n)$ 的；
+Because each row has two states, selected or not selected, the time complexity of enumerating rows is $O(2^n)$.
 
-而每次检查都需要 $O(nm)$ 的时间复杂度．所以总的复杂度是 $O(nm\cdot2^n)$．
+Each check requires $O(nm)$ time. Therefore, the total complexity is $O(nm\cdot2^n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     int ok = 0;
-    for (int state = 0; state < 1 << n; ++state) {  // 枚举每行是否被选
+    for (int state = 0; state < 1 << n; ++state) {  // Enumerate whether each row is selected
       for (int i = 1; i <= n; ++i)
         if ((1 << i - 1) & state)
           for (int j = 1; j <= m; ++j) a[i][j] = 1;
@@ -89,19 +89,19 @@ $$
     if (!ok) puts("No solution.");
     ```
 
-#### 暴力 2
+#### Brute Force 2
 
-考虑到 01 矩阵的特殊性质，每一行都可以看做一个 $m$ 位二进制数．
+Considering the special nature of a 01 matrix, each row can be regarded as an $m$-bit binary number.
 
-因此原问题转化为
+Therefore, the original problem is transformed into:
 
-> 给定 $n$ 个 $m$ 位二进制数，要求选择一些数，使得任意两个数的与都为 0，且所有数的或为 $2^m - 1$．`tmp` 表示的是截至目前被选中的二进制数的或．
+> Given $n$ $m$-bit binary numbers, choose some numbers so that the bitwise AND of any two numbers is 0, and the bitwise OR of all selected numbers is $2^m - 1$. `tmp` denotes the bitwise OR of the selected binary numbers so far.
 
-因为每一行都有选或者不选两种状态，所以枚举行的时间复杂度为 $O(2^n)$；
+Because each row has two states, selected or not selected, the time complexity of enumerating rows is $O(2^n)$.
 
-而每次计算 `tmp` 都需要 $O(n)$ 的时间复杂度．所以总的复杂度为 $O(n\cdot2^n)$．
+Each computation of `tmp` requires $O(n)$ time. Therefore, the total complexity is $O(n\cdot2^n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     int ok = 0;
     for (int i = 1; i <= n; ++i)
@@ -127,17 +127,17 @@ $$
     if (!ok) puts("No solution.");
     ```
 
-## 重复覆盖问题
+## Repeated Cover Problem
 
-重复覆盖问题与精确覆盖问题类似，但没有对元素相似性的限制．下文介绍的 [X 算法](#x-算法) 原本针对精确覆盖问题，但经过一些修改和优化（已标注在其中）同样可以高效地解决重复覆盖问题．
+The repeated cover problem is similar to the exact cover problem, but it has no restriction on element overlap. The [Algorithm X](#algorithm-x) introduced below was originally designed for exact cover problems, but with some modifications and optimizations (marked where they appear), it can also efficiently solve repeated cover problems.
 
-## X 算法
+## Algorithm X
 
-Donald E. Knuth 提出了 X 算法 (Algorithm X)，其思想与刚才的暴力差不多，但是方便优化．
+Donald E. Knuth proposed Algorithm X. Its idea is similar to the brute-force methods above, but it is easier to optimize.
 
-### 过程
+### Process
 
-继续以上文中中提到的例子为载体，得到一个这样的 01 矩阵：
+Continuing with the example above, we obtain the following 01 matrix:
 
 $$
 \begin{pmatrix}
@@ -150,7 +150,7 @@ $$
 \end{pmatrix}
 $$
 
-1.  此时第一行有 $3$ 个 $1$，第二行有 $3$ 个 $1$，第三行有 $3$ 个 $1$，第四行有 $2$ 个 $1$，第五行有 $2$ 个 $1$，第六行有 $3$ 个 $1$．选择第一行，将它删除，并将所有 $1$ 所在的列打上标记；
+1.  At this point, the first row has $3$ $1$s, the second row has $3$ $1$s, the third row has $3$ $1$s, the fourth row has $2$ $1$s, the fifth row has $2$ $1$s, and the sixth row has $3$ $1$s. Select the first row, delete it, and mark all columns containing a $1$ in this row.
 
     $$
     \begin{pmatrix}
@@ -163,7 +163,7 @@ $$
       \end{pmatrix}
     $$
 
-2.  选择所有被标记的列，将它们删除，并将这些列中含 $1$ 的行打上标记（重复覆盖问题无需打标记）；
+2.  Select all marked columns, delete them, and mark the rows containing $1$ in these columns (marking is not needed for repeated cover problems).
 
     $$
     \begin{pmatrix}
@@ -176,7 +176,7 @@ $$
     \end{pmatrix}
     $$
 
-3.  选择所有被标记的行，将它们删除；
+3.  Select all marked rows and delete them.
 
     $$
     \begin{pmatrix}
@@ -189,9 +189,9 @@ $$
     \end{pmatrix}
     $$
 
-    **这表示这一行已被选择，且这一行的所有 $1$ 所在的列不能有其他 $1$ 了**．
+    **This means that this row has been selected, and the columns containing all $1$s in this row cannot have any other $1$s**.
 
-    于是得到一个新的小 01 矩阵：
+    Thus, we obtain a new smaller 01 matrix:
 
     $$
     \begin{pmatrix}
@@ -201,7 +201,7 @@ $$
     \end{pmatrix}
     $$
 
-4.  此时第一行（原来的第二行）有 $3$ 个 $1$，第二行（原来的第四行）有 $2$ 个 $1$，第三行（原来的第五行）有 $2$ 个 $1$．选择第一行（原来的第二行），将它删除，并将所有 $1$ 所在的列打上标记；
+4.  At this point, the first row (the original second row) has $3$ $1$s, the second row (the original fourth row) has $2$ $1$s, and the third row (the original fifth row) has $2$ $1$s. Select the first row (the original second row), delete it, and mark all columns containing a $1$ in this row.
 
     $$
     \begin{pmatrix}
@@ -211,7 +211,7 @@ $$
     \end{pmatrix}
     $$
 
-5.  选择所有被标记的列，将它们删除，并将这些列中含 $1$ 的行打上标记；
+5.  Select all marked columns, delete them, and mark the rows containing $1$ in these columns.
 
     $$
     \begin{pmatrix}
@@ -221,7 +221,7 @@ $$
     \end{pmatrix}
     $$
 
-6.  选择所有被标记的行，将它们删除；
+6.  Select all marked rows and delete them.
 
     $$
     \begin{pmatrix}
@@ -231,14 +231,14 @@ $$
     \end{pmatrix}
     $$
 
-    这样就得到了一个空矩阵．但是上次删除的行 `1 0 1 1` 不是全 $1$ 的，说明选择有误；
+    This gives an empty matrix. However, the last deleted row `1 0 1 1` was not all $1$s, which means the selection was wrong.
 
     $$
     \begin{pmatrix}
     \end{pmatrix}
     $$
 
-7.  回溯到步骤 4，考虑选择第二行（原来的第四行），将它删除，并将所有 $1$ 所在的列打上标记；
+7.  Backtrack to step 4 and consider selecting the second row (the original fourth row). Delete it and mark all columns containing a $1$ in this row.
 
     $$
     \begin{pmatrix}
@@ -248,7 +248,7 @@ $$
     \end{pmatrix}
     $$
 
-8.  选择所有被标记的列，将它们删除，并将这些列中含 $1$ 的行打上标记；
+8.  Select all marked columns, delete them, and mark the rows containing $1$ in these columns.
 
     $$
     \begin{pmatrix}
@@ -258,7 +258,7 @@ $$
     \end{pmatrix}
     $$
 
-9.  选择所有被标记的行，将它们删除；
+9.  Select all marked rows and delete them.
 
     $$
     \begin{pmatrix}
@@ -268,7 +268,7 @@ $$
       \end{pmatrix}
     $$
 
-    于是我们得到了这样的一个矩阵：
+    Thus, we obtain the following matrix:
 
     $$
     \begin{pmatrix}
@@ -276,64 +276,64 @@ $$
     \end{pmatrix}
     $$
 
-10. 此时第一行（原来的第五行）有 $2$ 个 $1$，将它们全部删除，得到一个空矩阵：
+10. At this point, the first row (the original fifth row) has $2$ $1$s. Delete all of them to obtain an empty matrix:
 
     $$
     \begin{pmatrix}
     \end{pmatrix}
     $$
 
-11. 上一次删除的时候，删除的是全 $1$ 的行，因此成功，算法结束．
+11. In the previous deletion, the deleted row was all $1$s, so the algorithm succeeds and terminates.
 
-    答案即为被删除的三行：$1, 4, 5$．
+    The answer is the three deleted rows: $1, 4, 5$.
 
-强烈建议自己模拟一遍矩阵删除、还原与回溯的过程后，再接着阅读下文．
+It is strongly recommended to simulate the process of deleting, restoring, and backtracking through the matrix yourself before continuing.
 
-通过上述步骤，可将 X 算法的流程概括如下：
+From the steps above, the process of Algorithm X can be summarized as follows:
 
-1.  对于现在的矩阵 $M$，选择并标记一行 $r$，将 $r$ 添加至 $S$ 中；
-2.  如果尝试了所有的 $r$ 却无解，则算法结束，输出无解；
-3.  标记与 $r$ 相关的行 $r_i$ 和 $c_i$（相关的行和列与 [X 算法](#过程) 中第 2 步定义相同，下同）；
-4.  删除所有标记的行和列，得到新矩阵 $M'$；
-5.  如果 $M'$ 为空，且 $r$ 为全 $1$，则算法结束，输出被删除的行组成的集合 $S$；
+1.  For the current matrix $M$, select and mark a row $r$, and add $r$ to $S$.
+2.  If all choices of $r$ have been tried and no solution is found, terminate the algorithm and output that there is no solution.
+3.  Mark the rows $r_i$ and columns $c_i$ related to $r$ (related rows and columns are defined in the same way as in step 2 of [Algorithm X](#process); the same applies below).
+4.  Delete all marked rows and columns to obtain a new matrix $M'$.
+5.  If $M'$ is empty and $r$ is all $1$s, terminate the algorithm and output the set $S$ consisting of the deleted rows.
 
-    如果 $M'$ 为空，且 $r$ 不全为 $1$，则恢复与 $r$ 相关的行 $r_i$ 以及列 $c_i$，跳转至步骤 1；
+    If $M'$ is empty and $r$ is not all $1$s, restore the rows $r_i$ and columns $c_i$ related to $r$, and jump to step 1.
 
-    如果 $M'$ 不为空，则跳转至步骤 1．
+    If $M'$ is not empty, jump to step 1.
 
-不难看出，X 算法需要大量的「删除行」、「删除列」和「恢复行」、「恢复列」的操作．
+It is easy to see that Algorithm X requires many operations that delete rows, delete columns, restore rows, and restore columns.
 
-一个朴素的想法是，使用一个二维数组存放矩阵，再用四个数组分别存放每一行与之相邻的行编号，每次删除和恢复仅需更新四个数组中的元素．但由于一般问题的矩阵中 0 的数量远多于 1 的数量，这样做的空间复杂度难以接受．
+A naive idea is to store the matrix in a two-dimensional array, and then use four arrays to store, for each row, the indices of adjacent rows, so that each deletion and restoration only needs to update elements in the four arrays. However, because in matrices from typical problems the number of 0s is far greater than the number of 1s, the space complexity of this approach is unacceptable.
 
-Donald E. Knuth 想到了用双向十字链表来维护这些操作．
+Donald E. Knuth came up with using a doubly linked cross list to maintain these operations.
 
-而在双向十字链表上不断跳跃的过程被形象地比喻成「跳跃」，因此被用来优化 X 算法的双向十字链表也被称为「Dancing Links」．
+The process of continuously jumping on the doubly linked cross list is vividly compared to "dancing", so the doubly linked cross list used to optimize Algorithm X is also called "Dancing Links".
 
-## Dancing Links 优化的 X 算法
+## Algorithm X Optimized by Dancing Links
 
-### 预编译命令
+### Preprocessor Directive
 
 ```cpp
 #define IT(i, A, x) for (i = A[x]; i != x; i = A[i])
 ```
 
-### 定义
+### Definition
 
-双向十字链表中存在四个指针域，分别指向上、下、左、右的元素；且每个元素 $i$ 在整个双向十字链表系中都对应着一个格子，因此还要表示 $i$ 所在的列和所在的行，如图所示：
+There are four pointer fields in a doubly linked cross list, pointing to the elements above, below, to the left, and to the right. Each element $i$ corresponds to a cell in the whole doubly linked cross list system, so the column and row containing $i$ must also be represented, as shown in the figure:
 
 ![dlx-1.svg](./images/dlx-1.svg)
 
-大型的双向链表则更为复杂：
+A large doubly linked list is more complex:
 
 ![dlx-2.svg](./images/dlx-2.svg)
 
-每一行都有一个行首指示，每一列都有一个列指示．
+Each row has a row-head indicator, and each column has a column indicator.
 
-行首指示为 `first[]`，列指示是我们新建的 $c + 1$ 个哨兵结点．值得注意的是，**行首指示并非是链表中的哨兵结点**．它是虚拟的，类似于邻接表中的 `first[]` 数组，**直接指向** 这一行中的首元素．
+The row-head indicator is `first[]`, and the column indicators are the newly created $c + 1$ sentinel nodes. It is worth noting that **a row-head indicator is not a sentinel node in the linked list**. It is virtual, similar to the `first[]` array in an adjacency list, and **directly points** to the first element in that row.
 
-同时，每一列都有一个 `siz[]` 表示这一列的元素个数．
+Meanwhile, each column has a `siz[]` value indicating the number of elements in that column.
 
-特殊地，$0$ 号结点无右结点等价于这个 Dancing Links 为空．
+Specially, node $0$ having no right node is equivalent to this Dancing Links structure being empty.
 
 ```cpp
 constexpr int MS = 1e5 + 5;
@@ -342,60 +342,60 @@ int L[MS], R[MS], U[MS], D[MS];
 int col[MS], row[MS];
 ```
 
-### 过程
+### Process
 
-#### remove 操作
+#### remove Operation
 
-`remove(c)` 表示在 Dancing Links 中删除第 $c$ 列以及与其相关的行和列．
+`remove(c)` means deleting column $c$ and the rows and columns related to it in Dancing Links.
 
-先将 $c$ 删除，此时：
+First delete $c$. At this point:
 
--   $c$ 左侧的结点的右结点应为 $c$ 的右结点．
--   $c$ 右侧的结点的左结点应为 $c$ 的左结点．
+-   The right node of the node to the left of $c$ should be the right node of $c$.
+-   The left node of the node to the right of $c$ should be the left node of $c$.
 
-即 `L[R[c]] = L[c], R[L[c]] = R[c];`．
+That is, `L[R[c]] = L[c], R[L[c]] = R[c];`.
 
 ![dlx-3.svg](./images/dlx-3.svg)
 
-然后顺着这一列往下走，把走过的每一行都删掉．
+Then go downward along this column and delete every row encountered.
 
-如何删掉每一行呢？枚举当前行的指针 $j$，此时：
+How do we delete each row? Enumerate the pointer $j$ in the current row. At this point:
 
--   $j$ 上方的结点的下结点应为 $j$ 的下结点．
--   $j$ 下方的结点的上结点应为 $j$ 的上结点．
+-   The down node of the node above $j$ should be the down node of $j$.
+-   The up node of the node below $j$ should be the up node of $j$.
 
-注意要修改每一列的元素个数．
+Remember to update the number of elements in each column.
 
-即 `U[D[j]] = U[j], D[U[j]] = D[j], --siz[col[j]];`．
+That is, `U[D[j]] = U[j], D[U[j]] = D[j], --siz[col[j]];`.
 
 ![dlx-4.svg](./images/dlx-4.svg)
 
-`remove` 函数的代码实现如下：
+The code implementation of the `remove` function is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void remove(const int &c) {
       int i, j;
       L[R[c]] = L[c], R[L[c]] = R[c];
-      // 顺着这一列从上往下遍历
+      // Traverse this column from top to bottom
       IT(i, D, c)
-      // 顺着这一行从左往右遍历
+      // Traverse this row from left to right
       IT(j, R, i)
       U[D[j]] = U[j], D[U[j]] = D[j], --siz[col[j]];
     }
     ```
 
-#### recover 操作
+#### recover Operation
 
-`recover(c)` 表示在 Dancing Links 中还原第 $c$ 列以及与其相关的行和列．
+`recover(c)` means restoring column $c$ and the rows and columns related to it in Dancing Links.
 
-`recover(c)` 即 `remove(c)` 的逆操作，这里不再赘述．
+`recover(c)` is the inverse operation of `remove(c)`, so it is not repeated here.
 
-**值得注意的是，** `recover(c)` **的所有操作的顺序与**  `remove(c)` **的操作恰好相反．**
+**It is worth noting that the order of all operations in** `recover(c)` **is exactly the reverse of the operations in** `remove(c)`.
 
-`recover(c)` 的代码实现如下：
+The code implementation of `recover(c)` is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void recover(const int &c) {
       int i, j;
@@ -404,23 +404,23 @@ int col[MS], row[MS];
     }
     ```
 
-#### build 操作
+#### build Operation
 
-`build(r, c)` 表示新建一个大小为 $r \times c$，即有 $r$ 行，$c$ 列的 Dancing Links．
+`build(r, c)` means creating a new Dancing Links structure of size $r \times c$, that is, with $r$ rows and $c$ columns.
 
-新建 $c + 1$ 个结点作为列指示．
+Create $c + 1$ new nodes as column indicators.
 
-第 $i$ 个点的左结点为 $i - 1$，右结点为 $i + 1$，上结点为 $i$，下结点为 $i$．特殊地，$0$ 结点的左结点为 $c$，$c$ 结点的右结点为 $0$．
+The left node of point $i$ is $i - 1$, the right node is $i + 1$, the up node is $i$, and the down node is $i$. Specially, the left node of node $0$ is $c$, and the right node of node $c$ is $0$.
 
-于是我们得到了一个环状双向链表：
+Thus we obtain a circular doubly linked list:
 
 ![dlx-5.svg](./images/dlx-5.svg)
 
-这样就初始化了一个 Dancing Links．
+This initializes a Dancing Links structure.
 
-`build(r, c)` 的代码实现如下：
+The code implementation of `build(r, c)` is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void build(const int &r, const int &c) {
       n = r, m = c;
@@ -434,59 +434,59 @@ int col[MS], row[MS];
     }
     ```
 
-#### insert 操作
+#### insert Operation
 
-`insert(r, c)` 表示在第 $r$ 行，第 $c$ 列插入一个结点．
+`insert(r, c)` means inserting a node at row $r$, column $c$.
 
-插入操作分为两种情况：
+The insertion operation has two cases:
 
--   如果第 $r$ 行没有元素，那么直接插入一个元素，并使 `first[r]` 指向这个元素．
+-   If row $r$ has no elements, insert an element directly and make `first[r]` point to this element.
 
-    这可以通过 `first[r] = L[idx] = R[idx] = idx;` 来实现．
+    This can be implemented with `first[r] = L[idx] = R[idx] = idx;`.
 
--   如果第 $r$ 行有元素，那么将这个新元素用一种特殊的方式与 $c$ 和 $first(r)$ 连接起来．
+-   If row $r$ has elements, connect this new element with $c$ and $first(r)$ in a special way.
 
-    设这个新元素为 $idx$，然后：
+    Let this new element be $idx$, then:
 
-    -   把 $idx$ 插入到 $c$ 的正下方，此时：
+    -   Insert $idx$ directly below $c$. At this point:
 
-        -   $idx$ 下方的结点为原来 $c$ 的下结点；
-        -   $idx$ 下方的结点（即原来 $c$ 的下结点）的上结点为 $idx$;
-        -   $idx$ 的上结点为 $c$；
-        -   $c$ 的下结点为 $idx$．
+        -   The node below $idx$ is the original down node of $c$.
+        -   The up node of the node below $idx$ (that is, the original down node of $c$) is $idx$.
+        -   The up node of $idx$ is $c$.
+        -   The down node of $c$ is $idx$.
 
-        注意记录 $idx$ 的所在列和所在行，以及更新这一列的元素个数．
+        Remember to record the column and row containing $idx$, and update the number of elements in this column.
 
         ```cpp
         col[++idx] = c, row[idx] = r, ++siz[c];
         U[idx] = c, D[idx] = D[c], U[D[c]] = idx, D[c] = idx;
         ```
 
-        **强烈建议读者完全掌握这几步的顺序后再继续阅读本文．**
+        **Readers are strongly advised to fully understand the order of these steps before continuing.**
 
-    -   把 $idx$ 插入到 $first(r)$ 的正右方，此时：
+    -   Insert $idx$ directly to the right of $first(r)$. At this point:
 
-        -   $idx$ 右侧的结点为原来 $first(r)$ 的右结点；
-        -   原来 $first(r)$ 右侧的结点的左结点为 $idx$；
-        -   $idx$ 的左结点为 $first(r)$；
-        -   $first(r)$ 的右结点为 $idx$．
+        -   The node to the right of $idx$ is the original right node of $first(r)$.
+        -   The left node of the original right node of $first(r)$ is $idx$.
+        -   The left node of $idx$ is $first(r)$.
+        -   The right node of $first(r)$ is $idx$.
 
         ```cpp
         L[idx] = first[r], R[idx] = R[first[r]];
         L[R[first[r]]] = idx, R[first[r]] = idx;
         ```
 
-        **强烈建议读者完全掌握这几步的顺序后再继续阅读本文．**
+        **Readers are strongly advised to fully understand the order of these steps before continuing.**
 
-`insert(r, c)` 这个操作可以通过图片来辅助理解：
+The `insert(r, c)` operation can be understood with the help of the figure:
 
 ![dlx-6.svg](./images/dlx-6.svg)
 
-留心曲线箭头的方向．
+Pay attention to the directions of the curved arrows.
 
-`insert(r, c)` 的代码实现如下：
+The code implementation of `insert(r, c)` is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void insert(const int &r, const int &c) {
       row[++idx] = r, col[idx] = c, ++siz[c];
@@ -500,19 +500,19 @@ int col[MS], row[MS];
     }
     ```
 
-#### dance 操作
+#### dance Operation
 
-`dance()` 即为递归地删除以及还原各个行列的过程．
+`dance()` is the process of recursively deleting and restoring rows and columns.
 
-1.  如果 $0$ 号结点没有右结点，那么矩阵为空，记录答案并返回；
-2.  选择列元素个数最少的一列，并删掉这一列；
-3.  遍历这一列所有有 $1$ 的行，枚举它是否被选择；
-4.  递归调用 `dance()`，如果可行，则返回；如果不可行，则恢复被选择的行；
-5.  如果无解，则返回．
+1.  If node $0$ has no right node, the matrix is empty; record the answer and return.
+2.  Select the column with the fewest elements and delete this column.
+3.  Traverse all rows in this column that have a $1$, and enumerate whether each is selected.
+4.  Recursively call `dance()`. If it is feasible, return; if not, restore the selected row.
+5.  If there is no solution, return.
 
-`dance()` 的代码实现如下：
+The code implementation of `dance()` is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     bool dance(int dep) {
       int i, j, c = R[0];
@@ -533,132 +533,132 @@ int col[MS], row[MS];
     }
     ```
 
-其中 `stk[]` 用来记录答案．
+Here `stk[]` is used to record the answer.
 
-注意我们每次优先选择列元素个数最少的一列进行删除，这样能保证程序具有一定的启发性，使搜索树分支最少．
+Note that each time we preferentially choose the column with the fewest elements to delete. This gives the program some heuristic behavior and minimizes the branching of the search tree.
 
-对于重复覆盖问题，在搜索时可以用估价函数（与 [A\*](astar.md) 中类似）进行剪枝：若当前最好情况下所选行数超过目前最优解，则可以直接返回．
+For repeated cover problems, an evaluation function (similar to the one in [A\*](astar.md)) can be used for pruning during search: if the number of selected rows in the current best case already exceeds the current optimal solution, return directly.
 
-## 模板
+## Template
 
-??? note "[模板代码](https://www.luogu.com.cn/problem/P4929)"
+??? note "[Template code](https://www.luogu.com.cn/problem/P4929)"
     ```cpp
     --8<-- "docs/search/code/dlx/dlx_1.cpp"
     ```
 
-## 性质
+## Properties
 
-DLX 递归及回溯的次数与矩阵中 $1$ 的个数有关，与矩阵的 $r, c$ 等参数无关．因此，它的时间复杂度是 **指数级** 的，理论复杂度大概在 $O(c^n)$ 左右，其中 $c$ 为某个非常接近于 $1$ 的常数，$n$ 为矩阵中 $1$ 的个数．
+The number of recursive and backtracking steps in DLX is related to the number of $1$s in the matrix, and is unrelated to parameters such as $r, c$ of the matrix. Therefore, its time complexity is **exponential**. The theoretical complexity is roughly around $O(c^n)$, where $c$ is a constant very close to $1$, and $n$ is the number of $1$s in the matrix.
 
-但实际情况下 DLX 表现良好，一般能解决大部分的问题．
+In practice, however, DLX performs well and can generally solve most problems.
 
-## 建模
+## Modeling
 
-DLX 的难点，不全在于链表的建立，而在于建模．
+The difficulty of DLX lies not entirely in building the linked list, but in modeling.
 
-请确保已经完全掌握 DLX 模板后再继续阅读本文．
+Please make sure you have fully mastered the DLX template before continuing.
 
-我们每拿到一个题，应该考虑行和列所表示的意义：
+Whenever we get a problem, we should consider what the rows and columns represent:
 
--   行表示*决策*，因为每行对应着一个集合，也就对应着选/不选；
+-   Rows represent *decisions*, because each row corresponds to a set, and therefore corresponds to selecting or not selecting it.
 
--   列表示*状态*，因为第 $i$ 列对应着某个条件 $P_i$．
+-   Columns represent *states*, because column $i$ corresponds to some condition $P_i$.
 
-对于某一行而言，由于不同的列的值不尽相同，我们 **由不同的状态，定义了一个决策**．
+For a certain row, because the values in different columns vary, we **define a decision through different states**.
 
-### 例题 1 [P1784 数独](https://www.luogu.com.cn/problem/P1784)
+### Example 1 [P1784 Sudoku](https://www.luogu.com.cn/problem/P1784)
 
-??? note "解题思路"
-    先考虑决策是什么．
+??? note "Solution idea"
+    First consider what the decisions are.
     
-    在这一题中，每一个决策可以用形如 $(r, c, w)$ 的有序三元组表示．
+    In this problem, each decision can be represented by an ordered triple of the form $(r, c, w)$.
     
-    注意到「宫」并不是决策的参数，因为它 **可以被每个确定的 $(r, c)$ 表示**．
+    Note that the "block" is not a parameter of the decision, because it **can be represented by each determined $(r, c)$**.
     
-    因此有 $9 \times 9 \times 9 = 729$ 行．
+    Therefore, there are $9 \times 9 \times 9 = 729$ rows.
     
-    再考虑状态是什么．
+    Next consider what the states are.
     
-    我们思考一下 $(r, c, w)$ 这个决策将会造成什么影响．记 $(r, c)$ 所在的宫为 $b$．
+    Think about what effects the decision $(r, c, w)$ will cause. Let $b$ be the block containing $(r, c)$.
     
-    1.  第 $r$ 行用了一个 $w$（用 $9 \times 9 = 81$ 列表示）；
-    2.  第 $c$ 列用了一个 $w$（用 $9 \times 9 = 81$ 列表示）；
-    3.  第 $b$ 宫用了一个 $w$（用 $9 \times 9 = 81$ 列表示）；
-    4.  $(r, c)$ 中填入了一个数（用 $9 \times 9 = 81$ 列表示）．
+    1.  Row $r$ uses a $w$ (represented by $9 \times 9 = 81$ columns).
+    2.  Column $c$ uses a $w$ (represented by $9 \times 9 = 81$ columns).
+    3.  Block $b$ uses a $w$ (represented by $9 \times 9 = 81$ columns).
+    4.  A number is filled into $(r, c)$ (represented by $9 \times 9 = 81$ columns).
     
-    因此有 $81 \times 4 = 324$ 列，共 $729 \times 4 = 2916$ 个 $1$．
+    Therefore, there are $81 \times 4 = 324$ columns and a total of $729 \times 4 = 2916$ $1$s.
     
-    至此，我们成功地将 $9 \times 9$ 的数独问题转化成了一个 **有 $729$ 行，$324$ 列，共 $2916$ 个 $1$** 的精确覆盖问题．
+    At this point, we have successfully transformed the $9 \times 9$ Sudoku problem into an exact cover problem with **$729$ rows, $324$ columns, and a total of $2916$ $1$s**.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/search/code/dlx/dlx_2.cpp"
     ```
 
-### 例题 2 [靶形数独](https://www.luogu.com.cn/problem/P1074)
+### Example 2 [Target Sudoku](https://www.luogu.com.cn/problem/P1074)
 
-??? note "解题思路"
-    这一题与 [数独](https://www.luogu.com.cn/problem/P1784) 的模型构建 **一模一样**，主要区别在于答案的更新．
+??? note "Solution idea"
+    The model construction for this problem is **exactly the same** as [Sudoku](https://www.luogu.com.cn/problem/P1784). The main difference lies in updating the answer.
     
-    这一题可以开一个权值数组，每次找到一组数独的解时，
+    For this problem, create a weight array. Each time a Sudoku solution is found,
     
-    每个位置上的数乘上对应的权值计入答案即可．
+    multiply the number at each position by the corresponding weight and add it to the answer.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/search/code/dlx/dlx_3.cpp"
     ```
 
-### 例题 3 [「NOI2005」智慧珠游戏](https://www.luogu.com.cn/problem/P4205)
+### Example 3 [NOI2005 Smart Bead Game](https://www.luogu.com.cn/problem/P4205)
 
-??? note "解题思路"
-    定义：题中给我们的智慧珠的形态，称为这个智慧珠的*标准形态*．
+??? note "Solution idea"
+    Definition: the shape of a smart bead given in the problem is called this smart bead's *standard shape*.
     
-    显然，我们可以通过改变两个参数 $d$（表示顺时针旋转 $90^{\circ}$ 的次数）和 $f$（是否水平翻转）来改变这个智慧珠的形态．
+    Obviously, we can change the shape of this smart bead by changing two parameters: $d$ (the number of clockwise rotations by $90^{\circ}$) and $f$ (whether it is flipped horizontally).
     
-    仍然，我们先考虑决策是什么．
+    Again, first consider what the decisions are.
     
-    在这一题中，每一个决策可以用形如 $(v, d, f, i)$ 的有序五元组表示．
+    In this problem, each decision can be represented by an ordered 5-tuple of the form $(v, d, f, i)$.
     
-    表示第 $i$ 个智慧珠的*标准形态*的左上角的位置，序号为 $v$，经过了 $d$ 次顺时针转 $90^{\circ}$．
+    It represents that the upper-left position of the *standard shape* of the $i$-th smart bead has index $v$, and it has been rotated clockwise by $90^{\circ}$ a total of $d$ times.
     
-    巧合的是，我们可以令 $f = 1$ 时不水平翻转，$f = -1$ 时水平翻转，从而达到简化代码的目的．
+    Conveniently, we can set $f = 1$ for no horizontal flip and $f = -1$ for a horizontal flip, simplifying the code.
     
-    因此有 $55 \times 4 \times 2 \times 12 = 5280$ 行．
+    Therefore, there are $55 \times 4 \times 2 \times 12 = 5280$ rows.
     
-    需要注意的是，因为一些不合法的填充，如 $(1, 0, 1, 4)$，
+    Note that because of some invalid placements, such as $(1, 0, 1, 4)$,
     
-    所以 **在实际操作中，空的智慧珠棋盘也只需要建出 $2730$ 行．**
+    **in actual operation, even an empty smart bead board only needs $2730$ rows to be constructed.**
     
-    再考虑状态是什么．
+    Next consider what the states are.
     
-    这一题的状态比较简单．
+    The states in this problem are relatively simple.
     
-    我们思考一下，$(v, d, f, i)$ 这个决策会造成什么影响．
+    Think about what effects the decision $(v, d, f, i)$ will cause.
     
-    1.  某些格子被占了（用 $55$ 列表示）；
-    2.  第 $i$ 个智慧珠被用了（用 $12$ 列表示）．
+    1.  Some cells are occupied (represented by $55$ columns).
+    2.  The $i$-th smart bead is used (represented by $12$ columns).
     
-    因此有 $55 + 12 = 67$ 列，共 $5280 \times (5 + 1) = 31680$ 个 $1$．
+    Therefore, there are $55 + 12 = 67$ columns and a total of $5280 \times (5 + 1) = 31680$ $1$s.
     
-    至此，我们成功地将智慧珠游戏转化成了一个 **有 $5280$ 行，$67$ 列，共 $31680$ 个 $1$** 的精确覆盖问题．
+    At this point, we have successfully transformed the smart bead game into an exact cover problem with **$5280$ rows, $67$ columns, and a total of $31680$ $1$s**.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/search/code/dlx/dlx_4.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [SUDOKU - Sudoku](https://www.spoj.com/problems/SUDOKU/)
--   [「kuangbin 带你飞」专题三 Dancing Links](https://vjudge.net/contest/65998#overview)
+-   ["kuangbin takes you flying" Topic 3: Dancing Links](https://vjudge.net/contest/65998#overview)
 
-## 外部链接
+## External Links
 
--   [跳跃的舞者，舞蹈链（Dancing Links）算法——求解精确覆盖问题 - 万仓一黍](https://www.cnblogs.com/grenet/p/3145800.html)
--   [搜索：DLX 算法 - 静听风吟．](https://www.cnblogs.com/aininot260/p/9629926.html)
--   [《算法竞赛入门经典 - 训练指南》](https://book.douban.com/subject/35431537/)
+-   [Dancing Links Algorithm for Solving Exact Cover Problems - Wancang Yishu](https://www.cnblogs.com/grenet/p/3145800.html)
+-   [Search: DLX Algorithm - Jingting Fengyin](https://www.cnblogs.com/aininot260/p/9629926.html)
+-   [Training Guide for Algorithm Competitions](https://book.douban.com/subject/35431537/)
 
-## 注释
+## Notes
 
-[^note1]: （两岸用语差异）台灣：直行（column）、橫列（row）
+[^note1]: Terminology differs across regions: in Taiwan, column may be called a vertical row, and row may be called a horizontal row.

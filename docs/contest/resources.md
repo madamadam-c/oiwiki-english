@@ -1,141 +1,141 @@
 author: Suyun514, ChungZH, Enter-tainer, StudyingFather, Konano, JulieSigtuna, GldHkkowo, SukkaW, Rapiz1, Henry-ZHR, H-J-Granger, countercurrent-time, fouzhe, Ir1d, abc1763613206, EndlessCheng, Plaaant6, LUTLJS, ZsgsDesign, CB-X2-Jun, tallnutliu
 
-本页面主要列举了一些与算法竞赛有关的在线评测网站、题目合集、书籍、工具等资源．
+This page mainly lists online judge websites, problem collections, books, tools, and other resources related to algorithm competitions.
 
-## 在线评测平台
+## Online Judge Platforms
 
-在线评测平台（英语：Online Judging System，简称：OJ），一般用于刷题训练，参与和组织比赛，以及用户之间的交流分享．
+Online judging systems (OJ for short) are generally used for problem-solving practice, participating in and organizing contests, and communication and sharing among users.
 
-### 国内
+### Domestic
 
--   [51Nod](https://www.51nod.com/)：有许多值得尝试的数学题和思维题．
--   [Comet OJ](https://www.cometoj.com)：始于 2018 年，旨在为广大算法爱好者提供一个竞技、练习、交流的平台，经常举办原创性的高质量比赛，有丰富的题库．
--   [HDU Online Judge](http://acm.hdu.edu.cn/) 始于 2005 年，杭州电子科技大学在线评测系统，有多校训练的题目．
--   [HydroOJ](https://hydro.ac/)：始于 2021 年，为开源项目 [Hydro](https://hydro.js.org/) 的官方站．用户可以创建自己的 [域](https://hydro.ac/discuss/6087cc44e098b0cd7dde1a0c)，域中可以使用题库、比赛、讨论等主站可以使用的功能．
--   [Judge Duck Online](https://duck.ac/) 基于 [松松松](https://github.com/wangyisong1996) 开发的开源项目 [JudgeDuck](https://github.com/JudgeDuck)，可以将评测程序的运行时间精确到微秒．（题目较少）
--   [LibreOJ](https://loj.ac/)：始于 2017 年．基于开源项目 [Lyrio](https://github.com/lyrio-dev/lyrio)，Libre 取自由之意．题目所有测试数据以及提交的代码均对所有用户开放．目前由 [Menci](https://github.com/Menci) 维护．
--   [CDOJ](https://cdoj.site/d/lutece/)：电子科技大学在线评测系统，始于 2012 年．
--   [洛谷](https://www.luogu.com.cn/)：始于 2013 年，社区群体庞大，各类 OI 的真题和习题较全．提供有偿教育服务．
--   [牛客网](https://www.nowcoder.com/)：始于 2014 年，提供技术类求职备考、社群交流、企业招聘等服务．
--   [OpenJudge](http://openjudge.cn/)：始于 2005 年，由 POJ 团队开发的小组评测平台．
--   [POJ](http://poj.org/)：北京大学在线评测系统，始于 2003 年，国内历史最悠久的 OJ 之一．内有很多英文题，既有基础题，也有值得一试的好题．可以在 [百练](http://bailian.openjudge.cn/practice/) 题库提交 POJ 的题目．
--   [PTA（拼题 A）](https://pintia.cn/)：始于 2016 年，浙江大学衍生的杭州百腾教育科技有限公司产品．
--   [QOJ](https://qoj.ac/)：收集了很多国内外 OI 和 ICPC 竞赛题目，具有训练价值．
--   [Universal Online Judge](https://uoj.ac/)：始于 2014 年，Universal 取通用之意，[项目开源](https://github.com/UniversalOJ/UOJ-System)；[VFK](https://github.com/vfleaking) 的 OJ：多原创比赛题和 CCF/THU 题，难度较高．
--   [Vijos](https://vijos.org/)：始于 2005 年．[服务端](https://github.com/vijos/vj4) 和 [评测机](https://github.com/vijos/jd4) 等项目开源．
--   [WZOI](https://wzoi.cn)：始于 2017 年，由浙江省温州中学维护的 [开源](https://github.com/massimodong/wzoj) 评测系统．
--   [ZOJ](https://zoj.pintia.cn/home)：浙江大学在线评测系统，始于 2001 年．
+-   [51Nod](https://www.51nod.com/): Has many math and thinking problems worth trying.
+-   [Comet OJ](https://www.cometoj.com): Launched in 2018, it aims to provide a platform for competition, practice, and communication for algorithm enthusiasts. It often hosts original high-quality contests and has a rich problem set.
+-   [HDU Online Judge](http://acm.hdu.edu.cn/) was launched in 2005. It is the online judge system of Hangzhou Dianzi University and includes problems from multi-university training contests.
+-   [HydroOJ](https://hydro.ac/): Launched in 2021, it is the official site of the open-source project [Hydro](https://hydro.js.org/). Users can create their own [domains](https://hydro.ac/discuss/6087cc44e098b0cd7dde1a0c), where they can use features available on the main site, such as problem sets, contests, and discussions.
+-   [Judge Duck Online](https://duck.ac/) is based on the open-source project [JudgeDuck](https://github.com/JudgeDuck) developed by [Songsongsong](https://github.com/wangyisong1996). It can measure the running time of judging programs accurately to the microsecond. (There are relatively few problems.)
+-   [LibreOJ](https://loj.ac/): Launched in 2017. Based on the open-source project [Lyrio](https://github.com/lyrio-dev/lyrio), where Libre means freedom. All test data for problems and submitted code are open to all users. It is currently maintained by [Menci](https://github.com/Menci).
+-   [CDOJ](https://cdoj.site/d/lutece/): The online judge system of the University of Electronic Science and Technology of China, launched in 2012.
+-   [Luogu](https://www.luogu.com.cn/): Launched in 2013, it has a large community and relatively complete sets of real OI contest problems and exercises. It provides paid education services.
+-   [Nowcoder](https://www.nowcoder.com/): Launched in 2014, it provides services such as technical job-hunting preparation, community communication, and enterprise recruitment.
+-   [OpenJudge](http://openjudge.cn/): Launched in 2005, it is a group judging platform developed by the POJ team.
+-   [POJ](http://poj.org/): The online judge system of Peking University, launched in 2003, and one of the oldest OJs in China. It contains many English problems, including both basic problems and good problems worth trying. POJ problems can also be submitted in the [Bailian](http://bailian.openjudge.cn/practice/) problem set.
+-   [PTA (Pintia A)](https://pintia.cn/): Launched in 2016, it is a product of Hangzhou Baiteng Education Technology Co., Ltd., derived from Zhejiang University.
+-   [QOJ](https://qoj.ac/): Collects many OI and ICPC contest problems from China and abroad, and is valuable for training.
+-   [Universal Online Judge](https://uoj.ac/): Launched in 2014, where Universal means general-purpose. The [project is open-source](https://github.com/UniversalOJ/UOJ-System). [VFK](https://github.com/vfleaking)'s OJ has many original contest problems and CCF/THU problems, with relatively high difficulty.
+-   [Vijos](https://vijos.org/): Launched in 2005. Projects such as the [server](https://github.com/vijos/vj4) and [judge](https://github.com/vijos/jd4) are open-source.
+-   [WZOI](https://wzoi.cn): Launched in 2017, it is an [open-source](https://github.com/massimodong/wzoj) judging system maintained by Wenzhou High School in Zhejiang Province.
+-   [ZOJ](https://zoj.pintia.cn/home): The online judge system of Zhejiang University, launched in 2001.
 
-### 国外
+### International
 
--   [AizuOJ](https://onlinejudge.u-aizu.ac.jp)：日本会津大学在线评测系统，始于 2004 年．包含日本若干高中和大学编程比赛的题目，自带编程/数据结构/算法的入门课程．
--   [AtCoder](https://atcoder.jp/)：日本 OJ，日文版里会有日本高校的比赛，英文内不会显示．题目有趣，质量较高．
--   [CodeChef](https://codechef.com/)：印度 OJ，周期举办比赛．系统基于 SPOJ 的 Sphere Engine．
--   [Codeforces](https://codeforces.com/)：俄罗斯 OJ，始于 2010 年，创始人是 [Mike Mirzayanov](https://www.linkedin.com/in/mike-mirzayanov-31772a93/)．有多种系列的比赛，并支持个人出题、申请组织比赛．题目质量较高．
--   [CSES](https://cses.fi/problemset/)(Code Submission Evaluation System)，按专题划分的题库，[旨在](https://cses.fi/problemset/text/2433) 成为综合的高质量题库，主要由 [Competitive Programmer’s Handbook](https://cses.fi/book/book.pdf) 作者 Antti Laaksonen 开发，始于 2013 年．
+-   [AizuOJ](https://onlinejudge.u-aizu.ac.jp): The online judge system of the University of Aizu in Japan, launched in 2004. It contains problems from several Japanese high school and university programming contests, and includes introductory courses on programming, data structures, and algorithms.
+-   [AtCoder](https://atcoder.jp/): A Japanese OJ. Contests from Japanese universities appear in the Japanese version but are not shown in the English version. The problems are interesting and of high quality.
+-   [CodeChef](https://codechef.com/): An Indian OJ that hosts contests periodically. The system is based on SPOJ's Sphere Engine.
+-   [Codeforces](https://codeforces.com/): A Russian OJ launched in 2010, founded by [Mike Mirzayanov](https://www.linkedin.com/in/mike-mirzayanov-31772a93/). It has multiple contest series and supports individual problem setting and applications to organize contests. Its problems are of high quality.
+-   [CSES](https://cses.fi/problemset/)(Code Submission Evaluation System), a problem set divided by topic. It [aims](https://cses.fi/problemset/text/2433) to become a comprehensive high-quality problem set. It was mainly developed by Antti Laaksonen, author of [Competitive Programmer’s Handbook](https://cses.fi/book/book.pdf), and launched in 2013.
 -   [CS Academy](https://csacademy.com/)
--   [DMOJ](https://dmoj.ca/) 加拿大开源的 OJ，语言支持广；题库是各大比赛的存档，也有定期自行举办的比赛．
--   [HackerRank](https://www.hackerrank.com/) 有很多比赛
--   [Kattis](https://open.kattis.com/) 题库主要包含类似 ICPC 比赛的题目；根据用户解题情况评定用户等级，推荐适合该用户水平的 trivial/easy/medium/hard 四类难度的题目，其中题目难度采用类 [ELO 等级分](https://zh.wikipedia.org/wiki/%E7%AD%89%E7%BA%A7%E5%88%86) 系统来评估．
--   [LeetCode](https://leetcode.com/) 码农面试刷题网站，有中文分站：[LeetCode China](https://leetcode.cn)．
+-   [DMOJ](https://dmoj.ca/) is a Canadian open-source OJ with broad language support. Its problem set archives problems from major contests, and it also hosts regular contests of its own.
+-   [HackerRank](https://www.hackerrank.com/) has many contests.
+-   [Kattis](https://open.kattis.com/) has a problem set mainly containing ICPC-like problems. It rates users according to solved problems and recommends problems in four difficulty classes, trivial/easy/medium/hard, suitable for the user's level. Problem difficulty is evaluated using an [ELO rating](https://zh.wikipedia.org/wiki/%E7%AD%89%E7%BA%A7%E5%88%86)-like system.
+-   [LeetCode](https://leetcode.com/) is a problem-practice website for programmer interviews. It has a Chinese site: [LeetCode China](https://leetcode.cn).
 -   [Light OJ](https://lightoj.com)
--   [Open Trains](https://opentrains.opencup.org/) 俄罗斯 Open Cup 比赛的训练平台，基于 [ejudge](https://ejudge.ru/) 开源系统搭建，支持虚拟比赛；题库包含历年 Open Cup 赛题以及 Petrozavodsk 训练营的题目．
--   [SPOJ](http://www.spoj.com) 始于 2003 年，其后台系统 [Sphere Engine](https://sphere-engine.com/) 于 2008 年商业化；支持题目点赞和标签功能．
--   [TopCoder](https://www.topcoder.com/) 始于 2001 年，其 [竞技编程社区](https://www.topcoder.com/community/competitive-programming/) 有很多比赛；目前主营业务是技术众包．
--   [TimusOJ](http://acm.timus.ru/) 始于 2000 年，由 Ural Federal University 开发，拥有俄罗斯最大的在线评测题库，题目主要来自乌拉尔联邦大学校赛、乌拉尔锦标赛、ICPC 乌拉尔区域赛、以及 Petrozavodsk 训练营．
--   Online Judge（前 [UVaOJ](https://uva.onlinejudge.org/)）始于 1995 年，国际成名最早的 OJ，创始人是西班牙 University of Valladolid (UVa) 的 Miguel Ángel Revilla 教授；由于 [Revilla 教授于 2018 年不幸离世](https://www.elnortedecastilla.es/valladolid/muere-profesor-miguel-20180402225739-nt.html)，且 Valladolid 大学终止维护，UVaOJ 自 2019 年 7 月起更名为 Online Judge．现在该平台的维护者 [正在 GitHub 上构建新的评测平台](https://github.com/TheOnlineJudge/ojudge)．
--   [Yandex](https://contest.yandex.ru/) 存档了近几年的全俄罗斯信息学奥赛．
+-   [Open Trains](https://opentrains.opencup.org/) is a training platform for Russia's Open Cup contests. It is built on the open-source [ejudge](https://ejudge.ru/) system and supports virtual contests. Its problem set contains past Open Cup problems and problems from Petrozavodsk training camps.
+-   [SPOJ](http://www.spoj.com) was launched in 2003. Its backend system [Sphere Engine](https://sphere-engine.com/) was commercialized in 2008. It supports problem upvotes and tags.
+-   [TopCoder](https://www.topcoder.com/) was launched in 2001. Its [competitive programming community](https://www.topcoder.com/community/competitive-programming/) has many contests. Its current main business is technology crowdsourcing.
+-   [TimusOJ](http://acm.timus.ru/) was launched in 2000 and developed by Ural Federal University. It has Russia's largest online judge problem set, with problems mainly from Ural Federal University school contests, Ural championships, ICPC Ural regional contests, and Petrozavodsk training camps.
+-   Online Judge (formerly [UVaOJ](https://uva.onlinejudge.org/)) was launched in 1995 and was the earliest internationally famous OJ. Its founder was Professor Miguel Ángel Revilla of the University of Valladolid (UVa) in Spain. Because [Professor Revilla unfortunately passed away in 2018](https://www.elnortedecastilla.es/valladolid/muere-profesor-miguel-20180402225739-nt.html) and the University of Valladolid stopped maintaining it, UVaOJ was renamed Online Judge in July 2019. The platform's maintainers are now [building a new judging platform on GitHub](https://github.com/TheOnlineJudge/ojudge).
+-   [Yandex](https://contest.yandex.ru/) archives the All-Russian Olympiad in Informatics from recent years.
 
-## 教程资料
+## Tutorials
 
 -   [**OI Wiki**](https://oi-wiki.org)
--   [Codeforces 上网友整理的一份教程合集](https://codeforces.com/blog/entry/125623)
--   [英文版 E-Maxx 算法教程](https://cp-algorithms.com/)
--   [演算法筆記](https://web.ntnu.edu.tw/~algo/)：台湾师范大学总结的教程
--   [如何为 ACM-ICPC 做准备？- geeksforgeeks](https://www.geeksforgeeks.org/how-to-prepare-for-acm-icpc/)
--   [Topcoder 整理的教程](https://www.topcoder.com/community/competitive-programming/tutorials/)
--   [校招面试指南](https://github.com/jwasham/coding-interview-university)
--   [由 hzwer 收集整理自互联网的课件](https://github.com/hzwer/shareOI)
--   [Trinkle23897 的课件](https://github.com/Trinkle23897/oi_slides)
--   [huzecong 的课件](https://github.com/huzecong/oi-slides)
--   [Open Data Structure](https://opendatastructures.org/)：内含众多数据结构讲稿
+-   [A tutorial collection compiled by Codeforces users](https://codeforces.com/blog/entry/125623)
+-   [English E-Maxx algorithm tutorials](https://cp-algorithms.com/)
+-   [Algorithm Notes](https://web.ntnu.edu.tw/~algo/): Tutorials summarized by National Taiwan Normal University
+-   [How to Prepare for ACM-ICPC? - GeeksforGeeks](https://www.geeksforgeeks.org/how-to-prepare-for-acm-icpc/)
+-   [Tutorials compiled by Topcoder](https://www.topcoder.com/community/competitive-programming/tutorials/)
+-   [Coding Interview University](https://github.com/jwasham/coding-interview-university)
+-   [Courseware collected from the internet by hzwer](https://github.com/hzwer/shareOI)
+-   [Trinkle23897's courseware](https://github.com/Trinkle23897/oi_slides)
+-   [huzecong's courseware](https://github.com/huzecong/oi-slides)
+-   [Open Data Structure](https://opendatastructures.org/): Contains many data structure lecture notes
 -   [IOI Syllabus (2020)](https://ioinformatics.org/files/ioi-syllabus-2020.pdf)
 
-## 书籍
+## Books
 
-本列表内注明了书籍作者，译者未列其中．因无重名书籍且易于寻找，故不标明 ISBN．
+This list indicates book authors, but translators are not included. Since there are no duplicate book titles and the books are easy to find, ISBNs are not listed.
 
--   刘汝佳系列
-    -   《算法竞赛入门经典》（紫）
-        -   [第一版 配套资源仓库（镜像）](https://github.com/sukhoeing/aoapc-book/)
-        -   [第二版 配套资源仓库](https://github.com/aoapc-book/aoapc-bac2nd)
-        -   [第二版 习题选解](https://github.com/sukhoeing/aoapc-bac2nd-keys)
-    -   《算法竞赛入门经典 - 训练指南》（白/蓝）- 陈锋 合著
-    -   《算法艺术与信息学竞赛》（蓝/黑）
--   《算法竞赛进阶指南》- 李煜东
-    -   [配套资源仓库](https://github.com/lydrainbowcat/tedukuri)
--   《啊哈算法》- 纪磊
-    -   面向初学者或有初步兴趣的人群，有幽默配图．
--   CCF 中学生计算机程序设计系列
-    -   《CCF 中学生计算机程序设计 - 入门篇》- 陈颖，邱桂香，朱全民
-        -   [建议配合勘误使用．](https://zhuanlan.zhihu.com/p/85215961)
-    -   《CCF 中学生计算机程序设计 - 基础篇》- 江涛，宋新波，朱全民
-    -   《CCF 中学生计算机程序设计 - 提高篇》- 徐先友，朱全民
-    -   《CCF 中学生计算机程序设计 - 专业篇》（未出）
--   深入浅出系列
-    -   《深入浅出程序设计竞赛 - 基础篇》- 洛谷网校教研组
--   一本通系列
-    -   《信息学奥赛一本通》- 董永建
-    -   《信息学奥赛一本通 - 提高篇》- 黄新军，董永建
-        -   [建议选择性阅读．](https://www.zhihu.com/question/292926937)
-    -   《信息学奥赛一本通 - 高手训练》- 黄新军，董永建
--   其他由国内著名 OI 教练写的教材
-    -   《信息学奥赛课课通》- 林厚从
-    -   《聪明人的游戏：信息学探秘 - 提高篇》- 江涛，陈茂贤
-    -   《计算概论：C++ 编程与信息学竞赛入门》- 金靖
-    -   《算法竞赛宝典》- 张新华
--   ACM 国际大学生程序设计竞赛系列
-    -   《ACM 国际大学生程序设计竞赛系列 知识与入门》- 俞勇
-    -   《ACM 国际大学生程序设计竞赛系列 算法与实现》- 俞勇
-    -   《ACM 国际大学生程序设计竞赛系列 题目与解读》- 俞勇
--   《算法竞赛入门到进阶》- 罗勇军，郭卫斌
--   《算法导论》第三版 - Thomas H.Cormen/Charles E.Leiserson/Ronald L.Rivest/Clifford Stein  
-    黑书，大学经典教材．英文版原名*Introduction to Algorithms*
-    -   [答案解析 (English)](https://github.com/walkccc/CLRS)
--   《具体数学》第二版 - Ronald L. Graham/Donald E. Knuth/Oren Patashnik  
-    英文版原名*Concrete Mathematics*
--   《组合数学》第五版 - Richard A.Brualdi  
-    英文版原名*Introductory Combinatorics*
--   《挑战程序设计竞赛》全套 - 秋叶拓哉，岩田阳一，北川宜稔
-    通俗易懂．
--   《算法概论》- Sanjoy Dasgupta/Christos Papadimitriou/Umesh Vazirani
-    -   提纲挚领，但内容较少．
--   [Legend-K 的数据结构与算法的笔记](http://web.archive.org/web/20180826111306/http://www.legend-k.com/Algorithm/Algorithm.pdf)
+-   Liu Rujia series
+    -   Introduction to Algorithmic Contests (purple)
+        -   [First edition companion resources repository (mirror)](https://github.com/sukhoeing/aoapc-book/)
+        -   [Second edition companion resources repository](https://github.com/aoapc-book/aoapc-bac2nd)
+        -   [Second edition selected exercise solutions](https://github.com/sukhoeing/aoapc-bac2nd-keys)
+    -   Introduction to Algorithmic Contests - Training Guide (white/blue) - co-authored by Chen Feng
+    -   The Art of Algorithms and Informatics Competitions (blue/black)
+-   Advanced Guide to Algorithmic Contests - Li Yudong
+    -   [Companion resources repository](https://github.com/lydrainbowcat/tedukuri)
+-   Aha! Algorithms - Ji Lei
+    -   For beginners or people with initial interest, with humorous illustrations.
+-   CCF series on computer programming for middle school students
+    -   CCF Computer Programming for Middle School Students - Introductory Volume - Chen Ying, Qiu Guixiang, Zhu Quanmin
+        -   [Recommended for use together with the errata.](https://zhuanlan.zhihu.com/p/85215961)
+    -   CCF Computer Programming for Middle School Students - Basic Volume - Jiang Tao, Song Xinbo, Zhu Quanmin
+    -   CCF Computer Programming for Middle School Students - Advanced Volume - Xu Xianyou, Zhu Quanmin
+    -   CCF Computer Programming for Middle School Students - Specialized Volume (unpublished)
+-   In-Depth and Easy-to-Understand series
+    -   In-Depth and Easy-to-Understand Programming Contests - Basic Volume - Luogu Online School Teaching and Research Group
+-   Yibentong series
+    -   Informatics Olympiad Yibentong - Dong Yongjian
+    -   Informatics Olympiad Yibentong - Advanced Volume - Huang Xinjun, Dong Yongjian
+        -   [Recommended for selective reading.](https://www.zhihu.com/question/292926937)
+    -   Informatics Olympiad Yibentong - Expert Training - Huang Xinjun, Dong Yongjian
+-   Other textbooks written by well-known domestic OI coaches
+    -   Informatics Olympiad Course Companion - Lin Houcong
+    -   A Game for Smart People: Exploring Informatics - Advanced Volume - Jiang Tao, Chen Maoxian
+    -   Introduction to Computing: C++ Programming and Informatics Competition Primer - Jin Jing
+    -   Algorithmic Contest Handbook - Zhang Xinhua
+-   ACM International Collegiate Programming Contest series
+    -   ACM International Collegiate Programming Contest Series: Knowledge and Introduction - Yu Yong
+    -   ACM International Collegiate Programming Contest Series: Algorithms and Implementation - Yu Yong
+    -   ACM International Collegiate Programming Contest Series: Problems and Explanations - Yu Yong
+-   From Introduction to Advancement in Algorithmic Contests - Luo Yongjun, Guo Weibin
+-   Introduction to Algorithms, Third Edition - Thomas H.Cormen/Charles E.Leiserson/Ronald L.Rivest/Clifford Stein
+    Black book, a classic university textbook. The original English title is *Introduction to Algorithms*
+    -   [Solution analysis (English)](https://github.com/walkccc/CLRS)
+-   Concrete Mathematics, Second Edition - Ronald L. Graham/Donald E. Knuth/Oren Patashnik
+    The original English title is *Concrete Mathematics*
+-   Introductory Combinatorics, Fifth Edition - Richard A.Brualdi
+    The original English title is *Introductory Combinatorics*
+-   Complete Challenge Book series - Takuya Akiba, Yoichi Iwata, Masatoshi Kitagawa
+    Easy to understand.
+-   Algorithms - Sanjoy Dasgupta/Christos Papadimitriou/Umesh Vazirani
+    -   Concise and focused, but relatively short.
+-   [Legend-K's notes on data structures and algorithms](http://web.archive.org/web/20180826111306/http://www.legend-k.com/Algorithm/Algorithm.pdf)
 -   [acm-cheat-sheet](https://github.com/soulmachine/acm-cheat-sheet)
 -   [Competitive Programmer’s Handbook](https://cses.fi/book/book.pdf)- Antti Laaksonen
-    -   作者花了三年个人时间完成．面向算法竞赛，覆盖面广，详略得当．
--   [《挑战编程：程序设计竞赛训练手册》](http://acm.cs.buap.mx/downloads/Programming_Challenges.pdf)- Steven S. Skiena/Miguel A. Revilla
-    -   由西班牙 University of Valladolid 的两位教授编写．
-    -   阅读 [经过翻译的在线电子版图书](http://www.tup.com.cn/upload/books/yz/030502-01.pdf)
-    -   购买 [纸质版图书](http://www.tup.tsinghua.edu.cn/booksCenter/book_03050201.html)
--   《C++，挑战编程——程序设计竞赛进阶训练指南》- 邱秋
-    -   [作者博客的介绍页](https://blog.csdn.net/metaphysis/article/details/90288252)
--   [《数据结构（C++ 语言版 第 3 版）》- 邓俊辉](https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm)
-    -   建议随配套课程、配套课件和习题解析一起使用．
--   《计算几何：算法与应用》- 伯格（Berg,M.D.）著，邓俊辉 译  
-    英文版原名*Computational Geometry: Algorithms and Applications*
+    -   The author spent three years of personal time completing it. It targets algorithm competitions, with broad coverage and appropriate levels of detail.
+-   [Programming Challenges: The Programming Contest Training Manual](http://acm.cs.buap.mx/downloads/Programming_Challenges.pdf)- Steven S. Skiena/Miguel A. Revilla
+    -   Written by two professors from the University of Valladolid in Spain.
+    -   Read the [translated online e-book](http://www.tup.com.cn/upload/books/yz/030502-01.pdf)
+    -   Buy the [paper book](http://www.tup.tsinghua.edu.cn/booksCenter/book_03050201.html)
+-   C++, Challenge Programming: Advanced Training Guide for Programming Contests - Qiu Qiu
+    -   [Introduction page on the author's blog](https://blog.csdn.net/metaphysis/article/details/90288252)
+-   [Data Structures (C++ Language Edition, 3rd Edition) - Deng Junhui](https://dsa.cs.tsinghua.edu.cn/~deng/ds/dsacpp/index.htm)
+    -   Recommended for use together with the companion course, courseware, and exercise explanations.
+-   Computational Geometry: Algorithms and Applications - written by Berg (Berg,M.D.), translated by Deng Junhui
+    The original English title is *Computational Geometry: Algorithms and Applications*
 -   [《Handbook of Data Structures and Applications, 2nd Edition》](https://www.routledge.com/Handbook-of-Data-Structures-and-Applications/Mehta-Sahni/p/book/9780367572006)
-    -   由许多著名教授如 Sartaj Sahni、Hanan Samet、Weiss 等合著，内容较多，建议有一定基础的数据结构爱好者阅读．
--   [算法详解 系列](https://www.algorithmsilluminated.org/)
-    -   面向有语言基础的初学者的教材，建议同配套课程一起使用
+    -   Co-authored by many famous professors such as Sartaj Sahni, Hanan Samet, and Weiss. It contains a lot of content and is recommended for data structure enthusiasts with some foundation.
+-   [Algorithms Illuminated series](https://www.algorithmsilluminated.org/)
+    -   Textbooks for beginners with a programming-language foundation; recommended for use together with the companion courses
     -   《Algorithms Illuminated, Part 1: The Basics》- Tim Roughgarden
-    -   《算法详解，卷 1：算法基础》- 徐波 译
+    -   Algorithms Illuminated, Volume 1: The Basics - translated by Xu Bo
     -   《Algorithms Illuminated, Part 2: Graph Algorithms and Data Structures》- Tim Roughgarden
-    -   《算法详解，卷 2：图算法和数据结构》- 徐波 译
+    -   Algorithms Illuminated, Volume 2: Graph Algorithms and Data Structures - translated by Xu Bo
     -   《Algorithms Illuminated, Part 3: Greedy Algorithms and Dynamic Programming》- Tim Roughgarden
     -   《Algorithms Illuminated, Part 4: Algorithms for NP-Hard Problems》- Tim Roughgarden
 
-## 课程
+## Courses
 
 -   [CMU 15-295 (2025)](https://contest.cs.cmu.edu/295/)
 -   [LSU: CSC 2700 (2024)](http://isaac.lsu.edu/class/)
@@ -145,43 +145,43 @@ author: Suyun514, ChungZH, Enter-tainer, StudyingFather, Konano, JulieSigtuna, G
 -   [Stonybrook: CSE 392 (2012)](https://www3.cs.stonybrook.edu/~skiena/392/)
 -   [UBC: CPSC 490 (2021)](https://www.students.cs.ubc.ca/~cs-490/2019W2/problem-solving/)
 -   [UCF: COP 4516 (2025)](https://www.cs.ucf.edu/~dmarino/progcontests/cop4516/spr2025/)
--   [THU: 数据结构](https://www.xuetangx.com/course/THU08091000384/)
--   [THU: 计算几何](https://www.xuetangx.com/course/THU08091000327/)
+-   [THU: Data Structures](https://www.xuetangx.com/course/THU08091000384/)
+-   [THU: Computational Geometry](https://www.xuetangx.com/course/THU08091000327/)
 -   [StanfordOnline: Algorithms: Design and Analysis](https://www.algorithmsilluminated.org/)
 
-## 工具
+## Tools
 
--   [《100 个 gdb 小技巧》](https://github.com/hellogcc/100-gdb-tips)
+-   [100 gdb Tips](https://github.com/hellogcc/100-gdb-tips)
 -   [Algorithm Visualizer](http://algorithm-visualizer.org)
--   [cppreference](https://zh.cppreference.com/w/)：一个全面的 C 和 C++ 语言及其标准库的在线参考资料
--   [Compiler Explorer](https://godbolt.org)：在线查看编译后代码块对应的汇编语句，支持选择不同的编译器
--   [C++ Insights](https://cppinsights.io/)：以编译器的视角去查看你的 C++ 源码
--   [Inverse Symbolic Calculator](http://wayback.cecm.sfu.ca/projects/ISC/ISCmain.html)：实数反查表达式，适用于反推常数
--   [$\rm\LaTeX$ 手写符号识别](http://detexify.kirelabs.org/classify.html)
--   [$\rm\LaTeX$ 数学公式参考](http://www.mohu.org/info/symbols/symbols.htm)
--   [Mathpix](https://mathpix.com/)：截图转 $\rm\LaTeX{}$
--   [OEIS](https://oeis.org)：整数数列搜索引擎
--   [Python Tutor](https://pythontutor.com/): 代码执行过程可视化
--   [Quick C++ Benchmark](https://quick-bench.com/)：在线比较两个及以上函数的运行速度
--   [Try It Online](https://tio.run)：在线运行 600+ 种语言的代码，支持 IO 交互，超时 60s，可以分享代码
--   [图论画板](https://csacademy.com/app/graph_editor/) 与 [GraphViz](http://www.graphviz.org/)
--   [uDebug](https://www.udebug.com)：提供一些 OJ 题目的调试辅助
--   [USF](https://www.cs.usfca.edu/~galles/visualization/) 与 [VisuAlgo](https://visualgo.net/zh)：算法可视化
--   [Wandbox](https://wandbox.org/): 在线代码运行，支持 30+ 种语言，可以分享代码，支持不同编译器版本
--   [Wolfram Alpha](https://www.wolframalpha.com/)：可以计算包括数学、科学技术、社会文化……等多个主题的问题
+-   [cppreference](https://zh.cppreference.com/w/): A comprehensive online reference for the C and C++ languages and their standard libraries
+-   [Compiler Explorer](https://godbolt.org): View the assembly statements corresponding to compiled code blocks online, with support for choosing different compilers
+-   [C++ Insights](https://cppinsights.io/): View your C++ source code from the compiler's perspective
+-   [Inverse Symbolic Calculator](http://wayback.cecm.sfu.ca/projects/ISC/ISCmain.html): Reverse-lookup expressions for real numbers, useful for reverse-engineering constants
+-   [$\rm\LaTeX$ handwritten symbol recognition](http://detexify.kirelabs.org/classify.html)
+-   [$\rm\LaTeX$ math symbol reference](http://www.mohu.org/info/symbols/symbols.htm)
+-   [Mathpix](https://mathpix.com/): Convert screenshots to $\rm\LaTeX{}$
+-   [OEIS](https://oeis.org): Integer sequence search engine
+-   [Python Tutor](https://pythontutor.com/): Visualization of code execution
+-   [Quick C++ Benchmark](https://quick-bench.com/): Compare the running speed of two or more functions online
+-   [Try It Online](https://tio.run): Run code in 600+ languages online, with support for interactive IO, a 60s timeout, and code sharing
+-   [Graph Editor](https://csacademy.com/app/graph_editor/) and [GraphViz](http://www.graphviz.org/)
+-   [uDebug](https://www.udebug.com): Provides debugging assistance for some OJ problems
+-   [USF](https://www.cs.usfca.edu/~galles/visualization/) and [VisuAlgo](https://visualgo.net/zh): Algorithm visualization
+-   [Wandbox](https://wandbox.org/): Run code online, with support for 30+ languages, code sharing, and different compiler versions
+-   [Wolfram Alpha](https://www.wolframalpha.com/): Can calculate problems from many topics, including mathematics, science and technology, society and culture, and more
 
-## 题集和资源
+## Problem Sets and Resources
 
--   [POJ 训练计划](https://blog.csdn.net/skywalkert/article/details/46594541)
+-   [POJ training plan](https://blog.csdn.net/skywalkert/article/details/46594541)
 -   [USACO](http://train.usaco.org/usacogate)
--   [洛谷题单](https://www.luogu.com.cn/training/list)
--   [-Morass- 贴在 Codeforces 上的一份题单](https://codeforces.com/blog/entry/55274)
--   Codeforces 社区高质量算法文章合集 [之一](https://codeforces.com/blog/entry/57282)  [之二](https://codeforces.com/blog/entry/13529)
--   [北京大学 ICPC 暑期课课件例题](https://vjudge.net/article/446)
--   [北京大学 ICPC 暑期课课件](https://lib-pku.github.io/#acm-icpc%E6%9A%91%E6%9C%9F%E8%AF%BE)
+-   [Luogu problem lists](https://www.luogu.com.cn/training/list)
+-   [-Morass- problem list posted on Codeforces](https://codeforces.com/blog/entry/55274)
+-   High-quality algorithm article collections from the Codeforces community [part 1](https://codeforces.com/blog/entry/57282)  [part 2](https://codeforces.com/blog/entry/13529)
+-   [Peking University ICPC summer courseware example problems](https://vjudge.net/article/446)
+-   [Peking University ICPC summer courseware](https://lib-pku.github.io/#acm-icpc%E6%9A%91%E6%9C%9F%E8%AF%BE)
 -   [GitHub.com:OI-wiki/libs](https://github.com/OI-wiki/libs)
--   [多校联合训练](http://acm.hdu.edu.cn) 关键词：`Multi-University Training Contest`
+-   [Multi-University Training](http://acm.hdu.edu.cn) keyword: `Multi-University Training Contest`
 -   [Vjudge](https://vjudge.net/)
 -   [Project Euler](https://projecteuler.net/)
--   [Junior Training Sheet](https://goo.gl/unDETI)：对新手友好的训练计划
--   [USACO Guide](https://usaco.guide/)：针对 USACO 的各个级别分类的训练资源
+-   [Junior Training Sheet](https://goo.gl/unDETI): A beginner-friendly training plan
+-   [USACO Guide](https://usaco.guide/): Training resources categorized by USACO level

@@ -18,8 +18,8 @@ int qpow(int a, int b) {
 
 int A[MAXN][MAXN], B[MAXN][MAXN], t[MAXN][MAXN], id[MAXN];
 
-// 高斯消元 O(n^3)
-// 在传入 B 时表示计算逆矩阵, 传入 nullptr 则只需计算矩阵的秩
+// Gaussian elimination O(n^3)
+// Passing B means computing the inverse matrix; passing nullptr means only computing the matrix rank
 void Gauss(int A[][MAXN], int B[][MAXN], int n) {
   if (B) {
     memset(B, 0, sizeof(t));
@@ -68,11 +68,11 @@ void Gauss(int A[][MAXN], int B[][MAXN], int n) {
 
 bool row_marked[MAXN] = {false}, col_marked[MAXN] = {false};
 
-int sub_n;  // 极大满秩子矩阵的大小
+int sub_n;  // Size of the maximal full-rank submatrix
 
-// 消去一行一列 O(n^2)
+// Eliminate one row and one column O(n^2)
 void eliminate(int r, int c) {
-  row_marked[r] = col_marked[c] = true;  // 已经被消掉
+  row_marked[r] = col_marked[c] = true;  // Already eliminated
 
   int inv = qpow(B[r][c], p - 2);
 
@@ -86,30 +86,30 @@ void eliminate(int r, int c) {
     }
 }
 
-int vertices[MAXN], girl[MAXN];  // girl 是匹配点, 用来输出方案
+int vertices[MAXN], girl[MAXN];  // girl is the matched vertex, used to output the solution
 
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   auto rng = mt19937(random_device{}());
 
   int n, m;
-  cin >> n >> m;  // 点数和边数
+  cin >> n >> m;  // Number of vertices and edges
 
   while (m--) {
     int x, y;
     cin >> x >> y;
     A[x][y] = rng() % p;
-    A[y][x] = -A[x][y];  // Tutte 矩阵
+    A[y][x] = -A[x][y];  // Tutte matrix
   }
 
   for (int i = 1; i <= n; i++)
-    id[i] = i;  // 输出方案用的，因为高斯消元的时候会交换列
+    id[i] = i;  // Used for output, because Gaussian elimination swaps columns
   memcpy(t, A, sizeof(t));
 
   Gauss(A, nullptr, n);
 
   for (int i = 1; i <= n; i++)
-    if (A[id[i]][id[i]]) vertices[++sub_n] = i;  // 找出一个极大满秩子矩阵
+    if (A[id[i]][id[i]]) vertices[++sub_n] = i;  // Find a maximal full-rank submatrix
 
   for (int i = 1; i <= sub_n; i++)
     for (int j = 1; j <= sub_n; j++) A[i][j] = t[vertices[i]][vertices[j]];
@@ -120,8 +120,8 @@ int main() {
     if (!girl[vertices[i]])
       for (int j = i + 1; j <= sub_n; j++)
         if (!girl[vertices[j]] && t[vertices[i]][vertices[j]] && B[j][i]) {
-          // 注意上面那句 if 的写法, 现在 t 是邻接矩阵的备份，
-          // 逆矩阵 j 行 i 列不为 0 当且仅当这条边可行
+          // Note the form of the if above. Now t is a backup of the adjacency matrix.
+          // Entry (j, i) of the inverse matrix is nonzero if and only if this edge is feasible.
           girl[vertices[i]] = vertices[j];
           girl[vertices[j]] = vertices[i];
 

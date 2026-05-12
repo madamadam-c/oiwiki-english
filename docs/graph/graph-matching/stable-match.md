@@ -1,148 +1,148 @@
-## 引入
+## Introduction
 
-**稳定匹配问题**（stable matching problem）是组合优化和合作博弈论中的经典问题．相较于传统的图论匹配问题，稳定匹配引入了个体偏好和稳定性的限制，这使得算法设计更多地依赖于偏好顺序而非单纯的图结构．稳定匹配问题的模型中，每个个体对潜在的匹配对象具有偏好，而稳定匹配问题希望能在它们之间建立一种稳定的匹配关系．一个稳定的匹配中，不存在任何一组个体，会因为能得到更优的选择而合谋偏离当前的匹配结果．稳定匹配及其相关问题广泛地应用于劳动力市场、学校录取、医疗资源分配等场景中．
+The **stable matching problem** is a classic problem in combinatorial optimization and cooperative game theory. Compared to traditional graph theory matching problems, stable matching introduces individual preferences and stability constraints, which makes algorithm design rely more on preference orderings than on pure graph structure. In the stable matching problem model, each individual has preferences over potential match partners, and the stable matching problem seeks to establish a stable matching among them. In a stable matching, there is no group of individuals who would collude to deviate from the current matching because they could get better options. Stable matching and related problems are widely used in labor markets, school admissions, medical resource allocation, and other scenarios.
 
-算法竞赛中最常出现的稳定匹配问题是双边市场的一对一匹配，即稳定婚姻问题．本文将重点介绍稳定婚姻问题及其算法．
+The stable matching problem most frequently encountered in competitive programming is one-to-one matching in two-sided markets, namely the stable marriage problem. This article will focus on introducing the stable marriage problem and its algorithms.
 
-## 稳定婚姻问题
+## Stable Marriage Problem
 
-稳定婚姻问题是最早研究的稳定匹配问题．类似于二分图匹配，它可以描述为婚恋市场上的匹配问题：假设有男士和女士若干，每个人都对异性有一组偏好顺序，目标是找到一种匹配方式，使得没有一对男女更愿意抛弃各自的匹配对象而选择彼此．
+The stable marriage problem is the earliest studied stable matching problem. Similar to bipartite graph matching, it can be described as a matching problem in the marriage market: suppose there are several men and women, each having a strict preference ordering over members of the opposite sex. The goal is to find a matching such that there is no man and woman who would rather abandon their current partners and choose each other.
 
-### 问题描述
+### Problem Description
 
-匹配市场由若干男士 $M$ 和若干女士 $W$ 构成．每个人都对异性有严格的偏好顺序：
+The matching market consists of several men $M$ and several women $W$. Each person has a strict preference ordering over the opposite sex:
 
--   对于每位男士 $m\in M$，都存在集合 $W\cup\{m\}$ 上一个严格的全序 $\preceq_m$；
--   对于每位女士 $w\in W$，都存在集合 $M\cup\{w\}$ 上一个严格的全序 $\preceq_w$．
+-   For each man $m\in M$, there exists a strict total order $\preceq_m$ on the set $W\cup\{m\}$.
+-   For each woman $w\in W$, there exists a strict total order $\preceq_w$ on the set $M\cup\{w\}$.
 
-除了在异性之间相互比较之外，每个人还会将自身加入到这个偏好顺序中．这表示，这个人只会接受与排在自身前面的异性匹配；这些异性称为 **可接受的**（acceptable）．显然，不可接受的异性的偏好顺序是无足轻重的；原则上，只需要给出可接受的异性之间的偏好顺序即可．所以，这些存在不可接受异性的偏好也称为列表不完整的偏好（preferences with incomplete lists）．
+In addition to comparing with members of the opposite sex, each person also includes themselves in this preference ordering. This means a person will only accept matching with members of the opposite sex who are ranked higher than themselves; these members are called **acceptable**. Obviously, the preference ordering over unacceptable members of the opposite sex is irrelevant; in principle, we only need to give the preference ordering among acceptable members. Therefore, preferences that include unacceptable members are also called **preferences with incomplete lists**.
 
-???+ example "例子"
-    假设 $m$ 是一位男士，$w_1,w_2,w_3$ 是三位女士，且有偏好关系 $w_1\prec_m m \prec_m w_2\prec_m w_3$ 成立．那么，男士 $m$ 相对于和女士 $w_1$ 匹配，更喜欢单身；相对于单身，更喜欢和女士 $w_2$ 匹配；相对于和女士 $w_2$ 匹配，更喜欢和女士 $w_3$ 匹配．对于男士 $m$，女士 $w_1$ 就是不可接受的，女士 $w_2,w_3$ 就是可接受的．
+???+ example "Example"
+    Suppose $m$ is a man, and $w_1,w_2,w_3$ are three women, with the preference relation $w_1\prec_m m \prec_m w_2\prec_m w_3$. Then, the man $m$ prefers being single over being matched with woman $w_1$; prefers being matched with woman $w_2$ over being single; and prefers being matched with woman $w_3$ over being matched with woman $w_2$. For man $m$, woman $w_1$ is unacceptable, while women $w_2,w_3$ are acceptable.
 
-市场上的一个 **匹配** $\mu:M\cup W\rightarrow M\cup W$ 需要满足如下性质：
+A **matching** $\mu:M\cup W\rightarrow M\cup W$ in the market must satisfy the following properties:
 
--   每个人只能匹配异性或其自身，即对所有 $m\in M$ 都有 $\mu(m)\in W\cup\{m\}$ 且对所有 $w\in W$ 都有 $\mu(w)\in W\cup\{w\}$．
--   匹配是相互的，即对所有 $i\in M\cup W$ 都有 $i = \mu(\mu(i))$．
+-   Each person can only be matched with someone of the opposite sex or themselves, i.e., for all $m\in M$, we have $\mu(m)\in W\cup\{m\}$, and for all $w\in W$, we have $\mu(w)\in W\cup\{w\}$.
+-   Matching is mutual, i.e., for all $i\in M\cup W$, we have $i = \mu(\mu(i))$.
 
-一个匹配 $\mu$ 中可能存在两种不稳定因素：
+There are two types of instability in a matching $\mu$:
 
--   如果存在个体 $i\in M\cup W$ 使得 $\mu(i)\prec_i i$，也就是说，相对于当前的匹配对象，个体 $i$ 宁愿单身，那么，就称 $i$ 是匹配 $\mu$ 的 **阻塞个体**（blocking individual）．
--   如果存在一对异性 $m\in M$ 和 $w\in W$ 使得 $\mu(m)\prec_m w$ 且 $\mu(w)\prec_w m$，也就是说，相对于当前各自的匹配对象，男士 $m$ 和女士 $w$ 更希望和对方在一起，那么，就称 $(m,w)$ 是匹配 $\mu$ 的 **阻塞对**（blocking pair）．
+-   If there exists an individual $i\in M\cup W$ such that $\mu(i)\prec_i i$, that is, the individual $i$ would rather be single than stay with their current match, then $i$ is called a **blocking individual** of matching $\mu$.
+-   If there exists a pair of opposite-sex individuals $m\in M$ and $w\in W$ such that $\mu(m)\prec_m w$ and $\mu(w)\prec_w m$, that is, the man $m$ and woman $w$ would rather be with each other than with their current partners, then $(m,w)$ is called a **blocking pair** of matching $\mu$.
 
-如果一个匹配 $\mu$ 既不存在阻塞个体，也不存在阻塞对，就称匹配 $\mu$ 是 **稳定的**（stable）．稳定匹配中，所有人都无法破坏当前的局面：单身的人找不到愿意同他在一起的人；结婚的人既不愿意离婚单身，也找不到愿意同他私奔的人．
+If a matching $\mu$ has neither blocking individuals nor blocking pairs, it is called **stable**. In a stable matching, no one can disrupt the current situation: single people cannot find someone willing to be with them; married people neither want to divorce and be single, nor can they find someone willing to elope with them.
 
-稳定匹配问题就是在问：对于任意给定的一组偏好顺序，是否都存在一个稳定匹配？如果是，如何求出这样的稳定匹配？
+The stable matching problem asks: for any given set of preference orderings, does a stable matching exist? If so, how to find such a stable matching?
 
-### Gale–Shapley 算法
+### Gale–Shapley Algorithm
 
-Gale 和 Shapley 在 1962 年提出了 **延迟接受算法**（deferred acceptance algorithm），可以对任意给定的一组偏好顺序求出一个稳定匹配．因此，稳定匹配一定是存在的．
+Gale and Shapley proposed the **deferred acceptance algorithm** in 1962, which can find a stable matching for any given set of preference orderings. Therefore, stable matchings always exist.
 
-Gale–Shapley 算法有两个对称的版本，分别由男士求婚和女士求婚．以男士求婚的 Gale–Shapley 算法为例，算法流程如下：
+The Gale–Shapley algorithm has two symmetric versions: one where men propose and one where women propose. Taking the men-proposing Gale–Shapley algorithm as an example, the algorithm works as follows:
 
-1.  算法开始时，每位女士都视为保留着她对其自身的求婚请求，每位男士都标记为活跃的．
-2.  活跃的男士会向他可接受但是尚未求婚过的女士中最喜欢的那位求婚；如果这样的女士不存在，就无需进行任何操作．无论求婚与否，将所有男士都标记为不活跃的．
-3.  收到新的求婚请求的女士，会将他们与之前保留的求婚请求比较，只保留其中最喜欢的那一个（可能是她自身），并拒绝所有其他的求婚请求．将遭到拒绝的男士恢复标记为活跃的．
-4.  重复前两个步骤，直到没有活跃的男士为止．此时，女士接受她们当前保留的求婚请求．这样得到的匹配结果，就是一个稳定匹配．
+1.  At the beginning of the algorithm, each woman is considered to hold her own proposal, and all men are marked as active.
+2.  An active man proposes to the most preferred woman among those he finds acceptable and has not yet proposed to; if no such woman exists, no action is taken. Regardless of whether a proposal is made, all men are marked as inactive.
+3.  When a woman receives new proposal requests, she compares them with the proposals she previously held, keeping only the most preferred one (which may be her own) and rejecting all others. The rejected men are marked as active again.
+4.  Repeat the previous two steps until there are no active men. At this point, each woman accepts the proposal she currently holds. The resulting matching is a stable matching.
 
-由于每位男士向每位女士至多求婚一次，算法在 $O(|M||W|)$ 时间内一定会结束．
+Since each man proposes to each woman at most once, the algorithm always terminates in $O(|M||W|)$ time.
 
-参考实现如下：
+The reference implementation is as follows:
 
-??? example "模板题 [SPOJ STABLEMP - Stable Marriage Problem](https://www.spoj.com/problems/STABLEMP/) 参考实现"
+??? example "Template Problem [SPOJ STABLEMP - Stable Marriage Problem](https://www.spoj.com/problems/STABLEMP/) Reference Implementation"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/stable-match/stable-match.cpp"
     ```
 
-### 稳定匹配的性质
+### Properties of Stable Matchings
 
-稳定匹配有着良好的理论性质．首先，Gale–Shapley 算法构造性地证明，稳定匹配一定存在．
+Stable matchings have nice theoretical properties. First, the Gale–Shapley algorithm constructively proves that stable matchings always exist.
 
-???+ note "定理 1（Gale and Shapley, 1962）"
-    Gale–Shapley 算法得到的是一个稳定匹配．因此，稳定匹配存在．
+???+ note "Theorem 1 (Gale and Shapley, 1962)"
+    The matching obtained by the Gale–Shapley algorithm is a stable matching. Therefore, stable matchings exist.
 
-??? note "证明"
-    男士不会对他不接受的女士求婚，女士也会立即拒绝她不接受的男士的求婚．因此，最终互相匹配的男士和女士一定是彼此接受的，不可能存在阻塞个体．要证明它是稳定匹配，只需要说明不存在阻塞对．
-    
-    反证法．假设 $(m,w)$ 是一个阻塞对．那么，在男士 $m$ 向 $\mu(m)$ 求婚之前，他一定已经向 $w$ 求过婚．但是，既然女士 $w$ 拒绝了 $m$，她一定是收到了她更喜欢的人 $m'$ 的求婚请求．如果 $m'\neq \mu(w)$，那么，女士 $w$ 相对于 $m'$ 只会更喜欢 $\mu(w)$．由此，相对于 $m$，女士 $w$ 一定更喜欢最终的匹配对象 $\mu(w)$．这与 $(m,w)$ 是阻塞对矛盾．所以，匹配是稳定的．
+??? note "Proof"
+    Men do not propose to women they find unacceptable, and women immediately reject men they find unacceptable. Therefore, the final mutually matched man and woman must accept each other, so there cannot be blocking individuals. To prove it is a stable matching, we only need to show there are no blocking pairs.
 
-???+ note "推论"
-    如果 $|M|=|W|$ 且所有异性都是可接受的，那么，存在一个稳定的完美匹配．
+    Proof by contradiction. Suppose $(m,w)$ is a blocking pair. Then, before man $m$ proposes to $\mu(m)$, he must have already proposed to $w$. But since woman $w$ rejected $m$, she must have received a proposal from someone she prefers, say $m'$. If $m'\neq \mu(w)$, then woman $w$ prefers $\mu(w)$ over $m'$. Therefore, relative to $m$, woman $w$ definitely prefers her final match $\mu(w)$. This contradicts that $(m,w)$ is a blocking pair. So the matching is stable.
 
-Gale–Shapley 算法中，可以由男士求婚，也可以由女士求婚．一般情况下，这两个版本的 Gale–Shapley 算法得到的稳定匹配并不相同．事实上，由男士求婚的 Gale–Shapley 算法得到的稳定匹配是所有稳定匹配中，对于男士最有利的；反之亦然．
+???+ note "Corollary"
+    If $|M|=|W|$ and all members of the opposite sex are acceptable, then there exists a stable perfect matching.
 
-???+ note "定理 2（Gale and Shapley, 1962）"
-    设 $\mu_M$ 和 $\mu_W$ 分别是由男士和女士求婚的 Gale–Shapley 算法得到的稳定匹配．对于任何稳定匹配 $\mu$，都有 $\mu(m)\preceq_m\mu_M(m)$ 对于所有 $m\in M$ 成立，且 $\mu(w)\preceq_w\mu_W(w)$ 对所有 $w\in W$ 成立．
+In the Gale–Shapley algorithm, either men can propose or women can propose. In general, the two versions of the Gale–Shapley algorithm produce different stable matchings. In fact, the stable matching obtained by the men-proposing Gale–Shapley algorithm is the most favorable to all men among all stable matchings; and vice versa.
 
-??? note "证明"
-    根据对称性，只需要证明 $\mu(m)\preceq_m\mu_M(m)$ 对于所有 $m\in M$ 成立．为此，仍然考虑由男士求婚的 Gale–Shapley 算法，并记 $k(m,w)$ 为女士 $w$ 拒绝男士 $m$ 的求婚时，算法进行到的轮次．这个轮次对于所有满足 $\mu_M(m)\prec_m w$ 的 $(m,w)$ 都是良定义的．
-    
-    假设 $\mu_M$ 并非对所有男士都最有利的，也就是说，存在稳定匹配 $\mu$ 和男士 $m\in M$ 使得 $\mu_M(m)\prec_m\mu(m)$ 成立．由于匹配 $\mu_M$ 是稳定的，就有 $m\preceq_m\mu_M(m)\prec_m\mu(m)$，所以 $\mu(m)$ 是女士，一定有良定义的 $k(m,\mu(m))$．于是，不妨设 $m$ 恰为所有这样的男士中，$k(m,\mu(m))$ 最小的那个．设算法过程中，女士 $w=\mu(m)$ 拒绝男士 $m$ 时保留的是男士 $m'$ 的求婚请求，也就是说，$m=\mu(w)\prec_w m'$．由于 $\mu$ 是稳定匹配，$(w,m')$ 不能是阻塞对，又有 $\mu(m')\neq w$，所以，$w\prec_{m'}\mu(m')$．由于 Gale–Shapley 算法过程中，女士 $w$ 未必会保留 $m'$ 的求婚请求到最后，所以 $\mu_M(m')\preceq_{m'}w\prec_{m'}\mu(m')$．此时，$k(m',\mu(m'))$ 是良定义的．而且，由于 $w\prec_{m'}\mu(m')$，所以，女士 $\mu(m')$ 拒绝 $m'$ 的求婚请求之后，才会有 $w$ 保留 $m'$ 的求婚请求，也就是说，$k(m',\mu(m')) < k(m,\mu(m))$．这与 $m$ 的选取相矛盾．所以，根据反证法，$\mu_M$ 是对所有男士最有利的稳定匹配．
+???+ note "Theorem 2 (Gale and Shapley, 1962)"
+    Let $\mu_M$ and $\mu_W$ be the stable matchings obtained by the men-proposing and women-proposing Gale–Shapley algorithms respectively. For any stable matching $\mu$, we have $\mu(m)\preceq_m\mu_M(m)$ for all $m\in M$, and $\mu(w)\preceq_w\mu_W(w)$ for all $w\in W$.
 
-一个匹配市场可能存在指数级数量的稳定匹配．设 $\mathcal S$ 为全体稳定匹配的集合．在这个集合上，可以定义两个偏序：
+??? note "Proof"
+    By symmetry, we only need to prove $\mu(m)\preceq_m\mu_M(m)$ for all $m\in M$. To do this, still consider the men-proposing Gale–Shapley algorithm, and denote by $k(m,w)$ the round in which woman $w$ rejects man $m$'s proposal. This round number is well-defined for all $(m,w)$ satisfying $\mu_M(m)\prec_m w$.
 
--   $\mu_1\preceq_M\mu_2$，当且仅当 $\mu_1(m)\preceq_m\mu_2(m)$ 对所有 $m\in M$ 都成立；
--   $\mu_1\preceq_W\mu_2$，当且仅当 $\mu_1(w)\preceq_w\mu_2(w)$ 对所有 $w\in W$ 都成立．
+    Suppose $\mu_M$ is not the most favorable to all men, that is, there exists a stable matching $\mu$ and a man $m\in M$ such that $\mu_M(m)\prec_m\mu(m)$ holds. Since $\mu_M$ is stable, we have $m\preceq_m\mu_M(m)\prec_m\mu(m)$, so $\mu(m)$ is a woman, and $k(m,\mu(m))$ is well-defined. Then, let $m$ be exactly such a man with the smallest $k(m,\mu(m))$. During the algorithm, when woman $w=\mu(m)$ rejects man $m$, she keeps the proposal from man $m'$, that is, $m=\mu(w)\prec_w m'$. Since $\mu$ is a stable matching, $(w,m')$ cannot be a blocking pair, and since $\mu(m')\neq w$, we have $w\prec_{m'}\mu(m')$. During the Gale–Shapley algorithm, woman $w$ may not keep $m'$'s proposal until the end, so $\mu_M(m')\preceq_{m'}w\prec_{m'}\mu(m')$. At this point, $k(m',\mu(m'))$ is well-defined. Moreover, since $w\prec_{m'}\mu(m')$, after woman $\mu(m')$ rejects $m'$'s proposal, $w$ keeps $m'$'s proposal, that is, $k(m',\mu(m')) < k(m,\mu(m))$. This contradicts the choice of $m$. Therefore, by proof by contradiction, $\mu_M$ is the stable matching most favorable to all men.
 
-这两个偏序分别表示匹配结果对于所有男士和所有女士都更优．一般地，两个稳定匹配未必是可比的．但是，任意两个稳定匹配都诱导如图所示的分解，使得分解所得的三个部分中，分别成立 $\mu_1\preceq_M\mu_2$，$\mu_1=\mu_2$ 和 $\mu_2\preceq_M\mu_1$．注意，尽管没有直接绘制出，但是 $\mu_1=\mu_2$ 的那一部分其实包含了匹配到自身（即未匹配）的情形．
+A matching market may have an exponentially large number of stable matchings. Let $\mathcal S$ be the set of all stable matchings. On this set, we can define two partial orders:
+
+-   $\mu_1\preceq_M\mu_2$ if and only if $\mu_1(m)\preceq_m\mu_2(m)$ holds for all $m\in M$.
+-   $\mu_1\preceq_W\mu_2$ if and only if $\mu_1(w)\preceq_w\mu_2(w)$ holds for all $w\in W$.
+
+These two partial orders represent matchings that are better for all men and all women respectively. In general, two stable matchings may not be comparable. However, any two stable matchings can be decomposed as shown in the figure, such that in the three resulting parts, $\mu_1\preceq_M\mu_2$, $\mu_1=\mu_2$, and $\mu_2\preceq_M\mu_1$ hold respectively. Note that although not directly shown, the part where $\mu_1=\mu_2$ actually includes the case of being matched to oneself (i.e., unmatched).
 
 ![](./images/stable-match-decompose.svg)
 
-这一分解依赖于如下的引理：
+This decomposition relies on the following lemma:
 
-???+ note "引理（Knuth, 1976）"
-    设 $\mu_1$ 和 $\mu_2$ 是两个稳定匹配．设 $M(\mu_i)=\{m\in M : \mu_j(m)\prec_m\mu_i(m)\}$ 和 $W(\mu_i)=\{w\in W:\mu_j(w)\prec_w\mu_i(w)\}$ 分别为更偏好 $\mu_i$ 中的匹配结果的男士和女士的集合，其中，$i,j=1,2$ 且 $i\neq j$．那么，$\mu_1$ 和 $\mu_2$ 都是 $M(\mu_1)$ 与 $W(\mu_2)$ 之间的双射，也都是 $M(\mu_2)$ 与 $W(\mu_1)$ 之间的双射．
+???+ note "Lemma (Knuth, 1976)"
+    Let $\mu_1$ and $\mu_2$ be two stable matchings. Let $M(\mu_i)=\{m\in M : \mu_j(m)\prec_m\mu_i(m)\}$ and $W(\mu_i)=\{w\in W:\mu_j(w)\prec_w\mu_i(w)\}$ be the sets of men and women who prefer the matching in $\mu_i$ over that in $\mu_j$, where $i,j=1,2$ and $i\neq j$. Then both $\mu_1$ and $\mu_2$ are bijections between $M(\mu_1)$ and $W(\mu_2)$, as well as between $M(\mu_2)$ and $W(\mu_1)$.
 
-??? note "证明"
-    设 $m\in M(\mu_1)$．由于 $m\preceq_m \mu_2(m)\prec_m\mu_1(m)$，所以 $\mu_1(m)\in W$．令 $w=\mu_1(m)$．因为 $\mu_2(w)\neq m$，而 $\mu_2(w)\prec_w m$ 又意味着 $(m,w)$ 是 $\mu_2$ 的阻塞对，所以，$\mu_1(w)=m\prec_w\mu_2(w)$．也就是说，$w\in W(\mu_2)$．这说明，$\mu_1(M(\mu_1))\subseteq W(\mu_2)$．由对称性，还可以建立 $\mu_2(W(\mu_2))\subseteq M(\mu_1)$．由于 $\mu_1$ 和 $\mu_2$ 都是单射，所以，$|M(\mu_1)|=|W(\mu_2)|$ 且这两个映射都是满射．这就说明，$\mu_1$ 和 $\mu_2$ 都是 $M(\mu_1)$ 与 $W(\mu_2)$ 之间的双射．同理，它们也都是 $M(\mu_2)$ 与 $W(\mu_1)$ 之间的双射．
+??? note "Proof"
+    Let $m\in M(\mu_1)$. Since $m\preceq_m \mu_2(m)\prec_m\mu_1(m)$, we have $\mu_1(m)\in W$. Let $w=\mu_1(m)$. Since $\mu_2(w)\neq m$, and $\mu_2(w)\prec_w m$ implies $(m,w)$ is a blocking pair of $\mu_2$, we have $\mu_1(w)=m\prec_w\mu_2(w)$. That is, $w\in W(\mu_2)$. This shows $\mu_1(M(\mu_1))\subseteq W(\mu_2)$. By symmetry, we can also establish $\mu_2(W(\mu_2))\subseteq M(\mu_1)$. Since both $\mu_1$ and $\mu_2$ are injections, we have $|M(\mu_1)|=|W(\mu_2)|$ and both mappings are surjections. This shows that both $\mu_1$ and $\mu_2$ are bijections between $M(\mu_1)$ and $W(\mu_2)$. Similarly, they are also bijections between $M(\mu_2)$ and $W(\mu_1)$.
 
-这一引理说明，偏序集 $(\mathcal S,\preceq_M)$ 和 $(\mathcal S,\preceq_W)$ 互为 [对偶](../../math/order-theory.md#对偶)．而且，在每个偏序下，集合 $\mathcal S$ 都构成一个 [格](../../math/order-theory.md#有向集与格)．因为 $\mathcal S$ 是有限的，这两个格一定存在最大元和最小元．这两个最值元素，分别就是前文提到的两个版本的 Gale–Shapley 算法所得到的稳定匹配．
+This lemma shows that the partially ordered sets $(\mathcal S,\preceq_M)$ and $(\mathcal S,\preceq_W)$ are [duals](../../math/order-theory.md#duality) of each other. Moreover, under each partial order, the set $\mathcal S$ forms a [lattice](../../math/order-theory.md#directed-sets-and-lattices). Since $\mathcal S$ is finite, both lattices must have maximum and minimum elements. These two extreme elements are precisely the stable matchings obtained by the two versions of the Gale–Shapley algorithm mentioned earlier.
 
-???+ note "定理 3（Conway and Knuth, 1976）"
-    偏序集 $(\mathcal S,\preceq_M)$ 和 $(\mathcal S,\preceq_W)$ 是相互对偶的格．而且，$\mu_M$ 和 $\mu_W$ 分别是 $(\mathcal S,\preceq_M)$ 的最大元和最小元，也分别是 $(\mathcal S,\preceq_W)$ 的最小元和最大元．
+???+ note "Theorem 3 (Conway and Knuth, 1976)"
+    The partially ordered sets $(\mathcal S,\preceq_M)$ and $(\mathcal S,\preceq_W)$ are mutually dual lattices. Moreover, $\mu_M$ and $\mu_W$ are respectively the maximum and minimum elements of $(\mathcal S,\preceq_M)$, and also the minimum and maximum elements of $(\mathcal S,\preceq_W)$ respectively.
 
-??? note "证明"
-    根据引理，容易说明两个偏序集是对偶的．如果 $\mu_1\preceq_M\mu_2$，这说明 $M(\mu_1)=\varnothing$；由引理，$W(\mu_2)=\varnothing$，此即 $\mu_2\preceq_W\mu_1$．反之亦然．这就说明两者互为对偶．再结合前文的定理 2，就得到 $\mu_M$ 和 $\mu_W$ 是两个偏序集的最值元素．命题中还需要证明的是，两个偏序集是格．由对称性，只需要证明 $(\mathcal S,\preceq_M)$ 是格．再根据交和并运算的对称性，只需要证明稳定匹配的并仍然是稳定匹配．形式化地，对于任意 $\mu_1,\mu_2\in\mathcal S$，需要证明对于所有 $m\in M$ 都满足 $\mu(m)=\mu_1(m)\lor_m\mu_2(m)$ 的匹配 $\mu=\mu_1\lor_M\mu_2$ 是稳定匹配，其中，$\lor_m$ 是全序 $\preceq_m$ 下的并运算（即两者中 $m$ 更喜欢的那个）．
-    
-    仍采用引理中的记号．对于 $i\in M(\mu_1)\cup W(\mu_2)$，有 $\mu(i)=\mu_1(i)$；否则，有 $\mu(i)=\mu_2(i)$．由于 $\mu_1$ 和 $\mu_2$ 都是稳定的，不存在阻塞个体，$\mu$ 也同样如此．假设 $(m,w)$ 是 $\mu$ 的阻塞对．如果 $m\in M(\mu_1)$，那么，$\mu_2(m)\prec_m\mu_1(m)=\mu(m)\prec_m w$．此时，如果 $w\in W(\mu_2)$，那么，$\mu_1(w)=\mu(w)\prec_w m$，所以，$(m,w)$ 是 $\mu_1$ 的阻塞对，矛盾；否则，$w\in W\setminus W(\mu_2)$，有 $\mu_2(w)=\mu(w)\prec_w m$，所以，$(m,w)$ 是 $\mu_2$ 的阻塞对，也矛盾．类似地，$m\in M\setminus M(\mu_1)$ 的情形也只能导出矛盾．由反证法可知，这样的阻塞对不存在．所以，$\mu_1\lor_M\mu_2$ 是稳定匹配．命题得证．
+??? note "Proof"
+    According to the lemma, it is easy to show the two partially ordered sets are duals. If $\mu_1\preceq_M\mu_2$, this means $M(\mu_1)=\varnothing$; by the lemma, $W(\mu_2)=\varnothing$, which is $\mu_2\preceq_W\mu_1$. And vice versa. This shows they are mutually duals. Combined with Theorem 2 from before, we get that $\mu_M$ and $\mu_W$ are the extreme elements of the two partially ordered sets. What remains to be proved is that the two partially ordered sets are lattices. By symmetry, we only need to prove $(\mathcal S,\preceq_M)$ is a lattice. Then, by the symmetry of join and meet operations, we only need to prove that the join of stable matchings is still a stable matching. Formally, for any $\mu_1,\mu_2\in\mathcal S$, we need to prove that the matching $\mu=\mu_1\lor_M\mu_2$ defined by $\mu(m)=\mu_1(m)\lor_m\mu_2(m)$ for all $m\in M$ is a stable matching, where $\lor_m$ is the join operation in the total order $\preceq_m$ (i.e., the one that $m$ prefers more).
 
-最后，在所有稳定匹配中，未匹配的男士和女士的集合都是固定的．
+    Still using the notation from the lemma. For $i\in M(\mu_1)\cup W(\mu_2)$, we have $\mu(i)=\mu_1(i)$; otherwise, $\mu(i)=\mu_2(i)$. Since both $\mu_1$ and $\mu_2$ are stable, there are no blocking individuals, so $\mu$ has no blocking individuals either. Suppose $(m,w)$ is a blocking pair of $\mu$. If $m\in M(\mu_1)$, then $\mu_2(m)\prec_m\mu_1(m)=\mu(m)\prec_m w$. At this point, if $w\in W(\mu_2)$, then $\mu_1(w)=\mu(w)\prec_w m$, so $(m,w)$ is a blocking pair of $\mu_1$, a contradiction; otherwise, $w\in W\setminus W(\mu_2)$, and we have $\mu_2(w)=\mu(w)\prec_w m$, so $(m,w)$ is a blocking pair of $\mu_2$, also a contradiction. Similarly, the case $m\in M\setminus M(\mu_1)$ also leads to a contradiction. By proof by contradiction, such a blocking pair does not exist. Therefore, $\mu_1\lor_M\mu_2$ is a stable matching. The proposition is proved.
 
-???+ note "定理 4（McVitie and Wilson, 1970）"
-    设 $\mu_1$ 和 $\mu_2$ 是两个稳定匹配．那么，$\mu_1$ 和 $\mu_2$ 的不动点集合相同．
+Finally, in all stable matchings, the set of unmatched men and women is fixed.
 
-??? note "证明"
-    假设存在 $m\in M$ 使得 $\mu_1(m)=m$ 且 $\mu_2(m)\neq m$ 对某组 $\mu_1,\mu_2\in\mathcal S$ 成立．此时，有 $m\in M(\mu_2)$．由引理可知，$m=\mu_1(m)\in W(\mu_1)$，这与 $m\in M$ 矛盾．所以，不存在这样的 $m\in M$．同理，也不存在这样的 $w\in W$．所以，任意两个稳定匹配的不动点集合必然相同．
+???+ note "Theorem 4 (McVitie and Wilson, 1970)"
+    Let $\mu_1$ and $\mu_2$ be two stable matchings. Then the fixed-point sets of $\mu_1$ and $\mu_2$ are the same.
 
-除了本节讨论的这些性质外，稳定匹配还有一些良好的策略性质．关于这些内容，可以参见文末提供的文献．
+??? note "Proof"
+    Suppose there exists $m\in M$ such that $\mu_1(m)=m$ and $\mu_2(m)\neq m$ for some $\mu_1,\mu_2\in\mathcal S$. At this point, we have $m\in M(\mu_2)$. By the lemma, we have $m=\mu_1(m)\in W(\mu_1)$, which contradicts $m\in M$. So such $m\in M$ does not exist. Similarly, such $w\in W$ does not exist. Therefore, the fixed-point sets of any two stable matchings must be the same.
 
-## 相关问题
+In addition to the properties discussed in this section, stable matchings also have some nice strategic properties. For these contents, please refer to the references provided at the end of the article.
 
-稳定匹配及其类似问题还出现在许多其他的情境中．
+## Related Problems
 
-### 学院招生问题
+Stable matching and similar problems also appear in many other contexts.
 
-如果将稳定婚姻问题中的一对一匹配的限制放宽，允许多对一匹配，就得到了 **学院招生问题**（college admissions problem）．此时，一个学院可以招收多名学生，只要不超过招生限额；但是，一名学生仍然只允许进入至多一个学院学习．类似的情景还出现在公司招聘、医院招收实习医生等场景中．
+### College Admissions Problem
 
-对于这类问题，Gale–Shapley 算法仍然适用．例如，由学生申请的 Gale–Shapley 算法中，学院可以维持一个不超过限额长度的候选名单（waitlist），每次只要在申请数量超过限额时，拒绝最差学生的申请即可．前文关于稳定匹配性质的讨论对于这一场景仍然适用．特别地，定理 4 对应的版本是，在所有稳定匹配中，学校能够招到的学生人数是固定的．这也称为 **乡村医院定理**（rural hospitals theorem）．因为它意味着，无论如何更改匹配机制，只要得到的结果是稳定的，那些招不满医生的乡村医院永远招不到人．
+If we relax the one-to-one matching constraint in the stable marriage problem to allow many-to-one matching, we get the **college admissions problem**. At this time, a college can admit multiple students as long as it does not exceed its quota; however, a student is still allowed to enter at most one college. Similar scenarios also appear in company recruitment, hospitals admitting resident doctors, and other situations.
 
-### 稳定室友问题
+For such problems, the Gale–Shapley algorithm still applies. For example, in the student-proposing Gale–Shapley algorithm, colleges can maintain a waiting list not exceeding the quota length, and whenever the number of applications exceeds the quota, they simply reject the worst student. The discussion of stable matching properties earlier still applies to this scenario. In particular, the version of Theorem 4 is that in all stable matchings, the number of students a school can admit is fixed. This is also called the **rural hospitals theorem**. This means that no matter how the matching mechanism is changed, as long as the result is stable, those rural hospitals that cannot fill their doctor positions will never be able to recruit them.
 
-如果将稳定婚姻问题中，只能匹配异性的条件放宽，就得到了 **稳定室友问题**（stable roommates problem）．此时，初始只有若干名学生，需要两两结对成为室友．对于这类问题，稳定匹配未必存在．Irving 在 1985 年提出了可以在 $O(n^2)$ 时间内解决该问题的算法．
+### Stable Roommates Problem
 
-### 住房分配问题
+If we relax the constraint in the stable marriage problem that one can only match with members of the opposite sex, we get the **stable roommates problem**. At this time, initially there are several students who need to be paired into roommates. For such problems, stable matchings may not exist. Irving proposed an algorithm in 1985 that can solve this problem in $O(n^2)$ time.
 
-稳定婚姻问题中，两组个体互相有偏好，所以是双边匹配问题．除此之外，还可以考虑单边匹配问题．一个常见的场景是 **住房分配问题**（house allocation problem）．有 $n$ 名居民，各自拥有一套住房．每人对所有住房有一个严格偏好．现在，要将这些住房重新分配给这些居民，要求每名居民都不能分配到比初始更差的住房，且不存在任何数量的居民，可以私自交换房产，得到更满意的结局．对于这一问题，可以通过 Top Trading Cycle 算法在 $O(n^2)$ 时间内解决．这类问题还出现在肾移植等场景中．
+### House Allocation Problem
 
-## 习题
+In the stable marriage problem, the two groups of individuals have preferences for each other, so it is a two-sided matching problem. In addition, we can also consider one-sided matching problems. A common scenario is the **house allocation problem**. There are $n$ residents, each owning a house. Each person has a strict preference over all houses. Now, these houses need to be reallocated to these residents, requiring that each resident not be allocated a house worse than their original one, and that there is no group of residents who can privately exchange houses to get a more satisfactory outcome. This problem can be solved by the Top Trading Cycle algorithm in $O(n^2)$ time. Such problems also appear in scenarios like kidney transplants.
 
--   [UOJ 41.【清华集训 2014】矩阵变换](https://uoj.ac/problem/41)
+## Practice Problems
+
+-   [UOJ 41. Matrix Transformation](https://uoj.ac/problem/41)
 -   [Codeforces 1147 F. Zigzag Game](https://codeforces.com/problemset/problem/1147/F)
 
-## 参考资料与注释
+## References and Notes
 
--   [什么是算法：如何寻找稳定的婚姻搭配 - Matrix67](https://matrix67.com/blog/archives/2976)
--   [Gale–Shapley 算法：在二分图中寻找稳定匹配](https://reimuyk.github.io/2021-03-24-Gale-Shapley-Algorithm/)
+-   [What is an Algorithm: How to Find a Stable Marriage Pair - Matrix67](https://matrix67.com/blog/archives/2976)
+-   [Gale–Shapley Algorithm: Finding Stable Matchings in Bipartite Graphs](https://reimuyk.github.io/2021-03-24-Gale-Shapley-Algorithm/)
 -   [Stable matching problem - Wikipedia](https://en.wikipedia.org/wiki/Stable_matching_problem)
 -   [Lattice of stable matchings - Wikipedia](https://en.wikipedia.org/wiki/Lattice_of_stable_matchings)
 -   [Stable roommates problem - Wikipedia](https://en.wikipedia.org/wiki/Stable_roommates_problem)

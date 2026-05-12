@@ -1,35 +1,35 @@
-## 数据类型
+## Data Types
 
-C++ 的类型系统由如下几部分组成：
+The C++ type system consists of the following parts:
 
-1.  基础类型（括号内为代表关键词/代表类型）
-    1.  无类型/`void` 型 (`void`)
-    2.  （C++11 起）空指针类型 (`std::nullptr_t`)
-    3.  算术类型
-        1.  整数类型 (`int`)
-        2.  布尔类型/`bool` 型 (`bool`)
-        3.  字符类型 (`char`)
-        4.  浮点类型 (`float`,`double`)
-2.  复合类型[^note11]
+1.  Fundamental types (representative keywords/types are shown in parentheses)
+    1.  No type/`void` type (`void`)
+    2.  Null pointer type since C++11 (`std::nullptr_t`)
+    3.  Arithmetic types
+        1.  Integer types (`int`)
+        2.  Boolean type/`bool` type (`bool`)
+        3.  Character types (`char`)
+        4.  Floating-point types (`float`,`double`)
+2.  Compound types[^note11]
 
-### 布尔类型
+### Boolean Type
 
-一个 `bool` 类型的变量取值只可能为两种：`true` 和 `false`．
+A variable of type `bool` can have only two values: `true` and `false`.
 
-一般情况下，一个 `bool` 类型变量占有 $1$ 字节（一般情况下，$1$ 字节 =$8$ 位）的空间．
+In general, a `bool` variable occupies $1$ byte of space. Usually, $1$ byte = $8$ bits.
 
 ???+ tip "Tip"
-    可通过头文件 `<climits>`(C++)/`<limits.h>`(C) 中的宏常量 `CHAR_BIT` 获取字节的位数．
+    The number of bits in a byte can be obtained through the macro constant `CHAR_BIT` in the header `<climits>` (C++) or `<limits.h>` (C).
 
-???+ note "C 语言的布尔类型"
-    另请参阅 [C++ 与其他常用语言的区别 - bool](./cpp-other-langs.md#bool)．
+???+ note "Boolean type in C"
+    See also [Differences between C++ and other common languages - bool](./cpp-other-langs.md#bool).
     
-    C 语言最初是没有布尔类型的，直到 C99 时才引入 `_Bool` 关键词作为布尔类型，其被视作无符号整数类型．
+    The C language originally had no Boolean type. `_Bool` was introduced as a Boolean type in C99 and is regarded as an unsigned integer type.
     
     ???+ note "Note"
-        C 语言的 `bool` 类型从 C23 起不再使用整型的零与非零值定义，而是定义为足够储存 `true` 和 `false` 两个常量的类型．
+        Since C23, C's `bool` type is no longer defined using integer zero and nonzero values. Instead, it is defined as a type capable of storing the two constants `true` and `false`.
     
-    为方便使用，`stdbool.h` 中提供了 `bool`,`true`,`false` 三个宏，定义如下：
+    For convenience, `stdbool.h` provides the three macros `bool`, `true`, and `false`, defined as follows:
     
     ```c
     #define bool _Bool
@@ -37,78 +37,78 @@ C++ 的类型系统由如下几部分组成：
     #define false 0
     ```
     
-    这些宏于 C23 中移除，并且 C23 起引入 `true`,`false` 和 `bool` 作为关键字，同时保留 `_Bool` 作为替代拼写形式[^note10]．
+    These macros were removed in C23. Since C23, `true`, `false`, and `bool` are introduced as keywords, while `_Bool` is retained as an alternative spelling[^note10].
     
-    另外，C23 起还可以通过 `<limits.h>` 中的宏常量 `BOOL_WIDTH` 获取布尔类型的位宽．
+    Since C23, the width of the Boolean type can also be obtained through the macro constant `BOOL_WIDTH` in `<limits.h>`.
 
-### 整数类型
+### Integer Types
 
-用于存储整数．最基础的整数类型是 `int`.
+Integer types are used to store integers. The most basic integer type is `int`.
 
-???+ warning "注意"
-    由于历史原因，C++ 中布尔类型和字符类型会被视作特殊的整型．
+???+ warning "Note"
+    For historical reasons, Boolean and character types are considered special integer types in C++.
     
-    在几乎所有的情况下都 **不应该** 将除 `signed char` 和 `unsigned char` 之外的字符类型作为整型使用．
+    In almost all cases, character types other than `signed char` and `unsigned char` **should not** be used as integer types.
 
-整数类型一般按位宽有 5 个梯度：`char`,`short`,`int`,`long`,`long long`.
+Integer types generally have five width levels: `char`,`short`,`int`,`long`,`long long`.
 
-C++ 标准保证 `1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)`
+The C++ standard guarantees `1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)`.
 
-由于历史原因，整数类型的位宽有多种流行模型，为解决这一问题，C99/C++11 引入了 [定宽整数类型](#定宽整数类型)．
+For historical reasons, there are multiple popular models for integer type widths. To solve this problem, C99/C++11 introduced [fixed-width integer types](#fixed-width-integer-types).
 
-???+ note "`int` 类型的大小"
-    在 C++ 标准中，规定 `int` 的位数 **至少** 为 $16$ 位．
+???+ note "Size of the `int` type"
+    The C++ standard specifies that `int` has **at least** $16$ bits.
     
-    事实上在现在的绝大多数平台，`int` 的位数均为 $32$ 位．
+    In fact, on most modern platforms, `int` has $32$ bits.
 
-对于 `int` 关键字，可以使用如下修饰关键字进行修饰：
+The `int` keyword can be modified by the following keywords:
 
-符号性：
+Signedness:
 
--   `signed`：表示带符号整数（默认）；
--   `unsigned`：表示无符号整数．
+-   `signed`: indicates a signed integer, the default.
+-   `unsigned`: indicates an unsigned integer.
 
-大小：
+Size:
 
--   `short`：表示 **至少**  $16$ 位整数；
--   `long`：表示 **至少**  $32$ 位整数；
--   （C++11 起）`long long`：表示 **至少**  $64$ 位整数．
+-   `short`: indicates an integer of **at least** $16$ bits.
+-   `long`: indicates an integer of **at least** $32$ bits.
+-   `long long` since C++11: indicates an integer of **at least** $64$ bits.
 
-下表给出在 **一般情况下**，各整数类型的位宽和表示范围大小（少数平台上一些类型的表示范围可能与下表不同）：
+The following table gives the bit width and representable range size of each integer type **in general**. On a few platforms, some types may have ranges different from those shown below.
 
-| 类型名                                                                   | 等价类型                     | 位宽（C++ 标准） | 位宽（常见） | 位宽（较罕见）                    |
-| --------------------------------------------------------------------- | ------------------------ | ---------- | ------ | -------------------------- |
-| `signed char`                                                         | `signed char`            | $8$        | -      | -                          |
-| `unsigned char`                                                       | `unsigned char`          | $8$        | -      | -                          |
-| `short`,`short int`,`signed short`,`signed short int`                 | `short int`              | $\geq 16$  | $16$   | -                          |
-| `unsigned short`,`unsigned short int`                                 | `unsigned short int`     | $\geq 16$  | $16$   | -                          |
-| `int`,`signed`,`signed int`                                           | `int`                    | $\geq 16$  | $32$   | $16$（常见于 Win16 API）        |
-| `unsigned`,`unsigned int`                                             | `unsigned int`           | $\geq 16$  | $32$   | $16$（常见于 Win16 API）        |
-| `long`,`long int`,`signed long`,`signed long int`                     | `long int`               | $\geq 32$  | $32$   | $64$（常见于 64 位 Linux、macOS） |
-| `unsigned long`,`unsigned long int`                                   | `unsigned long int`      | $\geq 32$  | $32$   | $64$（常见于 64 位 Linux、macOS） |
-| `long long`,`long long int`,`signed long long`,`signed long long int` | `long long int`          | $\geq 64$  | $64$   | -                          |
-| `unsigned long long`,`unsigned long long int`                         | `unsigned long long int` | $\geq 64$  | $64$   | -                          |
+| Type name                                                               | Equivalent type           | Width (C++ standard) | Common width | Less common width                    |
+| ----------------------------------------------------------------------- | ------------------------- | -------------------- | ------------ | ------------------------------------ |
+| `signed char`                                                           | `signed char`             | $8$                  | -            | -                                    |
+| `unsigned char`                                                         | `unsigned char`           | $8$                  | -            | -                                    |
+| `short`,`short int`,`signed short`,`signed short int`                   | `short int`               | $\geq 16$           | $16$         | -                                    |
+| `unsigned short`,`unsigned short int`                                   | `unsigned short int`      | $\geq 16$           | $16$         | -                                    |
+| `int`,`signed`,`signed int`                                             | `int`                     | $\geq 16$           | $32$         | $16$ (common in Win16 API)           |
+| `unsigned`,`unsigned int`                                               | `unsigned int`            | $\geq 16$           | $32$         | $16$ (common in Win16 API)           |
+| `long`,`long int`,`signed long`,`signed long int`                       | `long int`                | $\geq 32$           | $32$         | $64$ (common on 64-bit Linux, macOS) |
+| `unsigned long`,`unsigned long int`                                     | `unsigned long int`       | $\geq 32$           | $32$         | $64$ (common on 64-bit Linux, macOS) |
+| `long long`,`long long int`,`signed long long`,`signed long long int`   | `long long int`           | $\geq 64$           | $64$         | -                                    |
+| `unsigned long long`,`unsigned long long int`                           | `unsigned long long int`  | $\geq 64$           | $64$         | -                                    |
 
-当位宽为 $x$ 时，有符号类型的表示范围为 $-2^{x-1}\sim 2^{x-1}-1$[^note16], 无符号类型的表示范围为 $0 \sim 2^x-1$. 具体而言，有下表：
+When the bit width is $x$, the representable range of a signed type is $-2^{x-1}\sim 2^{x-1}-1$[^note16], and the representable range of an unsigned type is $0 \sim 2^x-1$. Specifically:
 
-| 位宽   | 表示范围                                              |
-| ---- | ------------------------------------------------- |
-| $8$  | 有符号：$-2^{7}\sim 2^{7}-1$, 无符号：$0 \sim 2^{8}-1$    |
-| $16$ | 有符号：$-2^{15}\sim 2^{15}-1$, 无符号：$0 \sim 2^{16}-1$ |
-| $32$ | 有符号：$-2^{31}\sim 2^{31}-1$, 无符号：$0 \sim 2^{32}-1$ |
-| $64$ | 有符号：$-2^{63}\sim 2^{63}-1$, 无符号：$0 \sim 2^{64}-1$ |
+| Width | Representable range                                                |
+| ----- | ------------------------------------------------------------------ |
+| $8$   | signed: $-2^{7}\sim 2^{7}-1$, unsigned: $0 \sim 2^{8}-1$          |
+| $16$  | signed: $-2^{15}\sim 2^{15}-1$, unsigned: $0 \sim 2^{16}-1$       |
+| $32$  | signed: $-2^{31}\sim 2^{31}-1$, unsigned: $0 \sim 2^{32}-1$       |
+| $64$  | signed: $-2^{63}\sim 2^{63}-1$, unsigned: $0 \sim 2^{64}-1$       |
 
-???+ note "等价的类型表述"
-    在不引发歧义的情况下，允许省略部分修饰关键字，或调整修饰关键字的顺序．这意味着同一类型会存在多种等价表述．
+???+ note "Equivalent type spellings"
+    When there is no ambiguity, some modifier keywords may be omitted, or their order may be changed. This means the same type may have multiple equivalent spellings.
     
-    例如 `int`，`signed`，`int signed`，`signed int` 表示同一类型，而 `unsigned long` 和 `unsigned long int` 表示同一类型．
+    For example, `int`, `signed`, `int signed`, and `signed int` denote the same type, while `unsigned long` and `unsigned long int` denote the same type.
 
-另外，一些编译器实现了扩展整数类型，如 GCC 实现了 128 位整数：有符号版的 `__int128_t` 和无符号版的 `__uint128_t`，如果您在比赛时想使用这些类型，**请仔细阅读比赛规则** 以确定是否允许或支持使用扩展整数类型．
+In addition, some compilers implement extended integer types. For example, GCC implements 128-bit integers: the signed `__int128_t` and the unsigned `__uint128_t`. If you want to use these types in a contest, **read the contest rules carefully** to determine whether extended integer types are allowed or supported.
 
-???+ warning "注意"
-    STL 不一定对扩展整数类型有足够的支持，故使用扩展整数类型时需格外小心．
+???+ warning "Note"
+    The STL may not provide sufficient support for extended integer types, so use them with extra care.
     
-    ???+ note "示例代码"
+    ???+ note "Example code"
         ```cpp
         #include <cmath>
         #include <iostream>
@@ -139,15 +139,15 @@ C++ 标准保证 `1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(lo
         }
         ```
     
-    以上示例代码存在如下问题：
+    The example code above has the following problems:
     
-    1.  `__int128_t f3(__int128_t)` 中使用的是 C 风格的绝对值函数，其签名为 `int abs(int)`，故 `n` 首先会强制转换为 `int`，然后才会调用 `abs` 函数．
-    2.  `__int128_t f4(__int128_t)` 中使用的是 C++ 风格的绝对值函数，其并没有签名为 `__int128_t std::abs(__int128_t)` 的函数重载，所以无法通过编译．
-    3.  C++ 的流式输出不支持 `__int128_t` 与 `__uint128_t`．
+    1.  `__int128_t f3(__int128_t)` uses a C-style absolute value function whose signature is `int abs(int)`, so `n` is first cast to `int` before the `abs` function is called.
+    2.  `__int128_t f4(__int128_t)` uses a C++-style absolute value function, but there is no overload with the signature `__int128_t std::abs(__int128_t)`, so it cannot compile.
+    3.  C++ stream output does not support `__int128_t` or `__uint128_t`.
     
-    以下是一种解决方案：
+    One possible solution is:
     
-    ??? note "修正后的代码"
+    ??? note "Corrected code"
         ```cpp
         #include <cmath>
         #include <iostream>
@@ -181,74 +181,74 @@ C++ 标准保证 `1 == sizeof(char) <= sizeof(short) <= sizeof(int) <= sizeof(lo
         }
         ```
 
-### 字符类型
+### Character Types
 
-分为「窄字符类型」和「宽字符类型」，由于算法竞赛几乎不会用到宽字符类型，故此处仅介绍窄字符类型．
+Character types are divided into "narrow character types" and "wide character types". Since wide character types are almost never used in algorithm contests, only narrow character types are introduced here.
 
-窄字符型位数一般为 $8$ 位，实际上底层存储方式仍然是整数，一般通过 [ASCII 编码](http://www.asciitable.com/) 实现字符与整数的一一对应，有如下三种：
+Narrow character types generally have $8$ bits. Their underlying storage is still integer-based, and [ASCII encoding](http://www.asciitable.com/) is usually used to map characters and integers one-to-one. There are three such types:
 
--   `signed char`：有符号字符表示的类型，表示范围在 $-128 \sim 127$ 之间．
--   `unsigned char`：无符号字符表示的类型，表示范围在 $0 \sim 255$ 之间．
--   `char` 拥有与 `signed char` 或 `unsigned char` 之一相同的表示和对齐，但始终是独立的类型．
+-   `signed char`: a signed character representation type, with a range of $-128 \sim 127$.
+-   `unsigned char`: an unsigned character representation type, with a range of $0 \sim 255$.
+-   `char` has the same representation and alignment as either `signed char` or `unsigned char`, but is always a distinct type.
 
-    `char` 的符号性取决于编译器和目标平台：ARM 和 PowerPC 的默认设置通常没有符号，而 x86 与 x64 的默认设置通常有符号．
+    The signedness of `char` depends on the compiler and target platform. ARM and PowerPC defaults are usually unsigned, while x86 and x64 defaults are usually signed.
 
-    GCC 可以在编译参数中添加 `-fsigned-char` 或 `-funsigned-char` 指定将 `char` 视作 `signed char` 或 `unsigned char`，其他编译器请参照文档．需要注意指定与架构默认值不同的符号有可能会破坏 ABI，造成程序无法正常工作．
+    GCC can use the compilation options `-fsigned-char` or `-funsigned-char` to specify whether `char` is treated as `signed char` or `unsigned char`. For other compilers, refer to their documentation. Note that specifying signedness different from the architecture default may break the ABI and cause the program to malfunction.
 
-???+ warning "注意"
-    与其他整型不同，`char`、`signed char`、`unsigned char` 是 **三种不同的类型**．
+???+ warning "Note"
+    Unlike other integer types, `char`, `signed char`, and `unsigned char` are **three distinct types**.
     
-    一般来说 `signed char`,`unsigned char` 不应用来存储字符，绝大多数情况下，这两种类型均被视作整数类型．
+    In general, `signed char` and `unsigned char` should not be used to store characters. In most cases, these two types are treated as integer types.
 
-### 浮点类型
+### Floating-Point Types
 
-用于存储「实数」（注意并不是严格意义上的实数，而是实数在一定规则下的近似），包括以下三种：
+Floating-point types are used to store "real numbers". Note that these are not real numbers in the strict mathematical sense, but approximations of real numbers under certain rules. They include the following three types:
 
--   `float`：单精度浮点类型．如果支持就会匹配 IEEE-754 binary32 格式．
--   `double`：双精度浮点类型．如果支持就会匹配 IEEE-754 binary64 格式．
--   `long double`：扩展精度浮点类型．如果支持就会匹配 IEEE-754 binary128 格式，否则如果支持就会匹配 IEEE-754 binary64 扩展格式，否则匹配某种精度优于 binary64 而值域至少和 binary64 一样好的非 IEEE-754 扩展浮点格式，否则匹配 IEEE-754 binary64 格式．
+-   `float`: single-precision floating-point type. If supported, it matches the IEEE-754 binary32 format.
+-   `double`: double-precision floating-point type. If supported, it matches the IEEE-754 binary64 format.
+-   `long double`: extended-precision floating-point type. If supported, it matches the IEEE-754 binary128 format; otherwise, if supported, it matches the IEEE-754 binary64 extended format; otherwise, it matches some non-IEEE-754 extended floating-point format with better precision than binary64 and at least as good a value range as binary64; otherwise, it matches the IEEE-754 binary64 format.
 
-| 浮点格式                   | 位宽        | 最大正数                       | 精度位数             |
-| ---------------------- | --------- | -------------------------- | ---------------- |
-| IEEE-754 binary32 格式   | $32$      | $3.4\times 10^{38}$        | $6\sim 9$        |
-| IEEE-754 binary64 格式   | $64$      | $1.8\times 10^{308}$       | $15\sim 17$      |
-| IEEE-754 binary64 扩展格式 | $\geq 80$ | $\geq 1.2\times 10^{4932}$ | $\geq 18\sim 21$ |
-| IEEE-754 binary128 格式  | $128$     | $1.2\times 10^{4932}$      | $33\sim 36$      |
+| Floating-point format           | Width     | Maximum positive value         | Precision digits |
+| ------------------------------- | --------- | ------------------------------ | ---------------- |
+| IEEE-754 binary32 format        | $32$      | $3.4\times 10^{38}$           | $6\sim 9$       |
+| IEEE-754 binary64 format        | $64$      | $1.8\times 10^{308}$          | $15\sim 17$     |
+| IEEE-754 binary64 extended form | $\geq 80$ | $\geq 1.2\times 10^{4932}$   | $\geq 18\sim 21$ |
+| IEEE-754 binary128 format       | $128$     | $1.2\times 10^{4932}$         | $33\sim 36$     |
 
-> IEEE-754 浮点格式的最小负数是最大正数的相反数．
+> The smallest negative number in an IEEE-754 floating-point format is the opposite of the largest positive number.
 
-因为 `float` 类型表示范围较小，且精度不高，实际应用中常使用 `double` 类型表示浮点数．
+Because `float` has a relatively small range and low precision, `double` is commonly used for floating-point numbers in practice.
 
-另外，浮点类型可以支持一些特殊值：
+In addition, floating-point types can support some special values:
 
--   无穷（正或负）：`INFINITY`.
--   负零：`-0.0`，例如 `1.0 / 0.0 == INFINITY`,`1.0 / -0.0 == -INFINITY`.
--   非数（NaN）：`std::nan`,`NAN`，一般可以由 `0.0 / 0.0` 之类的运算产生．它与任何值（包括自身）比较都不相等，C++11 后可以 使用 `std::isnan` 判断一个浮点数是不是 NaN.
+-   Infinity, positive or negative: `INFINITY`.
+-   Negative zero: `-0.0`, for example `1.0 / 0.0 == INFINITY`,`1.0 / -0.0 == -INFINITY`.
+-   Not-a-number (NaN): `std::nan`,`NAN`, usually produced by operations such as `0.0 / 0.0`. It compares unequal to any value, including itself. Since C++11, `std::isnan` can be used to test whether a floating-point number is NaN.
 
-### 无类型
+### No Type
 
-`void` 类型为无类型，与上面几种类型不同的是，不能将一个变量声明为 `void` 类型．但是函数的返回值允许为 `void` 类型，表示该函数无返回值．
+The `void` type means no type. Unlike the types above, a variable cannot be declared as type `void`. However, a function may have return type `void`, meaning that the function returns no value.
 
-### 空指针类型
+### Null Pointer Type
 
-请参阅指针的 [对应章节](./pointer.md#空指针)
+See the [corresponding section](./pointer.md#null-pointers) on pointers.
 
-## 定宽整数类型
+## Fixed-Width Integer Types
 
-C++11 起提供了定宽整数的支持，具体如下：
+Since C++11, fixed-width integer support is provided as follows:
 
--   `<cstdint>`：提供了若干定宽整数的类型和各定宽整数类型最大值、最小值等的宏常量．
--   `<cinttypes>`：为定宽整数类型提供了用于 `std::fprintf` 系列函数和 `std::fscanf` 系列函数的格式宏常量．
+-   `<cstdint>`: provides several fixed-width integer types and macro constants for their maximum values, minimum values, and so on.
+-   `<cinttypes>`: provides format macro constants for fixed-width integer types used by the `std::fprintf` and `std::fscanf` family of functions.
 
-定宽整数有如下几种：
+There are several kinds of fixed-width integers:
 
--   `intN_t`: 宽度 **恰为**  $N$ 位的有符号整数类型，如 `int32_t`.
--   `int_fastN_t`: 宽度 **至少** 有 $N$ 位的 **最快的** 有符号整数类型，如 `int_fast32_t`.
--   `int_leastN_t`: 宽度 **至少** 有 $N$ 位的 **最小的** 有符号整数类型，如 `int_least32_t`.
+-   `intN_t`: a signed integer type whose width is **exactly** $N$ bits, such as `int32_t`.
+-   `int_fastN_t`: the **fastest** signed integer type with width **at least** $N$ bits, such as `int_fast32_t`.
+-   `int_leastN_t`: the **smallest** signed integer type with width **at least** $N$ bits, such as `int_least32_t`.
 
-无符号版本只需在有符号版本前加一个字母 u 即可，如 `uint32_t`,`uint_least8_t`.
+For unsigned versions, just add the letter u before the signed version, such as `uint32_t`,`uint_least8_t`.
 
-标准规定必须实现如下 16 种类型：
+The standard requires the following 16 types to be implemented:
 
 `int_fast8_t`,`int_fast16_t`,`int_fast32_t`,`int_fast64_t`,
 
@@ -258,21 +258,21 @@ C++11 起提供了定宽整数的支持，具体如下：
 
 `uint_least8_t`,`uint_least16_t`,`uint_least32_t`,`uint_least64_t`.
 
-绝大多数编译器在此基础上都实现了如下 8 种类型：
+Most compilers also implement the following 8 types on this basis:
 
 `int8_t`,`int16_t`,`int32_t`,`int64_t`,
 
 `uint8_t`,`uint16_t`,`uint32_t`,`uint64_t`.
 
-在实现了对应类型的情况下，C++ 标准规定必须实现表示对应类型的最大值、最小值、位宽的宏常量，格式为将类型名末尾的 `_t` 去掉后转大写并添加后缀：
+When the corresponding type is implemented, the C++ standard requires macro constants representing its maximum value, minimum value, and bit width. Their names are formed by removing the trailing `_t` from the type name, converting it to uppercase, and adding a suffix:
 
--   `_MAX` 表示最大值，如 `INT32_MAX` 即为 `int32_t` 的最大值．
--   `_MIN` 表示最小值，如 `INT32_MIN` 即为 `int32_t` 的最小值．
+-   `_MAX` indicates the maximum value, such as `INT32_MAX` for the maximum value of `int32_t`.
+-   `_MIN` indicates the minimum value, such as `INT32_MIN` for the minimum value of `int32_t`.
 
-???+ warning "注意"
-    定宽整数类型本质上是普通整数类型的类型别名，所以混用定宽整数类型和普通整数类型可能会影响跨平台编译，例如：
+???+ warning "Note"
+    Fixed-width integer types are essentially type aliases of ordinary integer types, so mixing fixed-width integer types and ordinary integer types may affect cross-platform compilation. For example:
     
-    ???+ note "示例代码"
+    ???+ note "Example code"
         ```cpp
         #include <algorithm>
         #include <cstdint>
@@ -287,36 +287,36 @@ C++11 起提供了定宽整数的支持，具体如下：
         }
         ```
     
-    `int64_t` 在 64 位 Windows 下一般为 `long long int`, 而在 64 位 Linux 下一般为 `long int`, 所以这段代码在使用 64 位 Linux 下的 GCC 时不能通过编译，而使用 64 位 Windows 下的 MSVC 时可以通过编译，因为 `std::max` 要求输入的两个参数类型必须相同．
+    On 64-bit Windows, `int64_t` is usually `long long int`, while on 64-bit Linux it is usually `long int`. Therefore, this code cannot compile with GCC on 64-bit Linux, but can compile with MSVC on 64-bit Windows, because `std::max` requires its two input parameters to have the same type.
 
-此外，C++17 起在 `<limits>` 中提供了 `std::numeric_limits` 类模板，用于查询各种算数类型的属性，如最大值、最小值、是否是整形、是否有符号等．
+In addition, since C++17, `<limits>` provides the `std::numeric_limits` class template for querying properties of various arithmetic types, such as maximum value, minimum value, whether the type is integer, and whether it is signed.
 
 ```cpp
 #include <cstdint>
 #include <limits>
 
-std::numeric_limits<int32_t>::max();  // int32_t 的最大值, 2'147'483'647
-std::numeric_limits<int32_t>::min();  // int32_t 的最小值, -2'147'483'648
+std::numeric_limits<int32_t>::max();  // maximum value of int32_t, 2'147'483'647
+std::numeric_limits<int32_t>::min();  // minimum value of int32_t, -2'147'483'648
 
-std::numeric_limits<double>::min();  // double 的最小值, 约为 2.22507e-308
-std::numeric_limits<double>::epsilon();  // 1.0 与 double 的下个可表示值的差,
-                                         // 约为 2.22045e-16
+std::numeric_limits<double>::min();  // minimum value of double, about 2.22507e-308
+std::numeric_limits<double>::epsilon();  // difference between 1.0 and the next representable double,
+                                         // about 2.22045e-16
 ```
 
-## 类型转换
+## Type Conversions
 
-在一些时候（比如某个函数接受 `int` 类型的参数，但传入了 `double` 类型的变量），我们需要将某种类型，转换成另外一种类型．
+Sometimes, for example when a function accepts an `int` parameter but a `double` variable is passed in, we need to convert one type into another.
 
-C++ 中类型的转换机制较为复杂，这里主要介绍对于基础数据类型的两种转换：数值提升和数值转换．
+C++ has a relatively complex type conversion mechanism. This section mainly introduces two conversions for fundamental data types: numeric promotion and numeric conversion.
 
-### 数值提升
+### Numeric Promotion
 
-数值提升过程中，值本身保持不变．
+During numeric promotion, the value itself remains unchanged.
 
 ???+ note "Note"
-    C 风格的可变参数域在传值过程中会进行默认参数提升．如：
+    C-style variadic argument lists perform default argument promotion when values are passed. For example:
     
-    ???+ note "示例代码"
+    ???+ note "Example code"
         ```c
         #include <stdarg.h>
         #include <stdio.h>
@@ -325,19 +325,19 @@ C++ 中类型的转换机制较为复杂，这里主要介绍对于基础数据�
           va_list valist;
           int i;
         
-          // 初始化可变参数列表
+          // Initialize the variadic argument list
           va_start(valist, tot);
         
           for (i = 0; i < tot; ++i) {
-            // 获取第 i 个变量的值
+            // Get the value of the i-th variable
             double xx = va_arg(valist, double);  // Correct
             // float xx = va_arg(valist, float); // Wrong
         
-            // 输出第 i 个变量的底层存储内容
+            // Output the underlying storage contents of the i-th variable
             printf("i = %d, value = 0x%016llx\n", i, *(long long *)(&xx));
           }
         
-          // 清理可变参数列表的内存
+          // Clean up the memory for the variadic argument list
           va_end(valist);
         }
         
@@ -351,7 +351,7 @@ C++ 中类型的转换机制较为复杂，这里主要介绍对于基础数据�
         }
         ```
     
-    在调用 `test` 时，`f` 提升为 `double`，从而底层存储内容和 `fd` 相同，输出为
+    When calling `test`, `f` is promoted to `double`, so its underlying storage is the same as `fd`. The output is:
     
     ```text
     i = 0, value = 0x405ec00000000000
@@ -359,7 +359,7 @@ C++ 中类型的转换机制较为复杂，这里主要介绍对于基础数据�
     i = 2, value = 0x407c800000000000
     ```
     
-    若将 `double xx = va_arg(valist, double);` 改为 `float xx = va_arg(valist, float);`，GCC 应该给出一条类似下文的警告：
+    If `double xx = va_arg(valist, double);` is changed to `float xx = va_arg(valist, float);`, GCC should give a warning similar to the following:
     
     ```text
     In file included from test.c:2:
@@ -371,102 +371,102 @@ C++ 中类型的转换机制较为复杂，这里主要介绍对于基础数据�
     test.c:14:35: note: if this code is reached, the program will abort
     ```
     
-    此时的程序将会在输出前终止．
+    At this point, the program will terminate before producing output.
     
-    这一点也能解释为什么 `printf` 的 `%f` 既能匹配 `float` 也能匹配 `double`．
+    This also explains why `%f` in `printf` can match both `float` and `double`.
 
-#### 整数提升
+#### Integer Promotion
 
-小整数类型（如 `char`）的纯右值可转换成较大整数类型（如 `int`）的纯右值．
+Prvalues of small integer types, such as `char`, can be converted to prvalues of larger integer types, such as `int`.
 
-具体而言，算术运算符不接受小于 `int` 的类型作为它的实参，而在左值到右值转换后，如果适用就会自动实施整数提升．
+Specifically, arithmetic operators do not accept types smaller than `int` as their arguments. After lvalue-to-rvalue conversion, integer promotion is automatically performed if applicable.
 
-具体地，有如下规则：
+The rules are as follows:
 
--   源类型为 `signed char`、`signed short / short` 时，可提升为 `int`．
--   源类型为 `unsigned char`、`unsigned short` 时，若 `int` 能保有源类型的值范围，则可提升为 `int`，否则可提升为 `unsigned int`．（`C++20` 起 `char8_t` 也适用本规则）
--   `char` 的提升规则取决于其底层类型是 `signed char` 还是 `unsigned char`．
--   `bool` 类型可转换到 `int`：`false` 变为 `0`，`true` 变为 `1`．
--   若目标类型的值范围包含源类型，且源类型的值范围不能被 `int` 和 `unsigned int` 包含，则源类型可提升为目标类型．[^note12]
+-   If the source type is `signed char`, `signed short`, or `short`, it can be promoted to `int`.
+-   If the source type is `unsigned char` or `unsigned short`, and `int` can represent all values of the source type, it can be promoted to `int`; otherwise it can be promoted to `unsigned int`. Since `C++20`, `char8_t` also follows this rule.
+-   The promotion rule for `char` depends on whether its underlying type is `signed char` or `unsigned char`.
+-   `bool` can be converted to `int`: `false` becomes `0`, and `true` becomes `1`.
+-   If the destination type's value range contains the source type's value range, and the source type's value range cannot be contained by `int` or `unsigned int`, the source type can be promoted to the destination type.[^note12]
 
-???+ warning "注意"
-    `char`->`short` 不是数值提升，因为 `char` 要优先提升为 `int / unsigned int`，之后是 `int / unsigned int`->`short`，不满足数值提升的条件．
+???+ warning "Note"
+    `char`->`short` is not numeric promotion, because `char` is first promoted to `int / unsigned int`, followed by `int / unsigned int`->`short`, which does not satisfy the conditions of numeric promotion.
 
-如（以下假定 `int` 为 32 位，`unsigned short` 为 16 位，`signed char` 和 `unsigned char` 为 8 位，`bool` 为 1 位）
+For example, assuming `int` is 32 bits, `unsigned short` is 16 bits, `signed char` and `unsigned char` are 8 bits, and `bool` is 1 bit:
 
--   `(signed char)'\0' - (signed char)'\xff'` 会先将 `(signed char)'\0'` 提升为 `(int)0`、将 `(signed char)'\xff'` 提升为 `(int)-1`, 再进行 `int` 间的运算，最终结果为 `(int)1`．
--   `(unsigned char)'\0' - (unsigned char)'\xff'` 会先将 `(unsigned char)'\0'` 提升为 `(int)0`、将 `(unsigned char)'\xff'` 提升为 `(int)255`, 再进行 `int` 间的运算，最终结果为 `(int)-255`．
--   `false - (unsigned short)12` 会先将 `false` 提升为 `(int)0`、将 `(unsigned short)12` 提升为 `(int)12`, 再进行 `int` 间的运算，最终结果为 `(int)-12`．
+-   `(signed char)'\0' - (signed char)'\xff'` first promotes `(signed char)'\0'` to `(int)0` and `(signed char)'\xff'` to `(int)-1`, then performs the operation between `int`s, producing `(int)1`.
+-   `(unsigned char)'\0' - (unsigned char)'\xff'` first promotes `(unsigned char)'\0'` to `(int)0` and `(unsigned char)'\xff'` to `(int)255`, then performs the operation between `int`s, producing `(int)-255`.
+-   `false - (unsigned short)12` first promotes `false` to `(int)0` and `(unsigned short)12` to `(int)12`, then performs the operation between `int`s, producing `(int)-12`.
 
-#### 浮点提升
+#### Floating-Point Promotion
 
-位宽较小的浮点数可以提升为位宽较大的浮点数（例如 `float` 类型的变量和 `double` 类型的变量进行算术运算时，会将 `float` 类型变量提升为 `double` 类型变量），其值不变．
+A floating-point number with a smaller width can be promoted to a floating-point number with a larger width. For example, when a `float` variable and a `double` variable participate in arithmetic, the `float` variable is promoted to `double`. The value remains unchanged.
 
-### 数值转换
+### Numeric Conversion
 
-数值转换过程中，值可能会发生改变．
+During numeric conversion, the value may change.
 
-???+ warning "注意"
-    数值提升优先于数值转换．如 `bool`->`int` 时是数值提升而非数值转换．
+???+ warning "Note"
+    Numeric promotion takes precedence over numeric conversion. For example, `bool`->`int` is numeric promotion rather than numeric conversion.
 
-#### 整数转换
+#### Integer Conversion
 
 <!-- scripts.linter.preprocess.fix_details off -->
 
--   如果目标类型为位宽为 $x$ 的无符号整数类型，则转换结果是原值 $\bmod 2^x$ 后的结果．
+-   If the destination type is an unsigned integer type with bit width $x$, the conversion result is the original value modulo $2^x$.
 
-    -   若目标类型位宽大于源类型位宽：
+    -   If the destination type has a greater width than the source type:
 
-        -   若源类型为有符号类型，一般情况下需先进行符号位扩展再转换．
+        -   If the source type is signed, sign extension is generally performed before conversion.
 
-            如
+            For example:
 
-            -   将 `(short)-1`（`(short)0b1111'1111'1111'1111`）转换为 `unsigned int` 类型时，先进行符号位扩展，得到 `0b1111'1111'1111'1111'1111'1111'1111'1111`，再进行整数转换，结果为 `(unsigned int)4'294'967'295`（`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`）．
-            -   将 `(short)32'767`（`(short)0b0111'1111'1111'1111`）转换为 `unsigned int` 类型时，先进行符号位扩展，得到 `0b0000'0000'0000'0000'0111'1111'1111'1111`，再进行整数转换，结果为 `(unsigned int)32'767`（`(unsigned int)0b0000'0000'0000'0000'0111'1111'1111'1111`）．
+            -   When converting `(short)-1` (`(short)0b1111'1111'1111'1111`) to `unsigned int`, sign extension is performed first, yielding `0b1111'1111'1111'1111'1111'1111'1111'1111`, then integer conversion is performed, producing `(unsigned int)4'294'967'295` (`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`).
+            -   When converting `(short)32'767` (`(short)0b0111'1111'1111'1111`) to `unsigned int`, sign extension is performed first, yielding `0b0000'0000'0000'0000'0111'1111'1111'1111`, then integer conversion is performed, producing `(unsigned int)32'767` (`(unsigned int)0b0000'0000'0000'0000'0111'1111'1111'1111`).
 
-        -   若源类型为无符号类型，则需先进行零扩展再转换．
+        -   If the source type is unsigned, zero extension is performed before conversion.
 
-            如将 `(unsigned short)65'535`（`(unsigned short)0b1111'1111'1111'1111`）转换为 `unsigned int` 类型时，先进行零扩展，得到 `0b0000'0000'0000'0000'1111'1111'1111'1111`，再进行整数转换，结果为 `(unsigned int)65'535`（`(unsigned int)0b0000'0000'0000'0000'1111'1111'1111'1111`）．
+            For example, when converting `(unsigned short)65'535` (`(unsigned short)0b1111'1111'1111'1111`) to `unsigned int`, zero extension is performed first, yielding `0b0000'0000'0000'0000'1111'1111'1111'1111`, then integer conversion is performed, producing `(unsigned int)65'535` (`(unsigned int)0b0000'0000'0000'0000'1111'1111'1111'1111`).
 
-    -   若目标类型位宽不大于源类型位宽，则需先截断再转换．
+    -   If the destination type's width is not greater than the source type's width, truncation is performed before conversion.
 
-        如将 `(unsigned int)4'294'967'295`（`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`）转换为 `unsigned short` 类型时，先进行截断，得到 `0b1111'1111'1111'1111`，再进行整数转换，结果为 `(unsigned short)65'535`（`(unsigned short)0b1111'1111'1111'1111`）．
+        For example, when converting `(unsigned int)4'294'967'295` (`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`) to `unsigned short`, truncation is performed first, yielding `0b1111'1111'1111'1111`, then integer conversion is performed, producing `(unsigned short)65'535` (`(unsigned short)0b1111'1111'1111'1111`).
 
--   如果目标类型为位宽为 $x$ 的带符号整数类型，则 **一般情况下**，转换结果可以认为是原值 $\bmod 2^x$ 后的结果．[^note13]
+-   If the destination type is a signed integer type with bit width $x$, then **in general**, the conversion result can be regarded as the original value modulo $2^x$.[^note13]
 
-    例如将 `(unsigned int)4'294'967'295`（`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`）转换为 `short` 类型时，结果为 `(short)-1`（`(short)0b1111'1111'1111'1111`）．
+    For example, when converting `(unsigned int)4'294'967'295` (`(unsigned int)0b1111'1111'1111'1111'1111'1111'1111'1111`) to `short`, the result is `(short)-1` (`(short)0b1111'1111'1111'1111`).
 
--   如果目标类型是 `bool`，则是 [布尔转换](#布尔转换)．
+-   If the destination type is `bool`, this is a [Boolean conversion](#boolean-conversion).
 
--   如果源类型是 `bool`，则 `false` 转为对应类型的 0，`true` 转为对应类型的 1．
+-   If the source type is `bool`, `false` is converted to 0 of the corresponding type, and `true` is converted to 1 of the corresponding type.
 
 <!-- scripts.linter.preprocess.fix_details on -->
 
-#### 浮点转换
+#### Floating-Point Conversion
 
-位宽较大的浮点数转换为位宽较小的浮点数，会将该数舍入到目标类型下最接近的值．
+When a floating-point number with a larger width is converted to a floating-point number with a smaller width, it is rounded to the nearest value representable by the destination type.
 
-#### 浮点整数转换
+#### Floating-Point-Integer Conversion
 
--   浮点数转换为整数时，会舍弃浮点数的全部小数部分．
+-   When a floating-point number is converted to an integer, all fractional parts of the floating-point number are discarded.
 
-    如果目标类型是 `bool`，则是 [布尔转换](#布尔转换)．
+    If the destination type is `bool`, this is a [Boolean conversion](#boolean-conversion).
 
--   整数转换为浮点数时，会舍入到目标类型下最接近的值．
+-   When an integer is converted to a floating-point number, it is rounded to the nearest value representable by the destination type.
 
-    如果该值不能适应到目标类型中，那么行为未定义．
+    If the value cannot fit in the destination type, the behavior is undefined.
 
-    如果源类型是 `bool`，那么 `false` 转换为零，而 `true` 转换为一．
+    If the source type is `bool`, `false` is converted to zero, and `true` is converted to one.
 
-#### 布尔转换
+#### Boolean Conversion
 
-将其他类型转换为 `bool` 类型时，零值转换为 `false`，非零值转换为 `true`．
+When other types are converted to `bool`, zero values are converted to `false`, and nonzero values are converted to `true`.
 
-## 定义变量
+## Defining Variables
 
-简单地说[^note14]，定义一个变量，需要包含类型说明符（指明变量的类型），以及要定义的变量名．
+Simply put[^note14], defining a variable requires a type specifier, which indicates the variable's type, and the name of the variable to be defined.
 
-例如，下面这几条语句都是变量定义语句．
+For example, each of the following statements defines a variable:
 
 ```cpp
 int oi;
@@ -474,69 +474,69 @@ double wiki;
 char org = 'c';
 ```
 
-在目前我们所接触到的程序段中，定义在花括号包裹的地方的变量是局部变量，而定义在没有花括号包裹的地方的变量是全局变量．实际有例外，但是现在不必了解．
+In the program fragments we have seen so far, variables defined inside braces are local variables, while variables defined outside any braces are global variables. There are exceptions in practice, but they are not necessary to understand now.
 
-定义时没有初始化值的全局变量会被初始化为 $0$．而局部变量没有这种特性，需要手动赋初始值，否则可能引起难以发现的 bug．
+Global variables that are not initialized at definition are initialized to $0$. Local variables do not have this property and need to be initialized manually, otherwise hard-to-find bugs may occur.
 
-## 变量作用域
+## Variable Scope
 
-作用域是变量可以发挥作用的代码块．
+A scope is the code block in which a variable can take effect.
 
-全局变量的作用域，自其定义之处开始[^note15]，至文件结束位置为止．
+The scope of a global variable starts at its definition[^note15] and continues to the end of the file.
 
-局部变量的作用域，自其定义之处开始，至代码块结束位置为止．
+The scope of a local variable starts at its definition and continues to the end of its code block.
 
-由一对大括号括起来的若干语句构成一个代码块．
+A code block consists of several statements enclosed by a pair of braces.
 
 ```cpp
-int g = 20;  // 定义全局变量
+int g = 20;  // define a global variable
 
 int main() {
-  int g = 10;         // 定义局部变量
-  printf("%d\n", g);  // 输出 g
+  int g = 10;         // define a local variable
+  printf("%d\n", g);  // output g
   return 0;
 }
 ```
 
-如果一个代码块的内嵌块中定义了相同变量名的变量，则内层块中将无法访问外层块中相同变量名的变量．
+If a variable with the same name is defined in a nested block, the inner block cannot access the variable with the same name in the outer block.
 
-例如上面的代码中，输出的 $g$ 的值将是 $10$．因此为了防止出现意料之外的错误，请尽量避免局部变量与全局变量重名的情况．
+In the code above, for example, the output value of $g$ is $10$. Therefore, to avoid unexpected errors, try not to use the same name for local and global variables.
 
-## 常量
+## Constants
 
-常量是固定值，在程序执行期间不会改变．
+A constant is a fixed value that does not change during program execution.
 
-常量的值在定义后不能被修改．定义时加一个 `const` 关键字即可．
+The value of a constant cannot be modified after it is defined. Add the `const` keyword when defining it.
 
 ```cpp
 const int a = 2;
 a = 3;
 ```
 
-如果修改了常量的值，在编译环节就会报错：`error: assignment of read-only variable 'a'`．
+If you modify the value of a constant, compilation reports an error: `error: assignment of read-only variable 'a'`.
 
-## 参考资料与注释
+## References and Notes
 
 1.  [Working Draft, Standard for Programming Language C++](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/n4917.pdf)
-2.  [类型 - cppreference.com](https://zh.cppreference.com/w/cpp/language/type)
-3.  C 语言的 [算术类型 - cppreference.com](https://zh.cppreference.com/w/c/language/arithmetic_types)
-4.  [基础类型 - cppreference.com](https://zh.cppreference.com/w/cpp/language/types)
-5.  [定宽整数类型（C++11 起）- cppreference.com](https://zh.cppreference.com/w/cpp/types/integer)
-6.  William Kahan (1 October 1997).["Lecture Notes on the Status of IEEE Standard 754 for Binary Floating-Point Arithmetic"](https://people.eecs.berkeley.edu/~wkahan/ieee754status/IEEE754.PDF).
-7.  [隐式转换 - cppreference.com](https://zh.cppreference.com/w/cpp/language/implicit_conversion)
-8.  [声明 - cppreference](https://zh.cppreference.com/w/cpp/language/declarations)
-9.  [作用域 - cppreference.com](https://zh.cppreference.com/w/cpp/language/scope)
+2.  [Types - cppreference.com](https://en.cppreference.com/w/cpp/language/type)
+3.  C language [Arithmetic types - cppreference.com](https://en.cppreference.com/w/c/language/arithmetic_types)
+4.  [Fundamental types - cppreference.com](https://en.cppreference.com/w/cpp/language/types)
+5.  [Fixed-width integer types (since C++11) - cppreference.com](https://en.cppreference.com/w/cpp/types/integer)
+6.  William Kahan (1 October 1997). ["Lecture Notes on the Status of IEEE Standard 754 for Binary Floating-Point Arithmetic"](https://people.eecs.berkeley.edu/~wkahan/ieee754status/IEEE754.PDF).
+7.  [Implicit conversions - cppreference.com](https://en.cppreference.com/w/cpp/language/implicit_conversion)
+8.  [Declarations - cppreference](https://en.cppreference.com/w/cpp/language/declarations)
+9.  [Scope - cppreference.com](https://en.cppreference.com/w/cpp/language/scope)
 
-[^note10]: 参见 <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3054.pdf>
+[^note10]: See <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3054.pdf>.
 
-[^note11]: 包括数组类型、引用类型、指针类型、类类型、函数类型等．由于本篇文章是面向初学者的，故不在本文做具体介绍．具体请参阅 [类型 - cppreference.com](https://zh.cppreference.com/w/cpp/language/type)
+[^note11]: Includes array types, reference types, pointer types, class types, function types, and so on. Since this article is intended for beginners, they are not introduced in detail here. See [Types - cppreference.com](https://en.cppreference.com/w/cpp/language/type) for details.
 
-[^note12]: 不包含宽字符类型、位域和枚举类型，详见 [整型转换 - cppreference](https://zh.cppreference.com/w/cpp/language/implicit_conversion#.E6.95.B4.E5.9E.8B.E8.BD.AC.E6.8D.A2)．
+[^note12]: This does not include wide character types, bit-fields, or enumeration types. See [Integral conversions - cppreference](https://en.cppreference.com/w/cpp/language/implicit_conversion#Integral_conversions) for details.
 
-[^note13]: 自 C++20 起生效．C++20 前结果是实现定义的．详见 [整型转换 - cppreference](https://zh.cppreference.com/w/cpp/language/implicit_conversion#.E6.95.B4.E5.9E.8B.E8.BD.AC.E6.8D.A2)．
+[^note13]: This applies since C++20. Before C++20, the result was implementation-defined. See [Integral conversions - cppreference](https://en.cppreference.com/w/cpp/language/implicit_conversion#Integral_conversions) for details.
 
-[^note14]: 定义一个变量时，除了类型说明符之外，还可以包含其他说明符．详见 [声明 - cppreference](https://zh.cppreference.com/w/cpp/language/declarations)．
+[^note14]: When defining a variable, other specifiers may be included in addition to the type specifier. See [Declarations - cppreference](https://en.cppreference.com/w/cpp/language/declarations) for details.
 
-[^note15]: 更准确的说法是 [声明点](https://zh.cppreference.com/w/cpp/language/scope#.E5.A3.B0.E6.98.8E.E7.82.B9)．
+[^note15]: More precisely, the [point of declaration](https://en.cppreference.com/w/cpp/language/scope#Point_of_declaration).
 
-[^note16]: C++20 前规定有符号整数至少要覆盖 [反码](../math/bit.md#整数与位序列) 的表示范围（即 $-2^{x-1}+1\sim 2^{x-1}-1$），但实际上绝大多数实现中均采用 [补码](../math/bit.md#整数与位序列) 实现；C++20 起进一步规定有符号整数必须使用补码实现．详见 [Range of values - cppreference](https://en.cppreference.com/w/cpp/language/types.html#Range_of_values)．
+[^note16]: Before C++20, signed integers were required to cover at least the representable range of [ones' complement](../math/bit.md#integers-and-bit-sequences), namely $-2^{x-1}+1\sim 2^{x-1}-1$, but in practice most implementations used [two's complement](../math/bit.md#integers-and-bit-sequences). Since C++20, signed integers are further required to use two's complement. See [Range of values - cppreference](https://en.cppreference.com/w/cpp/language/types.html#Range_of_values) for details.

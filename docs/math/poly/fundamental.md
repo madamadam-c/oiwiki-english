@@ -1,107 +1,107 @@
-## 定义
+## Definition
 
-任何复系数一元 $n$ 次多项式（$n$ 至少为 $1$）方程在复数域上至少有一根．
+Any complex-coefficient univariate polynomial equation of degree $n$ (with $n$ at least 1) has at least one root in the complex number field.
 
-由此推出，$n$ 次复系数多项式方程在复数域内有且只有 $n$ 个根，重根按重数计算．
+From this, a degree-$n$ complex-coefficient polynomial equation has exactly $n$ roots in the complex number field, with repeated roots counted by multiplicity.
 
-有时这个定理也表述为：
+Sometimes this theorem is also stated as:
 
-任何一个非零的一元 $n$ 次复系数多项式，都正好有 $n$ 个复数根．
+Any non-zero univariate degree-$n$ complex-coefficient polynomial has exactly $n$ complex roots.
 
-代数基本定理的证明，一般会用到复变函数或者近世代数，因此往往作为一个熟知结论直接应用．
+The proof of the Fundamental Theorem of Algebra generally uses complex analysis or modern algebra, so it's often treated as a well-known fact and directly applied.
 
-根据代数基本定理，一个复系数多项式 $f(x)=a_nx^n+a_{n-1}x^{n-1}+\ldots+a_0$ 一定可以唯一地分解为：
+According to the Fundamental Theorem of Algebra, a complex-coefficient polynomial $f(x)=a_nx^n+a_{n-1}x^{n-1}+\ldots+a_0$ can be uniquely factored as:
 
 $$
 f(x)=a_n{(x-x_1)}^{k_1}{(x-x_2)}^{k_2}\ldots{(x-x_t)}^{k_t}
 $$
 
-其中各个根均为复数，$k_1+k_2+\ldots+k_t=n$．
+Where all roots are complex numbers, and $k_1+k_2+\ldots+k_t=n$.
 
-## 虚根成对定理
+## Conjugate Root Theorem
 
-代数基本定理的研究对象是复系数多项式．当对实系数多项式进行研究时，虽然也能分解出复数根，却需要将研究范围扩大，不太方便．
+The Fundamental Theorem of Algebra deals with complex-coefficient polynomials. When studying real-coefficient polynomials, although we can also factor out complex roots, we need to expand the scope of study, which is inconvenient.
 
-虚根：非实数根．
+Non-real root: non-real number root.
 
-定理：实系数多项式的根的共轭复数也是该多项式的根．
+Theorem: The conjugate complex number of a root of a real-coefficient polynomial is also a root of that polynomial.
 
-证明：直接在代数基本定理的等式两端取共轭即证毕．
+Proof: Directly take conjugates on both sides of the Fundamental Theorem of Algebra equation to complete the proof.
 
-如果根本身是实数，则取共轭仍为它本身，不受影响．
+If the root itself is a real number, taking the conjugate still gives itself and is unaffected.
 
-如果根是虚根，则虚根的共轭复数也是原多项式的根．那么，两个虚根就可以配对．
+If the root is a non-real root, the conjugate complex number of the non-real root is also a root of the original polynomial. Thus, two non-real roots can be paired.
 
-定理：实数系数方程的共轭虚根一定成对出现，并且共轭虚根的重数相等．
+Theorem: Conjugate non-real roots of a real-coefficient equation must appear in pairs, and the multiplicities of conjugate non-real roots are equal.
 
-证明：假设一个根为 $a+b\mathrm{i}$，则另一个根为 $a-b\mathrm{i}$．这意味着在分解式中存在两项：
+Proof: Assume one root is $a+b\mathrm{i}$, then the other root is $a-b\mathrm{i}$. This means there are two terms in the factorization:
 
 $$
 (x-a-b\mathrm{i})(x-a+b\mathrm{i})=x^2-2ax+a^2+b^2
 $$
 
-可以看到两项乘在一起，各项系数会全部变为实数．这个等式右端的二次实系数多项式整除原始的多项式．
+It can be seen that when multiplying these two terms, all coefficients become real numbers. This quadratic real-coefficient polynomial on the right side divides the original polynomial.
 
-于是，在代数基本定理的等式中，两遍同时除以这个二次三项式，得到的仍旧是实系数多项式的等式．对新等式重复操作，随着次数的下降，若干次后即不存在虚根．
+Thus, in the Fundamental Theorem of Algebra equation, dividing both sides by this quadratic polynomial and performing the same operation on the new equation, after repeated operations as the degree decreases, there will eventually be no non-real roots after several times.
 
-因此，每对共轭虚根的重数相等．证毕．
+Therefore, the multiplicities of each pair of conjugate non-real roots are equal. Proof complete.
 
-以下是虚根成对定理的推论：
+The following are corollaries of the conjugate root theorem:
 
--   实系数奇次多项式至少有一个实根，并且总共有奇数个实根．
--   实系数偶次多项式可能没有实根，总共有偶数个实根．
+-   A real-coefficient odd-degree polynomial has at least one real root, and has an odd number of total real roots.
+-   A real-coefficient even-degree polynomial may have no real roots, and has an even number of total real roots.
 
-称上述二次三项式 $x^2-2ax+a^2+b^2=x^2+px+q$ 为二次实系数不可约因式．不可约是指它在实数范围内不可约．
+The quadratic polynomial $x^2-2ax+a^2+b^2=x^2+px+q$ above is called a quadratic irreducible factor over reals. "Irreducible" means it cannot be reduced within the real number range.
 
-定理：实系数多项式一定是一次或者二次实系数不可约因式的积．
+Theorem: A real-coefficient polynomial can always be factored into a product of linear or quadratic irreducible factors over reals.
 
-证明：
+Proof:
 
-只要实系数多项式有一个实根 $c$，就有一个实系数因式 $x-c$ 和它对应；有一对虚根 $a\pm b\mathrm{i}$，就有一个实系数因式 $x^2-2ax+a^2+b^2$ 和它对应．
+If a real-coefficient polynomial has a real root $c$, then there is a real-coefficient factor $x-c$ corresponding to it; if it has a pair of non-real roots $a\pm b\mathrm{i}$, then there is a real-coefficient factor $x^2-2ax+a^2+b^2$ corresponding to it.
 
-因此，只要在原始的代数基本定理分解式中，利用虚根成对定理进行配对，即证毕．
+Therefore, as long as we pair using the conjugate root theorem in the Fundamental Theorem of Algebra factorization, the proof is complete.
 
-根据虚根成对定理，一个实系数多项式 $f(x)=a_nx^n+a_{n-1}x^{n-1}+\ldots+a_0$ 一定可以唯一地分解为：
+According to the conjugate root theorem, a real-coefficient polynomial $f(x)=a_nx^n+a_{n-1}x^{n-1}+\ldots+a_0$ can be uniquely factored as:
 
 $$
 f(x)=a_n{(x-x_1)}^{k_1}{(x-x_2)}^{k_2}\ldots{(x-x_t)}^{k_t}{(x^2+p_1x+q_1)}^{l_1}{(x^2+p_2x+q_2)}^{l_2}\ldots{(x^2+p_sx+q_s)}^{l_s}
 $$
 
-其中各项系数均为实数，$k_1+k_2+\ldots+k_t+2(l_1+l_2+\ldots+l_s)=n$．
+Where all coefficients are real numbers, and $k_1+k_2+\ldots+k_t+2(l_1+l_2+\ldots+l_s)=n$.
 
-## 林士谔算法
+## Lin's Algorithm
 
-### 简介
+### Introduction
 
-怎样对实系数多项式进行代数基本定理的分解？如果将数域扩充至复数会很复杂．
+How to perform the Fundamental Theorem of Algebra factorization on real-coefficient polynomials? Expanding the number field to complex numbers is complicated.
 
-如果只在实数范围内进行分解，只能保证，当次数大于 $2$ 的时候，一定存在实系数二次三项式因式．
+If we only factor within the real number range, we can only guarantee that when the degree is greater than $2$, there must be a real-coefficient quadratic factor.
 
-这是因为，如果该多项式有虚根，直接凑出一对共轭虚根即可．如果该多项式只有实根，任取两个实根对应的一次因式乘在一起，也能得到实系数二次三项式因式．
+This is because: if the polynomial has non-real roots, we can directly form a pair of conjugate non-real roots. If the polynomial has only real roots, multiplying the linear factors corresponding to any two real roots also yields a real-coefficient quadratic factor.
 
-找到二次三项式因式之后，再从二次式中解实根或复根就极为容易．于是便有逐次 **找出一个二次因子** 来求得方程的复根的计算方法，这种方法避免了复数运算．
+After finding the quadratic factor, solving real or complex roots from the quadratic equation becomes extremely easy. Thus, there is a calculation method for finding complex roots of higher-order equations by "finding a quadratic factor" step by step. This method avoids complex number operations.
 
-在 1940 年 8 月、1943 年 8 月和 1947 年 7 月，林士谔先后在 MIT 出版的《数学物理》杂志上接连正式发表了 3 篇关于解算高阶方程式复根方法的论文[^note1]，每次均有改进．
+In August 1940, August 1943, and July 1947, Lin Shie successively published three papers on methods for calculating complex roots of higher-order equations in the "Mathematical Physics" journal published by MIT[^note1], each with improvements.
 
-这个方法今天还在现代计算机中进行快速运算，计算机程序包（如 MATLAB）中的多项式求根程序依据的原理也是这个算法．
+This method is still used for fast calculations in modern computers. The polynomial root program in computer software packages (such as MATLAB) also follows this algorithm.
 
-### 过程
+### Process
 
-要想找到一个二次三项式因子，就要将多项式分解为：
+To find a quadratic factor, we need to decompose the polynomial as:
 
 $$
 f(x)=(x^2+p_1x+q_1)g(x)
 $$
 
-由于无法一下子找到二次三项式因子，按照迭代求解的思路，对于初始值有：
+Since we cannot find the quadratic factor at once, following the idea of iterative solution, for initial values we have:
 
 $$
 f(x)=(x^2+px+q)g(x)+rx+s
 $$
 
-会产生一个一次式作为余项．只要余项足够小，即可近似地找到待求因子．
+This will generate a linear term as the remainder. As long as the remainder is small enough, we can approximately find the factor we seek.
 
-我们希望最终解是初始值加一个偏移修正：
+We want the final solution to be the initial value plus an offset correction:
 
 $$
 p_1=p+dp
@@ -111,7 +111,7 @@ $$
 q_1=q+dq
 $$
 
-余式中的两个数 $(r, s)$ 由除式的给定系数 $(p, q)$ 决定．有偏导数关系：
+The two numbers $(r, s)$ in the remainder are determined by the given coefficients $(p, q)$ of the divisor. There are partial derivative relationships:
 
 $$
 dr=\frac{\partial r}{\partial p}dp+\frac{\partial r}{\partial q}dq
@@ -121,7 +121,7 @@ $$
 ds=\frac{\partial s}{\partial p}dp+\frac{\partial s}{\partial q}dq
 $$
 
-在初始的等式中，被除式 $f(x)$ 是给定的，商式 $g(x)$ 和余式 $rx+s$ 随着除式 $x^2+px+q$ 的变化而变化．因此有偏导数关系
+In the initial equation, the dividend $f(x)$ is given, and the quotient $g(x)$ and remainder $rx+s$ vary with the divisor $x^2+px+q$. So there are partial derivative relationships:
 
 $$
 0=xg(x)+\frac{\partial g(x)}{\partial p}(x^2+px+q)+\frac{\partial r}{\partial p}x+\frac{\partial s}{\partial p}
@@ -131,7 +131,7 @@ $$
 0=g(x)+\frac{\partial g(x)}{\partial q}(x^2+px+q)+\frac{\partial r}{\partial q}x+\frac{\partial s}{\partial q}
 $$
 
-注意到，偏导数只是一个数值，与变元 $x$ 无关．因此有整除关系
+Note that the partial derivative is just a numerical value, independent of the variable $x$. So there are divisibility relationships:
 
 $$
 xg(x)=-\frac{\partial g(x)}{\partial p}(x^2+px+q)-\frac{\partial r}{\partial p}x-\frac{\partial s}{\partial p}
@@ -141,9 +141,9 @@ $$
 g(x)=-\frac{\partial g(x)}{\partial q}(x^2+px+q)-\frac{\partial r}{\partial q}x-\frac{\partial s}{\partial q}
 $$
 
-这里的结论是，待求的偏导数，恰好是对商式继续做除法的余式．多项式对给定二次三项式的除法，直接计算即可．这里就求得了四个偏导数．
+Here, the conclusion is that the partial derivatives we seek are exactly the remainders from continuing to divide the quotient. The division of a polynomial by a given quadratic can be computed directly. Here we obtain four partial derivatives.
 
-我们希望 $s$ 和 $r$ 加上偏移 $ds$ 与 $dr$ 得到 $0$，即 $ds$ 与 $dr$ 是 $s$ 和 $r$ 的相反数．因此要解方程：
+We want $s$ and $r$ plus offsets $ds$ and $dr$ to get $0$, i.e., $ds$ and $dr$ are the opposites of $s$ and $r$. So we need to solve the equations:
 
 $$
 -\frac{\partial r}{\partial p}dp-\frac{\partial r}{\partial q}dq=r
@@ -153,22 +153,22 @@ $$
 -\frac{\partial s}{\partial p}dp-\frac{\partial s}{\partial q}dq=s
 $$
 
-从上述方程组中解得 $p$ 和 $q$ 相应的偏移 $dp$ 和 $dq$，直接用二阶行列式求解即可．
+From these equations, we solve for the offsets $dp$ and $dq$ corresponding to $p$ and $q$, which can be directly solved using second-order determinants.
 
-### 实现
+### Implementation
 
 ```C
-// a 是原始的多项式，n 是多项式次数，p 是待求的一次项，q 是待求的常数项
+// a is the original polynomial, n is the degree of the polynomial, p is the term to be solved, q is the constant term to be solved
 void Shie(double a[], int n, double *p, double *q) {
-  // 数组 b 是多项式 a 除以当前迭代二次三项式的商
+  // Array b is the quotient of polynomial a divided by the current iterative quadratic
   memset(b, 0, sizeof(b));
-  // 数组 c 是多项式 b 乘以 x 平方再除以当前迭代二次三项式的商
+  // Array c is the quotient of polynomial b multiplied by x squared and then divided by the current iterative quadratic
   memset(c, 0, sizeof(c));
   *p = 0;
   *q = 0;
   double dp = 1;
   double dq = 1;
-  while (dp > eps || dp < -eps || dq > eps || dq < -eps)  // eps 自行设定
+  while (dp > eps || dp < -eps || dq > eps || dq < -eps)  // eps set by yourself
   {
     double p0 = p;
     double q0 = q;
@@ -195,6 +195,6 @@ void Shie(double a[], int n, double *p, double *q) {
 }
 ```
 
-## 参考资料与注释
+## References and Notes
 
-[^note1]: [林士谔．论劈因法解高阶特征方程根值的应用问题．数学进展，1963(03):207-217.](https://cnki.net/kcms/detail/detail.aspx?filename=SXJZ196303000&dbcode=CJFD&dbname=CJFD1979)
+[^note1]: [Lin Shie. On the Application of the Split-Factor Method to Solve High-Order Characteristic Equations. Advances in Mathematics, 1963(03):207-217.](https://cnki.net/kcms/detail/detail.aspx?filename=SXJZ196303000&dbcode=CJFD&dbname=CJFD1979)

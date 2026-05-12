@@ -1,281 +1,281 @@
-本文介绍（可）平面图及其相关概念．
+This article introduces (planar) planar graphs and related concepts.
 
-## 平面图
+## Planar Graphs
 
-如果图 $G$ 能画在平面 $S$ 上，即除顶点处外无边相交，则称 $G$ 可嵌入平面 $S$，$G$ 为 **可平面图**（planar graph）．画出的没有边相交的图称为 $G$ 的平面表示或 **平面嵌入**（planar embedding）．可平面图的这个平面嵌入也称为 **平面图**（plane graph）．
+If a graph $G$ can be drawn on a plane $S$ such that edges do not intersect except at vertices, then we say $G$ can be embedded on plane $S$, and $G$ is a **planar graph**. The drawn graph without edge intersections is called a planar embedding or **plane embedding** of $G$. This planar embedding of a planar graph is also called a **plane graph**.
 
-???+ info "「平面图」"
-    不同中文文本中，「平面图」的含义可能不同．在本文的定义中，可平面图是一个图论对象，它可能以不同的方式嵌入平面中；平面图则是一个几何对象，除了图论结构外，它还需要指定图的绘制方式．同一个可平面图往往对应着多个平面图．因此，本文叙述的结论如果只依赖于图论结构，将使用「可平面图」一词；如果还依赖于图的平面嵌入方式，将使用「平面图」一词．
+???+ info ""Planar Graph""
+    In different texts, the meaning of "planar graph" may vary. In the definitions of this article, a planar graph is a graph-theoretic object that may be embedded in the plane in different ways; a plane graph is a geometric object that, in addition to the graph-theoretic structure, also requires specifying the drawing method of the graph. The same planar graph often corresponds to multiple plane graphs. Therefore, in this article, if a conclusion depends only on the graph-theoretic structure, we will use the term "planar graph"; if it also depends on the plane embedding method of the graph, we will use the term "plane graph".
 
-以下是平面图的简单例子：
+Here are simple examples of planar graphs:
 
 ![](images/planar-1.svg)
 
-（左：蝴蝶图；右：$4$ 阶完全图 $K_4$）
+(Left: Butterfly graph; Right: Complete graph $K_4$ of order $4$)
 
-以下是不可平面图的简单例子：
+Here are simple examples of non-planar graphs:
 
 ![](images/planar-2.svg)
 
-（左：$5$ 阶完全图 $K_5$；右：两部分各 $3$ 个顶点的完全二分图 $K_{3,3}$）
+(Left: Complete graph $K_5$ of order $5$; Right: Complete bipartite graph $K_{3,3}$ with 3 vertices in each part)
 
-## 性质
+## Properties
 
-本节介绍平面图的性质．
+This section introduces properties of planar graphs.
 
-### 面及其次数
+### Faces and Their Degrees
 
-设 $G$ 是平面图，由 $G$ 的边将 $G$ 所在的平面划分成若干个区域，每个区域称为 $G$ 的一个 **面**（face）．其中，无界的面称为 **无限面**（unbounded face）或 **外部面**（external face），有界的称为有限面或内部面．每一个平面图有且仅有一个外部面．
+Let $G$ be a plane graph. The plane where $G$ lies is divided into several regions by the edges of $G$. Each region is called a **face** of $G$. The face with no boundary is called the **unbounded face** or **external face**, and those with boundaries are called bounded faces or internal faces. Each plane graph has exactly one external face.
 
-包围每个面的所有边组成的回路称为该面的 **边界**（boundary），并称边界中的边与该面 **关联**（incident）．边界的长度称为该面的 **次数**（degree）．计算面的次数时，每条割边都算作两次．平面图中所有面的次数之和等于边数 $|E|$ 的 $2$ 倍．
+The set of all edges surrounding each face is called the **boundary** of that face, and edges in the boundary are said to be **incident** with that face. The length of the boundary is called the **degree** of that face. When computing the degree of a face, each bridge is counted twice. In a plane graph, the sum of the degrees of all faces equals $2|E|$.
 
-平面图中，$1$ 次面的边界对应于图的自环，$2$ 次面的边界通常对应于图的一对重边[^face-2]．顶点数 $|V|\ge 3$ 的简单连通平面图中，所有面次数都至少为 $3$．
+In plane graphs, a face of degree $1$ corresponds to a self-loop in the graph, and a face of degree $2$ usually corresponds to a pair of parallel edges in the graph[^face-2]. In a simple connected plane graph with $|V| \ge 3$, all faces have degree at least $3$.
 
-### 欧拉公式
+### Euler's Formula
 
-平面图的一个重要性质是 **欧拉公式**（Euler's formula）．它给出了图的顶点数 $|V|$、边数 $|E|$ 和面数 $|F|$ 之间的关系．
+An important property of planar graphs is **Euler's formula**. It gives the relationship between the number of vertices $|V|$, number of edges $|E|$, and number of faces $|F|$ in a graph.
 
-???+ note "欧拉公式"
-    对于连通的平面图 $G$，有
+???+ note "Euler's Formula"
+    For a connected plane graph $G$, we have
     
     $$
     |V| - |E| + |F| = 2.
     $$
 
-??? note "证明"
-    对于面数 $|F|$ 应用数学归纳法．归纳起点是 $|F|=1$．此时，平面图有且只有一个外部面，全部边都是割边．所以，图 $G$ 是一棵树，必然有 $|E|=|V|-1$，代入欧拉公式就可以发现它成立．假设欧拉公式对于面数 $|F| = k$ 的平面图成立．对于面数 $|F|=k + 1$ 的平面图 $G$，必然存在非割边 $e$，它是两个不同的面的公共边．将边 $e$ 从图中删除，得到图 $G-e$，它有 $|V|$ 个顶点、$|E|-1$ 条边和 $|F|-1$ 个面．由归纳假设，对图 $G-e$ 成立欧拉公式，即 $|V|-(|E|-1)+(|F|-1)=2$，整理就得到关于图 $G$ 的欧拉公式．所以，根据数学归纳法，欧拉公式对于所有平面图都成立．
+??? note "Proof"
+    Apply mathematical induction on the number of faces $|F|$. The base case is $|F|=1$. At this time, the plane graph has only one external face, and all edges are bridges. So graph $G$ is a tree, and we must have $|E|=|V|-1$. Substituting into Euler's formula shows it holds. Assume Euler's formula holds for plane graphs with $|F| = k$. For a plane graph $G$ with $|F|=k + 1$, there must be a non-bridge edge $e$, which is a common edge of two distinct faces. Remove edge $e$ from the graph to obtain graph $G-e$, which has $|V|$ vertices, $|E|-1$ edges, and $|F|-1$ faces. By the induction hypothesis, Euler's formula holds for $G-e$, i.e., $|V|-(|E|-1)+(|F|-1)=2$. Rearranging gives Euler's formula for $G$. Therefore, by mathematical induction, Euler's formula holds for all plane graphs.
 
-???+ note "推论"
-    对于有 $k$ 个连通分支的平面图 $G$，有
+???+ note "Corollary"
+    For a planar graph $G$ with $k$ connected components, we have
     
     $$
     |V| - |E| + |F| = k + 1.
     $$
 
-??? note "证明"
-    图 $G$ 的每个连通分支都是平面图，但是这些连通分支共用同一个外部面．所以，直接对这些连通分支应用欧拉公式，并累加到一起，总顶点数和总边数都是正确的，但是总面数多了 $(k-1)$，因为唯一的外部面总共计数了 $k$ 次．将这一修正考虑在内，就得到 $|V|-|E|+|F| = 2k - (k-1) = k+1$．
+??? note "Proof"
+    Each connected component of $G$ is a plane graph, but these connected components share the same external face. So applying Euler's formula directly to these connected components and summing them together gives the correct total number of vertices and edges, but the total number of faces is off by $(k-1)$ because the unique external face is counted $k$ times. Taking this correction into account yields $|V|-|E|+|F| = 2k - (k-1) = k+1$.
 
-由此，可以推出平面图的边与顶点的数量关系．
+From this, we can derive the relationship between the number of edges and vertices in a planar graph.
 
-???+ note "定理"
-    对于有 $k$ 个连通分支的平面图 $G$，如果图 $G$ 的每个面次数都至少为 $l \ge 3$，那么有
+???+ note "Theorem"
+    For a planar graph $G$ with $k$ connected components, if each face of $G$ has degree at least $l \ge 3$, then
     
     $$
     |E| \le \dfrac{l}{l-2}(|V|-k-1).
     $$
 
-??? note "证明"
-    因为 $G$ 的各面的次数至少为 $l$，所以所有面的次数和至少为 $l|F|$，亦即 $2|E| \ge l|F|$．代入欧拉公式的推论 $|V| - |E| + |F| = k + 1$，就得到
+??? note "Proof"
+    Since each face of $G$ has degree at least $l$, the sum of the degrees of all faces is at least $l|F|$, i.e., $2|E| \ge l|F|$. Substituting from the corollary of Euler's formula $|V| - |E| + |F| = k + 1$, we get
     
     $$
     2|E| \ge l(k + 1 - |V| + |E|).
     $$
     
-    利用 $l \ge 2$ 解出 $|E|$，就得到
+    Solving for $|E|$ using $l \ge 2$ gives
     
     $$
     |E| \le \dfrac{l}{l-2}(|V|-k-1).
     $$
 
-???+ note "推论"
-    设 $G$ 是简单可平面图，且 $|V|\ge 3$，那么，有
+???+ note "Corollary"
+    Let $G$ be a simple planar graph and $|V|\ge 3$. Then
     
     $$
     |E| \le 3|V|-6.
     $$
 
-??? note "证明"
-    当 $G$ 连通时，所有面次数都至少是 $3$．在上述定理中，取 $k=1$ 且 $l=3$，就得到 $|E|\le 3|V|-6$．
+??? note "Proof"
+    When $G$ is connected, all faces have degree at least $3$. Taking $k=1$ and $l=3$ in the above theorem gives $|E|\le 3|V|-6$.
     
-    当 $G$ 不连通时，分为两种情形：
+    When $G$ is not connected, there are two cases:
     
-    -   如果存在连通分支顶点数至少是 $3$，那么对这些顶点数至少为 $3$ 的连通分支可以分别建立不等式 $|E_i|\le 3|V_i|-6$．因为那些顶点数小于 $3$ 的连通分支一定有 $|E_i|\le |V_i| \le 3|V_i|$．将所有连通分支对应的不等式相加，就得到 $|E|\le 3|V|-6$．
-    -   如果所有连通分支顶点数都小于 $3$，那么整体一定有 $|E|\le |V|$．又因为 $|V|\ge 3$ 时，$|V|\le 3|V|-6$，所以 $|E|\le 3|V|-6$ 仍然成立．
+    -   If there exists a connected component with at least $3$ vertices, then for each connected component with at least $3$ vertices, we can establish the inequality $|E_i|\le 3|V_i|-6$. Since connected components with fewer than $3$ vertices must have $|E_i|\le |V_i| \le 3|V_i|$. Adding up the inequalities for all connected components gives $|E|\le 3|V|-6$.
+    -   If all connected components have fewer than $3$ vertices, then we must have $|E|\le |V|$. Since when $|V|\ge 3$, $|V|\le 3|V|-6$, the inequality $|E|\le 3|V|-6$ still holds.
     
-    综上，命题得证．
+    In summary, the proposition is proved.
 
-这一推论说明，简单可平面图是稀疏图．
+This corollary shows that simple planar graphs are sparse graphs.
 
-### 对偶图
+### Dual Graph
 
-平面图都有相应的（几何）对偶图．
+Every plane graph has a corresponding (geometric) dual graph.
 
 ![](images/planar-dual-1.svg)
 
-设 $G$ 是平面图，可以绘制图 $G^*$ 如下：
+Let $G$ be a plane graph. We can draw graph $G^*$ as follows:
 
-1.  在 $G$ 的每个面 $f_i$ 内部都绘制一个点 $v_i^*$．
-2.  对 $G$ 的每条边 $e$，如果 $e$ 在面 $f_i$ 和 $f_j$ 的公共边界上，就绘制一条连接 $v_i^*$ 和 $v_j^*$ 的边 $e^*$，使之与 $e$ 恰相交一次，且不与其他图 $G$ 或图 $G^*$ 的边相交．特别地，当 $e$ 只出现在一个面 $f_i$ 的边界上时，需要绘制一条与 $v_i^*$ 关联的自环，使之与 $e$ 相交．
+1.  Draw a point $v_i^*$ inside each face $f_i$ of $G$.
+2.  For each edge $e$ of $G$, if $e$ is on the common boundary of faces $f_i$ and $f_j$, draw an edge $e^*$ connecting $v_i^*$ and $v_j^*$ that intersects $e$ exactly once and does not intersect any other edges of $G$ or $G^*$. In particular, when $e$ appears only on the boundary of a single face $f_i$, we need to draw a self-loop incident with $v_i^*$ that intersects $e$.
 
-这样得到的图 $G^*$ 就称作图 $G$ 的 **对偶图**（dual graph）．
+The resulting graph $G^*$ is called the **dual graph** of $G$.
 
-???+ note "定理"
-    设图 $G^*$ 是平面图 $G$ 的对偶图．那么，图 $G^*$ 是连通的平面图．而且，图 $G^{**}$ 与 $G$ 同构，当且仅当 $G$ 是连通图．
+???+ note "Theorem"
+    Let $G^*$ be the dual graph of a plane graph $G$. Then $G^*$ is a connected plane graph. Moreover, $G^{**}$ is isomorphic to $G$ if and only if $G$ is connected.
 
-??? note "证明"
-    图 $G^*$ 是平面图这一点可以由它的构造过程保证．还需要证明图 $G^*$ 是连通的．对于图 $G^*$ 中任意两个顶点 $v^*_i,v^*_j$，设平面中连接 $v^*_i$ 和 $v^*_j$ 的直线段经过图 $G$ 中的面和边依次为 $f_i,e_{s_1},f_{s_1},\cdots,f_{s_{r-1}},e_{s_r},f_j$，它们分别对应对偶图中的顶点和边 $v_i^*,e_{s_1}^*,v^*_{s_1},\cdots,v^*_{s_{r-1}},e^*_{s_r},v^*_j$．由图 $G^*$ 的构造可知，序列中相邻的顶点和边是相关联的，所以，这描述了图 $G^*$ 中的一条途径．所以，图 $G^*$ 是连通的．
+??? note "Proof"
+    That $G^*$ is a plane graph is guaranteed by its construction. We also need to prove that $G^*$ is connected. For any two vertices $v^*_i,v^*_j$ in $G^*$, suppose the line segment in the plane connecting $v^*_i$ and $v^*_j$ passes through faces and edges of $G$ in order: $f_i,e_{s_1},f_{s_1},\cdots,f_{s_{r-1}},e_{s_r},f_j$. They correspond to vertices and edges in the dual graph: $v_i^*,e_{s_1}^*,v^*_{s_1},\cdots,v^*_{s_{r-1}},e^*_{s_r},v^*_j$. From the construction of $G^*$, adjacent vertices and edges in the sequence are incident, so this describes a path in $G^*$. Therefore, $G^*$ is connected.
     
-    图 $G^{**}$ 是图 $G^*$ 的对偶图，必然是连通的．所以，$G$ 与 $G^{**}$ 同构，必要条件是图 $G$ 连通．接下来，需要证明这一条件也是充分的．为此，只需要证明当图 $G$ 连通时，图 $G$ 满足图 $G^*$ 的对偶图的构造要求．因为图 $G^*$ 的边和图 $G$ 的边天然是对应的，所以，只需要证明图 $G^*$ 的每一个面都恰好包含图 $G$ 的一个顶点．对于图 $G^*$ 的任一个面 $f^*$，设 $e^*$ 是它边界上的一条边，那么图 $G$ 中相对应的边 $e$ 的端点之一必然在面 $f^*$ 之内；因此，面 $f^*$ 中至少存在图 $G$ 的一个顶点．由于图 $G^*$ 和图 $G$ 都是连通的，欧拉公式成立；而图 $G$ 和图 $G^*$ 边数相同，图 $G$ 的面数等于图 $G^*$ 的顶点数，所以图 $G$ 的顶点数就等于图 $G^*$ 的面数．所以，图 $G^*$ 的每个面都恰好只有图 $G$ 的一个顶点．命题得证．
+    $G^{**}$ is the dual graph of $G^*$, so it is necessarily connected. Thus, a necessary condition for $G$ to be isomorphic to $G^{**}$ is that $G$ is connected. Next, we need to prove this condition is also sufficient. For this, we only need to prove that when $G$ is connected, $G$ satisfies the construction requirements of the dual graph of $G^*$. Since the edges of $G^*$ naturally correspond to edges of $G$, we only need to prove that each face of $G^*$ contains exactly one vertex of $G$. For any face $f^*$ of $G^*$, let $e^*$ be an edge on its boundary. Then one endpoint of the corresponding edge $e$ in $G$ must be inside face $f^*$. Therefore, face $f^*$ contains at least one vertex of $G$. Since both $G^*$ and $G$ are connected, Euler's formula holds. $G$ and $G^*$ have the same number of edges, and the number of faces of $G$ equals the number of vertices of $G^*$. So the number of vertices of $G$ equals the number of faces of $G^*$. Therefore, each face of $G^*$ contains exactly one vertex of $G$. The proposition is proved.
 
-平面图与其对偶图的结构之间有很多对应关系：
+There are many structural correspondences between a plane graph and its dual graph:
 
--   $G$ 中的面对应 $G^*$ 中的点，$G$ 中的边对应 $G^*$ 中的边，$G$ 中的点对应 $G^*$ 中的面．
--   $G$ 中的自环对应 $G^*$ 中的割边，$G^*$ 中的自环对应 $G$ 中的割边．
--   $G$ 中的边割集对应 $G^*$ 中的回路，$G^*$ 中的回路对应 $G$ 中的边割集．
+-   Faces in $G$ correspond to vertices in $G^*$, edges in $G$ correspond to edges in $G^*$, and vertices in $G$ correspond to faces in $G^*$.
+-   Self-loops in $G$ correspond to bridges in $G^*$, and self-loops in $G^*$ correspond to bridges in $G$.
+-   Edge cutsets in $G$ correspond to cycles in $G^*$, and cycles in $G^*$ correspond to edge cutsets in $G$.
 
-需要注意的是，对偶图的概念仅对具体的平面图成立，而无法定义在任意可平面图上．事实上，两个同构的平面图的对偶图未必是同构的．也就是说，同一个图的不同平面嵌入的对偶图可能并不相同．
+It should be noted that the concept of dual graph only applies to specific plane graphs and cannot be defined on arbitrary planar graphs. In fact, dual graphs of isomorphic plane graphs are not necessarily isomorphic. That is, different planar embeddings of the same graph may have non-isomorphic dual graphs.
 
-???+ example "例子"
-    下图画了两个同构的平面图，它们的对偶图并不同构．
+???+ example "Example"
+    The figure below shows two isomorphic plane graphs, but their dual graphs are not isomorphic.
     
     ![](images/planar-dual-2.svg)
     
-    对偶图不同构的原因是，右图有一次面，它的对偶图有一度顶点，而左图没有．
+    The reason the dual graphs are not isomorphic is that the right figure has a degree-1 face, whose dual graph has a degree-1 vertex, while the left figure does not.
 
-将平面图的问题转化到对偶图上，有时更容易解决．一个典型的例子是，平面图 [最小割](./flow/min-cut.md) 问题可以转化为对偶图 [最短路](./shortest-path.md) 问题．设 $G$ 是带边权的平面图，$s,t$ 是它的两个顶点，需要求最小的 $s$-$t$ 割．
+Transforming problems of plane graphs onto dual graphs sometimes makes them easier to solve. A typical example is that the [minimum cut](./flow/min-cut.md) problem on a plane graph can be transformed into a [shortest path](./shortest-path.md) problem on the dual graph. Let $G$ be a plane graph with edge weights, and $s,t$ be two vertices. We need to find the minimum $s$-$t$ cut.
 
 ![](images/planar-dual-3.svg)
 
-如图所示，通过选取合适的平面嵌入，总是可以使得 $s,t$ 出现在图 $G$ 外部面边界上．另外，添加自 $s$ 和 $t$ 延伸出去的射线，将外部面分为两部分 $f_{+}$ 和 $f_{-}$．基于该图，建立对偶图，并将边权赋给对偶图中的对应边．那么，对偶图 $G^*$ 中面 $f_{+}$ 和 $f_{-}$ 对应顶点之间的路径（红色粗线）就和图 $G$ 的 $s$-$t$ 割（黑色粗线）之间一一对应，且二者权值相同．这样，求解对偶图中的最短路，就得到了对偶图中的最小 $s$-$t$ 割．
+As shown in the figure, by choosing a suitable planar embedding, we can always make $s$ and $t$ appear on the boundary of the external face of $G$. Additionally, add rays extending from $s$ and $t$ to divide the external face into two parts $f_{+}$ and $f_{-}$. Based on this graph, construct the dual graph and assign edge weights to the corresponding edges in the dual graph. Then, the path between vertices corresponding to faces $f_{+}$ and $f_{-}$ in the dual graph (shown in thick red lines) corresponds one-to-one to the $s$-$t$ cut in graph $G$ (shown in thick black lines), and they have the same weight. Thus, by finding the shortest path in the dual graph, we obtain the minimum $s$-$t$ cut in the dual graph.
 
-### 更多结果
+### More Results
 
-当然，平面图还有很多著名的结果．本节简单列举它们，但并不做出讨论．
+Of course, there are many famous results on planar graphs. This section briefly lists them without discussion.
 
-???+ note "四色定理"
-    （没有自环的）平面图都是可 $4$‑着色的．
+???+ note "Four Color Theorem"
+    (Without self-loops) planar graphs are all $4$-colorable.
 
-???+ note "Fáry 定理"
-    简单可平面图总是存在一种平面嵌入，使得图的所有边都是直线段．
+???+ note "Fáry's Theorem"
+    Simple planar graphs always have a planar embedding where all edges are straight line segments.
 
-???+ note "定理（Wood）"
-    可平面图至多只有 $8|V|-16$ 个极大团．
+???+ note "Theorem (Wood)"
+    A planar graph has at most $8|V|-16$ maximal cliques.
 
-???+ note "定理（Tutte）"
-    $4$‑点连通的可平面图都是哈密顿图．
+???+ note "Theorem (Tutte)"
+    $4$-vertex-connected planar graphs are all Hamiltonian graphs.
 
-## 判定
+## Recognition
 
-本节讨论给定一个图，判定它是不是可平面图的方法．
+This section discusses methods to determine whether a given graph is planar.
 
-### 禁用图
+### Forbidden Graphs
 
-可平面图最经典的刻画方式是利用 **禁用图**（forbidden graph）给出的．
+The most classic characterization of planar graphs uses **forbidden graphs** (forbidden subgraphs).
 
-首先，$K_5$ 和 $K_{3,3}$ 不是可平面图．
+First, $K_5$ and $K_{3,3}$ are not planar graphs.
 
-???+ note "定理"
-    $K_5$ 和 $K_{3,3}$ 不是可平面图．
+???+ note "Theorem"
+    $K_5$ and $K_{3,3}$ are not planar graphs.
 
-??? note "证明"
-    前文说明，$|V|\ge 3$ 的简单连通平面图都需要满足
+??? note "Proof"
+    As explained earlier, a simple connected plane graph with $|V|\ge 3$ must satisfy
     
     $$
     |E| \le \dfrac{l}{l-2}(|V|-2).
     $$
     
-    其中，$l$ 是面次数的最小值．对于 $K_5$，有 $l=3,~|V|=5,~|E|=10$，所以 $K_5$ 不可能画成平面图．对于 $K_{3,3}$，有 $l=4,~|V|=6,~|E|=9$，所以 $K_{3,3}$ 不可能画成平面图．
+    Where $l$ is the minimum face degree. For $K_5$, we have $l=3,~|V|=5,~|E|=10$, so $K_5$ cannot be drawn as a planar graph. For $K_{3,3}$, we have $l=4,~|V|=6,~|E|=9$, so $K_{3,3}$ cannot be drawn as a planar graph.
 
-事实上，它们就是使得一个图不可平面的最小结构．也就是说，只要图不（以某种方式）包含这两个图为子结构，该图就一定是可平面的．
+In fact, they are the smallest structures that make a graph non-planar. That is, as long as a graph does not (in some way) contain these two graphs as substructures, the graph must be planar.
 
-第一个可平面性判定定理是 Kuratowski 定理．它用到了图同胚的概念：若两个图 $G_1$ 与 $G_2$ 同构，或通过反复插入或消去 $2$ 度顶点后是同构的，则称二者是 **同胚的**（homeomorphic）．由此，可以叙述如下结果：
+The first planarity testing theorem is Kuratowski's Theorem. It uses the concept of graph homeomorphism: If two graphs $G_1$ and $G_2$ are isomorphic, or become isomorphic after repeatedly inserting or removing degree-2 vertices, then they are said to be **homeomorphic**. From this, we can state:
 
-???+ note "Kuratowski 定理"
-    图 $G$ 是可平面图，当且仅当 $G$ 不含与 $K_5$ 或 $K_{3,3}$ 同胚的子图．
+???+ note "Kuratowski's Theorem"
+    Graph $G$ is a planar graph if and only if $G$ contains no subgraph homeomorphic to $K_5$ or $K_{3,3}$.
 
-另外一个与此相关的定理是 Wagner 定理．它利用收缩操作来刻画可平面图．收缩操作是指，重复多次将图的一条边收缩为一个点．由此，可以叙述如下结果：
+Another related theorem is Wagner's Theorem. It characterizes planar graphs using the contraction operation. The contraction operation means repeatedly contracting an edge of a graph into a single vertex. From this, we can state:
 
-???+ note "Wagner 定理"
-    图 $G$ 是可平面图，当且仅当 $G$ 中没有可以收缩到 $K_5$ 或 $K_{3,3}$ 的子图．
+???+ note "Wagner's Theorem"
+    Graph $G$ is a planar graph if and only if $G$ contains no subgraph that can be contracted to $K_5$ or $K_{3,3}$.
 
-可平面图不包含这些类型的子图相对显然，所以这两个定理的关键部分都在于相应的禁用图条件的充分性．由于与 $K_5$ 或 $K_{3,3}$ 同胚的子图一定可以收缩到它们，反过来却未必成立，所以 Kuratowski 定理提供了一个更弱的也更容易检验的判定可平面图的条件．
+That planar graphs do not contain such subgraphs is relatively obvious, so the key part of these two theorems is the sufficiency of the forbidden graph conditions. Since a subgraph homeomorphic to $K_5$ or $K_{3,3}$ can certainly be contracted to them, but not necessarily vice versa, Kuratowski's Theorem provides a weaker and easier-to-check condition for testing planarity.
 
-### 平面性判定算法
+### Planarity Testing Algorithms
 
-尽管看起来并不容易，平面性判定问题实际上有很多线性算法．但是，由于这些算法的实现通常都比较复杂，它们几乎从未出现在算法竞赛中．
+Although it doesn't seem easy, there are actually many linear-time algorithms for planarity testing. However, because implementations of these algorithms are usually quite complex, they almost never appear in programming contests.
 
-最早的线性算法是 Hopcroft–Tarjan 算法[^ht74]，但它的实现相当复杂．de Fraysseix–Ossona de Mendez–Rosenstiehl 算法（也称为 LR 平面性算法）[^dor06][^df08][^bra09]进一步改进了 Hopcroft–Tarjan 算法的流程，是目前最优秀的平面性判定算法之一．Python 的 NetworkX 库中就 [实现](https://github.com/networkx/networkx/blob/main/networkx/algorithms/planarity.py) 了这一算法．
+The first linear-time algorithm is the Hopcroft–Tarjan algorithm[^ht74], but its implementation is quite complex. The de Fraysseix–Ossona de Mendez–Rosenstiehl algorithm (also called the LR planarity algorithm)[^dor06][^df08][^bra09] further improves on the Hopcroft–Tarjan algorithm and is currently one of the best planarity testing algorithms. Python's NetworkX library has an [implementation](https://github.com/networkx/networkx/blob/main/networkx/algorithms/planarity.py) of this algorithm.
 
-另外一个同样优秀的算法是 Boyer–Myrvold 算法[^bm99][^bm04]．它可以在线性时间内判定给定图是否可平面．而且，如果图是可平面的，算法将输出一个平面嵌入；否则，算法将输出一个 Kuratowski 子图（即与 $K_5$ 或 $K_{3,3}$ 同胚的子图）．C++ 的 Boost 库就 [实现](https://www.boost.org/doc/libs/1_67_0/boost/graph/planar_detail/boyer_myrvold_impl.hpp) 了这一算法．
+Another excellent algorithm is the Boyer–Myrvold algorithm[^bm99][^bm04]. It can test in linear time whether a given graph is planar. Moreover, if the graph is planar, the algorithm will output a planar embedding; otherwise, it will output a Kuratowski subgraph (i.e., a subgraph homeomorphic to $K_5$ or $K_{3,3}$). C++'s Boost library has an [implementation](https://www.boost.org/doc/libs/1_67_0/boost/graph/planar_detail/boyer_myrvold_impl.hpp) of this algorithm.
 
-更多相关算法可以参考文末提供的文献．
+For more related algorithms, refer to the literature provided at the end.
 
-## 特殊的平面图
+## Special Planar Graphs
 
-本节介绍几类特殊的可平面图．
+This section introduces several special types of planar graphs.
 
-### 极大平面图
+### Maximal Planar Graphs
 
-对于简单可平面图 $G$，如果在它的任意不相邻顶点间添加边，所得图都不再是可平面图，就称 $G$ 为 **极大可平面图**（maximal planar graph）．极大可平面图的平面嵌入称为 **极大平面图**．
+For a simple planar graph $G$, if adding edges between any two non-adjacent vertices results in a non-planar graph, then $G$ is called a **maximal planar graph**. The plane embedding of a maximal planar graph is called a **maximal plane graph**.
 
-???+ note "定理"
-    极大可平面图 $G$ 必然连通．而且，当顶点数 $|V|\ge 3$ 时，图 $G$ 没有割边．
+???+ note "Theorem"
+    A maximal planar graph $G$ must be connected. Moreover, when the number of vertices $|V|\ge 3$, graph $G$ has no bridges.
 
-??? note "证明"
-    如果可平面图 $G$ 不连通，那么任选它的一个平面嵌入，都可以选择属于不同连通分支的两个顶点，在外部面内连接起来，得到的图显然仍然是平面图，这说明图 $G$ 不是极大可平面图．所以，图 $G$ 是极大可平面图，就一定连通．
+??? note "Proof"
+    If planar graph $G$ is not connected, then for any planar embedding, we can choose two vertices from different connected components and connect them inside the external face. The resulting graph is obviously still a plane graph, which shows that graph $G$ is not a maximal planar graph. Therefore, if graph $G$ is a maximal planar graph, it must be connected.
     
-    如果可平面图 $G$ 顶点数 $|V|\ge 3$，且 $G$ 有割边 $e=(u,v)$，那么，删去边 $e$ 后的图 $G - e$ 中恰有两个连通分支，且 $u,v$ 属于不同的连通分支．假设 $v$ 所在连通分支至少有两个顶点．那么，可以先将 $u$ 所在连通分支 $G_1$ 画在平面上，并选取图 $G_1$ 中边界含有 $u$ 的任意面 $f$，并将另一个连通分支 $G_2$ 画在面 $f$ 中．由于 $G_2$ 是简单图，它的外部面的边界一定不是一个自环，故而至少还存在另一个顶点 $w\neq u,v$．将 $v,w$ 分别连接到 $u$ 上，就得到包含 $G$ 为子图的平面图．所以，图 $G$ 不是极大可平面图．因此，顶点数 $|V|\ge 3$ 的极大可平面图一定没有割边．
+    If planar graph $G$ has $|V|\ge 3$ and has a bridge $e=(u,v)$, then after removing edge $e$, graph $G-e$ has exactly two connected components, with $u$ and $v$ belonging to different connected components. Assume the connected component containing $v$ has at least two vertices. Then we can first draw connected component $G_1$ containing $u$ on the plane, and select any face $f$ whose boundary contains $u$ from $G_1$, and draw the other connected component $G_2$ inside face $f$. Since $G_2$ is a simple graph, its external face boundary is certainly not a self-loop, so there exists another vertex $w\neq u,v$. Connect $v$ and $w$ to $u$ respectively, obtaining a plane graph containing $G$ as a subgraph. So graph $G$ is not a maximal planar graph. Therefore, a maximal planar graph with $|V|\ge 3$ must have no bridges.
 
-极大平面图的结构可以更准确地描述．
+The structure of maximal plane graphs can be described more precisely.
 
-???+ note "定理"
-    对于顶点数 $|V|\ge 3$ 的平面图 $G$，它是极大平面图当且仅当它是简单图，且它的每个面次数均为 $3$．
+???+ note "Theorem"
+    For a plane graph $G$ with $|V|\ge 3$, it is a maximal plane graph if and only if it is a simple graph and all its faces have degree $3$.
 
-??? note "证明"
-    条件的充分性显然．只需要说明必要性，即要证明：顶点数 $|V|\ge 3$ 的极大平面图 $G$ 中，每个面次数都是 $3$．由于图 $G$ 是连通简单平面图且 $|V|\ge 3$，所以全部面的次数都至少是 $3$．所以，假设命题不成立，就一定存在一个面 $f$ 的边界长度至少是 $4$．又因为图 $G$ 不存在割边，该边界只能是一个环．设这个环是 $v_1v_2v_3v_4\cdots v_1$．那么，如果 $v_1$ 与 $v_3$ 不相邻，那么在面 $f$ 内连接 $v_1$ 和 $v_3$ 不会破坏平面性，与 $G$ 的极大性矛盾，所以 $v_1$ 与 $v_3$ 相邻；同理，$v_2$ 与 $v_4$ 相邻．但是，边 $(v_1,v_3)$ 和 $(v_2,v_4)$ 都不会出现在面 $f$ 中．这意味着，两条边必然在面 $f$ 的外部．但这是不可能的：无论如何绘制，这两条边都必然相交．所以，图 $G$ 中不存在高于 $3$ 次的面．原命题得证．
+??? note "Proof"
+    The sufficiency of the condition is obvious. We only need to prove necessity, i.e., to prove that in a maximal plane graph $G$ with $|V|\ge 3$, all faces have degree $3$. Since $G$ is a connected simple plane graph and $|V|\ge 3$, all faces have degree at least $3$. So if the proposition does not hold, there must exist a face $f$ whose boundary length is at least $4$. Since graph $G$ has no bridges, this boundary can only be a cycle. Let this cycle be $v_1v_2v_3v_4\cdots v_1$. Then, if $v_1$ and $v_3$ are not adjacent, connecting $v_1$ and $v_3$ inside face $f$ would not destroy planarity, contradicting the maximality of $G$. So $v_1$ and $v_3$ are adjacent; similarly, $v_2$ and $v_4$ are adjacent. However, edges $(v_1,v_3)$ and $(v_2,v_4)$ do not appear in face $f$. This means both edges must be outside face $f$. But this is impossible: no matter how we draw them, these two edges must intersect. Therefore, there are no faces with degree greater than $3$ in graph $G$. The original proposition is proved.
 
-???+ note "推论"
-    对于顶点数 $|V|\ge 3$ 的图 $G$，总是有边数 $|E|=3|V|-6$ 且面数 $|F|=2|V|-4$．
+???+ note "Corollary"
+    For a graph $G$ with $|V|\ge 3$, we always have $|E|=3|V|-6$ and $|F|=2|V|-4$.
 
-由于极大平面图中，每个面都是由三条边围成，所以极大平面图也称为 **平面三角剖分**（plane triangulation）．
+Since each face in a maximal plane graph is bounded by three edges, maximal plane graphs are also called **plane triangulations**.
 
-### 外平面图
+### Outerplanar Graphs
 
-设 $G$ 为可平面图，若 $G$ 存在平面嵌入 $\tilde{G}$，使得 $G$ 中所有顶点都在 $\tilde{G}$ 的一个面的边界上，则称 $G$ 为 **外可平面图**（outerplanar graph）．这一嵌入也称为外平面嵌入或 **外平面图**．通常将边界经过所有顶点的那个面绘制为外部面．
+Let $G$ be a planar graph. If $G$ has a planar embedding $\tilde{G}$ such that all vertices of $G$ lie on the boundary of one face of $\tilde{G}$, then $G$ is called an **outerplanar graph**. This embedding is also called an outerplanar embedding or **outerplane graph**. Usually, the face whose boundary passes through all vertices is drawn as the external face.
 
 ![](images/planar-outer.svg)
 
-外可平面图都是可平面图，反之未必成立．外可平面图同样可以使用禁用图刻画．
+All outerplanar graphs are planar graphs, but not necessarily vice versa. Outerplanar graphs can also be characterized using forbidden graphs.
 
-???+ note "定理"
-    一个图 $G$ 是外平面图有当且仅当 $G$ 中不含与 $K_4$ 或 $K_{2,3}$ 同胚的子图．
+???+ note "Theorem"
+    Graph $G$ is an outerplanar graph if and only if $G$ contains no subgraph homeomorphic to $K_4$ or $K_{2,3}$.
 
-对于外可平面图，同样可以讨论极大外可平面图的概念．对于简单外可平面图 $G$，如果在它的任意不相邻顶点间添加边，所得图都不再是外可平面图，就称 $G$ 为 **极大外可平面图**（maximal outerplanar graph）．极大外可平面图的外平面嵌入称为 **极大外平面图**．极大外平面图其实就是平面上多边形的三角剖分．
+For outerplanar graphs, we can also discuss the concept of maximal outerplanar graphs. For a simple outerplanar graph $G$, if adding edges between any two non-adjacent vertices results in a non-outerplanar graph, then $G$ is called a **maximal outerplanar graph**. The outerplanar embedding of a maximal outerplanar graph is called a **maximal outerplane graph**. A maximal outerplane graph is essentially a triangulation of a polygon in the plane.
 
-???+ note "定理"
-    对于顶点数 $|V|\ge 3$ 的极大外平面图 $G$，且所有顶点都在外部面的边界上，那么图 $G$ 恰有 $|V|-2$ 个内部面．
+???+ note "Theorem"
+    For a maximal outerplanar graph $G$ with $|V|\ge 3$, with all vertices on the boundary of the external face, graph $G$ has exactly $|V|-2$ internal faces.
 
-??? note "证明"
-    对 $|V|$ 应用数学归纳法．归纳起点是 $|V|=3$．此时，图 $G$ 是三元环，只有 $1$ 个内部面，命题成立．假设命题对于 $|V| = k$ 成立．现在要证明，当 $|V| = k+1$ 时，命题仍然成立．
+??? note "Proof"
+    Apply mathematical induction on $|V|$. The base case is $|V|=3$. At this time, graph $G$ is a triangle with 3 vertices, having exactly 1 internal face, and the proposition holds. Assume the proposition holds for $|V| = k$. Now we prove that when $|V| = k+1$, the proposition still holds.
     
-    首先，图 $G$ 一定存在 $2$ 度顶点．否则，除了外部面边界上相邻的顶点外，所有顶点都需要和第三个顶点相连接．不妨将外部面边界上的顶点顺次编号，并对每一个 $i = 1,2,\cdots,k+1$，都定义 $f(i)$ 为与顶点 $i$ 连接且编号不与之相邻的顶点的最小编号．考虑 $f(i)$ 的可能取值．首先，$1 < f(1)$．由于点 $1$ 已经和 $f(1)$ 连接，点 $2$ 与 $f(2)$ 的连线不能越过边 $(1,f(1))$，就必然有 $1 < 2 < f(2) < f(1)$．同理，$2 < 3 < f(3) < f(2)$．由于顶点只有有限多个，这个逐渐缩小的过程必然在有限步后终止．令 $i^*$ 为满足 $1 < \cdots < i-1 < i < f(i) < f(i-1) < \cdots < f(1)$ 的编号 $i$ 最大值．那么，由于点 $i^*$ 和点 $f(i^*)$ 不相邻，必然有 $i^* < i^* + 1 < f(i^*)$．而重复之前的论述，仍应该有 $i^* < i^*+1 < f(i^*+1) < f(i^*)$，这与 $i^*$ 的最大性矛盾．这一矛盾说明，图 $G$ 必然存在 $2$ 度顶点．
+    First, graph $G$ must have a degree-2 vertex. Otherwise, except for adjacent vertices on the boundary of the external face, all vertices need to be connected to a third vertex. Let's number the vertices on the boundary of the external face in order, and for each $i = 1,2,\cdots,k+1$, define $f(i)$ as the smallest numbered vertex connected to vertex $i$ that is not adjacent to $i$. Consider possible values of $f(i)$. First, $1 < f(1)$. Since vertex $1$ is already connected to $f(1)$, the line from vertex $2$ to $f(2)$ cannot cross edge $(1,f(1))$, so we must have $1 < 2 < f(2) < f(1)$. Similarly, $2 < 3 < f(3) < f(2)$. Since there are only finitely many vertices, this gradually shrinking process must terminate after finitely many steps. Let $i^*$ be the largest index satisfying $1 < \cdots < i-1 < i < f(i) < f(i-1) < \cdots < f(1)$. Then, since vertices $i^*$ and $f(i^*)$ are not adjacent, we must have $i^* < i^* + 1 < f(i^*)$. Repeating the previous argument, we should still have $i^* < i^*+1 < f(i^*+1) < f(i^*)$, which contradicts the maximality of $i^*$. This contradiction shows that graph $G$ must have a degree-2 vertex.
     
-    设 $v$ 就是一个 $2$ 度顶点．将这一顶点从图 $G$ 中删除，就得到顶点数为 $k$ 的外平面图 $G-v$．它必然是极大外平面图，否则在它上面合法添加边的方法，必然对图 $G$ 也适用．由归纳假设，图 $G-v$ 恰有 $k-2$ 个内部面，而删去顶点 $v$ 时，恰好减少了一个图 $G$ 的内部面．所以，图 $G$ 内部面数目为 $k-1$．命题得证．
+    Let $v$ be a degree-2 vertex. Removing this vertex from graph $G$ gives an outerplane graph $G-v$ with $k$ vertices. It must be a maximal outerplane graph; otherwise, a valid way to add edges to it would also apply to graph $G$. By the induction hypothesis, $G-v$ has exactly $k-2$ internal faces. When removing vertex $v$, exactly one internal face of $G$ is reduced. So the number of internal faces of $G$ is $k-1$. The proposition is proved.
 
-???+ note "定理"
-    对于顶点数 $|V|\ge 3$ 的外平面图 $G$，且所有顶点都在外部面的边界上，那么图 $G$ 是极大外平面图，当且仅当图 $G$ 的外部面边界是长为 $|V|$ 的环，且所有内部面边界均是长为 $3$ 的环．
+???+ note "Theorem"
+    For an outerplanar graph $G$ with $|V|\ge 3$, with all vertices on the boundary of the external face, graph $G$ is a maximal outerplane graph if and only if the boundary of the external face is a cycle of length $|V|$, and all internal face boundaries are cycles of length $3$.
 
-??? note "证明"
-    充分性显然．事实上，考虑连接外部面边界上的两个不相邻顶点．如果连接发生在外部面中，那么，所有顶点无法都出现在一个面的边界上；否则，它们的连线必然与内部面的边界相交．
+??? note "Proof"
+    Sufficiency is obvious. In fact, consider connecting two non-adjacent vertices on the boundary of the external face. If the connection occurs in the external face, then all vertices cannot appear on the boundary of a single face; otherwise, their connecting line must intersect the boundary of an internal face.
     
-    接下来，证明必要性．假设图 $G$ 的外部面边界 $v_1v_2v_3\cdots v_nv_1~(n = |V|)$ 不是一个环．那么，它会重复经过一个顶点多次，亦即存在 $i\neq j$ 且 $i-j\neq\pm 1\pmod{n}$ 使得 $v_i=v_j$．不妨设 $1 < i < j < n$．此时，与 $v_{i-1}$ 相关联的边只能出现在回路 $v_jv_{j+1}\cdots v_nv_1\cdots v_{i-1}v_i$ 围成的有界区域内部，与 $v_{i+1}$ 相关联的边只能出现在回路 $v_iv_{i+1}\cdots v_{j-1}v_{j}$ 围成的有界区域内部，所以 $v_{i-1}$ 和 $v_{i+1}$ 无法相邻．可以在外部面内添加一条连接 $v_{i-1}$ 和 $v_{i+1}$ 的边 $e$，得到图 $G+e$．这显然也是平面图，且外部面边界上包含所有顶点．这就与图 $G$ 的极大外平面性矛盾．所以，图 $G$ 的外部面必然是长度为 $|V|$ 的环．而图 $G$ 内部面边界均为长为 $3$ 的环的原因，和极大平面图一致，不再赘述．
+    Next, we prove necessity. Assume the boundary of the external face of graph $G$ is not a cycle. Then it repeats through a vertex multiple times, i.e., there exists $i\neq j$ and $i-j\neq\pm 1\pmod{n}$ such that $v_i=v_j$. Let $1 < i < j < n$. At this time, edges incident to $v_{i-1}$ can only appear in the bounded region enclosed by the cycle $v_jv_{j+1}\cdots v_nv_1\cdots v_{i-1}v_i$, and edges incident to $v_{i+1}$ can only appear in the bounded region enclosed by the cycle $v_iv_{i+1}\cdots v_{j-1}v_{j}$. So $v_{i-1}$ and $v_{i+1}$ cannot be adjacent. We can add an edge $e$ connecting $v_{i-1}$ and $v_{i+1}$ inside the external face, obtaining graph $G+e$. This is obviously also a plane graph, and the external face boundary contains all vertices. This contradicts the maximal outerplanarity of $G$. Therefore, the external face of $G$ must be a cycle of length $|V|$. The reason all internal face boundaries of $G$ are cycles of length $3$ is the same as for maximal plane graphs and will not be repeated here.
 
-???+ note "推论"
-    对于顶点数 $|V|\ge 3$ 的极大外平面图 $G$，有：
+???+ note "Corollary"
+    For a maximal outerplanar graph $G$ with $|V|\ge 3$:
     
-    1.  $|E|=2|V|-3$．
-    2.  $G$ 中至少有 $3$ 个顶点度数小于等于 $3$，且至少有 $2$ 个顶点度数为 $2$．
-    3.  $G$ 的点连通度为 $2$．
+    1.  $|E|=2|V|-3$.
+    2.  There are at least 3 vertices in $G$ with degree at most 3, and at least 2 vertices with degree 2.
+    3.  The vertex connectivity of $G$ is $2$.
 
-## 习题
+## Problems
 
--   [Luogu P3209 \[HNOI2010\] 平面图判定](https://www.luogu.com.cn/problem/P3209)
--   [Luogu P3249 \[HNOI2016\] 矿区](https://www.luogu.com.cn/problem/P3249)
--   [Luogu P4001 \[ICPC-Beijing 2006\] 狼抓兔子](https://www.luogu.com.cn/problem/P4001)
--   [Luogu P4073 \[WC2013\] 平面图](https://www.luogu.com.cn/problem/P4073)
--   [Luogu P7295 \[USACO21JAN\] Paint by Letters P](https://www.luogu.com.cn/problem/P7295)
+-   [Luogu P3209 [HNOI2010] Planar Graph Judgment](https://www.luogu.com.cn/problem/P3209)
+-   [Luogu P3249 [HNOI2016] Mining Area](https://www.luogu.com.cn/problem/P3249)
+-   [Luogu P4001 [ICPC-Beijing 2006] Wolf Catching Rabbit](https://www.luogu.com.cn/problem/P4001)
+-   [Luogu P4073 [WC2013] Planar Graph](https://www.luogu.com.cn/problem/P4073)
+-   [Luogu P7295 [USACO21JAN] Paint by Letters P](https://www.luogu.com.cn/problem/P7295)
 
-## 参考资料与注释
+## References and Notes
 
 -   [Planar graph - Wikipedia](https://en.wikipedia.org/wiki/Planar_graph)
 -   [Planarity testing - Wikipedia](https://en.wikipedia.org/wiki/Planarity_testing)
@@ -283,7 +283,7 @@
 -   Diestel, Reinhard. Graph theory. Vol. 173. Springer Nature, 2025.
 -   Patrignani, Maurizio. "Planarity Testing and Embedding." (2013): 1-42.
 
-[^face-2]: 但这并非唯一的可能．两个嵌套的自环也会形成二次面．另外，有二次面未必意味着图不是简单的，例如，一个只有一条边的图中，唯一的面（即外部面）也是二次的．
+[^face-2]: But this is not the only possibility. Two nested self-loops also form a degree-2 face. Also, having a degree-2 face does not necessarily mean the graph is not simple; for example, in a graph with only one edge, the only face (the external face) is also degree-2.
 
 [^ht74]: Hopcroft, John, and Robert Tarjan. "Efficient planarity testing." Journal of the ACM (JACM) 21, no. 4 (1974): 549-568.
 

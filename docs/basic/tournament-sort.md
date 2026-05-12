@@ -1,56 +1,56 @@
-本页面将简要介绍锦标赛排序．
+This page briefly introduces tournament sort.
 
-## 定义
+## Definition
 
-锦标赛排序（英文：Tournament sort），又被称为树形选择排序，是 [选择排序](./selection-sort.md) 的优化版本，[堆排序](./heap-sort.md) 的一种变体（均采用完全二叉树）．它在选择排序的基础上使用优先队列查找下一个该选择的元素．
+Tournament sort (English: Tournament sort), also known as tree selection sort, is an optimized version of [selection sort](./selection-sort.md), a variant of [heap sort](./heap-sort.md) (both use complete binary trees). It uses a priority queue on top of selection sort to find the next element to select.
 
-## 引入
+## Introduction
 
-锦标赛排序的名字来源于单败淘汰制的竞赛形式．在这种赛制中有许多选手参与比赛，他们两两比较，胜者进入下一轮比赛．这种淘汰方式能够决定最好的选手，但是在最后一轮比赛中被淘汰的选手不一定是第二好的——他可能不如先前被淘汰的选手．
+The name of tournament sort comes from the single-elimination tournament format. In this system, many players participate in the competition, they pair up and compare, and the winner advances to the next round. This elimination method can determine the best player, but the player eliminated in the final round is not necessarily the second best—he may be worse than players eliminated earlier.
 
-## 过程
+## Process
 
-以 **最小锦标赛排序树** 为例：
+Using the **minimum tournament sort tree** as an example:
 
 ![tournament-sort1](./images/tournament-sort1.png)
 
-待排序元素是叶子节点显示的元素．红色边显示的是每一轮比较中较小的元素的胜出路径．显然，完成一次＂锦标赛＂可以选出一组元素中最小的那一个．
+The elements to be sorted are the elements shown in the leaf nodes. The red edges show the path of the smaller element winning in each round of comparison. Obviously, completing one "tournament" can select the smallest element from a group of elements.
 
-每一轮对 $n$ 个元素进行比较后可以得到 $\frac{n}{2}$ 个「优胜者」，每一对中较小的元素进入下一轮比较．如果无法凑齐一对元素，那么这个元素直接进入下一轮的比较．
+After each round of comparing $n$ elements, $\frac{n}{2}$ "winners" can be obtained. The smaller element in each pair enters the next round of comparison. If an element cannot be paired, it directly enters the next round of comparison.
 
 ![tournament-sort2](./images/tournament-sort2.png)
 
-完成一次「锦标赛」后需要将被选出的元素去除．直接将其设置为 $\infty$（这个操作类似 [堆排序](./heap-sort.md)），然后再次举行「锦标赛」选出次小的元素．
+After completing one "tournament", the selected element needs to be removed. Directly set it to $\infty$ (this operation is similar to [heap sort](./heap-sort.md)), then hold another "tournament" to select the second smallest element.
 
-之后一直重复这个操作，直至所有元素有序．
+Repeat this operation until all elements are sorted.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-锦标赛排序是一种不稳定的排序算法．
+Tournament sort is an unstable sorting algorithm.
 
-### 时间复杂度
+### Time Complexity
 
-锦标赛排序的最优时间复杂度、平均时间复杂度和最坏时间复杂度均为 $O(n\log n)$．它用 $O(n)$ 的时间初始化「锦标赛」，然后用 $O(\log n)$ 的时间从 $n$ 个元素中选取一个元素．
+The best time complexity, average time complexity, and worst time complexity of tournament sort are all $O(n\log n)$. It takes $O(n)$ time to initialize the "tournament", then takes $O(\log n)$ time to select one element from $n$ elements.
 
-### 空间复杂度
+### Space Complexity
 
-锦标赛排序的空间复杂度为 $O(n)$．
+The space complexity of tournament sort is $O(n)$.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
     int n, a[MAXN], tmp[MAXN << 1];
-    
+
     int winner(int pos1, int pos2) {
       int u = pos1 >= n ? pos1 : tmp[pos1];
       int v = pos2 >= n ? pos2 : tmp[pos2];
       if (tmp[u] <= tmp[v]) return u;
       return v;
     }
-    
+
     void creat_tree(int &value) {
       for (int i = 0; i < n; i++) tmp[n + i] = a[i];
       for (int i = 2 * n - 1; i > 1; i -= 2) {
@@ -61,7 +61,7 @@
       value = tmp[tmp[1]];
       tmp[tmp[1]] = INF;
     }
-    
+
     void recreat(int &value) {
       int i = tmp[1];
       while (i > 1) {
@@ -76,7 +76,7 @@
       value = tmp[tmp[1]];
       tmp[tmp[1]] = INF;
     }
-    
+
     void tournament_sort() {
       int value;
       creat_tree(value);
@@ -92,16 +92,16 @@
     n = 0
     a = [0] * MAXN
     tmp = [0] * MAXN * 2
-    
-    
+
+
     def winner(pos1, pos2):
         u = pos1 if pos1 >= n else tmp[pos1]
         v = pos2 if pos2 >= n else tmp[pos2]
         if tmp[u] <= tmp[v]:
             return u
         return v
-    
-    
+
+
     def creat_tree():
         for i in range(0, n):
             tmp[n + i] = a[i]
@@ -112,8 +112,8 @@
         value = tmp[tmp[1]]
         tmp[tmp[1]] = INF
         return value
-    
-    
+
+
     def recreat():
         i = tmp[1]
         while i > 1:
@@ -127,8 +127,8 @@
         value = tmp[tmp[1]]
         tmp[tmp[1]] = INF
         return value
-    
-    
+
+
     def tournament_sort():
         value = creat_tree()
         for i in range(0, n):
@@ -136,6 +136,6 @@
             value = recreat()
     ```
 
-## 外部链接
+## External Links
 
 -   [Tournament sort - Wikipedia](https://en.wikipedia.org/wiki/Tournament_sort)

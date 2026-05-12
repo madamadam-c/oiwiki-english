@@ -1,23 +1,23 @@
-本文介绍模意义下乘法运算的逆元，并讨论它的常见求解方法．
+This article introduces the modular multiplicative inverse and discusses common methods to compute it.
 
-## 基本概念
+## Basic Concepts
 
-非零实数 $a\in\mathbf R$ 的乘法逆元就是它的倒数 $a^{-1}$．类似地，数论中也可以定义一个整数 $a$ 在模 $m$ 意义下的逆元 $a^{-1}\bmod m$，或简单地记作 $a^{-1}$．这就是 **模逆元**（modular multiplicative inverse），也称作 **数论倒数**．
+The multiplicative inverse of a non-zero real number $a\in\mathbf R$ is its reciprocal $a^{-1}$. Similarly, in number theory, we can also define the inverse of an integer $a$ modulo $m$, simply denoted as $a^{-1}$. This is the **modular multiplicative inverse**, also called the **number-theoretic reciprocal**.
 
-???+ abstract "逆元"
-    对于非零整数 $a,m$，如果存在 $b$ 使得 $ab\equiv 1\pmod m$，就称 $b$ 是 $a$ 在模 $m$ 意义下的 **逆元**（inverse）．
+???+ abstract "Inverse"
+    For non-zero integers $a,m$, if there exists $b$ such that $ab\equiv 1\pmod m$, then $b$ is called the **inverse** of $a$ modulo $m$.
 
-这相当于说，$b$ 是线性同余方程 $ax\equiv 1\pmod m$ 的解．根据 [线性同余方程](./linear-equation.md) 的性质可知，当且仅当 $\gcd(a,m)=1$，即 $a,m$ 互素时，逆元 $a^{-1}\bmod m$ 存在，且在模 $m$ 的意义下是唯一的．
+This is equivalent to saying that $b$ is the solution to the linear congruence $ax\equiv 1\pmod m$. According to the properties of [linear congruence equations](./linear-equation.md), the inverse $a^{-1}\bmod m$ exists if and only if $\gcd(a,m)=1$, i.e., $a,m$ are coprime, and it is unique modulo $m$.
 
-## 单个逆元的求法
+## Computing a Single Inverse
 
-利用扩展欧几里得算法或快速幂法，可以在 $O(\log m)$ 时间内求出单个整数的逆元．
+Using the extended Euclidean algorithm or fast exponentiation, we can compute the inverse of a single integer in $O(\log m)$ time.
 
-### 扩展欧几里得算法
+### Extended Euclidean Algorithm
 
-求解逆元，就相当于求解线性同余方程．因此，可以使用 [扩展欧几里得算法](./gcd.md#扩展欧几里得算法) 在 $O(\log\min\{a,m\})$ 时间内求解逆元．同时，由于逆元对应的线性方程比较特殊，可以适当地简化相应的步骤．
+Solving for an inverse is equivalent to solving a linear congruence. Therefore, the [extended Euclidean algorithm](./gcd.md#extended-euclidean-algorithm) can be used to solve the inverse in $O(\log\min\{a,m\})$ time. Also, because the linear equation corresponding to the inverse is special, the corresponding steps can be appropriately simplified.
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/inverse/inverse-1.cpp:core"
@@ -28,19 +28,19 @@
         --8<-- "docs/math/code/inverse/inverse-1.py:core"
         ```
 
-这一算法适用于所有逆元存在的情形．
+This algorithm applies to all cases where the inverse exists.
 
-### 快速幂法
+### Fast Exponentiation Method
 
-这一方法主要适用于模数是素数 $p$ 的情形．此时，由 [费马小定理](./fermat.md#费马小定理) 可知对于任意 $a\perp p$ 都有
+This method primarily applies when the modulus is a prime $p$. At this time, by [Fermat's Little Theorem](./fermat.md#fermats-little-theorem), for any $a\perp p$:
 
 $$
 a\cdot a^{p-2} = a^{p-1} \equiv 1 \pmod p.
 $$
 
-根据逆元的唯一性可知，逆元 $a^{-1}\bmod p$ 就等于 $a^{p-2}\bmod p$，因此可以直接使用 [快速幂](../binary-exponentiation.md) 在 $O(\log p)$ 时间内计算：
+By the uniqueness of the inverse, the inverse $a^{-1}\bmod p$ equals $a^{p-2}\bmod p$. Therefore, it can be directly computed using [fast exponentiation](../binary-exponentiation.md) in $O(\log p)$ time:
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/inverse/inverse-2.cpp:core"
@@ -51,33 +51,33 @@ $$
         --8<-- "docs/math/code/inverse/inverse-2.py:core"
         ```
 
-当然，理论上，这一方法可以利用 [欧拉定理](./fermat.md#欧拉定理) 推广到一般的模数 $m$ 的情形，即利用 $a^{\varphi(m)-1}\bmod m$ 计算逆元．但是，单次求解 [欧拉函数](./euler-totient.md) $\varphi(m)$ 并不容易，因此该算法在一般情况下效率不高．
+Theoretically, this method can be generalized to the general modulus $m$ using [Euler's Theorem](./fermat.md#eulers-theorem), i.e., using $a^{\varphi(m)-1}\bmod m$ to compute the inverse. However, computing [Euler's function](./euler-totient.md) $\varphi(m)$ for a single case is not easy, so this algorithm is generally not efficient.
 
-## 多个逆元的求法
+## Computing Multiple Inverses
 
-有些场景下，需要快速处理出多个整数 $a_1,a_2,\cdots,a_n$ 在模 $m$ 意义下的逆元．此时，逐个求解逆元，总共需要 $O(n\log m)$ 的时间．实际上，如果将它们统一处理，就可以在 $O(n+\log m)$ 的时间内求出所有整数的逆元．
+In some scenarios, we need to quickly compute the inverses of multiple integers $a_1,a_2,\cdots,a_n$ modulo $m$. At this time, solving for inverses one by one would take a total of $O(n\log m)$ time. In fact, if we process them together, we can compute the inverses of all integers in $O(n+\log m)$ time.
 
-考虑序列 $\{a_i\}$ 的前缀积：
+Consider the prefix products of the sequence $\{a_i\}$:
 
 $$
 S_0 = 1,~ S_i = a_iS_{i-1},~ i=1,2,\cdots,n.
 $$
 
-只要每个 $a_i$ 都与 $m$ 互素，它们的乘积 $S_n$ 就与 $m$ 互素．因此，可以通过前文所述算法求出 $S_n^{-1}\bmod m$ 的值．因为乘积的逆元就是逆元的乘积，所以，从 $S_n^{-1}$ 出发，反向遍历序列就能求出每个 $S_i$ 的逆元：
+As long as each $a_i$ is coprime with $m$, their product $S_n$ is also coprime with $m$. Therefore, we can compute the value of $S_n^{-1}\bmod m$ using the algorithm described earlier. Because the inverse of a product is the product of inverses, starting from $S_n^{-1}$, we can traverse the sequence backwards to find the inverse of each $S_i$:
 
 $$
 S_{i-1}^{-1} = a_iS_i^{-1} \bmod m,~ i = n,n-1,\cdots,1.
 $$
 
-由此，单个 $a_i$ 的逆元可以通过下式计算：
+From this, the inverse of a single $a_i$ can be computed by:
 
 $$
 a_i^{-1} = S_{i-1}S_i^{-1} \bmod m,~ i = 1,2,\cdots,n.
 $$
 
-参考实现如下：
+The reference implementation is as follows:
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/inverse/inverse-3.cpp:core"
@@ -88,35 +88,35 @@ $$
         --8<-- "docs/math/code/inverse/inverse-3.py:core"
         ```
 
-算法中，只求了一次单个元素的逆元，因此总的时间复杂度是 $O(n+\log m)$ 的．
+In this algorithm, only one single-element inverse is computed, so the total time complexity is $O(n+\log m)$.
 
-## 线性时间预处理逆元
+## Linear Time Precomputation of Inverses
 
-如果要预处理前 $n$ 个正整数在素数模 $p$ 下的逆元，还可以通过本节将要讨论的递推关系在 $O(n)$ 时间内计算．这一方法常用于组合数计算中前 $n$ 个正整数的阶乘的倒数的预处理．
+If we need to precompute the inverses of the first $n$ positive integers modulo a prime $p$, we can use the recurrence relation to be discussed in this section to compute them in $O(n)$ time. This method is often used in combinatorics to precompute the reciprocals of factorials of the first $n$ positive integers.
 
-对于 $1< i < p$ 的正整数 $i$，考察带余除法：
+For positive integers $1< i < p$, examine the division with remainder:
 
 $$
 p = \left\lfloor \dfrac{p}{i} \right\rfloor i + (p\bmod i).
 $$
 
-将该等式对素数 $p$ 取模，就得到
+Taking this equation modulo the prime $p$:
 
 $$
 0 \equiv \left\lfloor \dfrac{p}{i} \right\rfloor i + (p\bmod i) \pmod p.
 $$
 
-将等式两边同时乘以 $i^{-1}(p\bmod i)^{-1}$ 就得到
+Multiplying both sides by $i^{-1}(p\bmod i)^{-1}$:
 
 $$
 i^{-1} \equiv - \left\lfloor \dfrac{p}{i} \right\rfloor (p\bmod i)^{-1} \pmod p.
 $$
 
-这就是用于线性时间递推求逆元的公式．由于 $p\bmod i < i$，这一公式将求解 $i^{-1}\bmod p$ 的问题转化为规模更小的问题 $(p\bmod i)^{-1}\bmod p$．因此，从 $1^{-1}\bmod p=1$ 开始，对每个 $i$ 顺次应用该公式，就可以在 $O(n)$ 时间内获得前 $n$ 个整数的逆元．
+This is the formula for linear time recurrence to compute inverses. Since $p\bmod i < i$, this formula transforms the problem of computing $i^{-1}\bmod p$ into a smaller problem $(p\bmod i)^{-1}\bmod p$. Therefore, starting from $1^{-1}\bmod p=1$, applying this formula sequentially for each $i$, we can obtain the inverses of the first $n$ integers in $O(n)$ time.
 
-参考实现如下：
+The reference implementation is as follows:
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/inverse/inverse-4.cpp:core"
@@ -127,20 +127,20 @@ $$
         --8<-- "docs/math/code/inverse/inverse-4.py:core"
         ```
 
-这一算法只适用于模数是素数的情形．对于模数 $m$ 不是素数的情形，无法保证递推公式中得到的 $m\bmod i$ 仍然与 $m$ 互素，因而递推所需要的 $(m\bmod i)^{-1}$ 可能并不存在．一个这样的例子是 $m=8,i=3$．此时，$m\bmod i = 2$，不存在模 $m$ 的逆元．
+This algorithm only applies when the modulus is a prime. For modulus $m$ that is not prime, we cannot guarantee that $m\bmod i$ in the recurrence formula is still coprime with $m$, so the $(m\bmod i)^{-1}$ required for the recurrence may not exist. An example of this is $m=8,i=3$. At this time, $m\bmod i = 2$, and the inverse modulo $m$ does not exist.
 
-另外，得到该递推公式后，一种自然的想法是直接递归求解任意一个数 $a$ 的逆元．每次递归时，都利用递推公式将它转化为更小的余数 $p\bmod a$ 的逆元，直到余数变为 $1$ 时停止．目前尚不清楚这样做的复杂度[^linear-recursion]，因此，推荐使用前文所述的常规方法求解．
+Additionally, after obtaining this recurrence formula, a natural idea is to recursively solve for the inverse of any number $a$. During each recursion, use the recurrence formula to transform it into the inverse of a smaller remainder $p\bmod a$, until the remainder becomes $1$. Currently, the complexity of doing so[^linear-recursion] is not clear, so the conventional method described earlier is recommended.
 
-## 习题
+## Practice Problems
 
--   [LOJ 110 乘法逆元](https://loj.ac/problem/110)
--   [LOJ 161 乘法逆元 2](https://loj.ac/problem/161)
--   [LOJ 2605「NOIP2012」同余方程](https://loj.ac/problem/2605)
--   [Luogu P2054「AHOI2005」洗牌](https://www.luogu.com.cn/problem/P2054)
--   [LOJ 2034「SDOI2016」排列计数](https://loj.ac/problem/2034)
+-   [LOJ 110 Multiplicative Inverse](https://loj.ac/problem/110)
+-   [LOJ 161 Multiplicative Inverse 2](https://loj.ac/problem/161)
+-   [LOJ 2605 [NOIP2012] Congruence Equation](https://loj.ac/problem/2605)
+-   [Luogu P2054 [AHOI2005] Shuffle](https://www.luogu.com.cn/problem/P2054)
+-   [LOJ 2034 [SDOI2016] Permutation Count](https://loj.ac/problem/2034)
 
-## 参考资料与注释
+## References and Notes
 
 -   [Modular multiplicative inverse - Wikipedia](https://en.wikipedia.org/wiki/Modular_multiplicative_inverse)
 
-[^linear-recursion]: [riteme 在知乎上的回答](https://www.zhihu.com/question/59033693/answer/323292359) 中指出，这样做理论上已知的复杂度的上界是 $O(p^{1/3+\varepsilon})$，而在实际随机数据中的表现接近于 $O(\log p)$．
+[^linear-recursion]: [riteme's answer on Zhihu](https://www.zhihu.com/question/59033693/answer/323292359) points out that the theoretically known upper bound of the complexity is $O(p^{1/3+\varepsilon})$, while the actual performance on random data is close to $O(\log p)$.

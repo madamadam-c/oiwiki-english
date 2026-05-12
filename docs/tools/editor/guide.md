@@ -1,21 +1,23 @@
-GUIDE（GAIT Universal IDE）是由北航 GAIT 研究组开发的、专门为 NOI 选手设计的、支持 C/C++/Pascal 三种程序设计语言的小型集成开发环境．
+author: Enter-tainer, ouuan, Xeonacid, Ir1d, partychicken, ChungZH, LuoshuiTianyi, Kewth, s0cks5, Doveqise, StudyingFather, SukkaW, SodaCris, SkyeYoung, 383494, danielqfmai
+
+GUIDE (GAIT Universal IDE) is a small integrated development environment developed by the Beihang GAIT Research Group, specifically designed for NOI contestants, supporting C/C++/Pascal programming languages.
 
 ???+ note "Note"
-    自 2021 年 9 月 1 日起启用的 NOI Linux 2.0 不再包含 GUIDE．[^ref1]
+    NOI Linux 2.0, which started being used on September 1, 2021, no longer includes GUIDE.[^ref1]
 
-## 安装
+## Installation
 
 ### Windows
 
-参见 <https://www.noi.cn/xw/2009-03-23/714714.shtml>．
+See <https://www.noi.cn/xw/2009-03-23/714714.shtml>.
 
 ### Linux
 
-参见 <https://www.noi.cn/xw/2009-03-23/714714.shtml> 或按照如下步骤安装．
+See <https://www.noi.cn/xw/2009-03-23/714714.shtml> or follow the steps below to install.
 
-#### 需要的动态库文件及包名
+#### Required Dynamic Library Files and Package Names
 
-| 动态库                 | Arch 包名          | Debian 包名      | Fedora 包名  | openSUSE x86 包名   | openSUSE x86\_64 包名     |
+| Dynamic Library        | Arch Package Name   | Debian Package Name | Fedora Package Name | openSUSE x86 Package Name | openSUSE x86\_64 Package Name   |
 | ------------------- | ---------------- | -------------- | ---------- | ----------------- | ----------------------- |
 | libpng12.so.0       | lib32-libpng12   | libpng12       | libpng12   | libpng12-0        | libpng12-0-32bit        |
 | libSM.so.6          | lib32-libsm      | libsm6         | libSM      | libSM6            | libSM6-32bit            |
@@ -38,7 +40,7 @@ GUIDE（GAIT Universal IDE）是由北航 GAIT 研究组开发的、专门为 NO
 | libm.so.6           | lib32-glibc      | libc6          | glibc      | glibc             | glibc-32bit             |
 | libc.so.6           | lib32-glibc      | libc6          | glibc      | glibc             | glibc-32bit             |
 
-#### 在 Debian 或 Ubuntu 安装
+#### Installing on Debian or Ubuntu
 
 ```bash
 sudo apt install -y libpng12 libsm6 libice6 libxi6 libxrender1 libxrandr libfreetype6 libfontconfig1 libxext6 libx11-6 zlib1g libglib2.0-0 libglib2.0-0 libstdc++6 lib32gcc1 libc6
@@ -50,11 +52,11 @@ sudo apt install -y checkinstall
 sudo checkinstall --pkgname "GUIDE" --pkgversion "1.0.2" -y
 ```
 
-#### 在 openSUSE 安装
+#### Installing on openSUSE
 
-按照 [openSUSE/opi](https://github.com/openSUSE/opi#install) 给出的方式安装 opi．
+Install opi as given in [openSUSE/opi](https://github.com/openSUSE/opi#install).
 
-然后：（32 位用户自行删去 `-32bit`）
+Then: (32-bit users should remove `-32bit` themselves)
 
 ```bash
 sudo opi checkinstall
@@ -66,31 +68,31 @@ echo "install:\n\tinstall -Dm755 -t /usr/bin GUIDE\n\tinstall -Dm644 -t /usr/sha
 sudo checkinstall --pkgname "GUIDE" --pkgversion "1.0.2" -y -rpmi
 ```
 
-## 编辑文件
+## Editing Files
 
-点击页面上方工具栏的「新文件」按钮（或者使用<kbd>Ctrl</kbd>+<kbd>N</kbd>快捷键）来创建一个新文件．
+Click the "New File" button on the toolbar at the top of the page (or use the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>N</kbd>) to create a new file.
 
-在默认情况下，GUIDE 的代码字体并非等宽字体，看上去非常不美观，因此需要在设置中更改字体．
+By default, GUIDE's code font is not a monospace font, which looks very ugly. Therefore, you need to change the font in the settings.
 
-在 编辑 -> 选项 -> 语法高亮设置 中，点击「全部字体」按钮，即可切换编辑器字体．
+In Edit -> Options -> Syntax Highlighting Settings, click the "All Fonts" button to switch the editor font.
 
-需要注意的是，对于未保存的新文件，字体仍然是默认字体．因此建议在开始编辑前先保存文件（点击工具栏的「保存」按钮，或按下<kbd>Ctrl</kbd>+<kbd>S</kbd>快捷键），再进行编辑．
+Note that for unsaved new files, the font remains the default font. Therefore, it is recommended to save the file first (click the "Save" button on the toolbar, or press <kbd>Ctrl</kbd>+<kbd>S</kbd>) before starting to edit.
 
-## 编译与运行
+## Compiling and Running
 
-在编辑完源代码后，点击工具栏的「编译」按钮（或<kbd>F7</kbd>快捷键）进行编译．
+After editing the source code, click the "Compile" button on the toolbar (or the <kbd>F7</kbd> shortcut) to compile.
 
-???+ note "更改编译选项"
-    GUIDE 没有设置默认编译选项的功能，用户只能更改对某个文件的编译选项．
+???+ note "Changing Compilation Options"
+    GUIDE does not have a function to set default compilation options. Users can only change the compilation options for a specific file.
     
-    右键点击想要更改编译选项的文件的标签，选择 **设置编译命令** 选项，即可更改该文件的编译选项．
+    Right-click on the tab of the file whose compilation options you want to change, and select the **Set Compile Command** option to change that file's compilation options.
 
-如果源代码正常编译，点击工具栏的「运行」按钮（或<kbd>Ctrl</kbd>+<kbd>F5</kbd>快捷键）即可运行程序．
+If the source code compiles successfully, click the "Run" button on the toolbar (or <kbd>Ctrl</kbd>+<kbd>F5</kbd> shortcut) to run the program.
 
-## 调试
+## Debugging
 
-GUIDE 自带的调试功能存在很多 bug（如程序中途发生崩溃等），因此不推荐直接使用 GUIDE 的调试功能．
+GUIDE's built-in debugging function has many bugs (such as the program crashing midway, etc.), so it is not recommended to use GUIDE's debugging function directly.
 
-建议直接在 [终端](../cmd.md) 下使用 gdb 来进行调试．
+It is recommended to use gdb directly in the [terminal](../cmd.md) for debugging.
 
-[^ref1]: [NOI Linux 2.0 发布，将于 9 月 1 日起正式启用！](https://www.noi.cn/gynoi/jsgz/2021-07-16/732450.shtml)
+[^ref1]: [NOI Linux 2.0 Released, Will Be Officially Used from September 1st!](https://www.noi.cn/gynoi/jsgz/2021-07-16/732450.shtml)

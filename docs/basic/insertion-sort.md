@@ -1,28 +1,28 @@
-本页面将简要介绍插入排序．
+This page gives a brief introduction to insertion sort.
 
-## 定义
+## Definition
 
-插入排序（英语：Insertion sort）是一种简单直观的排序算法．它的工作原理为将待排列元素划分为「已排序」和「未排序」两部分，每次从「未排序的」元素中选择一个插入到「已排序的」元素中的正确位置．
+Insertion sort (English: Insertion sort) is a simple and intuitive sorting algorithm. Its working principle is to divide the elements to be sorted into "sorted" and "unsorted" parts, and each time select an element from the "unsorted" part and insert it into the correct position in the "sorted" part.
 
-一个与插入排序相同的操作是打扑克牌时，从牌桌上抓一张牌，按牌面大小插到手牌后，再抓下一张牌．
+An identical operation to insertion sort is when playing card games: you pick up a card from the table and insert it into your hand in the correct position based on its value, then pick up the next card.
 
 ![insertion sort animate example](images/insertion-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-插入排序是一种稳定的排序算法．
+Insertion sort is a stable sorting algorithm.
 
-### 时间复杂度
+### Time Complexity
 
-插入排序的最优时间复杂度为 $O(n)$，在数列几乎有序时效率很高．
+The optimal time complexity of insertion sort is $O(n)$, and it is very efficient when the sequence is nearly sorted.
 
-插入排序的最坏时间复杂度和平均时间复杂度都为 $O(n^2)$．
+The worst-case and average time complexity of insertion sort are both $O(n^2)$.
 
-## 代码实现
+## Code Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -54,15 +54,15 @@ $$
     --8<-- "docs/basic/code/insertion-sort/insertion-sort_1.java"
     ```
 
-## 折半插入排序
+## Binary Insertion Sort
 
-插入排序还可以通过二分算法优化性能，在排序元素数量较多时优化的效果比较明显．
+Insertion sort can also be optimized using binary search, and the optimization effect is more significant when sorting a larger number of elements.
 
-### 时间复杂度
+### Time Complexity
 
-折半插入排序与直接插入排序的基本思想是一致的，折半插入排序仅对插入排序时间复杂度中的常数进行了优化，所以优化后的时间复杂度仍然不变．
+Binary insertion sort follows the same basic idea as straight insertion sort. Binary insertion sort only optimizes the constant factor in the time complexity of insertion sort, so the overall time complexity remains unchanged.
 
-### 代码实现
+### Code Implementation
 
 === "C++"
     ```cpp
@@ -71,7 +71,7 @@ $$
       for (int i = 1; i != len; ++i) {
         int key = arr[i];
         auto index = upper_bound(arr, arr + i, key) - arr;
-        // 使用 memmove 移动元素，比使用 for 循环速度更快，时间复杂度仍为 O(n)
+        // Use memmove to move elements, faster than a for loop, time complexity is still O(n)
         memmove(arr + index + 1, arr + index, (i - index) * sizeof(int));
         arr[index] = key;
       }

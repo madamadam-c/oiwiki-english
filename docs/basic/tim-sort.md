@@ -1,136 +1,136 @@
-本页面将介绍 Tim 排序（Timsort），一种混合的、稳定的排序算法．
+This page introduces Timsort, a hybrid, stable sorting algorithm.
 
-## 引入
+## Introduction
 
-Timsort 由 Python 核心开发者 Tim Peters 于 2002 年设计，并应用于 Python 语言，其巧妙结合了插入排序和归并排序的优点，针对数据集中的有序性进行了精确的优化，尤其适合处理包含大量部分有序子序列的数据集．自 Python 2.3 版本以来，Timsort 被选为 Python 标准库的默认排序算法，并被广泛应用于其他编程环境，例如在 Java SE 7 中被用于对非原始对象数组进行排序．
+Timsort was designed by Tim Peters, a Python core developer, in 2002 and applied to the Python language. It cleverly combines the advantages of insertion sort and merge sort, with precise optimization for the orderedness in the dataset, making it especially suitable for processing datasets containing many partially ordered subsequences. Since Python 2.3, Timsort has been chosen as the default sorting algorithm in Python's standard library and has been widely used in other programming environments, such as sorting non-primitive object arrays in Java SE 7.
 
-## 步骤
+## Steps
 
-Timsort 的核心思想是通过识别和利用数据集中已有的有序性，提高排序效率，其主要包括以下步骤：
+The core idea of Timsort is to improve sorting efficiency by identifying and utilizing the existing order in the dataset. It mainly includes the following steps:
 
-1.  **识别 Run**：扫描待排序数组，识别出有序的连续子序列（Run）．
-2.  **扩展 Run**：如果识别的 Run 长度小于 `MIN_RUN`，则使用插入排序对其进行扩展．
-3.  **归并 Run**：Timsort 维护一个特殊的栈，采用特定的归并策略将栈中已有的 Run 合并成更大的有序序列．
+1.  **Identify Run**: Scan the array to be sorted and identify ordered contiguous subsequences (Runs).
+2.  **Extend Run**: If the identified Run length is less than `MIN_RUN`, use insertion sort to extend it.
+3.  **Merge Run**: Timsort maintains a special stack and uses a specific merge strategy to combine existing Runs in the stack into larger ordered sequences.
 
-### 识别 Run
+### Identifying Run
 
-首先，Timsort 会从左向右扫描数组，识别出连续的有序序列，这些有序序列被称为 Run：
+First, Timscan scans the array from left to right to identify contiguous ordered sequences, which are called Runs:
 
--   **升序 Run**：如果后一个元素大于等于前一个元素，则继续扩展 Run．
--   **降序 Run**：如果后一个元素小于前一个元素，则继续扩展 Run，随后将该 Run 反转为升序．
+-   **Ascending Run**: If the next element is greater than or equal to the previous element, continue extending the Run.
+-   **Descending Run**: If the next element is less than the previous element, continue extending the Run, then reverse this Run to ascending order.
 
-### 扩展 Run
+### Extending Run
 
-为了提高小规模数据的排序效率，Timsort 引入了一个 Run 最小的长度 `MIN_RUN`．其值一般根据待排序数组的长度动态计算，通常为 $32$ 至 $64$ 之间．
+To improve sorting efficiency for small-scale data, Timsort introduces a minimum Run length `MIN_RUN`. Its value is usually calculated dynamically based on the length of the array to be sorted, typically between $32$ and $64$.
 
--   如果识别的 Run 长度大于等于 `MIN_RUN`，则不需要额外操作，直接将 Run 压入栈中．
--   如果识别的 Run 长度小于 `MIN_RUN`，则使用二分插入排序将该 Run 的后续元素插入到 Run 中，直到 Run 的长度达到 `MIN_RUN`，然后将其压入栈中．
+-   If the identified Run length is greater than or equal to `MIN_RUN`, no additional operation is needed, and the Run is directly pushed onto the stack.
+-   If the identified Run length is less than `MIN_RUN`, use binary insertion sort to insert subsequent elements into the Run until the Run length reaches `MIN_RUN`, then push it onto the stack.
 
-### 归并 Run
+### Merging Run
 
-在 Timsort 中，归并排序是通过 **栈** 来管理和控制的．栈中保存了已经识别出的有序的 Run，并通过特定的归并规则控制栈中 Run 的合并，其目的是在合并时保持序列的平衡性和稳定性．
+In Timsort, merge sort is managed and controlled through a **stack**. The stack saves the identified ordered Runs and controls the merging of Runs in the stack through specific merge rules, with the goal of maintaining balance and stability during merging.
 
-#### 归并规则
+#### Merge Rules
 
-Timsort 是一种稳定的排序算法，即相同元素在排序后仍然保持原有的相对顺序．为确保这一点，Timsort 在归并时只会合并相邻的、连续的 Run，而不会直接合并非相邻的 Run．因为非相邻的 Run 之间可能存在相同的元素，直接合并很有可能会打乱它们的相对顺序．
+Timsort is a stable sorting algorithm, meaning equal elements maintain their original relative order after sorting. To ensure this, Timsort only merges adjacent, consecutive Runs during merging, and does not directly merge non-adjacent Runs. Because there may be equal elements between non-adjacent Runs, directly merging them may disrupt their relative order.
 
-同时，为了确保合并的平衡性，Timsort 引入了特定的归并规则．在每次合并操作之前，算法会检查栈顶的三个 Run X、Y 和 Z，以确保满足以下两个条件：
+At the same time, to ensure balanced merging, Timsort introduces specific merge rules. Before each merge operation, the algorithm checks the three Runs X, Y, and Z at the top of the stack to ensure the following two conditions are met:
 
--   **条件一**：`len(Z) > len(Y) + len(X)`
--   **条件二**：`len(Y) > len(X)`
+-   **Condition one**: `len(Z) > len(Y) + len(X)`
+-   **Condition two**: `len(Y) > len(X)`
 
-如果栈顶的三个 Run 不满足上述条件，Timsort 会将 Y 与 X 或 Z 中较小的一个进行合并，然后再次检查条件．一旦条件满足，则开始继续搜索新的 Run，将其添加到栈中并开始下一轮的归并．
+If the three Runs at the top of the stack do not meet the above conditions, Timsort merges Y with the smaller of X or Z, then checks the conditions again. Once the conditions are met, it continues searching for new Runs, adds them to the stack, and starts the next round of merging.
 
 ![Merge Rules](./images/tim-sort-1.png)
 
-#### 归并优化
+#### Merge Optimization
 
-为了在归并不同长度的 Run 时提高效率并减少空间开销，Timsort 在归并前会通过二分查找精确定位需要处理的元素范围，只对需要移动的部分进行归并，具体方式为：
+To improve efficiency and reduce space overhead when merging Runs of different lengths, Timsort precisely locates the range of elements to process through binary search before merging, only merging the parts that need to be moved:
 
-1.  **确定插入点**：使用二分查找，找到第二个 Run 的第一个元素在第一个 Run 中的插入位置，以及第一个 Run 的最后一个元素在第二个 Run 中的插入位置．这样，可以缩小需要归并的范围，只对需要移动的元素进行处理．
+1.  **Determine insertion points**: Use binary search to find the insertion position of the first element of the second Run in the first Run, and the insertion position of the last element of the first Run in the second Run. This allows reducing the merge range to only process elements that need to be moved.
 
-2.  **临时缓冲区**：传统的原地合并算法效率太低，需要大量的元素移动．为了减少这种开销，Timsort 使用一个临时缓冲区，将长度较小的 Run 复制到缓冲区中，然后逐步将元素从缓冲区复制回原数组．
+2.  **Temporary buffer**: Traditional in-place merge algorithms are too inefficient and require a large amount of element movement. To reduce this overhead, Timsort uses a temporary buffer, copying the shorter Run into the buffer, then gradually copying elements from the buffer back to the original array.
 
-例如，假设存在两个 Run A 和 B，分别为：
+For example, suppose there are two Runs A and B:
 
--   Run A:$[1, 2, 3, 6, 10]$
--   Run B:$[4, 5, 7, 9, 12, 14, 17]$
+-   Run A: $[1, 2, 3, 6, 10]$
+-   Run B: $[4, 5, 7, 9, 12, 14, 17]$
 
-通过二分查找，可以确定：
+Through binary search, it can be determined that:
 
--   元素 $4$ 应插入到 Run A 的第四个位置．
--   元素 $10$ 应插入到 Run B 的第五个位置．
+-   Element $4$ should be inserted at the fourth position of Run A.
+-   Element $10$ should be inserted at the fifth position of Run B.
 
-因此，Run A 的前 $3$ 个元素和 Run B 的后 $3$ 个元素已经在正确位置，无需处理．只需归并 Run A 的 $[6, 10]$ 和 Run B 的 $[4, 5, 7, 9]$，其归并过程如下图所示：
+Therefore, the first $3$ elements of Run A and the last $3$ elements of Run B are already in the correct positions and do not need processing. Only Run A's $[6, 10]$ and Run B's $[4, 5, 7, 9]$ need to be merged, as shown in the figure below:
 
 ![Timsort Merge](./images/tim-sort-2.apng)
 
-#### 加速模式
+#### Galloping Mode
 
-为进一步提升归并效率，Timsort 引入了 **加速模式（Galloping Mode）**．在标准的归并过程中，算法会逐一比较两个 Run 中的元素，将较小的元素放入结果数组．然而，如果一侧的 Run 中有大量连续元素比另一侧的当前元素要小，逐一比较会造成不必要的开销．
+To further improve merging efficiency, Timsort introduces **Galloping Mode**. In the standard merge process, the algorithm compares elements in both Runs one by one, placing the smaller element into the result array. However, if one Run has many consecutive elements that are smaller than the current element of the other Run, performing one-by-one comparisons would cause unnecessary overhead.
 
-为了解决这一问题，Timsort 设定了一个阈值 `Min_Gallop`（默认值为 $7$）．当一侧 Run 中的元素连续比较胜利的次数达到 `Min_Gallop` 时，算法会进入加速模式，快速定位元素位置，其具体步骤如下：
+To solve this problem, Timsort sets a threshold `Min_Gallop` (default value is $7$). When the number of consecutive winning comparisons from one Run reaches `Min_Gallop`, the algorithm enters galloping mode to quickly locate element positions:
 
-1.  **指数查找**：从当前位置开始，算法以指数增长的步长 $(1, 2, 4, 8, \dots)$ 在一侧的 Run 中查找，直到找到一个区间，使得目标元素位于该区间内．
-2.  **二分查找**：一旦确定了包含目标元素的区间，算法会在该区间内使用二分查找，精确定位目标元素的位置．
+1.  **Exponential search**: Starting from the current position, the algorithm searches in one Run with exponentially growing step sizes $(1, 2, 4, 8, \dots)$ until an interval is found such that the target element is within that interval.
+2.  **Binary search**: Once the interval containing the target element is determined, the algorithm uses binary search within that interval to precisely locate the target element's position.
 
-通过这种方式，Timsort 可以跳过大量不必要的比较，快速处理一侧 Run 中连续的、较小（或较大）的元素，将它们批量移动到合并结果中．
+Through this method, Timskip can skip a large number of unnecessary comparisons, quickly process consecutive smaller (or larger) elements from one Run, and batch move them to the merged result.
 
-然而，加速模式并非在所有情况下都更高效．在某些数据分布下，加速模式可能导致更多的比较次数．为此，Timsort 采用了动态调整策略：
+However, galloping mode is not always more efficient. In some data distributions, galloping mode may lead to more comparisons. Therefore, Timsort adopts a dynamic adjustment strategy:
 
--   **阈值调整**：维护一个可变的 `Min_Gallop` 参数．当加速模式表现良好（即连续多次从同一 Run 中选取元素）时，`Min_Gallop` 减 $1$，鼓励继续使用加速模式；当加速模式效果不佳（频繁在两个 Run 之间切换）时，`Min_Gallop` 加 $1$，降低加速模式的使用频率．
+-   **Threshold adjustment**: Maintain a variable `Min_Gallop` parameter. When galloping mode performs well (i.e., consecutively selecting elements from the same Run multiple times), `Min_Gallop` is decremented by $1$, encouraging continued use of galloping mode; when galloping mode performs poorly (frequently switching between two Runs), `Min_Gallop` is incremented by $1$, reducing the frequency of galloping mode usage.
 
-通过动态调整 `Min_Gallop` 的值，算法能够根据实际数据情况，在普通归并模式和加速模式之间取得平衡．对于部分有序或高度有序的数据，加速模式可以显著提高效率，使 Timsort 的性能接近 $O(n)$；而对于随机数据，算法会逐渐倾向于使用普通归并，从而保证 $O(n \log n)$ 的时间复杂度．
+By dynamically adjusting the value of `Min_Gallop`, the algorithm can balance between normal merge mode and galloping mode based on actual data. For partially ordered or highly ordered data, galloping mode can significantly improve efficiency, making Timsort's performance close to $O(n)$; for random data, the algorithm gradually tends to use normal merging, thus guaranteeing $O(n \log n)$ time complexity.
 
-## 复杂度
+## Complexity
 
-Timsort 的时间复杂度取决于数据的有序性：
+Timsort's time complexity depends on the orderliness of the data:
 
--   **最优情况**：$O(n)$
-    -   当数据已经有序或近似有序时，算法识别出的 Run 长度接近 $n$，归并次数减少，复杂度趋近于 $O(n)$．
--   **最坏情况**：$O(n \log n)$
-    -   在数据完全无序的情况下，每一个 Run 的长度都接近 $1$，因此需要 $O(\log n)$ 次归并，每次归并的代价为 $O(n)$，总复杂度为 $O(n \log n)$．
+-   **Best case**: $O(n)$
+    -   When the data is already ordered or nearly ordered, the Run lengths identified by the algorithm approach $n$, the number of merges decreases, and complexity approaches $O(n)$.
+-   **Worst case**: $O(n \log n)$
+    -   When the data is completely unordered, each Run's length approaches $1$, so $O(\log n)$ merges are needed, each merge costs $O(n)$, and the total complexity is $O(n \log n)$.
 
-**证明**：
+**Proof**:
 
--   **识别和扩展 Run**：
-    -   识别 Run 需线性遍历一次数组，其复杂度为 $O(n)$．
-    -   使用插入排序扩展 Run 也需线性遍历数组，其复杂度为 $O(n)$．
+-   **Identifying and extending Runs**:
+    -   Identifying Runs requires one linear traversal of the array, with complexity $O(n)$.
+    -   Using insertion sort to extend Runs also requires linear traversal of the array, with complexity $O(n)$.
 
--   **归并 Run**：
-    -   归并操作的总次数与 Run 的总数有关，最坏情况下 Run 的数量为 `n / MIN_RUN`，由于 `MIN_RUN` 是常数，因此 Run 的数量可看作 $O(n)$．
-    -   $O(n)$ 个 Run 需要进行的归并次数为 $O(\log n)$，每次归并操作的代价为 $O(n)$，因此归并操作的总复杂度为 $O(n \log n)$．
+-   **Merging Runs**:
+    -   The total number of merge operations is related to the total number of Runs. In the worst case, the number of Runs is `n / MIN_RUN`. Since `MIN_RUN` is a constant, the number of Runs can be considered $O(n)$.
+    -   $O(n)$ Runs require $O(\log n)$ merges, and each merge operation costs $O(n)$, so the total complexity of merge operations is $O(n \log n)$.
 
-而对于空间复杂度，由于 Timsort 大致需要额外的 $O(n)$ 空间用于存储栈和临时缓冲区，因此总的空间复杂度为 $O(n)$．
+For space complexity, since Timsort requires approximately $O(n)$ additional space for storing the stack and temporary buffers, the total space complexity is $O(n)$.
 
-## 实现
+## Implementation
 
-???+ note "伪代码实现"
+???+ note "Pseudocode implementation"
     $$
     \begin{array}{ll}
-    1 & nRemaining \gets \text{数组长度} \\
-    2 & minRun \gets \text{选择合适的 MinRun 的值}(nRemaining) \\
+    1 & nRemaining \gets \text{array length} \\
+    2 & minRun \gets \text{choose appropriate MinRun value}(nRemaining) \\
     3 & startIndex \gets 0 \\
     4 & \textbf{while } nRemaining > 0 \ \textbf{do} \\
-    5 & \qquad runLength \gets \text{识别 Run }(array, startIndex, nRemaining) \\
+    5 & \qquad runLength \gets \text{identify Run }(array, startIndex, nRemaining) \\
     6 & \qquad \textbf{if } runLength < minRun \ \textbf{then} \\
     7 & \qquad \qquad extendLength \gets \min(minRun, nRemaining) \\
-    8 & \qquad \qquad \text{使用插入排序扩展区间 } [startIndex, startIndex + extendLength - 1]\\
+    8 & \qquad \qquad \text{use insertion sort to extend range } [startIndex, startIndex + extendLength - 1]\\
     9 & \qquad \qquad runLength \gets extendLength \\
     10 & \qquad \textbf{end if} \\
-    11 & \qquad \text{将 Run  } (startIndex, runLength) \text{ 压入栈中} \\
-    12 & \qquad \textbf{调用 } \text{mergeCollapse(栈)} \ \text{检查并合并栈中的 Run } \\
-    13 & \qquad startIndex \gets startIndex + runLength \ \text{更新起始位置} \\
-    14 & \qquad nRemaining \gets nRemaining - runLength \ \text{更新剩余长度} \\
+    11 & \text{push Run } (startIndex, runLength) \text{ onto stack} \\
+    12 & \textbf{call } \text{mergeCollapse(stack)} \ \text{check and merge Runs in the stack} \\
+    13 & \qquad startIndex \gets startIndex + runLength \ \text{update start position} \\
+    14 & \qquad nRemaining \gets nRemaining - runLength \ \text{update remaining length} \\
     15 & \textbf{end while} \\
-    16 & \textbf{调用 } \text{mergeForceCollapse(栈)} \ \text{对栈中所有 Run 进行最终的合并} \\
+    16 & \textbf{call } \text{mergeForceCollapse(stack)} \ \text{final merge of all Runs in the stack} \\
     \end{array}
     $$
 
-## 参考资料
+## References
 
 1.  [Timsort](https://en.wikipedia.org/wiki/Timsort)
 2.  [On the Worst-Case Complexity of TimSort](https://drops.dagstuhl.de/opus/volltexte/2018/9467/pdf/LIPIcs-ESA-2018-4.pdf)
 3.  [Original Explanation by Tim Peters](https://github.com/python/cpython/blob/main/Objects/listsort.txt)
-4.  [Java 实现](https://cs.android.com/android/platform/superproject/main/+/main:libcore/ojluni/src/main/java/java/util/TimSort.java)
-5.  [C 语言实现](https://github.com/python/cpython/blob/main/Objects/listobject.c)
+4.  [Java Implementation](https://cs.android.com/android/platform/superproject/main/+/main:libcore/ojluni/src/main/java/java/util/TimSort.java)
+5.  [C Implementation](https://github.com/python/cpython/blob/main/Objects/listobject.c)

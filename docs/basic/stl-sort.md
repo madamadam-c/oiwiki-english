@@ -1,126 +1,126 @@
-本页面将简要介绍 C 和 C++ 标准库中实现的排序算法．
+This page provides a brief introduction to sorting algorithms implemented in the C and C++ standard libraries.
 
-除已说明的函数外，本页所列函数默认定义于头文件 `<algorithm>` 中．
+Except where noted, all functions described on this page are defined in the `<algorithm>` header.
 
 ## qsort
 
-参见：[`qsort`](https://zh.cppreference.com/w/c/algorithm/qsort)，[`std::qsort`](https://zh.cppreference.com/w/cpp/algorithm/qsort)
+See: [`qsort`](https://en.cppreference.com/w/c/algorithm/qsort), [`std::qsort`](https://en.cppreference.com/w/cpp/algorithm/qsort)
 
-该函数为 C 标准库实现的 [快速排序](./quick-sort.md)，定义在 `<stdlib.h>` 中．在 C++ 标准库里，该函数定义在 `<cstdlib>` 中．
+This function implements [quicksort](./quick-sort.md) as part of the C standard library, defined in `<stdlib.h>`. In the C++ standard library, it is defined in `<cstdlib>`.
 
-### qsort 与 bsearch 的比较函数
+### Comparison function for qsort and bsearch
 
-qsort 函数有四个参数：数组名、元素个数、元素大小、比较规则．其中，比较规则通过指定比较函数来实现，指定不同的比较函数可以实现不同的排序规则．
+The qsort function takes four parameters: array name, number of elements, element size, and comparison rule. The comparison rule is implemented by specifying a comparison function; different comparison functions can achieve different sorting rules.
 
-比较函数的参数限定为两个 const void 类型的指针．返回值规定为正数、负数和 0．
+The comparison function's parameters are constrained to two `const void` type pointers. The return value must be a positive number, negative number, or zero.
 
-比较函数的一种示例写法为：
+An example of a comparison function:
 
 ```c
-int compare(const void *p1, const void *p2)  // int 类型数组的比较函数
+int compare(const void *p1, const void *p2)  // comparison function for int array
 {
   int *a = (int *)p1;
   int *b = (int *)p2;
   if (*a > *b)
-    return 1;  // 返回正数表示 a 大于 b
+    return 1;  // return positive to indicate a is greater than b
   else if (*a < *b)
-    return -1;  // 返回负数表示 a 小于 b
+    return -1;  // return negative to indicate a is less than b
   else
-    return 0;  // 返回 0 表示 a 与 b 等价
+    return 0;  // return 0 to indicate a and b are equivalent
 }
 ```
 
-注意：返回值用两个元素相减代替正负数是一种典型的错误写法，因为这样可能会导致溢出错误．
+Note: Using the difference of two elements to represent positive/negative values is a typical error, as it may cause overflow errors.
 
-以下是排序结构体的一个示例：
+Here is an example of sorting a struct:
 
 ```c
-struct eg  // 示例结构体
+struct eg  // example struct
 {
   int e;
   int g;
 };
 
 int compare(const void *p1,
-            const void *p2)  // struct eg 类型数组的比较函数：按成员 e 排序
+            const void *p2)  // comparison function for struct eg array: sort by member e
 {
   struct eg *a = (struct eg *)p1;
   struct eg *b = (struct eg *)p2;
   if (a->e > b->e)
-    return 1;  // 返回正数表示 a 大于 b
+    return 1;  // return positive to indicate a is greater than b
   else if (a->e < b->e)
-    return -1;  // 返回负数表示 a 小于 b
+    return -1;  // return negative to indicate a is less than b
   else
-    return 0;  // 返回 0 表示 a 与 b 等价
+    return 0;  // return 0 to indicate a and b are equivalent
 }
 ```
 
-这里也可以看出，等价不代表相等，只代表在此比较规则下两元素等价．
+As you can see, equivalence does not mean equality; it only means the two elements are equivalent under this comparison rule.
 
 ## std::sort
 
-参见：[`std::sort`](https://zh.cppreference.com/w/cpp/algorithm/sort)
+See: [`std::sort`](https://en.cppreference.com/w/cpp/algorithm/sort)
 
-用法：
+Usage:
 
 ```cpp
-// a[0] .. a[n - 1] 为需要排序的数列
-// 对 a 原地排序，将其按从小到大的顺序排列
+// a[0] .. a[n - 1] is the sequence to be sorted
+// sorts a in-place, arranging elements in ascending order
 std::sort(a, a + n);
 
-// cmp 为自定义的比较函数
+// cmp is a custom comparison function
 std::sort(a, a + n, cmp);
 ```
 
-注意：sort 的比较函数的返回值是 true 和 false，用 true 和 false 表示两个元素的大小（先后）关系，这与 qsort 的三值比较函数的语义完全不同．具体内容详见上方给出的 sort 的文档．
+Note: The comparison function for sort returns true and false, using true and false to indicate the size (order) relationship between two elements, which is completely different from the semantics of qsort's three-value comparison function. See the sort documentation linked above for details.
 
-如果要将 sort 简单改写为 qsort，维持排序顺序整体上不变（不考虑等价的元素），需要将返回 true 改为 - 1，返回 false 改为 1．
+If you want to simply convert sort to qsort while maintaining the overall sorting order (ignoring equivalent elements), you need to change returning true to -1 and returning false to 1.
 
-`std::sort` 函数是更常用的 C++ 库比较函数．该函数的最后一个参数为二元比较函数，未指定 `cmp` 函数时，默认按从小到大的顺序排序．
+`std::sort` is the more commonly used C++ library comparison function. Its last parameter is a binary comparison function; if no `cmp` function is specified, it sorts in ascending order by default.
 
-旧版 C++ 标准中仅要求它的 **平均** 时间复杂度达到 $O(n\log n)$．C++11 标准以及后续标准要求它的 **最坏** 时间复杂度达到 $O(n\log n)$．
+In older C++ standards, it was only required to achieve **average** time complexity of $O(n\log n)$. C++11 and subsequent standards require **worst-case** time complexity of $O(n\log n)$.
 
-C++ 标准并未严格要求此函数的实现算法，具体实现取决于编译器．[libstdc++](https://github.com/mirrors/gcc/blob/master/libstdc++-v3/include/bits/stl_algo.h) 和 [libc++](http://llvm.org/svn/llvm-project/libcxx/trunk/include/algorithm) 中的实现都使用了 [内省排序](./quick-sort.md#内省排序)．
+The C++ standard does not strictly mandate the implementation algorithm for this function; the specific implementation depends on the compiler. Both [libstdc++](https://github.com/mirrors/gcc/blob/master/libstdc++-v3/include/bits/stl_algo.h) and [libc++](http://llvm.org/svn/llvm-project/libcxx/trunk/include/algorithm) implementations use [Introsort](./quick-sort.md#introsort).
 
-## std::nth\_element
+## std::nth_element
 
-参见：[`std::nth_element`](https://zh.cppreference.com/w/cpp/algorithm/nth_element)
+See: [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element)
 
-用法：
+Usage:
 
 ```cpp
 std::nth_element(first, nth, last);
 std::nth_element(first, nth, last, cmp);
 ```
 
-它重排 `[first, last)` 中的元素，使得 `nth` 所指向的元素被更改为 `[first, last)` 排好序后该位置会出现的元素．这个新的 `nth` 元素前的所有元素小于或等于新的 `nth` 元素后的所有元素．
+It rearranges elements in `[first, last)` such that the element pointed to by `nth` is changed to whatever element would appear in that position if the range were fully sorted. All elements before this new `nth` are less than or equal to all elements after it.
 
-实现算法是未完成的内省排序．
+The implementation algorithm is an incomplete introsort.
 
-对于以上两种用法，C++ 标准要求它的平均时间复杂度为 $O(n)$，其中 n 为 `std::distance(first, last)`．
+For both usages above, the C++ standard requires an average time complexity of $O(n)$, where n is `std::distance(first, last)`.
 
-它常用于构建 [K-D Tree](../ds/kdt.md)．
+It is commonly used for building [K-D Trees](../ds/kdt.md).
 
-## std::stable\_sort
+## std::stable_sort
 
-参见：[`std::stable_sort`](https://zh.cppreference.com/w/cpp/algorithm/stable_sort)
+See: [`std::stable_sort`](https://en.cppreference.com/w/cpp/algorithm/stable_sort)
 
-用法：
+Usage:
 
 ```cpp
 std::stable_sort(first, last);
 std::stable_sort(first, last, cmp);
 ```
 
-稳定排序，保证相等元素排序后的相对位置与原序列相同．
+Stable sorting, which preserves the relative order of equal elements in the sorted output as they were in the original sequence.
 
-时间复杂度为 $O(n\log^2 n)$，当额外内存可用时，复杂度为 $O(n\log n)$．
+Time complexity is $O(n\log^2 n)$; when extra memory is available, complexity is $O(n\log n)$.
 
-## std::partial\_sort
+## std::partial_sort
 
-参见：[`std::partial_sort`](https://zh.cppreference.com/w/cpp/algorithm/partial_sort)
+See: [`std::partial_sort`](https://en.cppreference.com/w/cpp/algorithm/partial_sort)
 
-用法：
+Usage:
 
 ```cpp
 // mid = first + k
@@ -128,29 +128,29 @@ std::partial_sort(first, mid, last);
 std::partial_sort(first, mid, last, cmp);
 ```
 
-将序列中前 `k` 元素按 `cmp` 给定的顺序进行原地排序，后面的元素不保证顺序．未指定 `cmp` 函数时，默认按从小到大的顺序排序．
+Sorts the first `k` elements of the range in ascending order according to `cmp`, leaving the remaining elements in an unspecified order. If no `cmp` function is specified, it sorts in ascending order by default.
 
-复杂度：约 $(\mathit{last}-\mathit{first})\log(\mathit{mid}-\mathit{first})$ 次应用 `cmp`．
+Complexity: approximately $(\mathit{last}-\mathit{first})\log(\mathit{mid}-\mathit{first})$ applications of `cmp`.
 
-原理：
+Principle:
 
-`std::partial_sort` 的思想是：对原始容器内区间为 `[first, mid)` 的元素执行 `make_heap()` 操作，构造一个大根堆，然后将 `[mid, last)` 中的每个元素和 `first` 进行比较，保证 `first` 内的元素为堆内的最大值．如果小于该最大值，则互换元素位置，并对 `[first, mid)` 内的元素进行调整，使其保持最大堆序．比较完之后，再对 `[first, mid)` 内的元素做一次堆排序 `sort_heap()` 操作，使其按增序排列．注意，堆序和增序是不同的．
+`std::partial_sort` works by: constructing a max-heap from elements in `[first, mid)` using `make_heap()`, then comparing each element in `[mid, last)` with `first` to ensure the elements in `[first, mid)` are the largest in the heap. If an element is smaller than the maximum, swap them and adjust `[first, mid)` to maintain the max-heap property. After all comparisons, perform a heap sort (`sort_heap()`) on `[first, mid)` to arrange elements in ascending order. Note that heap order and ascending order are different.
 
-## 自定义比较
+## Custom Comparison
 
-参见：[运算符重载](https://zh.cppreference.com/w/cpp/language/operators)
+See: [operator overloading](https://en.cppreference.com/w/cpp/language/operators)
 
-内置类型（如 `int`）和用户定义的结构体允许定制调用 STL 排序函数时使用的比较函数．可以在调用该函数时，在最后一个参数中传入一个实现二元比较的函数．
+Built-in types (such as `int`) and user-defined structs allow customization of the comparison function used when calling STL sorting functions. You can pass a binary comparison function as the last parameter when calling the function.
 
-对于用户定义的结构体，对其使用 STL 排序函数前必须定义至少一种关系运算符，或是在使用函数时提供二元比较函数．通常推荐定义 `operator<`．[^note1]
+For user-defined structs, you must define at least one relational operator before using STL sorting functions, or provide a binary comparison function when using the function. It is generally recommended to define `operator<`.[^note1]
 
-示例：
+Example:
 
 ```cpp
 int a[1009], n = 10;
 // ...
-std::sort(a + 1, a + 1 + n);                  // 从小到大排序
-std::sort(a + 1, a + 1 + n, greater<int>());  // 从大到小排序
+std::sort(a + 1, a + 1 + n);                  // sort in ascending order
+std::sort(a + 1, a + 1 + n, greater<int>());  // sort in descending order
 ```
 
 ```cpp
@@ -167,26 +167,26 @@ bool cmp(const data u1, const data u2) {
 }
 
 // ...
-std::sort(da + 1, da + 1 + 10);  // 使用结构体中定义的 < 运算符，从小到大排序
-std::sort(da + 1, da + 1 + 10, cmp);  // 使用 cmp 函数进行比较，从大到小排序
+std::sort(da + 1, da + 1 + 10);  // use the < operator defined in the struct, sort in ascending order
+std::sort(da + 1, da + 1 + 10, cmp);  // use cmp function, sort in descending order
 ```
 
-### 严格弱序
+### Strict Weak Ordering
 
-另请参阅：[C++ 中的应用 - 序理论](../math/order-theory.md#c-中的应用)
+See also: [Application in C++ - Order Theory](../math/order-theory.md#application-in-c)
 
-进行排序的运算符必须满足 [严格弱序](../math/order-theory.md#二元关系)，否则会出现不可预料的情况（如运行时错误、无法正确排序）．
+The operator used for sorting must satisfy [strict weak ordering](../math/order-theory.md#binary-relation), otherwise unexpected behavior may occur (such as runtime errors or incorrect sorting).
 
-常见的错误做法：
+Common mistakes:
 
--   使用 `<=` 来定义排序中的小于运算符．
--   在调用排序运算符时，读取外部数值可能会改变的数组（常见于最短路算法）．
--   将多个数的最大最小值进行比较的结果作为排序运算符（如皇后游戏/加工生产调度 中的经典错误）．
+-   Using `<=` to define the less-than operator in sorting.
+-   Reading external values that may change during comparison calls (common in shortest path algorithms).
+-   Using the result of comparing the maximum and minimum of multiple numbers as the sorting operator (a classic error in problems like "Queen's Game / Production Scheduling").
 
-## 外部链接
+## External Links
 
--   [浅谈邻项交换排序的应用以及需要注意的问题](https://ouuan.github.io/浅谈邻项交换排序的应用以及需要注意的问题/)
+-   [A Brief Discussion on the Application of Adjacent Swap Sorting and Issues to Note](https://ouuan.github.io/浅谈邻项交换排序的应用以及需要注意的问题/)
 
-## 参考资料与注释
+## References and Notes
 
-[^note1]: 因为大部分标准算法默认使用 `operator<` 进行比较．
+[^note1]: Because most standard algorithms use `operator<` for comparison by default.

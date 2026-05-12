@@ -1,44 +1,44 @@
-## 多项式平移
+## Polynomial Shift
 
-多项式平移是简单情况的多项式复合变换，给出 $f(x)=\sum _ {i=0}^nf_ix^i$ 的系数和一个常数 $c$，求 $f(x+c)$ 的系数，即 $f(x)\mapsto f(x+c)$．
+Polynomial shift is a simple case of polynomial composition transformation. Given the coefficients of $f(x)=\sum _ {i=0}^nf_ix^i$ and a constant $c$, find the coefficients of $f(x+c)$, i.e., $f(x)\mapsto f(x+c)$.
 
-### 分治法
+### Divide-and-Conquer Method
 
-令
+Let:
 
 $$
 f(x)=f_0(x)+x^{\left\lfloor n/2\right\rfloor}f_1(x)
 $$
 
-那么
+Then:
 
 $$
 f(x+c)=f_0(x+c)+(x+c)^{\left\lfloor n/2\right\rfloor}f_1(x+c)
 $$
 
-$(x+c)^{\left\lfloor n/2\right\rfloor}$ 的系数为二项式系数，那么
+The coefficients of $(x+c)^{\left\lfloor n/2\right\rfloor}$ are binomial coefficients, so:
 
 $$
 T(n)=2T(n/2)+O(n\log n)=O(n\log^2 n)
 $$
 
-其中 $O(n\log n)$ 为多项式乘法的时间．
+Where $O(n\log n)$ is the time for polynomial multiplication.
 
-### Taylor 公式法
+### Taylor Formula Method
 
-对 $f(x)$ 在 $c$ 处应用 Taylor 公式，有
+Applying the Taylor formula to $f(x)$ at $c$:
 
 $$
 f(x)=f(c)+\frac{f'(c)}{1!}(x-c)+\frac{f''(c)}{2!}(x-c)^2+\cdots +\frac{f^{(n)}(c)}{n!}(x-c)^n
 $$
 
-那么
+Then:
 
 $$
 f(x+c)=f(c)+\frac{f'(c)}{1!}x+\frac{f''(c)}{2!}x^2+\cdots +\frac{f^{(n)}(c)}{n!}x^n
 $$
 
-观察到对于 $t\geq 0$ 有
+Observe that for $t\geq 0$:
 
 $$
 \begin{aligned}
@@ -48,7 +48,7 @@ t!\lbrack x^t\rbrack f(x+c)&=f^{(t)}(c)\\
 \end{aligned}
 $$
 
-令
+Let:
 
 $$
 \begin{aligned}
@@ -57,7 +57,7 @@ B_0(x)&=\sum _ {i=0}^n\frac{c^i}{i!}x^i
 \end{aligned}
 $$
 
-那么
+Then:
 
 $$
 \begin{aligned}
@@ -67,9 +67,9 @@ $$
 \end{aligned}
 $$
 
-### 二项式定理法
+### Binomial Theorem Method
 
-考虑二项式定理 $\displaystyle (a+b)^n=\sum _ {i=0}^n\binom{n}{i}a^ib^{n-i}$ 那么
+Consider the binomial theorem $\displaystyle (a+b)^n=\sum _ {i=0}^n\binom{n}{i}a^ib^{n-i}$:
 
 $$
 \begin{aligned}
@@ -80,16 +80,16 @@ f(x+c)&=\sum _ {i=0}^nf_i(x+c)^i\\
 \end{aligned}
 $$
 
-得到的结果与上述方法相同．
+The result obtained is the same as the above method.
 
-## 连续点值平移
+## Continuous Point Value Shift
 
-???+ note "例题 [LOJ 166 拉格朗日插值 2](https://loj.ac/p/166)"
-    给出度数小于等于 $n$ 的多项式 $f$ 的连续点值 $f(0),f(1),\dots ,f(n)$，在模 $998244353$ 意义下计算 $f(c),f(c+1),\dots ,f(c+n)$，其中 $1\leq n\leq 10^5,n < m\leq 10^8$．
+???+ note "Problem [LOJ 166 Lagrange Interpolation 2](https://loj.ac/p/166)"
+    Given the consecutive point values $f(0),f(1),\dots ,f(n)$ of a polynomial $f$ with degree $\le n$, compute $f(c),f(c+1),\dots ,f(c+n)$ modulo $998244353$, where $1\leq n\leq 10^5,n < m\leq 10^8$.
 
-### Lagrange 插值公式法
+### Lagrange Interpolation Formula Method
 
-考虑 [Lagrange 插值公式](../numerical/interp.md#lagrange-插值法)
+Consider the [Lagrange Interpolation Formula](../numerical/interp.md#lagrange-interpolation-method):
 
 $$
 \begin{aligned}
@@ -99,7 +99,7 @@ f(x)&=\sum _ {0\leq i\leq n}f(i)\prod _ {0\leq j\leq n\,\land \,j\neq i}\frac{x-
 \end{aligned}
 $$
 
-上式虽然是卷积形式但不能保证分母上 $x-i\neq 0$，所以下面仅考虑 $c > n$ 的情况，其他情况（如系数在模素数意义下时须避免 $B_0(x)$ 系数的分母出现零）可以分类讨论解决，令
+The above is in convolution form but cannot guarantee $x-i\neq 0$ in the denominator. So below we only consider the case $c > n$; other cases (like avoiding zeros in denominators when coefficients are under modulo prime) can be discussed case by case. Let:
 
 $$
 \begin{aligned}
@@ -108,7 +108,7 @@ B_0(x)&=\sum _ {i\geq 0}\frac{1}{c-n+i}x^i
 \end{aligned}
 $$
 
-那么对于 $t\geq 0$ 有
+Then for $t\geq 0$:
 
 $$
 \begin{aligned}
@@ -118,90 +118,91 @@ $$
 \end{aligned}
 $$
 
-实现中取 $B_0(x)$ 需要的部分截断可求出更多点值，且可利用循环卷积．
+In implementation, taking the required part of $B_0(x)$ by truncation can compute more point values, and cyclic convolution can be used.
 
-对问题稍加修改，假设对于某个 $d$ 给出的点值为 $f(d),f(d+k),\dots ,f(d+nk)$，我们可以计算 $f(c+d),f(c+d+k),\dots ,f(c+d+nk)$，视作平移 $g(x)=f(d+kx)$ 的点值 $g(0),g(1),\dots ,g(n)$ 为 $g(c/k),g(c/k+1),\dots ,g(c/k+n)$．
+With a slight modification to the problem, if for some $d$ we are given point values $f(d),f(d+k),\dots ,f(d+nk)$, we can compute $f(c+d),f(c+d+k),\dots ,f(c+d+nk)$. This can be viewed as shifting the point values of $g(x)=f(d+kx)$ from $g(0),g(1),\dots ,g(n)$ to $g(c/k),g(c/k+1),\dots ,g(c/k+n)$.
 
-Lagrange 插值公式也给出了通过维护一些前后缀积的线性计算单个点值的方法．
+The Lagrange interpolation formula also provides a linear-time method for computing a single point value by maintaining some prefix and suffix products.
 
-## 应用
+## Applications
 
-### 同一行第一类无符号 Stirling 数
+### Unsigned Stirling Numbers of the First Kind on the Same Row
 
-???+ note "例题 [P5408 第一类斯特林数·行](https://www.luogu.com.cn/problem/P5408)"
-    在模素数 $167772161$ 意义下求 $\displaystyle {n\brack 0},{n\brack 1},\dots ,{n\brack n}$，其中 $1\leq n< 262144$．
+???+ note "Problem [P5408 Stirling Numbers of the First Kind Row](https://www.luogu.com.cn/problem/P5408)"
+    Find $\displaystyle {n\brack 0},{n\brack 1},\dots ,{n\brack n}$ modulo prime $167772161$, where $1\leq n< 262144$.
 
-考虑
+Consider:
 
 $$
 x^{\overline{n}}=\sum _ {i=0}^n{n\brack i}x^i,\quad n\geq 0
 $$
 
-其中 $x^{\overline{n}}=x\cdot (x+1)\cdots (x+n-1)$ 为上升阶乘幂，令 $f_n(x)=x^{\overline{n}}$ 那么
+Where $x^{\overline{n}}=x\cdot (x+1)\cdots (x+n-1)$ is the rising factorial, and let $f_n(x)=x^{\overline{n}}$. Then:
 
 $$
 f_{2n}(x)=x^{\overline{n}}\cdot (x+n)^{\overline{n}}=f_n(x)f_n(x+n)
 $$
 
-通过多项式平移可在 $O(n\log n)$ 求出 $f_n(x+n)$，问题被缩小为原先的一半即求出 $f_n(x)$ 的系数，那么
+Using polynomial shift, we can compute $f_n(x+n)$ in $O(n\log n)$, reducing the problem to half: find the coefficients of $f_n(x)$:
 
 $$
 T(n)=T(n/2)+O(n\log n)=O(n\log n)
 $$
 
-### 模素数意义下阶乘
+### Factorial Modulo Prime
 
-???+ note "例题 [P5282【模板】快速阶乘算法](https://www.luogu.com.cn/problem/P5282)"
-    求 $n!\bmod p$，其中 $p$ 为素数且 $1\leq n< p\leq 2^{31}-1$．
+???+ note "Problem [P5282【Template】Fast Factorial Algorithm](https://www.luogu.com.cn/problem/P5282)"
+    Find $n!\bmod p$, where $p$ is prime and $1\leq n< p\leq 2^{31}-1$.
 
-令 $v=\lfloor\sqrt{n}\rfloor$ 和 $g(x)=\prod _ {i=1}^v(x+i)$ 那么
+Let $v=\lfloor\sqrt{n}\rfloor$ and $g(x)=\prod _ {i=1}^v(x+i)$. Then:
 
 $$
 n!\equiv \left(\prod _ {i=0}^{v-1}g(iv)\right)\cdot \prod _ {i=v^2+1}^n i\pmod{p}
 $$
 
-其中 $\prod _ {i=v^2+1}^n i$ 可在 $O(\sqrt{n})$ 时间计算，我们希望可以快速计算上式的前半部分．
+Where $\prod _ {i=v^2+1}^n i$ can be computed in $O(\sqrt{n})$ time. We want to quickly compute the first part.
 
-#### 多项式多点求值
+#### Polynomial Multi-Point Evaluation
 
-$g(x)$ 系数的计算可用上述多项式平移算法在 $O(n\log n)$ 时间得到，但多点求值计算 $g(0),g(v),g(2v),\dots ,g(v^2-v)$ 需要 $O(\sqrt{n}\log ^2n)$ 时间．
+The coefficients of $g(x)$ can be obtained in $O(n\log n)$ time using the polynomial shift algorithm above, but multi-point evaluation to compute $g(0),g(v),g(2v),\dots ,g(v^2-v)$ requires $O(\sqrt{n}\log^2n)$ time.
 
-#### 连续点值平移
+#### Continuous Point Value Shift
 
-令 $g_d(x)=\prod _ {i=1}^d(x+i)$，我们可以用 $d+1$ 个点值 $g_d(0),g_d(v),\dots ,g_d(dv)$ 唯一确定这个次数为 $d$ 的多项式，又
+Let $g_d(x)=\prod _ {i=1}^d(x+i)$. We can uniquely determine this degree $d$ polynomial from $d+1$ point values $g_d(0),g_d(v),\dots ,g_d(dv)$. Also:
 
 $$
 g _ {2d}(x)=g_d(x)g_d(x+d)
 $$
 
-所以只需 $2d+1$ 个点值可以唯一确定 $g _ {2d}(x)$，那么使用连续点值平移计算 $g_d((d+1)v),g_d((d+2)v),\dots ,g_d(2dv)$（即平移 $h(x)=g_d(vx)$ 的点值 $h(0),h(1),\dots ,h(d)$ 为 $h(d+1),h(d+2),\dots ,h(2d)$）和 $g_d(d),g_d(v+d),\dots ,g_d(2dv+d)$（即平移 $h(x)=g_d(vx)$ 的点值 $h(0),h(1),\dots ,h(d)$ 为 $h(d/v),h(d/v+1),h(d/v+2),\dots ,h(d/v+2d)$）后将这两者的对应点值相乘即得 $g _ {2d}(0),g _ {2d}(v),\dots ,g _ {2d}(2dv)$．
+So only $2d+1$ point values can uniquely determine $g _ {2d}(x)$. Then use continuous point value shift to compute $g_d((d+1)v),g_d((d+2)v),\dots ,g_d(2dv)$ (i.e., shift point values of $h(x)=g_d(vx)$ from $h(0),h(1),\dots ,h(d)$ to $h(d+1),h(d+2),\dots ,h(2d)$) and $g_d(d),g_d(v+d),\dots ,g_d(2dv+d)$ (i.e., shift point values of $h(x)=g_d(vx)$ from $h(0),h(1),\dots ,h(d)$ to $h(d/v),h(d/v+1),h(d/v+2),\dots ,h(d/v+2d)$), then multiply the corresponding point values to get $g _ {2d}(0),g _ {2d}(v),\dots ,g _ {2d}(2dv)$.
 
-由 $g_d(0),g_d(v),\dots ,g_d(dv)$ 计算 $g _ {d+1}(0),g _ {d+1}(v),\dots ,g _ {d+1}(dv),g _ {d+1}((d+1)v)$ 考虑
+To compute $g _ {d+1}(0),g _ {d+1}(v),\dots ,g _ {d+1}(dv),g _ {d+1}((d+1)v)$ from $g_d(0),g_d(v),\dots ,g_d(dv)$, consider:
 
 $$
 g _ {d+1}(x)=(x+d+1)\cdot g_d(x)
 $$
 
-额外增加的一个点值使用线性时间的算法即可．那么在开始时维护 $g_1(0)=1,g_1(v)=v+1$ 后使用连续点值平移来倍增地维护这些点值，有
+The additional point value can be computed with a linear-time algorithm. Then maintaining $g_1(0)=1,g_1(v)=v+1$ at the start and using continuous point value shift to double these point values:
 
 $$
 T(n)=T(n/2)+O(n\log n)=O(n\log n)
 $$
 
-而我们只需要约 $\sqrt{n}$ 个点值，所以时间复杂度为 $O(\sqrt{n}\log n)$．
+And we only need about $\sqrt{n}$ point values, so the time complexity is $O(\sqrt{n}\log n)$.
 
-### 模素数意义下二项式系数前缀和
+### Binomial Coefficient Prefix Sum Modulo Prime
 
-???+ note "例题 [LOJ 6386 组合数前缀和](https://loj.ac/p/6386)"
-    求 $\displaystyle \sum _ {i=0}^m\binom{n}{i}\bmod 998244353$，其中 $0\leq m\leq n\leq 9\times 10^8$．
+???+ note "Problem [LOJ 6386 Binomial Coefficient Prefix Sum](https://loj.ac/p/6386)"
+    Compute $\displaystyle \sum _ {i=0}^m\binom{n}{i}\bmod 998244353$, where $0\leq m\leq n\leq 9\times 10^8$.
 
-考虑使用矩阵描述 $n!=n\cdot (n-1)!$ 这一步递推，我们有
+Consider using a matrix to describe the recurrence $n!=n\cdot (n-1)!$:
 
 $$
 \begin{bmatrix}
 n!
 \end{bmatrix}
-=\left(
+=
+\left(
 \prod _ {i=0}^{n-1}
 \begin{bmatrix}i+1\end{bmatrix}
 \right)
@@ -210,7 +211,7 @@ n!
 \end{bmatrix}
 $$
 
-类似的可以将二项式系数前缀和的递推描述为
+Similarly, the recurrence for binomial coefficient prefix sum can be described as:
 
 $$
 \begin{bmatrix}
@@ -227,7 +228,7 @@ $$
 \end{bmatrix}
 $$
 
-注意矩阵乘法的顺序，那么
+Note the order of matrix multiplication:
 
 $$
 \begin{aligned}
@@ -235,7 +236,8 @@ $$
 \binom{n}{m+1}\\
 \sum _ {i=0}^m\binom{n}{i}
 \end{bmatrix}
-&=\left(
+&=
+\left(
 \prod _ {i=0}^{m}
 \begin{bmatrix}
 (n-i)/(i+1)&0\\1&1
@@ -258,7 +260,7 @@ n-i&0\\i+1&i+1
 \end{aligned}
 $$
 
-令 $v=\lfloor\sqrt{m}\rfloor$，考虑维护矩阵
+Let $v=\lfloor\sqrt{m}\rfloor$, consider maintaining the point values of the matrix:
 
 $$
 \begin{aligned}
@@ -276,7 +278,7 @@ g_d(x)&h_d(x)
 \end{aligned}
 $$
 
-的点值 $M _ d(0),M _ d(v),\dots ,M_d(dv)$ 即 $f_d(0),f_d(v),\dots ,f_d(dv)$、$h_d(0),\dots ,h_d(dv)$ 和 $g_d(0),\dots ,g_d(dv)$，又
+Namely, the point values $M _ d(0),M _ d(v),\dots ,M_d(dv)$, i.e., $f_d(0),f_d(v),\dots ,f_d(dv)$, $h_d(0),\dots ,h_d(dv)$ and $g_d(0),\dots ,g_d(dv)$. Also:
 
 $$
 \begin{aligned}
@@ -318,7 +320,7 @@ g_d(x+d)f_d(x)+h_d(x+d)g_d(x)&h_d(x+d)h_d(x)
 \end{aligned}
 $$
 
-且矩阵右下角元素恰为我们在阶乘算法中所维护的，那么
+The bottom-right element of the matrix is exactly what we maintain in the factorial algorithm. Then:
 
 $$
 \begin{aligned}
@@ -345,14 +347,14 @@ g_v(0)&h_v(0)
 \end{aligned}
 $$
 
-可在 $O(\sqrt m\log m)$ 时间完成计算．
+This can be computed in $O(\sqrt m\log m)$ time.
 
-### 模素数意义下调和数
+### Harmonic Number Modulo Prime
 
-???+ note "例题 [P5702 调和级数求和](https://www.luogu.com.cn/problem/P5702)"
-    求 $\sum _ {i=1}^ni^{-1}\bmod p$，其中 $p$ 为素数且 $1\leq n< p< 2^{30}$．
+???+ note "Problem [P5702 Harmonic Series Sum](https://www.luogu.com.cn/problem/P5702)"
+    Compute $\sum _ {i=1}^ni^{-1}\bmod p$, where $p$ is prime and $1\leq n< p< 2^{30}$.
 
-记 $H_n=\sum _ {k=1}^nk^{-1}$，一步递推为
+Let $H_n=\sum _ {k=1}^nk^{-1}$. One step of recurrence is:
 
 $$
 \begin{bmatrix}
@@ -366,7 +368,7 @@ n!\\n!H_n
 \end{bmatrix}
 $$
 
-那么
+Then:
 
 $$
 \begin{bmatrix}
@@ -386,24 +388,24 @@ i+1&0\\1&i+1
 \end{bmatrix}
 $$
 
-在这里 $\displaystyle {n+1\brack 1}$ 和 $\displaystyle {n+1\brack 2}$ 为第一类无符号 Stirling 数．维护点值矩阵的方法同上．
+Here $\displaystyle {n+1\brack 1}$ and $\displaystyle {n+1\brack 2}$ are unsigned Stirling numbers of the first kind. The method for maintaining point value matrices is the same as above.
 
-## 整式递推
+## Integral Recurrence
 
-对于更一般的情况，类似于上述快速阶乘算法的案例，我们期望得到一个怎么样的算法？
+For more general cases, similar to the above fast factorial algorithm case, what kind of algorithm do we expect?
 
-???+ note "例题 [P6115【模板】整式递推](https://www.luogu.com.cn/problem/P6115)"
-    现有数列 $a$ 满足 $\forall n\ge m,\sum_{k=0}^ma_{n-k}P_k(n)=0$，其中 $P_k$ 为不超过 $d$ 次的多项式．  
-    给定所有 $P_k$ 的系数，和 $a_0,a_1,\dots,a_{m-1}$，求 $a_n$．
-    对 $998244353$ 取模．$n\le6\times10^8$，$1\le m,d\le7$，时限 $7s$．
+???+ note "Problem [P6115【Template】Integral Recurrence](https://www.luogu.com.cn/problem/P6115)"
+    Given a sequence $a$ satisfying $\forall n\ge m,\sum_{k=0}^ma_{n-k}P_k(n)=0$, where $P_k$ are polynomials of degree at most $d$.  
+    Given all coefficients of $P_k$, and $a_0,a_1,\dots,a_{m-1}$, find $a_n$.
+    Modulo $998244353$. $n\le6\times10^8$, $1\le m,d\le7$, time limit $7s$.
 
-为了更系统地描述上述几道例题中构造矩阵的过程，我们引入 [$\lambda$ 矩阵](../linear-algebra/jordan.md#lambda-%E7%9F%A9%E9%98%B5) 的概念．
+To systematically describe the process of constructing matrices in the above example problems, we introduce the concept of [$\lambda$ matrix](../linear-algebra/jordan.md#lambda-matrix).
 
-为了实现整式递推，我们应当注意到快速阶乘算法过程中，我们维护的点值其实并不是 $n!$，而是 $\prod_{i=0}^{T-1}(aT+i)$，即 **一对点值之间的倍数关系**．
+To implement integral recurrence, we should note that during the fast factorial algorithm, the point values we maintain are actually not $n!$, but $\prod_{i=0}^{T-1}(aT+i)$, i.e., the **ratio relationship between pairs of point values**.
 
-由于整式递推阶数 $m$ 不止是 $1$ 了，我们就 **不能直接维护一对数之间的倍数关系了**；而是维护出 **一对 $m$ 维向量之间的线性变换**，即 $m\times m$ 的一个矩阵，**矩阵的每一项对应于某个多项式的一个点值**．
+Since the order $m$ of integral recurrence is not just $1$, we can no longer directly maintain the ratio relationship between a pair of numbers; instead, we maintain a **linear transformation between pairs of $m$-dimensional vectors**, i.e., an $m\times m$ matrix, where **each entry of the matrix corresponds to a point value of some polynomial**.
 
-容易发现，对于一般的整式递推远处系数求值问题，我们可以构造
+It is easy to find that for general integral recurrence far coefficient evaluation problems, we can construct:
 
 $$
 -{\frac{1}{P_0(n)}}\begin{bmatrix}P_1(n)&P_2(n)&P_3(n)&\cdots&P_{m-1}(n)&P_m(n)\\-P_0(n)\\&-P_0(n)\\&&-P_0(n)\\&&&\ddots\\&&&&-P_0(n)\\\end{bmatrix}
@@ -411,7 +413,7 @@ $$
 =\begin{bmatrix}a_n\\a_{n-1}\\a_{n-2}\\\vdots\\a_{n-m+2}\\a_{n-m+1}\end{bmatrix}
 $$
 
-设
+Let:
 
 $$
 B(\lambda)=\begin{bmatrix}
@@ -424,39 +426,39 @@ B(\lambda)=\begin{bmatrix}
 \end{bmatrix}
 $$
 
-我们先撇开前面的 $-\frac1{P_0(n)}$ 因子不论，我们现在要维护 $\prod_{i=0}^{T-1}B(aT+m+i)$ 这种形式的量，其中乘法自右往左．
+Ignoring the $-\frac1{P_0(n)}$ factor, we now need to maintain something of the form $\prod_{i=0}^{T-1}B(aT+m+i)$, where multiplication goes from right to left.
 
-容易发现 $B_T(\lambda)=\prod_{i=0}^{T-1}B(\lambda+i)$ 是一个各项次数不高于 $dT$ 的 $\lambda$ 矩阵，只用 $dT+1$ 个值即可维护．
+It is easy to find that $B_T(\lambda)=\prod_{i=0}^{T-1}B(\lambda+i)$ is a $\lambda$ matrix with each entry of degree no higher than $dT$, which can be maintained with only $dT+1$ values.
 
-于是我们维护出 $B_T(m)$，$B_T(m+T)$，$B_T(m+2T)$，$\dots$，$B_T(m+(dT-1)T)$，$B_T(m+dT^2)$ 这几个 $\lambda$ 矩阵的 **点值**，然后用类似于快速阶乘算法的方式暴力进行多项式点值平移和倍增就好了．
+So we maintain point values of these $\lambda$ matrices: $B_T(m)$, $B_T(m+T)$, $B_T(m+2T)$, $\dots$, $B_T(m+(dT-1)T)$, $B_T(m+dT^2)$. Then we use a method similar to the fast factorial algorithm to perform polynomial point value shift and doubling.
 
-具体地，为了让 $t=\log_2T$ 抬高 $1$，我们这么干：
+Specifically, to raise $t=\log_2T$ by $1$:
 
-1.  在 $O(m^2dT\log(dT))$ 时间内获取 $B_T(p+dT^2)$，$B_T(p+(dT+1)T)$，$B_T(p+(dT+2)T)$，$\cdots$，$B_T(p+(2dT-1)T)$，$B_T(p+(2dT)dT)$．
-2.  在 $O(m^2dT\log(dT))$ 时间内获取 $B_T(p+2dT^2)$，$B_T(p+(2dT+1)T)$，$B_T(p+(2dT+2)T)$，$\cdots$，$B_T(p+(3dT-1)T)$，$B_T(p+(3dT)dT)$．
-3.  在 $O(m^2dT\log(dT))$ 时间内获取 $B_T(p+3dT^2)$，$B_T(p+(3dT+1)T)$，$B_T(p+(3dT+2)T)$，$\cdots$，$B_T(p+(4dT-1)T)$，$B_T(p+(4dT)dT)$．
-4.  计算 $B_{2T}(v)=B_{T}(v+T)B_{T}(v)$．
+1.  Obtain $B_T(p+dT^2)$, $B_T(p+(dT+1)T)$, $B_T(p+(dT+2)T)$, $\cdots$, $B_T(p+(2dT-1)T)$, $B_T(p+(2dT)dT)$ in $O(m^2dT\log(dT))$ time.
+2.  Obtain $B_T(p+2dT^2)$, $B_T(p+(2dT+1)T)$, $B_T(p+(2dT+2)T)$, $\cdots$, $B_T(p+(3dT-1)T)$, $B_T(p+(3dT)dT)$ in $O(m^2dT\log(dT))$ time.
+3.  Obtain $B_T(p+3dT^2)$, $B_T(p+(3dT+1)T)$, $B_T(p+(3dT+2)T)$, $\cdots$, $B_T(p+(4dT-1)T)$, $B_T(p+(4dT)dT)$ in $O(m^2dT\log(dT))$ time.
+4.  Compute $B_{2T}(v)=B_{T}(v+T)B_{T}(v)$.
 
-我们每轮花费 $O(m^2dT\log(dT))$ 的复杂度进行平移；同时，我们每轮只用做 $\Theta(dT)$ 次矩阵乘法，复杂度可以认为是 $O(m^3dT)$．
+We spend $O(m^2dT\log(dT))$ complexity per round for shifting; at the same time, we only need to do $\Theta(dT)$ matrix multiplications per round, with complexity considered as $O(m^3dT)$.
 
-最后，我们只用做到 $T\ge\sqrt{n/d}$ 即可．
+Finally, we only need $T\ge\sqrt{n/d}$.
 
-之前的 $-\frac1{P_0(n)}$ 因子可以用类似的方法解决．
+The $-\frac1{P_0(n)}$ factor can be solved similarly.
 
-这样，我们预处理的复杂度即为 $\Theta(\sqrt{nd}(m^3+m^2\log(nd)))$．
+Thus, the preprocessing complexity is $\Theta(\sqrt{nd}(m^3+m^2\log(nd)))$.
 
-考虑查询，我们只用 $\Theta(n/T)$ 次向量与矩阵的乘法，以及 $O(T)$ 次暴力转移．
+For queries, we only need $\Theta(n/T)$ vector-matrix multiplications and $O(T)$ brute-force transitions.
 
-容易发现这部分计算并不是复杂度瓶颈．
+It is easy to find that this part of computation is not the complexity bottleneck.
 
-因此，该算法的总复杂度为 $\Theta(\sqrt{nd}(m^3+m^2\log(nd)))$．
+Therefore, the total complexity of this algorithm is $\Theta(\sqrt{nd}(m^3+m^2\log(nd)))$.
 
-编码时，我们可以使用循环卷积的技巧来减小 NTT 的常数．
+When coding, we can use cyclic convolution tricks to reduce the NTT constant.
 
-在实际应用时，我们往往是对一个已知的微分有限的 GF 提取其远处系数，从而 $m,d$ 均为常数，也即做到了 $\Theta(\sqrt n\log n)$ 的远处系数求值．
+In practical applications, we often extract far coefficients from a known differentially finite GF, so $m,d$ are both constants, achieving $\Theta(\sqrt n\log n)$ far coefficient evaluation.
 
-## 参考文献
+## References
 
 -   Alin Bostan, Pierrick Gaudry, and Eric Schost. Linear recurrences with polynomial coefficients and application to integer factorization and Cartier–Manin operator.
--   Min\_25 的博客
--   [ZZQ 的博客 - 阶乘模大质数](https://www.cnblogs.com/zzqsblog/p/8408691.html)
+-   Min_25's blog
+-   [ZZQ's Blog - Factorial Mod Large Prime](https://www.cnblogs.com/zzqsblog/p/8408691.html)

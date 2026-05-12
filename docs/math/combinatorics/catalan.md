@@ -1,261 +1,261 @@
-## 引入
+## Introduction
 
-Catalan 数经常出现在各类计数问题中．比利时数学家 Eugène Charles Catalan 在 1958 年研究括号序列计数问题时发现了这一数列，它也因此得名．清朝数学家明安图早在 18 世纪 30 年代就已经发现这一数列．
+Catalan numbers frequently appear in various counting problems. The Belgian mathematician Eugène Charles Catalan discovered this sequence in 1958 while studying the counting of bracket sequences, and it was named after him. The Chinese mathematician Ming An Tu had already discovered this sequence in the 1930s.
 
-Catalan 数满足如下递推关系：
+Catalan numbers satisfy the following recurrence relation:
 
 $$
 C_n = \begin{cases}
 1, & n = 0, \\
-\sum_{i=0}^{n-1} C_{i}C_{n-1-i}, & n > 0.
+\sum_{i=0}^{n-1} C_i C_{n-1-i}, & n > 0.
 \end{cases}\tag{1}
 $$
 
-数列的前几项为：（[OEIS: A000108](https://oeis.org/A000108)，下标从 $0$ 开始）
+The first few terms of the sequence are: ([OEIS: A000108](https://oeis.org/A000108), indices start from 0)
 
 $$
-1,1,2,5,14,42,132,429,1430,\ldots
+1, 1, 2, 5, 14, 42, 132, 429, 1430, \ldots
 $$
 
-## 应用
+## Applications
 
-Catalan 数 $C_n$ 的递推关系有着天然的递归结构：规模为 $n$ 的计数问题 $C_n$，可以通过枚举分界点，分拆为两个规模分别为 $i$ 和 $(n-1-i)$ 的子问题．这一递推关系使得 Catalan 数广泛出现于各类具有类似递归结构的问题中．
+The recurrence relation of Catalan numbers $C_n$ has a natural recursive structure: a counting problem of size $n$, $C_n$, can be split into two subproblems of sizes $i$ and $(n-1-i)$ by enumerating the dividing point. This recurrence makes Catalan numbers widely appear in various problems with similar recursive structures.
 
--   <a id="path-counting"></a>**路径计数问题**：有一个大小为 $n\times n$ 的方格图，左下角为 $(0, 0)$，右上角为 $(n, n)$．从左下角开始，每次都只能向右或者向上走一单位，不走到对角线 $y=x$ 上方（但可以触碰）的情况下，到达右上角的路径总数为 $C_n$．
+-   <a id="path-counting"></a>**Path Counting Problem**: There is an $n \times n$ grid, with the bottom-left corner at $(0, 0)$ and the top-right corner at $(n, n)$. Starting from the bottom-left corner, we can only move one unit to the right or up each time. Without going above the diagonal $y = x$ (but we can touch it), the total number of paths to reach the top-right corner is $C_n$.
 
-    ??? note "证明"
-        设方案数为 $T_n$．考虑 $n \ge 2$ 的情况．设路径 **第一次** 走到对角线 $y=x$ 的点是 $(k,k)~(k \in [1,n])$．考察从 $(0,0)$ 到 $(k,k)$ 的除起点和终点外，中间的点 **不经过对角线（不能碰到）** 的路径．
+    ??? note "Proof"
+        Let the number of paths be $T_n$. Consider $n \ge 2$. Let the point where the path first touches the diagonal $y = x$ be $(k, k)$ ($k \in [1, n]$). Consider the path from $(0, 0)$ to $(k, k)$, where intermediate points do not touch the diagonal (cannot touch).
         
         ![catalan2](./images/catalan-2.svg)
         
-        如图所示，这些路径的第一步一定向右，从 $(0,0)$ 到 $(1,0)$；最后一步一定向上，从 $(k,k-1)$ 到 $(k,k)$．因此，这些路径就是从 $(1,0)$ 到 $(k,k-1)$ 的不越过直线 $y=x-1$ 的路径，这样路径的数目就是 $T_{k-1}$．同时，从 $(k,k)$ 到 $(n,n)$ 的合法路径数就是 $T_{n-k}$．根据乘法原理，第一次在 $(k,k)$ 处触碰对角线的路径数目为 $T_{k-1} T_{n-k}$．枚举 $k$ 的所有可能性，所有合法路径的数目为
+        As shown in the figure, the first step of these paths must go right, from $(0, 0)$ to $(1, 0)$; the last step must go up, from $(k, k-1)$ to $(k, k)$. Therefore, these paths are exactly the paths from $(1, 0)$ to $(k, k-1)$ that do not cross the line $y = x-1$, and the number of such paths is $T_{k-1}$. Similarly, the number of valid paths from $(k, k)$ to $(n, n)$ is $T_{n-k}$. By the multiplication principle, the number of paths that first touch the diagonal at $(k, k)$ is $T_{k-1} T_{n-k}$. Enumerating all possible $k$, the number of all valid paths is:
         
         $$
-        T_n = \sum_{k=1}^n T_{k-1}T_{n-k}.
+        T_n = \sum_{k=1}^n T_{k-1} T_{n-k}.
         $$
         
-        做代换 $k=i+1$ 就可以发现，这就是 Catalan 数的递推关系．由 $T_0=1$ 可知 $T_n = C_n$．
+        Making the substitution $k = i + 1$, we find this is exactly the recurrence relation of Catalan numbers. From $T_0 = 1$, we know $T_n = C_n$.
 
     <!-- To make bot happy. Do NOT delete this line. -->
 
--   **圆内不相交弦计数问题**：圆上有 $2n$ 个点，将这些点成对连接起来且使得所得到的 $n$ 条线段两两不交的方案数是 $C_n$．
+-   **Non-intersecting Chords Counting Problem**: There are $2n$ points on a circle. Pairing these points to get $n$ line segments that are pairwise non-intersecting yields $C_n$ ways.
 
-    ??? note "证明"
-        记 $2n$ 个点的方案数为 $T_n$．将 $2n$ 个点按顺时针标号，分别为 $1,2,\ldots,2n$．由于弦两两不交，$1$ 号点只能连接偶数号点；否则，两点之间的奇数个点无法在不穿过两点连线的情况下两两配对．如果连接了 $1$ 和 $2k~(k\in[1,n])$，那么左边有 $2k-2$ 个点，右边有 $2n-2k$ 个点，由乘法原理，这样的方案数为 $T_{k-1}T_{n-k}$．因此，枚举 $k$，有 $T_n = \sum_{k=1}^n T_{k-1} T_{n-k}$．令 $k=i+1$，就得到 Catalan 数的递推关系．由 $T_0=1$ 可知 $T_n=C_n$．
+    ??? note "Proof"
+        Let the number of ways for $2n$ points be $T_n$. Label the $2n$ points in clockwise order as $1, 2, \ldots, 2n$. Since the chords do not intersect, point 1 can only connect to an even-numbered point; otherwise, the odd number of points between the two cannot be paired without crossing the line connecting them. If it connects to $2k$ ($k \in [1, n]$), there are $2k-2$ points on the left and $2n-2k$ points on the right. By the multiplication principle, the number of ways is $T_{k-1} T_{n-k}$. Therefore, enumerating $k$, we have $T_n = \sum_{k=1}^n T_{k-1} T_{n-k}$. Let $k = i + 1$, and we get the recurrence relation of Catalan numbers. From $T_0 = 1$, we know $T_n = C_n$.
 
     <!-- To make bot happy. Do NOT delete this line. -->
 
--   <a id="triangulation-counting"></a>**三角剖分计数问题**：对角线不相交的情况下，将一个凸 $(n+2)$ 边形区域分成三角形区域的方法数为 $C_n$．
+-   <a id="triangulation-counting"></a>**Triangulation Counting Problem**: With no diagonals intersecting, the number of ways to divide a convex $(n+2)$-gon into triangular regions is $C_n$.
 
-    ??? note "证明"
-        设 $(n+2)$ 边形三角剖分的方案数为 $T_n$．先选定一条边 $(1,n+2)$ 作为基边，它一定属于一个三角形，记该三角形的第三个点为 $k~(k\in[2,n+1])$．这样，原凸多边形变成了三个部分：
+    ??? note "Proof"
+        Let the number of triangulations of an $(n+2)$-gon be $T_n$. First, fix one edge $(1, n+2)$ as the base edge. It must belong to a triangle. Let the third vertex of that triangle be $k$ ($k \in [2, n+1]$). This divides the original convex polygon into three parts:
         
-        -   三角形 $(1,k,n+2)$．
-        -   $k$ 边形，顶点 $1\sim k$．
-        -   $(n+3-k)$ 边形，顶点 $k\sim (n+2)$．
+        -   Triangle $(1, k, n+2)$.
+        -   A $k$-gon with vertices $1 \sim k$.
+        -   An $(n+3-k)$-gon with vertices $k \sim (n+2)$.
         
-        后面两个部分都是子问题，所以，有递推关系
+        The latter two parts are both subproblems, so we have the recurrence:
         
         $$
-        T_n = \sum_{k=2}^{n+1} T_{k-2}T_{n+1-k}.
+        T_n = \sum_{k=2}^{n+1} T_{k-2} T_{n+1-k}.
         $$
         
-        令 $k=i+2$，就得到 Catalan 数递归关系．由 $T_0=T_1=1$ 可知 $T_n=C_n$．
+        Let $k = i + 2$, and we get the recurrence relation of Catalan numbers. From $T_0 = T_1 = 1$, we know $T_n = C_n$.
 
     <!-- To make bot happy. Do NOT delete this line. -->
 
--   **二叉树计数问题**：含有 $n$ 个结点的形态不同的二叉树数目为 $C_n$．等价地，含有 $n$ 个非叶结点的形态不同的满二叉树数目为 $C_{n}$．
+-   **Binary Tree Counting Problem**: The number of distinct binary trees with $n$ nodes is $C_n$. Equivalently, the number of distinct full binary trees with $n$ internal nodes is also $C_n$.
 
-    ??? note "证明"
-        记 $n$ 个结点的二叉树数目为 $T_n$．任取一个根结点，枚举左右子树大小．设左子树大小为 $i\in[0,n-1]$，则右子树大小为 $(n-1-i)$．左右子树均为子问题，所以，有递推关系
+    ??? note "Proof"
+        Let the number of binary trees with $n$ nodes be $T_n$. Take any node as the root. Enumerate the sizes of the left and right subtrees. Let the size of the left subtree be $i \in [0, n-1]$, then the right subtree has size $(n-1-i)$. Both subtrees are subproblems, so we have the recurrence:
         
         $$
-        T_n = \sum_{i=0}^{n-1}T_iT_{n-1-i}.
+        T_n = \sum_{i=0}^{n-1} T_i T_{n-1-i}.
         $$
         
-        这就是 Catalan 数递推关系．由 $T_0=T_1=1$ 可知 $T_n=C_n$．
+        This is exactly the recurrence relation of Catalan numbers. From $T_0 = T_1 = 1$, we know $T_n = C_n$.
 
     <!-- To make bot happy. Do NOT delete this line. -->
 
--   **括号序列计数问题**：由 $n$ 对括号构成的合法括号序列数为 $C_n$．
+-   **Bracket Sequence Counting Problem**: The number of valid bracket sequences formed by $n$ pairs of parentheses is $C_n$.
 
-    ??? note "证明"
-        联系路径计数问题．将左括号视为向上走，右括号视为向右走．合法括号序列即为，在任意位置，左括号的数量不少于右括号的数量．相当于路径计数问题中，在任意时刻，向上走的次数不少于向右走的次数．因此，合法括号序列与合法路径之间存在双射．合法括号序列的数目同样为 $C_n$．
-
-    <!-- To make bot happy. Do NOT delete this line. -->
-
--   **出栈序列计数问题**：一个栈（无穷大）的进栈序列为 $1,2,3, \ldots ,n$，合法出栈序列的数目为 $C_n$．
-
-    ??? note "证明"
-        联系括号序列计数问题．将入栈视为左括号，出栈视为右括号．任意时刻，入栈的次数不少于出栈的次数．因此，合法出栈序列与合法括号序列之间存在双射．合法出栈序列的数目同样为 $C_n$．
+    ??? note "Proof"
+        Relate to the path counting problem. Consider a left parenthesis as moving up, and a right parenthesis as moving right. A valid bracket sequence means that at any position, the number of left parentheses is not less than the number of right parentheses. This is equivalent to the path counting problem where at any time, the number of moves up is not less than the number of moves right. Therefore, there is a bijection between valid bracket sequences and valid paths. The number of valid bracket sequences is also $C_n$.
 
     <!-- To make bot happy. Do NOT delete this line. -->
 
--   <a id="seq-counting"></a>**数列计数问题**：由 $n$ 个 $+1$ 和 $n$ 个 $-1$ 组成的数列 $a_1,a_2, \ldots ,a_{2n}$ 中，部分和满足 $a_1+a_2+ \ldots +a_k \geq 0~(k=1,2,3, \ldots ,2n)$ 的数列数目为 $C_n$．
+-   **Pop Sequence Counting Problem**: The input sequence for a stack (infinite size) is $1, 2, 3, \ldots, n$. The number of valid pop sequences is $C_n$.
 
-    ??? note "证明"
-        联系括号序列计数问题．将 $+1$ 视为左括号，$-1$ 视为右括号．任意时刻，$+1$ 的数量不少于 $-1$ 的数量．因此，合法数列与合法括号序列之间存在双射．合法数列的数目同样为 $C_n$．
+    ??? note "Proof"
+        Relate to the bracket sequence counting problem. Consider pushing as left parenthesis and popping as right parenthesis. At any time, the number of pushes is not less than the number of pops. Therefore, there is a bijection between valid pop sequences and valid bracket sequences. The number of valid pop sequences is also $C_n$.
 
-尽管这一递推关系应用广泛，但是直接计算复杂度较高，需要寻找更为简单的公式．
+    <!-- To make bot happy. Do NOT delete this line. -->
 
-## 常见形式
+-   <a id="seq-counting"></a>**Sequence Counting Problem**: Among sequences of $n$ $+1$'s and $n$ $-1$'s, i.e., $a_1, a_2, \ldots, a_{2n}$, the number of sequences where the partial sum satisfies $a_1 + a_2 + \ldots + a_k \ge 0$ ($k = 1, 2, 3, \ldots, 2n$) is $C_n$.
 
-Catalan 数有如下常见的表达式：
+    ??? note "Proof"
+        Relate to the bracket sequence counting problem. Consider $+1$ as a left parenthesis and $-1$ as a right parenthesis. At any time, the number of $+1$'s is not less than the number of $-1$'s. Therefore, there is a bijection between valid sequences and valid bracket sequences. The number of valid sequences is also $C_n$.
+
+Although this recurrence is widely used, the direct calculation complexity is high, so we need to find a simpler formula.
+
+## Common Forms
+
+Catalan numbers have the following common expressions:
 
 $$
-C_n = \frac{1}{n+1}\binom{2n}{n} = \dfrac{(2n)!}{n!(n+1)!},~ n\ge 0. \tag{2}
+C_n = \frac{1}{n+1}\binom{2n}{n} = \dfrac{(2n)!}{n!(n+1)!},~ n \ge 0. \tag{2}
 $$
 
 $$
-C_n = \binom{2n}{n} - \binom{2n}{n+1},~n \ge 0. \tag{3}
+C_n = \binom{2n}{n} - \binom{2n}{n+1},~ n \ge 0. \tag{3}
 $$
 
 $$
-C_n = \frac{(4n-2)}{n+1}C_{n-1},~ n > 0,~ C_0 = 1. \tag{4}
+C_n = \frac{(4n-2)}{n+1} C_{n-1},~ n > 0,~ C_0 = 1. \tag{4}
 $$
 
-Catalan 数的这些形式都可以高效计算：前两个形式将它转换为阶乘和组合数的计算问题，第三个形式则提供了顺次计算的递推公式．
+These forms of Catalan numbers can be calculated efficiently: the first two convert it to factorial and binomial coefficient calculations, and the third provides a recurrence formula for sequential calculation.
 
-对于这三种常见形式，本文提供两种证明方式．
+For these three common forms, this article provides two proof methods.
 
-### 代数推演
+### Algebraic Derivation
 
-通过代数方法得出 Catalan 数的上述表达式共两步．首先，验证三个形式相互等价．
+The algebraic derivation of these expressions for Catalan numbers consists of two steps. First, verify that the three forms are equivalent to each other.
 
-??? note "证明表达式 $(2)\sim(4)$ 等价"
-    只需要证明表达式 $(3)$ 可以转化为表达式 $(2)$ 中阶乘形式：
+??? note "Proof that expressions $(2) \sim (4)$ are equivalent"
+    Only need to prove that expression $(3)$ can be transformed into the factorial form in expression $(2)$:
     
     $$
     \begin{aligned}
     C_n &= \binom{2n}{n} - \binom{2n}{n+1} \\
-    &= \frac{(2n)!}{n!n!} - \frac{(2n)!}{(n-1)!(n+1)!} \\
-    &= \frac{(2n)!}{n!n!}\left(1 - \frac{n!}{(n-1)!(n+1)}\right) \\
-    &= \frac{(2n)!}{n!n!}\left(1- \frac{n}{n+1}\right) \\
+    &= \frac{(2n)!}{n! n!} - \frac{(2n)!}{(n-1)!(n+1)!} \\
+    &= \frac{(2n)!}{n! n!} \left(1 - \frac{n!}{(n-1)!(n+1)}\right) \\
+    &= \frac{(2n)!}{n! n!} \left(1 - \frac{n}{n+1}\right) \\
     &= \dfrac{(2n)!}{n!(n+1)!}.
     \end{aligned}
     $$
     
-    以及，表达式 $(4)$ 也可以转化为表达式 $(2)$ 中阶乘形式：
+    Also, expression $(4)$ can be transformed into the factorial form in expression $(2)$:
     
     $$
-    C_n = \prod_{i=1}^n\frac{(4i-2)}{i+1} = \prod_{i=1}^n\frac{2i(2i-1)}{i(i+1)} = \dfrac{(2n)!}{n!(n+1)!}.
+    C_n = \prod_{i=1}^n \frac{(4i-2)}{i+1} = \prod_{i=1}^n \frac{2i(2i-1)}{i(i+1)} = \dfrac{(2n)!}{n!(n+1)!}.
     $$
     
-    因此，三个表达式互相等价．
+    Therefore, the three expressions are mutually equivalent.
 
-紧接着，验证这些形式确实是 Catalan 数递推公式的解．为此，考虑使用生成函数方法直接求出递推公式 $(1)$ 的解．
+Next, verify that these forms are indeed solutions to the recurrence formula of Catalan numbers. For this, we directly use the generating function method to find the solution to the recurrence formula $(1)$.
 
-??? note "利用生成函数方法求解递推公式 $(1)$"
-    考虑 Catalan 数的普通生成函数 $C(x)=\sum_{n=0}^{\infty}C_nx^n$．由于 Catalan 数的递推关系和卷积形式很相似，所以考虑用卷积构造 $C(x)$ 的方程：
+??? note "Using generating function method to solve recurrence formula $(1)$"
+    Consider the ordinary generating function $C(x) = \sum_{n=0}^{\infty} C_n x^n$. Since the recurrence relation of Catalan numbers is very similar to a convolution form, consider constructing an equation for $C(x)$ using convolution:
     
     $$
     \begin{aligned}
-    C(x)&=\sum_{n=0}^{\infty}C_nx^n\\
-    &=1+\sum_{n=1}^{\infty}\left(\sum_{i=0}^{n-1}C_iC_{n-i-1}\right)x^{n}\\
-    &=1+x\sum_{n=1}^{\infty}\sum_{i=0}^{n-1}C_ix^iC_{n-i-1}x^{n-i-1}\\
-    &=1+x\sum_{i=0}^{\infty}C_ix^i\sum_{j=0}^{\infty}C_jx^j\\
-    &=1+xC^2(x).
+    C(x) &= \sum_{n=0}^{\infty} C_n x^n\\
+    &= 1 + \sum_{n=1}^{\infty} \left(\sum_{i=0}^{n-1} C_i C_{n-i-1}\right) x^{n}\\
+    &= 1 + x \sum_{n=1}^{\infty} \sum_{i=0}^{n-1} C_i x^i C_{n-i-1} x^{n-i-1}\\
+    &= 1 + x \sum_{i=0}^{\infty} C_i x^i \sum_{j=0}^{\infty} C_j x^j\\
+    &= 1 + x C^2(x).
     \end{aligned}
     $$
     
-    其中，倒数第二个等号交换了求和次序，并令 $j=n-1-i$．由此，解得：
+    In the second-to-last step, we swapped the order of summation and set $j = n - 1 - i$. From this, we solve:
     
     $$
-    C(x)=\dfrac{1\pm \sqrt{1-4x}}{2x} = \frac{2}{1\mp \sqrt{1-4x}}.
+    C(x) = \dfrac{1 \pm \sqrt{1-4x}}{2x} = \frac{2}{1 \mp \sqrt{1-4x}}.
     $$
     
-    由初值条件 $C_0=1$ 可知，$C(0)=1$．代入检验可以发现唯一可行的解就是
+    From the initial condition $C_0 = 1$, we know $C(0) = 1$. Substituting to check, the only feasible solution is:
     
     $$
-    C(x) = \dfrac{1- \sqrt{1-4x}}{2x}.
+    C(x) = \dfrac{1 - \sqrt{1-4x}}{2x}.
     $$
     
-    接下来，需要将它展开为幂级数的形式．利用 $(1+x)^a$ 的 [幂级数展开式](../poly/intro.md#常见的幂级数展开式) 可知：
+    Next, we need to expand it as a power series. Using the power series expansion of $(1+x)^a$ ([common power series expansions](../poly/intro.md#common-power-series-expansions)):
     
     $$
     \sqrt{1-4x} = \sum_{n=0}^{\infty} \dfrac{\left(\frac{1}{2}\right)_{-n}}{n!}(-4x)^n,
     $$
     
-    其中，$\left(\dfrac{1}{2}\right)_{-n}$ 是下降阶乘幂：
+    where $\left(\dfrac{1}{2}\right)_{-n}$ is the falling factorial:
     
     $$
     \begin{aligned}
-    \left(\frac{1}{2}\right)_{-n} &= \prod_{k=0}^{n-1}\left(\dfrac{1}{2}-k\right) = \dfrac{1}{2^n}\prod_{k=1}^{n-1}(1-2k) = \dfrac{(-1)^{n-1}}{2^n}\prod_{k=1}^{n-1}(2k-1)\\
+    \left(\frac{1}{2}\right)_{-n} &= \prod_{k=0}^{n-1}\left(\dfrac{1}{2} - k\right) = \dfrac{1}{2^n}\prod_{k=1}^{n-1}(1-2k) = \dfrac{(-1)^{n-1}}{2^n}\prod_{k=1}^{n-1}(2k-1)\\
     &= \dfrac{(-1)^{n-1}}{2^{2n-1}}\prod_{k=1}^{n-1}\dfrac{(2k-1)2k}{k} = \dfrac{(-1)^{n-1}}{2^{2n-1}}\dfrac{(2n-2)!}{(n-1)!}.
     \end{aligned}
     $$
     
-    代入 $C(x)$ 的表达式，就有
+    Substituting into the expression for $C(x)$, we get:
     
     $$
     \begin{aligned}
-    C(x) &= \dfrac{1}{2x}\left(1-\sum_{n=0}^{\infty} \dfrac{\left(\frac{1}{2}\right)_{-n}}{n!}(-4x)^n\right)\\
-    &= -\dfrac{1}{2x}\sum_{n=1}^\infty \dfrac{(-4x)^n}{n!}\left(\frac{1}{2}\right)_{-n} \\
-    &= -\dfrac{1}{2x}\sum_{n=1}^\infty \dfrac{(-4x)^n}{n!}\dfrac{(-1)^{n-1}}{2^{2n-1}}\dfrac{(2n-2)!}{(n-1)!} \\
-    &= \sum_{n=1}^{\infty}\dfrac{(2n-2)!}{(n-1)!n!}x^{n-1}\\
-    &= \sum_{n=0}^{\infty}\dfrac{(2n)!}{n!(n+1)!}x^n.
+    C(x) &= \dfrac{1}{2x}\left(1 - \sum_{n=0}^{\infty} \dfrac{\left(\frac{1}{2}\right)_{-n}}{n!}(-4x)^n\right)\\
+    &= -\dfrac{1}{2x}\sum_{n=1}^{\infty} \dfrac{(-4x)^n}{n!}\left(\frac{1}{2}\right)_{-n} \\
+    &= -\dfrac{1}{2x}\sum_{n=1}^{\infty} \dfrac{(-4x)^n}{n!}\dfrac{(-1)^{n-1}}{2^{2n-1}}\dfrac{(2n-2)!}{(n-1)!} \\
+    &= \sum_{n=1}^{\infty}\dfrac{(2n-2)!}{(n-1)!n!} x^{n-1}\\
+    &= \sum_{n=0}^{\infty}\dfrac{(2n)!}{n!(n+1)!} x^n.
     \end{aligned}
     $$
     
-    由此，就得到 $C_n$ 的表达式 $(2)$．
+    Thus, we obtain expression $(2)$ for $C_n$.
 
-### 组合意义
+### Combinatorial Meaning
 
-由于 Catalan 数具有明显的组合意义，所以只使用组合计数方法同样可以证明这些形式．本节为三个表达式分别提供一个组合意义的证明．
+Since Catalan numbers have obvious combinatorial meanings, these forms can also be proven using only combinatorial counting methods. This section provides a combinatorial proof for each of the three expressions.
 
-??? note "表达式 $(2)$ 的证明"
-    考虑 [数列计数问题](#seq-counting)．对于任意由 $\pm 1$ 组成的序列 $\{a_i\}_{i=1}^{2n}$，定义它的部分和为 $S_i = \sum_{j=1}^{i}a_i$，并定义它的 **超额量**（exceedance）为 $S_i < 0$ 且 $a_i = -1$ 的下标数量．超额量为 $0$，就等价于数列合法；超额量的取值范围是 $[0,n]$，共 $(n+1)$ 种可能的取值．需要证明的是，不同超额量的数列数量其实是一样的．
+??? note "Proof of expression $(2)$"
+    Consider the [sequence counting problem](#seq-counting). For any sequence $\{a_i\}_{i=1}^{2n}$ consisting of $\pm 1$, define its partial sum as $S_i = \sum_{j=1}^{i} a_i$, and define its **exceedance** as the number of indices where $S_i < 0$ and $a_i = -1$. An exceedance of 0 is exactly equivalent to the sequence being valid; the range of exceedance is $[0, n]$, with $(n+1)$ possible values. What needs to be proven is that the number of sequences with different exceedances is actually the same.
     
-    为此，可以构造一个从超额量为 $e > 0$ 的数列到超额量为 $(e-1)$ 的数列的映射 $f$．对于超额量为 $e > 0$ 的序列 $\{a_i\}$，取下标 $k$ 为使得 $S_i = 0$ 且 $a_i = +1$ 成立的下标最小值．将 $a_k$ 左右两侧的序列交换，就得到如下序列 $\{a'_i\}$：
+    For this, we can construct a mapping $f$ from sequences with exceedance $e > 0$ to sequences with exceedance $(e-1)$. For a sequence $\{a_i\}$ with exceedance $e > 0$, take $k$ as the smallest index where $S_i = 0$ and $a_i = +1$ holds. Swap the sequences on the left and right of $a_k$, resulting in the following sequence $\{a'_i\}$:
     
     $$
-    a_{k+1},a_{k+2},\cdots,a_{2n},a_k,a_{1},a_{2},\cdots,a_{k-1}.
+    a_{k+1}, a_{k+2}, \cdots, a_{2n}, a_k, a_{1}, a_{2}, \cdots, a_{k-1}.
     $$
     
-    由于原序列中 $a_k$ 右侧部分在交换前后对应的部分和序列不变，所以它们贡献的超额量也不变．对于原序列中 $a_k$ 左侧部分，它们对应的部分和在交换后全部增加 $1$，因此，它们贡献的超额量会减少，而且减少的数量恰好等于原序列 $a_k$ 左侧部分中满足 $S_i=-1$ 且 $a_i=-1$ 的下标数量．因为 $a_k$ 的选取保证了这样的下标有且仅有一个，所以，序列 $\{a'_i\}$ 的超额量就等于 $(e-1)$．也就是说，映射 $f$ 可以将序列的超额量恰好减少 $1$．
+    Since the partial sum sequence corresponding to the part to the right of $a_k$ in the original sequence remains unchanged before and after the swap, the exceedance they contribute also remains unchanged. For the part to the left of $a_k$ in the original sequence, their corresponding partial sums all increase by 1 after the swap, so the exceedance they contribute decreases, and the decrease is exactly equal to the number of indices in the part to the left of $a_k$ where $S_i = -1$ and $a_i = -1$. Since the choice of $a_k$ ensures that such indices exist exactly once, the exceedance of the sequence $\{a'_i\}$ equals $(e-1)$. That is, mapping $f$ can reduce the exceedance of a sequence by exactly 1.
     
-    映射 $f$ 是可逆的．注意到序列 $\{a'_i\}$ 中，$a_k$ 对应的位置恰好为满足 $S'_k=+1$ 且 $a'_i = +1$ 的下标最大值．这是因为交换后，这些部分和都比交换前对应的部分和恰好大 $1$，因此，现在的部分和为 $+1$ 对应交换前部分和等于 $0$．但是，根据 $k$ 的选取，交换前这一部分（即原序列 $a_k$ 左侧部分）是没有满足 $S_i = 0$ 且 $a_i = +1$ 成立的下标的．
+    Mapping $f$ is invertible. Note that in sequence $\{a'_i\}$, the position corresponding to $a_k$ is exactly the maximum index where $S'_k = +1$ and $a'_i = +1$ holds. This is because after the swap, these partial sums are all exactly 1 greater than the corresponding partial sums before the swap. However, according to the choice of $k$, this part (i.e., the part to the left of $a_k$ in the original sequence) before the swap has no index where $S_i = 0$ and $a_i = +1$ holds.
     
-    由此，映射 $f$ 构成了超额量为 $e>0$ 的序列和超额量为 $(e-1)$ 的序列之间的双射．这就说明，不同超额量的数列数量其实是一样的．由于数列总数是 $\dbinom{2n}{n}$，合法数列（即超额量为 $0$ 的数列）数量就等于
+    Thus, mapping $f$ establishes a bijection between sequences with exceedance $e > 0$ and sequences with exceedance $(e-1)$. This shows that the number of sequences with different exceedances is actually the same. Since the total number of sequences is $\dbinom{2n}{n}$, the number of valid sequences (i.e., sequences with exceedance 0) equals:
     
     $$
-    C_n = \dfrac{1}{n+1}\dbinom{2n}{n}.
+    C_n = \dfrac{1}{n+1} \dbinom{2n}{n}.
     $$
     
-    这就证明了 Catalan 数的表达式 $(2)$．
+    This proves expression $(2)$ of Catalan numbers.
 
-??? note "表达式 $(3)$ 的证明"
-    考虑 [路径计数问题](#path-counting)．这是典型的格路计数问题，可以通过反射原理求解．具体到本问题，考虑用总路径数目减去不合法的路径数目．总路径数一共要走 $2n$ 步，其中 $n$ 步向右，所以方案数为 $\dbinom{2n}{n}$．一条路径不合法，当且仅当它碰到了直线 $y = x+1$．对于任意一条非法路径，可以找到第一次碰到直线 $y = x+1$ 的位置，并将该位置之后的路径关于直线 $y=x+1$ 做对称．此时，可以发现，一条从 $(0,0)$ 到 $(n,n)$ 的非法路径，变成了一条从 $(0,0)$ 到 $(n-1,n+1)$ 的路径．
+??? note "Proof of expression $(3)$"
+    Consider the [path counting problem](#path-counting). This is a typical lattice path counting problem, which can be solved using the reflection principle. Specifically, consider using the total number of paths minus the number of invalid paths. The total number of paths requires $2n$ steps in total, with $n$ steps to the right. The number of ways is $\dbinom{2n}{n}$. A path is invalid if and only if it touches the line $y = x + 1$. For any invalid path, we can find the position where it first touches the line $y = x + 1$ and reflect the part of the path after that position about the line $y = x + 1$. At this point, an invalid path from $(0, 0)$ to $(n, n)$ becomes a path from $(0, 0)$ to $(n-1, n+1)$.
     
     ![catalan1](./images/catalan-1.svg)
     
-    由于从 $(0,0)$ 到 $(n-1,n+1)$ 的路径必定要穿过直线 $y = x+1$，所以每条这样的路径都对应一条从 $(0,0)$ 到 $(n,n)$ 的非法路径．类似总路径数的计算，非法路径数目的总数就是 $\dbinom{2n}{n+1}$．因此，合法路径的总数为
+    Since any path from $(0, 0)$ to $(n-1, n+1)$ must cross the line $y = x + 1$, each such path corresponds to an invalid path from $(0, 0)$ to $(n, n)$. Similar to the calculation of total paths, the total number of invalid paths is $\dbinom{2n}{n+1}$. Therefore, the total number of valid paths is:
     
     $$
     C_n = \binom{2n}{n} - \binom{2n}{n+1}.
     $$
     
-    这就是 Catalan 数的表达式 $(3)$．
+    This is expression $(3)$ of Catalan numbers.
 
-??? note "表达式 $(4)$ 的证明"
-    考虑 [三角剖分计数问题](#triangulation-counting)．设 $P$ 是凸 $(n+2)$ 边形，固定它的一个边为基边．对于多边形 $P$ 的每一个三角剖分，都可以选择它的一个非基边（包括三角剖分时新加的边）标记，并定向．这共有 $(4n+2)C_n$ 种剖分加标记的方案．又设 $Q$ 是凸 $(n+3)$ 边形，仍固定它的一个边为基边．对于多边形 $Q$，可以选择它的一条非基边标记，然后再做三角剖分．这共有 $(n+2)C_{n+1}$ 种标记加剖分的方案．
+??? note "Proof of expression $(4)$"
+    Consider the [triangulation counting problem](#triangulation-counting). Let $P$ be a convex $(n+2)$-gon, fix one of its edges as the base edge. For each triangulation of polygon $P$, we can choose one of its non-base edges (including edges added during triangulation) to mark and orient. There are $(4n + 2) C_n$ such triangulation-marking schemes. Let $Q$ be a convex $(n+3)$-gon, still fix one of its edges as the base edge. For polygon $Q$, we can choose one of its non-base edges to mark, then perform triangulation. There are $(n + 2) C_{n+1}$ such marking-triangulation schemes.
     
     ![](./images/catalan-triangulation.svg)
     
-    如图所示，这两组操作得到的结果之间存在明显的双射．对于 $P$ 剖分并标记的一个结果，可以将它的标记边扩展为三角形，定向所指向的终点扩展为一条新边，并将这条新边打上标记，这就得到对 $Q$ 标记并剖分的一个结果；对于 $Q$ 标记并剖分的一个结果，可以将它的标记边压缩为一个点，并将压缩得到的对角线打上标记，且指向压缩得到的顶点，这就得到对 $P$ 剖分并标记的一个结果．因此，
+    As shown in the figure, there is an obvious bijection between the results of these two sets of operations. For a result of triangulating and marking $P$, we can extend the marked edge into a triangle, extend the endpoint that the orientation points to into a new edge, and mark this new edge, which gives a result of marking and triangulating $Q$. For a result of marking and triangulating $Q$, we can compress the marked edge into a point, mark the diagonal obtained from compression, and point to the compressed vertex, which gives a result of triangulating and marking $P$. Therefore:
     
     $$
-    (4n+2)C_n = (n+2)C_{n+1}.
+    (4n + 2) C_n = (n + 2) C_{n+1}.
     $$
     
-    稍作整理，并结合 $C_0=1$，就得到 Catalan 数的表达式 $(4)$．
+    Rearrange slightly, combined with $C_0 = 1$, we get expression $(4)$ of Catalan numbers.
 
-## 例题
+## Example Problems
 
-???+ example "[洛谷 P1044 栈](https://www.luogu.com.cn/problem/P1044)"
-    入栈顺序为 $1,2,\ldots ,n$，求所有可能的出栈顺序的总数．
+???+ example "[Luogu P1044 Stack](https://www.luogu.com.cn/problem/P1044)"
+    The input sequence is $1, 2, \ldots, n$. Find the total number of possible output sequences.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/combinatorics/catalan/catalan_1.cpp"
@@ -266,16 +266,16 @@ Catalan 数的这些形式都可以高效计算：前两个形式将它转换为
         --8<-- "docs/math/code/combinatorics/catalan/catalan_1.py"
         ```
 
-## 习题
+## Exercises
 
--   [Luogu P2532 \[AHOI2012\] 树屋阶梯](https://www.luogu.com.cn/problem/P2532)
--   [Luogu P1641 \[SCOI2010\] 生成字符串](https://www.luogu.com.cn/problem/P1641)
--   [Luogu P3200 \[HNOI2009\] 有趣的数列](https://www.luogu.com.cn/problem/P3200)
+-   [Luogu P2532 [AHOI2012] Tree House Ladder](https://www.luogu.com.cn/problem/P2532)
+-   [Luogu P1641 [SCOI2010] Generating Strings](https://www.luogu.com.cn/problem/P1641)
+-   [Luogu P3200 [HNOI2009] Interesting Sequence](https://www.luogu.com.cn/problem/P3200)
 -   [AtCoder Beginner Contest 205 E - White and Black Balls](https://atcoder.jp/contests/abc205/tasks/abc205_e)
 -   [AtCoder Regular Contest 145 C - Split and Maximize](https://www.luogu.com.cn/problem/AT_arc145_c)
--   [Luogu P5014 水の三角（修改版）](https://www.luogu.com.cn/problem/P5014)
--   [Luogu P3978 \[TJOI2015\] 概率论](https://www.luogu.com.cn/problem/P3978)
+-   [Luogu P5014 Water Triangle (Modified)](https://www.luogu.com.cn/problem/P5014)
+-   [Luogu P3978 [TJOI2015] Probability Theory](https://www.luogu.com.cn/problem/P3978)
 
-## 参考资料与注释
+## References and Notes
 
 -   [Catalan number - Wikipedia](https://en.wikipedia.org/wiki/Catalan_number)

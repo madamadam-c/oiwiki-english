@@ -1,39 +1,39 @@
 author: Anguei, sshwy, Xeonacid, Ir1d, MonkeyOliver, hsfzLZH1
 
-拆点是一种图论建模思想，常用于 [网络流](./flow.md)，用来处理 **点权或者点的流量限制** 的问题，也常用于 **分层图**．
+Node splitting is a graph theory modeling technique, commonly used in [network flow](./flow.md), to handle **node weights or node flow limitations**, and is also commonly used in **layered graphs**.
 
-## 结点有流量限制的最大流
+## Maximum Flow with Node Capacity Limits
 
-如果把结点转化成边，那么这个问题就可以套板子解决了．
+If we convert a node into an edge, then the problem can be solved using standard templates.
 
-我们考虑把有流量限制的结点转化成这样一种形式：由两个结点 $u,v$ 和一条边 $\left\langle u,v \right\rangle$ 组成的部分．其中，结点 $u$ 承接所有从原图上其他点的出发到原图上该点的边，结点 $v$ 引出所有从原图上该点出发到达原图上其他点的边．边 $\left\langle u,v \right\rangle$ 的流量限制为原图该点的流量限制，再套板子就可以解决本题．这就是拆点的基本思想．
+We consider converting a node with capacity limits into such a form: a component consisting of two nodes $u, v$ and an edge $\langle u, v \rangle$. Here, node $u$ receives all edges from other nodes in the original graph that go to the node in the original graph, and node $v$ originates all edges from the node in the original graph to other nodes in the original graph. The capacity limit of edge $\langle u, v \rangle$ is set to the capacity limit of the node in the original graph. Then we can use standard templates to solve the problem. This is the basic idea of node splitting.
 
-如果原图是这样：
+If the original graph is like this:
 
 ![](./images/node.svg)
 
-拆点之后的图是这个样子：
+The graph after splitting looks like this:
 
 ![](./images/node-split.svg)
 
-## 分层图最短路
+## Shortest Path on Layered Graphs
 
-分层图最短路，如：有 $k$ 次零代价通过一条路径，求总的最小花费．对于这种题目，我们可以采用 DP 相关的思想，设 $\text{dis}_{i, j}$ 表示当前从起点 $i$ 号结点，使用了 $j$ 次免费通行权限后的最短路径．显然，$\text{dis}$ 数组可以这么转移：
+Layered graph shortest path problems, such as: given $k$ times to traverse a path with zero cost, find the minimum total cost. For such problems, we can use DP-related ideas. Let $\text{dis}_{i, j}$ represent the shortest path from the starting node $i$ after using $j$ free passage rights. Clearly, the $\text{dis}$ array can be transitioned as follows:
 
-$\text{dis}_{i, j} = \min\{\min\{\text{dis}_{from, j - 1}\}, \min\{\text{dis}_{from,j} + w\}\}$
+$\text{dis}_{i, j} = \min\{\min\{\text{dis}_{\text{from}, j - 1}\}, \min\{\text{dis}_{\text{from}, j} + w\}\}$
 
-其中，$from$ 表示 $i$ 的父亲节点，$w$ 表示当前所走的边的边权．当 $j - 1 \geq k$ 时，$\text{dis}_{from, j}$=$\infty$．
+Here, $\text{from}$ represents the parent node of $i$, and $w$ represents the weight of the current edge. When $j - 1 \geq k$, $\text{dis}_{\text{from}, j} = \infty$.
 
-事实上，这个 DP 就相当于把每个结点拆分成了 $k+1$ 个结点，每个新结点代表使用不同多次免费通行后到达的原图结点．换句话说，就是每个结点 $u_i$ 表示使用 $i$ 次免费通行权限后到达 $u$ 结点．
+In fact, this DP is equivalent to splitting each node into $k + 1$ nodes, where each new node represents the original node after arriving with different numbers of free passes. In other words, each node $u_i$ represents reaching node $u$ after using $i$ free passage rights.
 
-??? note "[「JLOI2011」飞行路线](https://www.luogu.com.cn/problem/P4568)"
-    题意：有一个 $n$ 个点 $m$ 条边的无向图，你可以选择 $k$ 条道路以零代价通行，求 $s$ 到 $t$ 的最小花费．
+??? note "[JLOI2011 Flight Route](https://www.luogu.com.cn/problem/P4568)"
+    Problem: There is an undirected graph with $n$ nodes and $m$ edges. You can choose $k$ roads to traverse at zero cost. Find the minimum cost from $s$ to $t$.
     
-    参考核心代码：
+    Reference core code:
     
     ```cpp
-    struct State {    // 优先队列的结点结构体
-      int v, w, cnt;  // cnt 表示已经使用多少次免费通行权限
+    struct State {    // Node structure for the priority queue
+      int v, w, cnt;  // cnt represents how many times free passage has been used
     
       State() {}
     
@@ -45,7 +45,7 @@ $\text{dis}_{i, j} = \min\{\min\{\text{dis}_{from, j - 1}\}, \min\{\text{dis}_{f
     void dijkstra() {
       memset(dis, 0x3f, sizeof dis);
       dis[s][0] = 0;
-      pq.push(State(s, 0, 0));  // 到起点不需要使用免费通行权，距离为零
+      pq.push(State(s, 0, 0));  // At the start, no free passage used, distance is 0
       while (!pq.empty()) {
         const State top = pq.top();
         pq.pop();
@@ -54,11 +54,11 @@ $\text{dis}_{i, j} = \min\{\min\{\text{dis}_{from, j - 1}\}, \min\{\text{dis}_{f
         done[u][nowCnt] = true;
         for (int i = head[u]; i; i = edge[i].next) {
           int v = edge[i].v, w = edge[i].w;
-          if (nowCnt < k && dis[v][nowCnt + 1] > dis[u][nowCnt]) {  // 可以免费通行
+          if (nowCnt < k && dis[v][nowCnt + 1] > dis[u][nowCnt]) {  // Can use free passage
             dis[v][nowCnt + 1] = dis[u][nowCnt];
             pq.push(State(v, dis[v][nowCnt + 1], nowCnt + 1));
           }
-          if (dis[v][nowCnt] > dis[u][nowCnt] + w) {  // 不可以免费通行
+          if (dis[v][nowCnt] > dis[u][nowCnt] + w) {  // Cannot use free passage
             dis[v][nowCnt] = dis[u][nowCnt] + w;
             pq.push(State(v, dis[v][nowCnt], nowCnt));
           }
@@ -68,16 +68,16 @@ $\text{dis}_{i, j} = \min\{\min\{\text{dis}_{from, j - 1}\}, \min\{\text{dis}_{f
     
     int main() {
       n = read(), m = read(), k = read();
-      // 笔者习惯从 1 到 n 编号，而这道题是从 0 到 n - 1，所以要处理一下
+      // The author is accustomed to using 1 to n, but this problem uses 0 to n-1, so adjust
       s = read() + 1, t = read() + 1;
       while (m--) {
         int u = read() + 1, v = read() + 1, w = read();
-        add(u, v, w), add(v, u, w);  // 这道题是双向边
+        add(u, v, w), add(v, u, w);  // This problem uses bidirectional edges
       }
       dijkstra();
-      int ans = std::numeric_limits<int>::max();  // ans 取 int 最大值为初值
+      int ans = std::numeric_limits<int>::max();  // Initialize ans to max int value
       for (int i = 0; i <= k; ++i)
-        ans = std::min(ans, dis[t][i]);  // 对到达终点的所有情况取最优值
+        ans = std::min(ans, dis[t][i]);  // Take the optimal value for all cases reaching the destination
       println(ans);
     }
     ```

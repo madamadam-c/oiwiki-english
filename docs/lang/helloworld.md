@@ -1,22 +1,22 @@
 disqus:
 
-## 环境配置
+## Environment Setup
 
-工欲善其事，必先利其器．
+To do good work, one must first sharpen one's tools.
 
-### 集成开发环境
+### Integrated Development Environment
 
-IDE 操作较为简单，一般入门玩家会选用 IDE 来编写代码．在竞赛中最常见的是 [Dev-C++](../tools/editor/devcpp.md)（如果考试环境是 Windows 系统，一般也会提供这一 IDE）．
+IDEs are relatively easy to use, so beginners usually choose an IDE to write code. The most common one in contests is [Dev-C++](../tools/editor/devcpp.md); if the exam environment is Windows, this IDE is usually provided.
 
-### 编译器
+### Compiler
 
 #### Windows
 
-推荐使用 GNU 编译器．需要去 [MinGW Distro](https://nuwen.net/mingw.html) 下载 MinGW 并安装．此外 Windows 下也可以选择 [Microsoft Visual C++ 编译器](https://docs.microsoft.com/en-us/cpp/build/projects-and-build-systems-cpp)，需要去 [Visual Studio 页面](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) 下载安装．
+The GNU compiler is recommended. Download and install MinGW from [MinGW Distro](https://nuwen.net/mingw.html). On Windows, you can also choose the [Microsoft Visual C++ compiler](https://learn.microsoft.com/en-us/cpp/build/projects-and-build-systems-cpp), which can be downloaded and installed from the [Visual Studio page](https://visualstudio.microsoft.com/downloads/).
 
 #### macOS
 
-在终端中执行：
+Run this in the terminal:
 
 ```bash
 xcode-select --install
@@ -24,52 +24,52 @@ xcode-select --install
 
 #### Linux
 
-使用 `g++ -v` 来检查是否安装过 `g++`．
+Use `g++ -v` to check whether `g++` has been installed.
 
-使用如下命令可以安装：
+You can install it with the following command:
 
 ```bash
 sudo apt update && sudo apt install g++
 ```
 
-#### 在命令行中编译代码
+#### Compiling Code on the Command Line
 
-熟练之后也有玩家会使用更灵活的命令行来编译代码，这样就不依赖 IDE 了，而是使用自己熟悉的文本编辑器编写代码．
+After becoming familiar with programming, some contestants use the more flexible command line to compile code. This avoids dependence on an IDE and lets them write code with their preferred text editor.
 
 ```bash
 g++ test.cpp -o test -lm
 ```
 
-`g++` 是 C++ 语言的编译器（C 语言的编译器为 `gcc`），`-o` 用于指定可执行文件的文件名，编译选项 `-lm` 用于链接数学库 `libm`，从而使得使用 `math.h` 的代码可以正常编译运行．
+`g++` is the compiler for C++ (`gcc` is the compiler for C). `-o` specifies the name of the executable file. The compile option `-lm` links the math library `libm`, allowing code that uses `math.h` to compile and run correctly.
 
-注：C++ 程序不需要 `-lm` 即可正常编译运行．历年 NOI/NOIP 试题的 C++ 编译选项中都带着 `-lm`，故这里也一并加上．
+Note: C++ programs can compile and run normally without `-lm`. The C++ compile options for past NOI/NOIP problems included `-lm`, so it is included here as well.
 
-## 第一份代码
+## First Program
 
-通过这样一个示例程序来展开 C++ 入门之旅吧～
+Begin your journey into C++ with this sample program.
 
-注：请在编写前注意开启英文输入法．
+Note: before writing code, make sure you are using an English input method.
 
-C++ 语言
+C++ language
 
 ```cpp
-#include <iostream>  // 引用头文件
+#include <iostream>  // Include a header file
 
-int main() {                     // 定义 main 函数
-  std::cout << "Hello, world!";  // 使用标准命名空间中的 cout 函数
-  return 0;  // 返回 0，结束 main 函数．编译器一般会自动加上这一行，一般可以省略
+int main() {                     // Define the main function
+  std::cout << "Hello, world!";  // Use cout from the standard namespace
+  return 0;  // Return 0 and end main. The compiler usually adds this line automatically, so it can often be omitted
 }
 ```
 
-C 语言
+C language
 
 ```c
-#include <stdio.h>  // 引用头文件
+#include <stdio.h>  // Include a header file
 
-int main() {                // 定义 main 函数
-  printf("Hello, world!");  // 输出 Hello, world!
-  return 0;                 // 返回 0，结束 main 函数
+int main() {                // Define the main function
+  printf("Hello, world!");  // Output Hello, world!
+  return 0;                 // Return 0 and end main
 }
 ```
 
-注意：C 语言在这里仅做参考，C++ 基本兼容 C 语言，并且拥有许多新的功能，可以让选手在赛场上事半功倍．具体请见 [C++ 与其他常用语言区别](./cpp-other-langs.md)
+Note: C is shown here only for reference. C++ is largely compatible with C and has many new features that can help contestants work more efficiently during contests. For details, see [Differences Between C++ and Other Common Languages](./cpp-other-langs.md).

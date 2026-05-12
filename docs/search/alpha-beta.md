@@ -1,112 +1,112 @@
-本页面将简要介绍 Minimax 算法和 Alpha–Beta 剪枝．
+This page briefly introduces the Minimax algorithm and Alpha–Beta pruning.
 
-## Minimax 算法
+## Minimax Algorithm
 
-Minimax 算法又叫极小化极大算法，是一种最小化最差（即最大损失）情境下的潜在损失的算法．
+The Minimax algorithm, also called the minimax method, is an algorithm that minimizes the potential loss in the worst-case scenario (that is, the maximum loss).
 
-### 过程
+### Process
 
-在局面确定的双人零和对弈中，常需要进行对抗搜索，构建一棵每个节点都为一个确定状态的搜索树．奇数层为己方先手，偶数层为对方先手．搜索树上每个叶子节点都会被赋予一个估值，估值越大代表我方赢面越大．我方追求更大的赢面，而对方会设法降低我方的赢面；体现在搜索树上就是，奇数层节点（我方节点）总是会选择赢面最大的子节点状态，而偶数层（对方节点）总是会选择（我方）赢面最小的子节点状态．
+In a two-player zero-sum game with deterministic positions, adversarial search is often needed. We build a search tree in which every node is a determined state. Odd-numbered layers are our turns, and even-numbered layers are the opponent's turns. Each leaf node in the search tree is assigned an evaluation value; the larger the value, the greater our winning chances. We seek a higher winning chance, while the opponent tries to reduce it. In the search tree, this means that odd-layer nodes (our nodes) always choose the child state with the largest winning chance, while even-layer nodes (opponent nodes) always choose the child state with the smallest winning chance for us.
 
-Minimax 算法中，会从上到下遍历搜索树，回溯时利用子树信息更新答案，最后得到根节点的值——这就是我方在双方都采取最优策略下能获得的最大分数．
+In the Minimax algorithm, the search tree is traversed from top to bottom, and subtree information is used to update the answer during backtracking. The final value obtained at the root node is the maximum score we can obtain when both sides use optimal strategies.
 
-### 示例
+### Example
 
-来看一个简单的例子．
+Consider a simple example.
 
-称我方为 MAX，对方为 MIN，图示如下：
+Call our side MAX and the opponent MIN, as shown below:
 
 ![](images/minimax-1.svg)
 
-例如，对于如下的局势，假设从左往右搜索，根节点的数值为我方赢面：
+For example, in the following position, assume the search proceeds from left to right and the root node value represents our winning chance:
 
 ![](images/minimax-2.svg)
 
-我方应选择中间的路线．因为，如果选择左边的路线，最差的赢面是 $3$；如果选择中间的路线，最差的赢面是 $15$；如果选择右边的路线，最差的赢面是 $1$．虽然选择右边的路线可能有 $22$ 的赢面，但足够理性的对方将会使我方只有 $1$ 的赢面．那么，经过权衡，显然选择中间的路线更优．
+We should choose the middle route. If the left route is chosen, the worst winning chance is $3$; if the middle route is chosen, the worst winning chance is $15$; if the right route is chosen, the worst winning chance is $1$. Although the right route may offer a winning chance of $22$, a sufficiently rational opponent will make our winning chance only $1$. After weighing these outcomes, the middle route is clearly better.
 
 ![](images/minimax-3.svg)
 
-实际上，在看右边的路线时，当发现赢面可能为 $1$ 后就不必再去看赢面为 $12$、$20$、$22$ 的分支了．因为相较于左侧两条路线的赢面，已经可以确定右边的路线不是最好的．
+In fact, when examining the right route, after discovering that the winning chance may be $1$, there is no need to examine the branches with winning chances $12$, $20$, and $22$. Compared with the winning chances of the two routes on the left, it is already certain that the right route is not the best.
 
-朴素的 Minimax 算法常常需要构建一棵庞大的搜索树，时间和空间复杂度都将不能承受．而 Alpha–Beta 剪枝就是利用搜索树每个节点双方分数的上下界来对 Minimax 进行剪枝优化的一种方法．
+The naive Minimax algorithm often needs to build a huge search tree, making both time and space complexity unacceptable. Alpha–Beta pruning is a method that uses upper and lower bounds on the players' scores at each node in the search tree to prune and optimize Minimax.
 
-需要注意的是，对于不同的问题，搜索树每个节点上的值有着不同的含义，它可以是估值、分数、赢的概率等等．为方便起见，下文统一用分数来称呼．
+Note that for different problems, the value at each node of the search tree may have different meanings. It can be an evaluation value, a score, a winning probability, and so on. For convenience, the following text uniformly calls it a score.
 
-## Alpha–Beta 剪枝
+## Alpha–Beta Pruning
 
-Alpha–Beta 剪枝是针对 Minimax 算法的搜索剪枝．
+Alpha–Beta pruning is search pruning for the Minimax algorithm.
 
-### 过程
+### Process
 
-Minimax 算法中，若已知某节点的所有子节点的分数，则可以算出该节点的分数：对于 MAX 节点，取最大分数；对于 MIN 节点，取最小分数．
+In the Minimax algorithm, if the scores of all child nodes of a node are known, the score of that node can be computed: for a MAX node, take the maximum score; for a MIN node, take the minimum score.
 
-在搜索进行到某节点但尚未完成时，虽然不能算出该节点的分数，但是可以算出 **目前已经搜索过的节点中**，双方分数的取值范围．搜索时，维护两个变量 $\alpha$ 和 $\beta$，分别表示局面进行到该节点时，**考虑所有已经搜索过的节点**，Alpha 玩家（即寻求最大分数的一方）和 Beta 玩家（即寻求最小分数的一方）能够保证取得的分数的下界和上界．
+When the search reaches a node but has not yet finished processing it, the score of that node cannot be computed, but the possible range of the players' scores **among the nodes searched so far** can be computed. During the search, maintain two variables $\alpha$ and $\beta$, which respectively represent, when the game reaches this node and **considering all nodes searched so far**, the lower and upper bounds on the scores that the Alpha player (the side seeking the maximum score) and the Beta player (the side seeking the minimum score) can guarantee.
 
-Alpha–Beta 剪枝的剪枝策略依赖于搜索当前节点时 $\alpha$ 和 $\beta$ 的取值．如果当前节点是 MAX 节点，那么，Alpha 可以继续搜索它的子节点来提高分数下界 $\alpha$．但是，如果某次搜索后已经有 $\alpha\ge\beta$ 了，那么这个节点就不可能出现在一次对弈中：只要到达该节点处，Alpha 玩家就能够保证分数至少是 $\alpha$；可是 Beta 玩家已经知道存在一种（偏离当前路径的）策略，能够保证分数不超过 $\beta\le\alpha$，那么，Beta 玩家自然不会任由局面发展到 **当前节点** 处．同理，如果当前节点是 MIN 节点，且搜索它的某个子节点后已经发现该节点处有 $\beta\le\alpha$ 成立，那么，同样无需继续搜索其他子节点，因为 Alpha 玩家不会让局面进入 **当前节点**．总结两种情形可以发现：当 $\alpha \geq \beta$ 时，该节点剩余的分支就不必继续搜索了（也就是可以进行剪枝了）．注意，当 $\alpha = \beta$ 时，也需要剪枝，这是因为不会有更好的结果了，但可能有更差的结果．
+The pruning strategy of Alpha–Beta pruning depends on the values of $\alpha$ and $\beta$ when searching the current node. If the current node is a MAX node, Alpha can continue searching its child nodes to raise the lower score bound $\alpha$. However, if after some search we already have $\alpha\ge\beta$, then this node cannot appear in an actual game: once this node is reached, the Alpha player can guarantee a score of at least $\alpha$; but the Beta player already knows that there exists a strategy (deviating from the current path) that can guarantee a score no greater than $\beta\le\alpha$, so the Beta player naturally will not allow the game to develop to the **current node**. Similarly, if the current node is a MIN node, and after searching one of its child nodes it is found that $\beta\le\alpha$ holds at this node, then there is likewise no need to continue searching other child nodes, because the Alpha player will not allow the game to enter the **current node**. Combining the two cases, when $\alpha \geq \beta$, the remaining branches of this node do not need to be searched further (that is, pruning can be performed). Note that pruning is also needed when $\alpha = \beta$, because there will be no better result, though there may be worse results.
 
-搜索过程中，无需维护节点分数，只需要维护 $\alpha$ 和 $\beta$ 即可．初始时，令 $\alpha=-\infty,~\beta=+\infty$．向下搜索时，需要一并下传 $\alpha$ 和 $\beta$ 的信息，以记录两名玩家的备选方案．
+During the search, there is no need to maintain node scores; maintaining only $\alpha$ and $\beta$ is enough. Initially, set $\alpha=-\infty,~\beta=+\infty$. When searching downward, pass the information of $\alpha$ and $\beta$ along with the recursion to record the two players' candidate strategies.
 
-搜索完子节点时，需要更新当前节点处的信息．不妨假设当前节点 $X$ 是 MAX 节点，且刚刚搜索完它的子节点 $Y$．那么，节点 $X$ 处的 $\beta$ 值不会改变，只有 $\alpha$ 值需要与子节点 $Y$ 的分数取最大值．如果子节点 $Y$ 是叶子节点，直接用子节点 $Y$ 的分数更新当前节点 $X$ 处的 $\alpha$ 值；否则，只需要用子节点 $Y$ 的 $\beta$ 值更新当前节点 $X$ 的 $\alpha$ 值．此时，有三种可能性：
+After a child node has been searched, the information at the current node must be updated. Suppose the current node $X$ is a MAX node, and its child node $Y$ has just been searched. Then the $\beta$ value at node $X$ does not change; only the $\alpha$ value needs to take the maximum with the score of child node $Y$. If child node $Y$ is a leaf node, directly use the score of child node $Y$ to update the $\alpha$ value at current node $X$; otherwise, it is enough to use the $\beta$ value of child node $Y$ to update the $\alpha$ value of current node $X$. At this point, there are three possibilities:
 
-1.  子节点 $Y$ 的 $\beta$ 值严格位于节点 $X$ 的 $\alpha$ 值和 $\beta$ 值之间．因为子节点 $Y$ 继承了节点 $X$ 的 $\alpha$ 值且不会更新它，所以，搜索子节点 $Y$ 完后仍然有 $\beta > \alpha$，就说明搜索子节点 $Y$ 时没有发生剪枝．子节点 $Y$ 最终的 $\beta$ 值，就等于它继承的节点 $X$ 的 $\beta$ 值和它（指子节点 $Y$）的所有子节点的分数中，最小的那个．既然这个最小值严格小于节点 $X$ 的 $\beta$ 值，就说明它一定是子节点 $Y$ 的所有子节点的分数最小值．因此，作为 MIN 节点，子节点 $Y$ 的分数就是这个 $\beta$ 值．用它更新节点 $X$ 的 $\alpha$ 值是合理的．
-2.  子节点 $Y$ 的 $\beta$ 值就等于节点 $X$ 的 $\beta$ 值．如上文所述，这说明子节点 $Y$ 的所有子节点的分数均不小于节点 $X$ 的 $\beta$ 值．这进一步说明 Beta 玩家不会任由局面进入节点 $X$：因为 Alpha 玩家只要选择了子节点 $Y$，Beta 玩家就不能取得比 $\beta$ 更低的分数．因此，此时使用子节点 $Y$ 的 $\beta$ 值更新节点 $X$ 的 $\alpha$ 值，是为了使得节点 $X$ 处 $\alpha=\beta$，以触发剪枝条件．它的效果与使用 $Y$ 处实际分数——一个大于等于节点 $X$ 处 $\beta$ 值的数字——更新节点 $X$ 的 $\alpha$ 值的效果是一样的．
-3.  子节点 $Y$ 的 $\beta$ 值小于等于节点 $X$ 的 $\alpha$ 值．此时，子节点 $Y$ 触发了剪枝条件，它的实际分数不会超过子节点 $Y$ 的 $\beta$ 值，更不会超过节点 $X$ 的 $\alpha$ 值．用子节点 $Y$ 的实际分数更新节点 $X$ 的 $\alpha$ 值不会改变 $\alpha$ 值．这与使用子节点 $Y$ 的 $\beta$ 值更新节点 $X$ 的 $\alpha$ 值的效果是一样的．
+1.  The $\beta$ value of child node $Y$ lies strictly between the $\alpha$ and $\beta$ values of node $X$. Because child node $Y$ inherits the $\alpha$ value of node $X$ and does not update it, still having $\beta > \alpha$ after searching child node $Y$ means that no pruning occurred while searching child node $Y$. The final $\beta$ value of child node $Y$ is the minimum of the $\beta$ value it inherited from node $X$ and the scores of all its (child node $Y$'s) child nodes. Since this minimum is strictly less than the $\beta$ value of node $X$, it must be the minimum score among all child nodes of child node $Y$. Therefore, as a MIN node, the score of child node $Y$ is exactly this $\beta$ value. It is reasonable to use it to update the $\alpha$ value of node $X$.
+2.  The $\beta$ value of child node $Y$ is exactly equal to the $\beta$ value of node $X$. As described above, this means that the scores of all child nodes of child node $Y$ are not less than the $\beta$ value of node $X$. This further indicates that the Beta player will not allow the game to enter node $X$: as long as the Alpha player chooses child node $Y$, the Beta player cannot obtain a score lower than $\beta$. Therefore, using the $\beta$ value of child node $Y$ to update the $\alpha$ value of node $X$ at this point is intended to make $\alpha=\beta$ at node $X$, triggering the pruning condition. Its effect is the same as updating the $\alpha$ value of node $X$ with the actual score at $Y$, which is a number greater than or equal to the $\beta$ value at node $X$.
+3.  The $\beta$ value of child node $Y$ is less than or equal to the $\alpha$ value of node $X$. At this point, child node $Y$ has triggered the pruning condition. Its actual score will not exceed the $\beta$ value of child node $Y$, and certainly will not exceed the $\alpha$ value of node $X$. Updating the $\alpha$ value of node $X$ with the actual score of child node $Y$ will not change the $\alpha$ value. This has the same effect as updating the $\alpha$ value of node $X$ with the $\beta$ value of child node $Y$.
 
-这一分析说明，当某个子节点搜索完成后，只有它的分数处于第一种情形时，$\alpha$（或 $\beta$）才准确记录了这个子节点作为一个 MAX 节点（或 MIN 节点）的实际分数．对于其他情形，虽然它未必是准确的分数，但是它提供的信息足以保证剪枝的正确进行，从而不影响根节点处的分数记录．
+This analysis shows that after a child node has been searched, only in the first case does $\alpha$ (or $\beta$) accurately record the actual score of this child node as a MAX node (or MIN node). In the other cases, although it may not be an accurate score, the information it provides is sufficient to ensure correct pruning and therefore does not affect the score recorded at the root node.
 
-### 示例
+### Example
 
-本节通过分析一个例子，来展示如何在搜索过程中更新各个节点处的 $\alpha$ 和 $\beta$ 值．过程中，也一并计算了所涉及的节点处的分数．由此，就可以观察每个节点处的实际分数与所记录的 $\alpha$ 和 $\beta$ 值的关系．但应注意，实现这一算法时，并不会计算这些节点的实际分数．
+This section analyzes an example to show how to update the $\alpha$ and $\beta$ values at each node during the search. During the process, the scores at the involved nodes are also computed, allowing us to observe the relationship between each node's actual score and the recorded $\alpha$ and $\beta$ values. However, note that when implementing this algorithm, the actual scores of these nodes are not computed.
 
-对于如下的局势，假设从左往右搜索：
+For the following position, assume the search proceeds from left to right:
 
 ![](images/alpha-beta-1.svg)
 
-初始化时，令 $\alpha = -\infty,~\beta = +\infty$，并将这一信息沿着搜索路径下传．
+Initially, set $\alpha = -\infty,~\beta = +\infty$, and pass this information down along the search path.
 
 ![](images/alpha-beta-2.svg)
 
-搜索到节点 A 时，由于左子节点的分数为 $3$，而节点 A 是 MIN 节点，试图找分数小的走法，于是将 $\beta$ 值修改为 $3$，这是因为 $3$ 小于当前的 $\beta$ 值（$\beta = +\infty$）．然后节点 A 的右子节点的分数为 $17$，此时不修改节点 A 的 $\beta$ 值，这是因为 $17$ 大于当前的 $\beta$ 值（$\beta = 3$）．此时，节点 A 的所有子节点已搜索完毕，即可计算出节点 A 的分数为 $3$，这与该节点处记录的 $\beta$ 值一致（前文的情形 1）．
+When the search reaches node A, its left child has score $3$, and node A is a MIN node trying to find a move with a smaller score, so the $\beta$ value is changed to $3$, because $3$ is less than the current $\beta$ value ($\beta = +\infty$). Then the right child of node A has score $17$, so the $\beta$ value of node A is not changed, because $17$ is greater than the current $\beta$ value ($\beta = 3$). At this point, all child nodes of node A have been searched, so the score of node A can be computed as $3$, which is consistent with the $\beta$ value recorded at this node (case 1 above).
 
 ![](images/alpha-beta-3.svg)
 
-节点 A 是节点 B 的子节点，计算出节点 A 的分数后，可以更新节点 B 的 $\alpha$ 和 $\beta$ 值．由于节点 B 是 MAX 节点，试图找分数大的走法，于是将 $\alpha$ 值修改为 $3$，这是因为子节点 A 处的 $\beta$ 值（$\beta=3$）大于当前的 $\alpha$ 值（$\alpha = -\infty$）．之后，搜索节点 B 的右子节点 C，并将节点 B 的 $\alpha$ 和 $\beta$ 值传递给节点 C．
+Node A is a child of node B. After computing the score of node A, the $\alpha$ and $\beta$ values of node B can be updated. Since node B is a MAX node and tries to find a move with a larger score, the $\alpha$ value is changed to $3$, because the $\beta$ value at child node A ($\beta=3$) is greater than the current $\alpha$ value ($\alpha = -\infty$). Then search the right child C of node B, passing the $\alpha$ and $\beta$ values of node B to node C.
 
 ![](images/alpha-beta-4.svg)
 
-对于节点 C，由于左子节点的分数为 $2$，而节点 C 是 MIN 节点，于是将 $\beta$ 值修改为 $2$．此时 $\alpha \geq \beta$，故节点 C 的剩余子节点就不必搜索了，因为可以确定，Alpha 玩家不会允许局面发展到节点 C．此时，节点 C 是 MIN 节点，它的分数就是 $2$，不超过记录的 $\beta$ 值（前文的情形 3）．由于节点 B 的所有子节点搜索完毕，即可计算出节点 B 的分数为 $3$，与记录的 $\alpha$ 值相同（前文的情形 1）．
+For node C, its left child has score $2$, and node C is a MIN node, so the $\beta$ value is changed to $2$. Now $\alpha \geq \beta$, so the remaining child nodes of node C do not need to be searched, because it is certain that the Alpha player will not allow the game to develop to node C. At this point, node C is a MIN node, and its score is $2$, not exceeding the recorded $\beta$ value (case 3 above). Since all child nodes of node B have been searched, the score of node B can be computed as $3$, the same as the recorded $\alpha$ value (case 1 above).
 
 ![](images/alpha-beta-5.svg)
 
-计算出节点 B 的分数后，节点 B 是节点 D 的一个子节点，故可以更新节点 D 的 $\alpha$ 和 $\beta$ 值．由于节点 D 是 MIN 节点，于是将 $\beta$ 值修改为 $3$．然后节点 D 将 $\alpha$ 和 $\beta$ 值传递给节点 E，节点 E 又传递给节点 F．对于节点 F，它只有一个分数为 $15$ 的子节点，由于 $15$ 大于当前的 $\beta$ 值，而节点 F 为 MIN 节点，所以不更新其 $\beta$ 值，然后可以计算出节点 F 的分数为 $15$，大于记录的 $\beta$ 值（前文的情形 2）．
+After computing the score of node B, node B is a child of node D, so the $\alpha$ and $\beta$ values of node D can be updated. Since node D is a MIN node, its $\beta$ value is changed to $3$. Then node D passes the $\alpha$ and $\beta$ values to node E, and node E passes them to node F. For node F, it has only one child with score $15$. Since $15$ is greater than the current $\beta$ value and node F is a MIN node, its $\beta$ value is not updated. Then the score of node F can be computed as $15$, which is greater than the recorded $\beta$ value (case 2 above).
 
 ![](images/alpha-beta-6.svg)
 
-计算出节点 F 的分数后，节点 F 是节点 E 的一个子节点，故可以更新节点 E 的 $\alpha$ 和 $\beta$ 值．节点 E 是 MAX 节点，更新 $\alpha$ 值，此时 $\alpha \geq \beta$，故可以剪去节点 E 的余下分支（即节点 G）．然后，节点 E 是 MAX 节点，将节点 E 的分数设为 $15$，严格大于记录的 $\alpha$ 值（前文的情形 3）．利用节点 E 的 $\alpha$ 值更新节点 D 的 $\beta$ 值，仍然是 $3$．此时，节点 D 的所有子节点搜索完毕，即可计算出节点 D 的分数为 $3$，等于记录的 $\beta$ 值（前文的情形 1）．
+After computing the score of node F, node F is a child of node E, so the $\alpha$ and $\beta$ values of node E can be updated. Node E is a MAX node, so update the $\alpha$ value. At this point $\alpha \geq \beta$, so the remaining branch of node E (node G) can be pruned. Then, since node E is a MAX node, set the score of node E to $15$, which is strictly greater than the recorded $\alpha$ value (case 3 above). Using node E's $\alpha$ value to update node D's $\beta$ value still gives $3$. At this point, all child nodes of node D have been searched, so the score of node D can be computed as $3$, equal to the recorded $\beta$ value (case 1 above).
 
 ![](images/alpha-beta-7.svg)
 
-计算出节点 D 的分数后，节点 D 是节点 H 的一个子节点，故可以更新节点 H 的 $\alpha$ 和 $\beta$ 值．节点 H 是 MAX 节点，更新 $\alpha$．然后，按搜索顺序，将节点 H 的 $\alpha$ 和 $\beta$ 值依次传递给节点 I、J、K．对于节点 K，其左子节点的分数为 $2$，而节点 K 是 MIN 节点，更新 $\beta$，此时 $\alpha \geq \beta$，故可以剪去节点 K 的余下分支．然后，将节点 K 的分数设为 $2$，小于等于记录的 $\beta$ 值（前文的情形 3）．
+After computing the score of node D, node D is a child of node H, so the $\alpha$ and $\beta$ values of node H can be updated. Node H is a MAX node, so update $\alpha$. Then, in search order, pass the $\alpha$ and $\beta$ values of node H to nodes I, J, and K in sequence. For node K, its left child has score $2$, and node K is a MIN node, so update $\beta$. At this point $\alpha \geq \beta$, so the remaining branches of node K can be pruned. Then set the score of node K to $2$, which is less than or equal to the recorded $\beta$ value (case 3 above).
 
 ![](images/alpha-beta-8.svg)
 
-计算出节点 K 的分数后，节点 K 是节点 J 的一个子节点，故可以更新节点 J 的 $\alpha$ 和 $\beta$ 值．节点 J 是 MAX 节点，更新 $\alpha$，但是，由于节点 K 的分数小于 $\alpha$，所以节点 J 的 $\alpha$ 值维持 $3$ 不变．然后，将节点 J 的 $\alpha$ 和 $\beta$ 值传递给节点 L．由于节点 L 是 MIN 节点，更新 $\beta = 3$，此时 $\alpha \geq \beta$，故可以剪去节点 L 的余下分支．由于节点 L 没有余下分支，所以此处并没有实际剪枝．然后，将节点 L 的分数设为 $3$，它小于等于记录的 $\beta$ 值（前文的情形 3）．
+After computing the score of node K, node K is a child of node J, so the $\alpha$ and $\beta$ values of node J can be updated. Node J is a MAX node, so update $\alpha$; however, because the score of node K is less than $\alpha$, the $\alpha$ value of node J remains $3$. Then pass the $\alpha$ and $\beta$ values of node J to node L. Since node L is a MIN node, update $\beta = 3$. At this point $\alpha \geq \beta$, so the remaining branches of node L can be pruned. Since node L has no remaining branches, no actual pruning occurs here. Then set the score of node L to $3$, which is less than or equal to the recorded $\beta$ value (case 3 above).
 
 ![](images/alpha-beta-9.svg)
 
-计算出节点 L 的分数后，节点 L 是节点 J 的一个子节点，故可以更新节点 J 的 $\alpha$ 和 $\beta$ 值．节点 J 是 MAX 节点，更新 $\alpha$，但是，由于节点 L 的分数小于等于 $\alpha$，所以节点 J 的 $\alpha$ 值维持 $3$ 不变．此时，节点 J 的所有子节点搜索完毕，即可计算出节点 J 的分数为 $3$，它等于记录的 $\alpha$ 值（前文的情形 2）．
+After computing the score of node L, node L is a child of node J, so the $\alpha$ and $\beta$ values of node J can be updated. Node J is a MAX node, so update $\alpha$; however, because the score of node L is less than or equal to $\alpha$, the $\alpha$ value of node J remains $3$. At this point, all child nodes of node J have been searched, so the score of node J can be computed as $3$, which is equal to the recorded $\alpha$ value (case 2 above).
 
-计算出节点 J 的分数后，节点 J 是节点 I 的一个子节点，故可以更新节点 I 的 $\alpha$ 和 $\beta$ 值．节点 I 是 MIN 节点，更新 $\beta$，此时 $\alpha \geq \beta$，故可以剪去节点 I 的余下分支．值得注意的是，由于右子节点的存在，节点 I 的实际分数是 $2$，小于记录的 $\beta$ 值（前文的情形 3）．
+After computing the score of node J, node J is a child of node I, so the $\alpha$ and $\beta$ values of node I can be updated. Node I is a MIN node, so update $\beta$. At this point $\alpha \geq \beta$, so the remaining branches of node I can be pruned. It is worth noting that because the right child exists, the actual score of node I is $2$, which is less than the recorded $\beta$ value (case 3 above).
 
-计算出节点 I 的分数后，节点 I 是节点 H 的一个子节点，故可以更新节点 H 的 $\alpha$ 和 $\beta$ 值．节点 H 是 MAX 节点，更新 $\alpha$，但是，由于节点 I 的分数小于等于 $\alpha$，所以节点 H 的 $\alpha$ 值维持 $3$ 不变．此时，节点 H 的所有子节点搜索完毕，即可计算出节点 H 的分数为 $3$，它等于记录的 $\alpha$ 值（前文的情形 1）．
+After computing the score of node I, node I is a child of node H, so the $\alpha$ and $\beta$ values of node H can be updated. Node H is a MAX node, so update $\alpha$; however, because the score of node I is less than or equal to $\alpha$, the $\alpha$ value of node H remains $3$. At this point, all child nodes of node H have been searched, so the score of node H can be computed as $3$, which is equal to the recorded $\alpha$ value (case 1 above).
 
 ![](images/alpha-beta-10.svg)
 
-这就是最终结果．
+This is the final result.
 
-### 实现
+### Implementation
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     int alpha_beta(int u, int alph, int beta, bool is_max) {
       if (!son_num[u]) return val[u];
@@ -128,9 +128,9 @@ Alpha–Beta 剪枝的剪枝策略依赖于搜索当前节点时 $\alpha$ 和 $\
     }
     ```
 
-## 参考资料与注释
+## References and Notes
 
 -   [Minimax Algorithm - Wikipedia](https://en.wikipedia.org/wiki/Minimax#Minimax_algorithm_with_alternate_moves)
 -   [Alpha–beta pruning - Wikipedia](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning)
 
-**本文部分引用自博文 [详解 Minimax 算法与α-β剪枝\_文剑木然](https://blog.csdn.net/wenjianmuran/article/details/90633418)，遵循 CC 4.0 BY-SA 版权协议．内容有改动．**
+**This article partially quotes the blog post [Detailed explanation of the Minimax algorithm and alpha-beta pruning by wenjianmuran](https://blog.csdn.net/wenjianmuran/article/details/90633418), under the CC 4.0 BY-SA license. The content has been modified.**

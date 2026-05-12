@@ -1,359 +1,359 @@
 author: ouuan, Henry-ZHR, StudyingFather, ChungZH, xyf007, Cryflmind, oierlinch, xk2013awa
 
-## 出题前的准备
+## Preparation Before Setting Problems
 
-### 具备一定的水平
+### Have a Certain Level of Skill
 
-一方面，一个人自己出题，很难出出难度大于自身水平的题目，一定的 OI 水平有助于想到更加优质的 idea 并想出优秀的做法；另一方面，OI 水平在一定程度上代表着 OI 资历，见识过更多的题目的选手也会对「好题」拥有自己的见解．
+On the one hand, when setting problems alone, it is hard to create problems whose difficulty exceeds your own level. A certain level of OI skill helps you come up with higher-quality ideas and excellent solutions. On the other hand, OI skill to some extent reflects OI experience; contestants who have seen more problems will also have their own understanding of what makes a "good problem".
 
-### 抱有认真负责的态度
+### Maintain a Serious and Responsible Attitude
 
-出题是给别人做的，比起展示自己，更多是为了是服务他人．算法竞赛是选手之间的竞赛，而不是出题人与做题人之间的较量．因此，出题不应以考倒选手为目标（当然，适当的防 AK 与良好的区分度也是非常重要的），而应当让选手能在比赛中有所收获．花费足够的时间精力去学习如何出题并认真负责地出题非常重要．
+Problems are made for others to solve. Rather than showing yourself off, problemsetting is more about serving others. Algorithm contests are contests among contestants, not battles between problem setters and solvers. Therefore, the goal of problemsetting should not be to stump contestants (of course, properly preventing AK and ensuring good differentiation are also very important), but to let contestants gain something from the contest. It is very important to spend enough time and effort learning how to set problems and to set them seriously and responsibly.
 
-### 做好耗费大量时间的准备
+### Be Prepared to Spend a Lot of Time
 
-如果想要认真地出题，就必然要花费大量的时间．如果不做好心理准备，可能导致比赛准备匆忙，质量不过关，也可能在事后由于没有将时间花费在学习上而懊悔．但出题也可以带来很多美好的回忆，如果真的对出题抱有兴趣，并做好了充分的心理准备，出题带来的收获也能够弥补那些花费的时间．
+If you want to set problems seriously, you will inevitably spend a lot of time. Without mental preparation, the contest may be prepared in a rush and fail to meet quality standards, or you may later regret not having spent that time on studying. But problemsetting can also bring many wonderful memories. If you are truly interested in problemsetting and are fully mentally prepared, the rewards from problemsetting can make up for the time spent.
 
-### 认真阅读本文的内容
+### Read This Article Carefully
 
-本文从如何出题、如何把题出好两个方面对整个出题流程进行了介绍．对于想要出题的人来说，认真阅读本文一定能够受益匪浅．
+This article introduces the whole problemsetting process from two aspects: how to set problems and how to set good problems. For anyone who wants to set problems, reading this article carefully will certainly be very rewarding.
 
-## 题目内容
+## Problem Content
 
-出一道题，idea，即题目本质的内容，是题目的灵魂，也是出题的第一步．
+When setting a problem, the idea, that is, the essential content of the problem, is the soul of the problem and also the first step in problemsetting.
 
-### idea 的来源
+### Sources of Ideas
 
-1.  受到已有题目的启发（但不能照搬或无意义地加强，如：序列题目搬到仙人掌上）．
-2.  受到学过的知识点的启发（但不能毫无联系地拼凑知识点）．
-3.  从生活/游戏中受到启发（但注意不要把游戏出成大模拟）．
-4.  不知道为什么，就是想到了一道题．
+1.  Inspiration from existing problems (but do not copy them or strengthen them meaninglessly, such as moving a sequence problem onto a cactus).
+2.  Inspiration from knowledge points you have learned (but do not forcibly piece together unrelated knowledge points).
+3.  Inspiration from life/games (but be careful not to turn a game into a big simulation problem).
+4.  For no clear reason, you just think of a problem.
 
-### 什么样的 idea 是不好的
+### What Kinds of Ideas Are Bad
 
-#### 关于原题
+#### About Duplicate Problems
 
-原题大致可分为完全一致、几乎一致和做法一致三种．
+Duplicate problems can roughly be divided into three types: completely identical, almost identical, and identical in solution.
 
--   完全一致：使用一题的 AC 代码可以 AC 另一题．
--   几乎一致：由一题的 AC 代码改动至另一题的 AC 代码可以由一个不会该题的人完成．
--   做法一致：核心思路、做法一致，但代码实现上、不那么关键的细节上有差异．
+-   Completely identical: the AC code for one problem can AC the other problem.
+-   Almost identical: modifying the AC code for one problem into the AC code for the other can be done by someone who does not know the problem.
+-   Identical in solution: the core idea and solution are identical, but there are differences in code implementation and less critical details.
 
-这三种原题自下而上为包含关系．
+These three types of duplicate problems form an inclusion relationship from bottom to top.
 
-以下情况不应出现：
+The following situations should not occur:
 
-1.  在明知有「几乎一致」的原题的情况下出原题．
-2.  由于未使用搜索引擎查找导致自己不清楚有原题，从而出了「几乎一致」的原题．
-3.  在「做法一致」的原题广为人知（如：NOIP、NOI 原题）时出原题．
-4.  在带有选拔性的考试的非送分题中出现「做法一致」的原题．
+1.  Setting a duplicate problem while knowing that there is an "almost identical" original problem.
+2.  Setting an "almost identical" duplicate problem because you did not use a search engine and therefore did not know the original existed.
+3.  Setting a duplicate problem when an "identical in solution" original problem is widely known (for example, an original NOIP or NOI problem).
+4.  Having an "identical in solution" original problem appear as a non-giveaway problem in a selection-oriented exam.
 
-以下情况最好不要出现：
+The following situations are best avoided:
 
-1.  在明知有至少为「做法一致」的原题的情况下出原题．
-2.  由于未使用搜索引擎查找导致自己不清楚有原题，从而出了「做法一致」的原题．
-3.  在任何情况下出「几乎一致」的原题．
+1.  Setting a duplicate problem while knowing that there is an original problem that is at least "identical in solution".
+2.  Setting an "identical in solution" duplicate problem because you did not use a search engine and therefore did not know the original existed.
+3.  Setting an "almost identical" duplicate problem under any circumstances.
 
-可以放宽要求的例外情况：
+Exceptions where the requirements may be relaxed:
 
-1.  校内模拟赛．
-2.  以专题训练为目的的模拟赛．
-3.  难度较低的比赛，或是定位为送分题的题目．
+1.  In-school mock contests.
+2.  Mock contests intended for topic-based training.
+3.  Contests with low difficulty, or problems positioned as giveaways.
 
-#### 关于毒瘤题
+#### About Malignant Problems
 
-「毒瘤题」是一个非常模糊而主观的观念，在这只是引用一些前人关于此的探讨，加以自己的一些理解．这个话题是非常开放的，欢迎大家来发表自己的观点．
+"Malignant problem" is a very vague and subjective concept. Here we only quote some previous discussions on it and add some of our own understanding. This topic is very open, and everyone is welcome to express their views.
 
-> 一道好题不应该是两道题拼在一起，一道好题会有自己的 idea——而它应该不加过多包装地突出这个 idea．
+> A good problem should not be two problems stitched together. A good problem has its own idea, and it should highlight that idea without excessive packaging.
 >
-> 一道好题应该新颖．真正的好题，应该是能让人脑洞出新的好题的好题．
+> A good problem should be novel. A truly good problem should be a good problem that inspires people to think of new good problems.
 >
-> ——[vfk《UOJ 精神之源流》][1]
+> --[vfk《UOJ 精神之源流》][1]
 
-例子：[「XR-1」柯南家族](https://www.luogu.com.cn/problem/P5346)，做法的前后两部分完全割裂，前半部分为 [「模板」树上后缀排序](https://www.luogu.com.cn/problem/P5353)，后半部分是经典树上问题．就算是随意输入树的点权，依然可以做第二部分，前后部分没有联系．
+Example: [「XR-1」柯南家族](https://www.luogu.com.cn/problem/P5346). The two halves of the solution are completely disconnected: the first half is [「模板」树上后缀排序](https://www.luogu.com.cn/problem/P5353), and the second half is a classic tree problem. Even if the weights of the tree nodes are input arbitrarily, the second part can still be solved; the two parts are unrelated.
 
-> 一类 OI 题以数学为主，无论是题目描述还是做法都是数学题的特征，并且解法中不含算法相关的知识点，这类 OI 题目统称为纯数学题．
+> One type of OI problem is mainly mathematical. Both the statement and the solution have the characteristics of a math problem, and the solution contains no algorithm-related knowledge points. Such OI problems are collectively called pure mathematics problems.
 >
-> ——[王天懿《论偏题的危害》][2]
+> --[王天懿《论偏题的危害》][2]
 
-经典例子：[NOIP2017 小凯的疑惑](https://uoj.ac/problem/329)
+Classic example: [NOIP2017 小凯的疑惑](https://uoj.ac/problem/329)
 
-OI 中的数学题与其它数学题的区别，也是体现 OI 本质的一个特点，是 OI 中的数学题往往重点不在答案 **是什么**，而在如何 **加快** 答案的计算．如果一道题考察的重点是「怎么算」而非「怎么快速计算」，这样的数学题一般都是不适合出在 OI 中的．
+The difference between math problems in OI and other math problems, and also a characteristic that reflects the essence of OI, is that math problems in OI usually focus not on **what** the answer is, but on how to **speed up** the computation of the answer. If the focus of a problem is "how to calculate" rather than "how to calculate quickly", such a math problem is generally not suitable for OI.
 
-> 一部分偏题中牵涉到了大学物理的内容，导致选手在面对这些从未接触过物理知识点时变得不知所措，造成了知识上的隔膜．
+> Some off-topic problems involve university physics, making contestants feel at a loss when facing physics knowledge points they have never encountered and creating a knowledge barrier.
 >
-> ——[王天懿《论偏题的危害》][2]
+> --[王天懿《论偏题的危害》][2]
 
-经典例子：[「清华集训 2015」多边形下海](https://uoj.ac/problem/159)
+Classic example: [「清华集训 2015」多边形下海](https://uoj.ac/problem/159)
 
-不止是物理，OI 题目中不应过多涉及到其它学科的知识，如果涉及应当给予详细的解释，不应使其它学科的知识作为解题的重大障碍．
+Not only physics: OI problems should not involve too much knowledge from other disciplines. If they do, detailed explanations should be provided, and knowledge from other disciplines should not become a major obstacle to solving the problem.
 
-> 一道好题无论难度如何，都应该具有自己的思维难度，需要选手去思考并发现一些性质．
+> A good problem, regardless of difficulty, should have its own thinking difficulty and require contestants to think and discover some properties.
 >
-> 一道好题的代码可以长，但一定不是通过强行嵌套或者增加条件而让代码变长，而是长得自然，让人感觉这个题的代码就应该是这么长．
+> A good problem's code may be long, but it must not become long through forced nesting or added conditions. It should be naturally long, making people feel that the code for this problem ought to be this long.
 >
-> ——[王天懿《论偏题的危害》][2]
+> --[王天懿《论偏题的危害》][2]
 
-经典例子：[「SDOI2010」猪国杀](https://loj.ac/problem/2885)，[「集训队互测 2015」未来程序·改](https://uoj.ac/problem/98)
+Classic examples: [「SDOI2010」猪国杀](https://loj.ac/problem/2885), [「集训队互测 2015」未来程序·改](https://uoj.ac/problem/98)
 
-在一般的 OI 比赛中，思维难度应占主要部分．当然，如 THUWC/THUSC 的 Day 2+ 那样的工程题也有其存在的道理——毕竟体验营的目的除了考察选手的算法设计能力，还有和大学学习对接的工程代码以及文档学习能力．但在一般的 OI 比赛中，考察更多的应当还是算法设计与思维能力．
+In ordinary OI contests, thinking difficulty should account for the main part. Of course, engineering problems such as those on THUWC/THUSC Day 2+ also have their reason to exist. After all, besides assessing contestants' algorithm design ability, the purpose of the experience camp also includes connecting with university study through engineering code and documentation learning ability. But in ordinary OI contests, what should be assessed more is still algorithm design and thinking ability.
 
-## 题面
+## Statement
 
-### 使用 LaTeX 书写公式
+### Use LaTeX to Write Formulas
 
-网上有很多 LaTeX 的教程，如：
+There are many LaTeX tutorials online, such as:
 
--   [LaTeX 入门](../tools/latex.md#图表)
+-   [Introduction to LaTeX](../tools/latex.md#图表)
 -   [LaTeX 数学公式大全](https://www.luogu.com.cn/blog/IowaBattleship/latex-gong-shi-tai-quan)
 -   [LaTeX 各种命令，符号](https://blog.csdn.net/anxiaoxi45/article/details/39449445)
 
-使用时请注意 [LaTeX 公式的格式要求](../intro/format.md)．
+When using it, please pay attention to the [format requirements for LaTeX formulas](../intro/format.md).
 
-### 题目背景
+### Problem Background
 
-题目背景最好尽量简短．在题目背景较长时，应当与题目描述分开．
+The problem background should preferably be as concise as possible. When the background is long, it should be separated from the problem description.
 
-需要绝对避免题目背景严重影响题意的理解．
+It is absolutely necessary to avoid the problem background seriously affecting understanding of the problem meaning.
 
-必要时，可以提供与背景结合的题目描述与简洁的题目描述两个版本．
+When necessary, you can provide two versions: a problem description combined with the background and a concise problem description.
 
-### 题目描述
+### Problem Description
 
-简而言之，题目描述需要 **清晰易懂**．
+In short, the problem description needs to be **clear and easy to understand**.
 
-题面中的每个可能不被理解的定义都应得到解释，不应凭空冒出未加定义的概念．例如：在 [CF1172D Nauuo and Portals](https://codeforces.com/problemset/problem/1172/D) 中，你必须在题面中解释什么是「传送门」．
+Every definition in the statement that may not be understood should be explained; undefined concepts should not appear out of nowhere. For example, in [CF1172D Nauuo and Portals](https://codeforces.com/problemset/problem/1172/D), you must explain in the statement what a "portal" is.
 
-题面中涉及到的每个概念应当使用单一的词汇来描述．例如：不应一会儿说「费用」，一会儿说「代价」．
+Every concept involved in the statement should be described using a single term. For example, do not sometimes say "fee" and sometimes say "cost".
 
-不应不加说明地使用与原义、常见义不同的词汇．例如：不应不加说明地用「路径」代指一条边．
+Do not use words with meanings different from their original or common meanings without explanation. For example, do not use "path" to refer to an edge without explanation.
 
-你需要保证你的题面不会自相矛盾．例如：在 [CF1173A Nauuo and Votes](https://codeforces.com/problemset/problem/1173/A) 中，没有把 "?" 作为一种 "result"，是因为 "?" 的含义是 "there are more than one possible results"．
+You need to ensure that your statement does not contradict itself. For example, in [CF1173A Nauuo and Votes](https://codeforces.com/problemset/problem/1173/A), "?" is not treated as a kind of "result" because "?" means "there are more than one possible results".
 
-你需要保证你的题面不能被错误理解而自圆其说，即使这种理解是反常识、没有人会这么去想的．例如：在 [CF1172D Nauuo and Portals](https://codeforces.com/problemset/problem/1172/D) 中，之所以要繁琐地定义 "walk into" 并与 "teleport" 区分，是为了防止这种理解：通过传送门可以到另一个传送门，而到了传送门会传送，因此会反复横跳．
+You need to ensure that your statement cannot be misinterpreted in a self-consistent way, even if that interpretation is counterintuitive and no one would normally think of it. For example, in [CF1172D Nauuo and Portals](https://codeforces.com/problemset/problem/1172/D), the reason for laboriously defining "walk into" and distinguishing it from "teleport" is to prevent this interpretation: through a portal one can reach another portal, and upon reaching a portal one teleports, so one bounces back and forth repeatedly.
 
-顺着读题目描述应当能看懂每一句话，并理解题目的任务与要求．至少在紧接着的下一段话中疑惑能够得到解释，而不是需要在若干段后才能得到解释，或者要看了输入输出格式才能明白题意，甚至需要根据样例来猜题意．例如：在 [「GuOJ Round #1」琪露诺的冰雪宴会](https://github.com/OI-wiki/problemset/blob/master/contest/online/GuOJ/OI%20Archive%20-%20GuOJ1171.pdf) 中，在输出格式才第一次出现了题目的目标「雾之湖最终能接收到的最大水量」，再加上「灵梦当然能很快算出来清理完全部小溪的总费用是多少」这句带有误解性质的话，更容易使人读错题意，这是不可取的，应当在题目描述中就对题目的目标进行说明．（在这个例子中还存在题目背景严重影响题意理解的问题．）相同的错误还出现在 [CF1423(4)N Bubblesquare Tokens](https://codeforces.com/problemset/problem/1423/N) 中，在输出格式才第一次出现了题目的目标 "friend pairs and number of tokens each of them gets on behalf of their friendship"．
+Reading the problem description in order should allow one to understand every sentence and understand the task and requirements of the problem. At least any confusion should be explained in the immediately following paragraph, rather than only several paragraphs later, or only after reading the input/output format, or even requiring the samples to guess the meaning. For example, in [「GuOJ Round #1」琪露诺的冰雪宴会](https://github.com/OI-wiki/problemset/blob/master/contest/online/GuOJ/OI%20Archive%20-%20GuOJ1171.pdf), the problem's goal, "the maximum amount of water that Misty Lake can finally receive", first appears only in the output format. Together with the misleading sentence "Reimu can of course quickly calculate the total cost of clearing all streams", this more easily causes people to misread the problem. This is undesirable; the goal of the problem should be stated in the problem description. (In this example there is also the problem that the background seriously affects understanding of the problem meaning.) The same mistake also appears in [CF1423(4)N Bubblesquare Tokens](https://codeforces.com/problemset/problem/1423/N), where the problem's goal, "friend pairs and number of tokens each of them gets on behalf of their friendship", first appears only in the output format.
 
-### 输入输出格式
+### Input and Output Format
 
-输入输出格式清晰 **完整** 即可，没有死板的要求，个人建议参照 CF 的题目来写输入输出格式，具体可以参考[CF 出题人须知][3]．
+The input and output format only needs to be clear and **complete**; there are no rigid requirements. Personally, I suggest referring to CF problems when writing input and output formats. For details, see [Guidelines for CF problem setters][3].
 
-为了方便选手做题，输入输出格式中最好说明每个变量的具体含义，除非变量的意义非常长，没法一句话说清楚（这时可以说「意义见题目描述」）．
+For contestants' convenience, the input and output format should preferably explain the specific meaning of each variable, unless the meaning of a variable is too long to explain in one sentence (in which case you can say "see the problem description for its meaning").
 
-需要特别注意的是，如果输出中含有小数，请尽量使用 [SPJ](#special-judge) 来对误差的大小进行限制，而非要求「保留 x 位小数」．
+It is especially important that, if the output contains decimals, you should try to use [SPJ](#special-judge) to restrict the allowed error, rather than requiring "keep x decimal places".
 
-「保留 x 位小数」对精度的要求可能是无限的．例如：要求保留三位小数，实际答案为 $0.0015$，此时只要有任意大小的误差导致计算出的答案小于 $0.0015$，即使计算出的答案是 $0.00149999\cdots$ 也会输出错误的答案．
+"Keep x decimal places" may impose infinite precision requirements. For example, if the requirement is to keep three decimal places and the actual answer is $0.0015$, then any error of any size that makes the computed answer less than $0.0015$ will cause a wrong output, even if the computed answer is $0.00149999\cdots$.
 
-如果无法使用 SPJ，请保证对精度的要求是有限的，例如：请输出答案四舍五入后保留小数点后三位的结果．令标准答案为 $ans$，数据保证对于任意满足 $\frac{|x-ans|}{\max(1,ans)}<10^{-9}$ 的 $x$，四舍五入后结果与 $ans$ 四舍五入后相同．
+If SPJ cannot be used, make sure the precision requirement is finite. For example: please output the answer rounded to three digits after the decimal point. Let the standard answer be $ans$; the data guarantees that for any $x$ satisfying $\frac{|x-ans|}{\max(1,ans)}<10^{-9}$, the rounded result is the same as the rounded result of $ans$.
 
-可以参考的一些句子：
+Some sentences for reference:
 
 ```latex
-输入的第一行包含三个正整数 $n$, $m$, $k$ ($1\le n,m\le 2\cdot 10^5$, $1\le k\le 100$) — $n$ 表示数列的长度，$m$ 表示操作个数，$k$ 的意义见题目描述．
+The first line of input contains three positive integers $n$, $m$, $k$ ($1\le n,m\le 2\cdot 10^5$, $1\le k\le 100$) -- $n$ denotes the length of the sequence, $m$ denotes the number of operations, and the meaning of $k$ is described in the problem statement.
 ```
 
 ```latex
-输入的第二行包含 $n$ 个非负整数 $a_1,a_2,\ldots,a_n$ ($1\le a_i\le 10^9$) — 题目给出的数列．
+The second line of input contains $n$ non-negative integers $a_1,a_2,\ldots,a_n$ ($1\le a_i\le 10^9$) -- the sequence given in the problem.
 ```
 
 ```latex
-接下来的 $m$ 行中的第 $i$ 行包含两个正整数 $l_i$ 和 $r_i$ ($1\le l_i\le r_i\le n$)，表示第 $i$ 次操作在区间 $[l_i,r_i]$ 上进行．
+The $i$-th of the next $m$ lines contains two positive integers $l_i$ and $r_i$ ($1\le l_i\le r_i\le n$), indicating that the $i$-th operation is performed on the interval $[l_i,r_i]$.
 ```
 
 ```latex
-接下来的 $n-1$ 行，每行包含两个正整数 $u$ 和 $v$ ($1\le u,v\le n$)，表示 $u$ 和 $v$ 之间由一条边相连．
+Each of the next $n-1$ lines contains two positive integers $u$ and $v$ ($1\le u,v\le n$), indicating that there is an edge between $u$ and $v$.
 
-数据保证给出的边能构成一棵树．
+It is guaranteed that the given edges form a tree.
 ```
 
 ```latex
-输入的唯一一行包含一个由小写英文字母构成的非空字符串，其长度不超过 $10^6$．
+The only line of input contains a non-empty string consisting of lowercase English letters, whose length does not exceed $10^6$.
 ```
 
 ```latex
-输入的第二行包含一个小数点后不超过三位的实数 $x$ ($-10^6\le x\le 10^6$)，意义见题目描述．
+The second line of input contains a real number $x$ with at most three digits after the decimal point ($-10^6\le x\le 10^6$); its meaning is described in the problem statement.
 ```
 
 ```latex
-输出包含一个实数，当你的输出与标准答案之间的绝对误差或相对误差小于 $10^{-6}$ 时视作正确．
+Output a real number. Your output is considered correct if the absolute or relative error between your output and the standard answer is less than $10^{-6}$.
 ```
 
 ```latex
-输出的第二行包含 $n$ 个正整数，表示你构造的一组方案 — 其中第 $i$ 个数表示你打出的第 $i$ 张牌的编号．
+The second line of output contains $n$ positive integers, representing one plan you construct -- the $i$-th number denotes the index of the $i$-th card you play.
 
-如果有多组合法的答案，可以任意输出其中一组．
+If there are multiple valid answers, you may output any one of them.
 ```
 
-???+ note "在选手代码内由随机数生成器生成输入数据"
-    有的题目会因为输入数据过大，为了防止读入用时过长，而要求选手在代码内通过给定的数据生成器生成数据，代替通过标准输入或文件输入来读入数据．
+???+ note "Generating input data with a random number generator inside contestant code"
+    Some problems have very large input data. To prevent reading input from taking too long, they require contestants to generate the data inside their code using a given data generator, instead of reading data from standard input or files.
     
-    采用这种做法需要谨慎考虑，因为它有很多缺点：
+    This approach should be considered carefully, because it has many disadvantages:
     
-    -   可能引入了正解所不需要的数据随机性，或者使得构造数据变得困难
-    -   可能增大了理解输入格式的难度
-    -   如果随机数生成器封装的不好，可能理解数据生成器本身的使用方法就有难度
-    -   如果选手没有使用出题者推荐的语言，可能需要自己写一个数据生成器
+    -   It may introduce data randomness that the intended solution does not need, or make constructing data difficult
+    -   It may increase the difficulty of understanding the input format
+    -   If the random number generator is not well encapsulated, understanding how to use the data generator itself may be difficult
+    -   If contestants do not use the language recommended by the problem setter, they may need to write a data generator themselves
     
-    采用这种做法一般是为了防止读入数据用时过长，所以一个可能的替代方案是下发一个性能足够好的 [读入、输出优化](./io.md) 模板，以尽量保证所有人的读入用时一致，这样的话即使读入用时很久也不会影响不同选手用时的差异．另一个解决方案是将题目包装成函数调用式（而非 IO 式）交互题，即使算法过程中没有交互，交互题也可以起到统一读入用时的作用，IOI 就采用了所有题目都是交互题的方案．但是，这两种方案都对选手使用的语言有限制，需要出题者手动支持每种允许选手使用的语言．
+    This approach is generally used to prevent reading data from taking too long. Therefore, one possible alternative is to provide a sufficiently performant [input/output optimization](./io.md) template, so as to keep everyone's input-reading time as consistent as possible; in this way, even if reading takes a long time, it will not affect the time differences between contestants. Another solution is to package the problem as a function-call-style (rather than IO-style) interactive problem. Even if there is no interaction during the algorithm, an interactive problem can still unify input-reading time. IOI adopts the approach where all problems are interactive problems. However, both approaches restrict the languages contestants can use and require the problem setter to manually support every language allowed for contestants.
     
-    回到问题的本源，还可以考虑一下过大的输入数据是否是必要的，有没有可能使用较小的输入数据达到目的，以及比正解复杂度稍劣的做法是否有卡掉的必要．
+    Returning to the root of the issue, you can also consider whether overly large input data is necessary, whether smaller input data can achieve the goal, and whether it is necessary to hack solutions whose complexity is only slightly worse than the intended solution.
 
-### 数据范围
+### Data Constraints
 
-按照 CF 的要求，数据范围要写在输入格式里，但在国内，数据范围往往是写在题目的最后的．
+According to CF requirements, data constraints should be written in the input format, but in China, data constraints are often written at the end of the problem.
 
-数据范围中最容易犯的错误就是不完整．输入中的每一个数、每一个字符串都应该有清晰的界定．在上文所给出的输入输出格式示例中就有一些数据范围的正确写法．
+The most common mistake in data constraints is incompleteness. Every number and every string in the input should have a clear definition. The input/output format examples above include some correct ways to write data constraints.
 
-数据范围的常见遗漏：
+Common omissions in data constraints:
 
-1.  「整数」中的「整」．
-2.  题面中只说了是「整数」没说是「正整数」，并且数据范围中只有上限没有下限．
-3.  字符串没说字符集．
-4.  实数没说小数点后位数．
-5.  某些变量没有给范围．
+1.  The word "integer".
+2.  The statement only says "integer" and not "positive integer", while the data constraints give only an upper bound and no lower bound.
+3.  The character set of a string is not specified.
+4.  The number of digits after the decimal point for a real number is not specified.
+5.  Some variables have no constraints.
 
-你需要保证标程可以通过满足题面所述数据范围的 **任何一组数据**．
+You need to ensure that the standard solution can pass **any set of data** satisfying the constraints stated in the problem statement.
 
-???+ note "关于「保证数据随机生成」"
-    有的题目中会「保证数据随机生成」，很多时候这样的限制并不是最优的解决方案，因为「随机生成」对数据的限制并不明确，会给判断具体数据范围、提供 hack 数据带来困难．
+???+ note "About 'the data is guaranteed to be randomly generated'"
+    Some problems "guarantee that the data is randomly generated". In many cases, such a restriction is not the optimal solution, because "randomly generated" does not clearly define the constraints on the data and makes it difficult to determine the exact data range or provide hack data.
     
-    一般来说，「保证数据随机生成」可以换成解法所需要的数据性质．例如，随机生成一棵树往往可以换成限制树的高度．
+    Generally speaking, "the data is guaranteed to be randomly generated" can be replaced by the data properties needed by the solution. For example, a randomly generated tree can often be replaced by a restriction on the tree height.
     
-    如果一定要保证数据随机生成，应当指定随机生成的具体操作．例如，生成一棵树是随机选择父亲节点还是随机生成 Prüfer 序列．
+    If you must guarantee that the data is randomly generated, you should specify the exact random generation operation. For example, when generating a tree, say whether the parent node is chosen randomly or a Prüfer sequence is generated randomly.
     
-    需要注意的是，非确定性算法和依赖于数据随机性的算法是不同的．前者可以对于任意数据都有很高的概率得到正解，而后者是对于大部分的数据能得到正解，对于某些特定的数据则不可能得到正解．
+    Note that nondeterministic algorithms and algorithms relying on data randomness are different. The former can obtain the correct solution with high probability for any data, while the latter can obtain the correct solution for most data but cannot obtain the correct solution for some specific data.
 
-### 样例
+### Samples
 
-样例应当有一定的强度，能够查出一些简单的错误．读错题意的人应当能够通过样例发现自己读错了题意．
+Samples should have a certain strength and be able to catch some simple mistakes. People who misread the problem should be able to discover their misunderstanding through the samples.
 
-有多种操作的题，每种操作都应在样例中出现．
+For problems with multiple operations, every operation should appear in the samples.
 
-有多种输出的题（如 [CF1173A Nauuo and Votes](https://codeforces.com/problemset/problem/1173/A)），每种输出都应在样例中出现．例外：实际上不可能无解，但要求判断是否有解的题目．
+For problems with multiple possible outputs (such as [CF1173A Nauuo and Votes](https://codeforces.com/problemset/problem/1173/A)), every output should appear in the samples. Exception: problems where having no solution is actually impossible but the statement asks contestants to determine whether a solution exists.
 
-### 样例解释
+### Sample Explanation
 
-题目描述越复杂、越不易理解就越应当有详细的样例解释．
+The more complex and harder to understand the problem description is, the more detailed the sample explanation should be.
 
-题目难度越简单就越应当有详细的样例解释．
+The simpler the problem difficulty is, the more detailed the sample explanation should be.
 
-详细的样例解释可以选择配上图片．
+Detailed sample explanations may include images.
 
-较大的样例可以没有样例解释．
+Large samples may omit sample explanations.
 
-为了照顾色觉障碍者，最好不要使颜色成为理解样例解释所必备的．可以用彩色图片来美化样例解释，但如果一定要用颜色传递一些必要的信息，最好不要同时出现红黄或者红绿．
+To accommodate people with color vision deficiency, colors should preferably not be necessary for understanding sample explanations. Color images may be used to beautify sample explanations, but if colors must be used to convey necessary information, it is best not to use red-yellow or red-green together.
 
-## 时限、空间限制与部分分
+## Time Limit, Memory Limit, and Partial Scores
 
-时限与空间限制的目的是卡掉复杂度错误的做法．（当然，也是为了防止评测用时过长，如：只对交互次数有限制而对时间复杂度没有限制的交互题也有时间限制．）
+The purpose of time and memory limits is to block solutions with incorrect complexity. (Of course, they also prevent judging from taking too long; for example, interactive problems that only limit the number of interactions but do not limit time complexity also have time limits.)
 
-因此，原则上时间限制应当选取不使错误做法通过的尽量大的值．
+Therefore, in principle, the time limit should be chosen as large as possible while not allowing incorrect solutions to pass.
 
-一般地，时限应满足以下要求：
+Generally, the time limit should satisfy the following requirements:
 
-1.  至少为 std 在最坏情况下用时的两倍．
-2.  如果比赛允许使用 Java，应使 Java 能够通过．
-3.  不应使错误做法通过（实在卡不掉、想放某种错解过除外）．
+1.  It should be at least twice the running time of std in the worst case.
+2.  If the contest allows Java, Java should be able to pass.
+3.  It should not allow incorrect solutions to pass (unless you really cannot block them, or intentionally want to let some wrong solution pass).
 
-为了更好地在放大常数做法过的同时卡掉错解，一般可以采用同时增大数据范围和时限的方法．但要注意，有时正解（由于缓存等玄学问题）会在数据范围增大时有极大的常数增加，此时增大数据范围不一定能够增大正解与错解之间用时的差距．
+To better allow solutions with large constants while blocking wrong solutions, one can generally increase both the data range and the time limit. But note that sometimes the intended solution (due to mysterious issues such as cache behavior) may have a huge constant increase when the data range grows. In this case, increasing the data range may not increase the running-time gap between the intended solution and wrong solutions.
 
-在有部分分的赛制中，还可以通过设置有梯度的数据、数据范围稍小的数据来使较为优秀的错解和大常数正解不能通过，同时使其获得较高的部分分．
+In contest systems with partial scores, you can also set gradient data and data with slightly smaller ranges, so that better wrong solutions and intended solutions with large constants cannot pass fully while still obtaining relatively high partial scores.
 
-需要注意的是，在数据范围小于 $5\cdot 10^5$ 时，应当考虑是否能使用 [指令集](https://ouuan.github.io/post/n方过百万-暴力碾标算——指令集优化的基础使用) 通过．
+Note that when the data range is less than $5\cdot 10^5$, you should consider whether it can be passed using [instruction sets](https://ouuan.github.io/post/n方过百万-暴力碾标算——指令集优化的基础使用).
 
-一般情况下空间限制应当设置的足够大，除非空间复杂度更优的做法的确十分巧妙，值得卡掉空间复杂度大的做法．这种情况下可以考虑设置空间限制较松的部分分．值得注意的是，如果不想卡掉空间消耗较大的做法，数据结构题一般需要设置较大的空间限制．
+In general, the memory limit should be set large enough, unless the solution with better space complexity is indeed very clever and worth using the memory limit to block high-space-complexity solutions. In this case, you can consider setting partial scores with looser memory limits. It is worth noting that if you do not want to block solutions with large memory consumption, data structure problems generally need larger memory limits.
 
-> 一道好题应该具有它的选拔性质，具有足够的区分度．应该至少 4 档部分分，让新手可以拿到分，让高手能够展示自己的实力．
+> A good problem should have its selective nature and sufficient differentiation. There should be at least 4 levels of partial scores, so beginners can get points and experts can demonstrate their strength.
 >
-> ——vfk《UOJ 精神之源流》
+> --vfk《UOJ 精神之源流》
 
-部分分一般分为较小数据范围与特殊性质两种．
+Partial scores are generally divided into two types: smaller data ranges and special properties.
 
-较小数据范围一般要设置多档，即使你想不到某种复杂度的做法，也可以考虑给这种复杂度一档分．一般来说，为了避免卡常，可以设置一档极限数据除以二的部分分．
+Smaller data ranges should generally be set in multiple levels. Even if you cannot think of a solution with a certain complexity, you can still consider assigning one level of points to that complexity. Generally speaking, to avoid constant-factor hacking, you can set one partial-score level at half of the maximum data limit.
 
-「数据有梯度」最好用多档部分分替代．
+"Gradient data" is preferably replaced by multiple levels of partial scores.
 
-特殊性质部分分的设置要依具体题目而定．理想的特殊性质部分分应当是能够引导选手思考正解的．与较小数据范围部分分不同，在你不会针对某种特殊性质的做法时，最好不要给这种特殊性质一档分．例如：[「CTS2019」随机立方体](https://loj.ac/problem/3119) 的 $k=1$ 这档部分分在讲题时就被很多人吐槽，称这档部分分妨碍了思考正解．
+The setting of partial scores for special properties depends on the specific problem. An ideal special-property partial score should guide contestants toward thinking about the intended solution. Unlike partial scores for smaller data ranges, if you do not know a solution for a certain special property, it is best not to assign a score level to that special property. For example, the $k=1$ partial score of [「CTS2019」随机立方体](https://loj.ac/problem/3119) was criticized by many people during the editorial talk, who said this partial score hindered thinking about the intended solution.
 
-如果题目给分方式与默认方式不同（如：在一般的 OI 赛制比赛中绑 subtask 测试），一定要在题面中说明．
+If the scoring method of the problem differs from the default method (for example, using bundled subtask tests in a normal OI-style contest), this must be stated in the problem statement.
 
-不推荐使用「百分之 XX 的数据满足 XX」的说法，尤其是数据范围有多个变量时．例如，「$30\%$ 的数据满足 $n \le 1000$」和「$40\%$ 的数据满足 $m \le 100$」可能描述了 $70\%$ 的数据的性质，也可能只描述了 $40\%$ 数据的性质．一般来说，subtask 或数据范围表格是更好的选择．
+It is not recommended to use statements like "XX percent of the data satisfies XX", especially when the data range has multiple variables. For example, "$30\%$ of the data satisfies $n \le 1000$" and "$40\%$ of the data satisfies $m \le 100$" may describe properties of $70\%$ of the data, or may describe properties of only $40\%$ of the data. Generally speaking, subtasks or data range tables are better choices.
 
-## 造数据
+## Generating Data
 
-数据生成是出题过程中必要的一步，也是对拍时所必需的，掌握一些生成数据的技巧，就能使造数据的过程更加轻松，造出来的数据强度更高．
+Data generation is a necessary step in the problemsetting process and is also required for stress testing. Mastering some data generation techniques can make the data generation process easier and produce stronger data.
 
-### 生成随机数据
+### Generating Random Data
 
-#### 生成随机数
+#### Generating Random Numbers
 
-请参考 [随机函数](../misc/random.md) 页面．
+Please refer to the [random functions](../misc/random.md) page.
 
-需要特别提醒的是，在生成值域比随机函数返回值更大的数时，请 **不要** 使用 `rand() * rand()` 之类的写法，这样的写法生成的随机数非常不均匀．
+It is especially worth reminding that when generating numbers whose value range is larger than the return value range of the random function, please **do not** use code like `rand() * rand()`, because such code generates very non-uniform random numbers.
 
-另外，出题时推荐使用 [testlib](../tools/testlib/generator.md) 来造数据，可以保证在不同平台上同一个种子生成的随机数相同，并且种子会依据命令行参数自动生成．
+In addition, when setting problems, it is recommended to use [testlib](../tools/testlib/generator.md) to generate data. It can ensure that the same seed generates the same random numbers on different platforms, and the seed is automatically generated according to command-line parameters.
 
-#### 生成随机排列
+#### Generating Random Permutations
 
-可以使用 STL 中的 `std::shuffle` 函数，形如 `std::shuffle(a, a + n, rng)`，这里 `rng` 是一个随机数生成器，比如 `std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count())`．
+You can use the STL function `std::shuffle`, in the form `std::shuffle(a, a + n, rng)`, where `rng` is a random number generator, such as `std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count())`.
 
-请 **不要** 使用 `std::random_shuffle`，它在 C++14 中弃用，C++17 中被移除．
+Please **do not** use `std::random_shuffle`; it was deprecated in C++14 and removed in C++17.
 
-#### 生成随机区间
+#### Generating Random Intervals
 
-常见错误方法：在 $[1,n]$ 中随机生成左端点 $l$，再在 $[l, n]$ 中随机生成右端点 $r$．这样的话生成的区间会比较靠右．
+Common incorrect method: randomly generate the left endpoint $l$ in $[1,n]$, then randomly generate the right endpoint $r$ in $[l, n]$. The intervals generated this way will tend to be on the right.
 
-较为正确的方法（推荐做法）：在 $[1, n]$ 中随机生成两个数，取较小的作为左端点，较大的作为右端点．
+A more correct method (recommended): randomly generate two numbers in $[1, n]$, take the smaller one as the left endpoint and the larger one as the right endpoint.
 
-真正均匀随机的方法：在 $[0, n]$ 中生成一个随机数 $x$，若 $x = 0$，再在 $[1, n]$ 中生成一个随机数 $y$，区间为 $[y, y]$；否则按「较为正确的方法」生成．
+The truly uniform random method: generate a random number $x$ in $[0, n]$. If $x = 0$, generate another random number $y$ in $[1, n]$, and the interval is $[y, y]$; otherwise, generate it using the "more correct method".
 
-#### 生成随机树
+#### Generating Random Trees
 
-常用方法是为 $2\sim n$ 的每个节点 $i$ 从 $[1,i-1]$ 中随机选择一个父亲．这样做的话生成的树不是均匀随机的，期望高度为 $O(\log n)$．
+A commonly used method is to randomly choose a parent for each node $i$ from $2\sim n$ in $[1,i-1]$. The tree generated this way is not uniformly random, and its expected height is $O(\log n)$.
 
-还有一种随机方法：从 $[i\cdot low, i\cdot high]$ 中随机选择 $i$ 的父亲．若 $low$ 和 $high$ 设置得当，可以造出强度较高的树．
+Another random method: randomly choose the parent of $i$ from $[i\cdot low, i\cdot high]$. If $low$ and $high$ are set properly, this can generate relatively strong trees.
 
-真正均匀随机的方法是利用 [Prüfer 序列](../graph/prufer.md)，先生成一个随机 Prüfer 序列，再通过序列生成树．这样做的话，树的期望高度为 $O(\sqrt n)$．
+The truly uniform random method is to use a [Prüfer sequence](../graph/prufer.md): first generate a random Prüfer sequence, then generate the tree from the sequence. With this method, the expected height of the tree is $O(\sqrt n)$.
 
-除此之外，可以随机一个排列来给节点重编号/打乱边的顺序．
+In addition, you can randomize a permutation to relabel nodes or shuffle the order of edges.
 
-### 构造数据
+### Constructing Data
 
-#### 区间相关的题目
+#### Interval-Related Problems
 
-常用构造：长度特别小（特殊地，全部为单点）、长度特别大（特殊地，全部为整个序列）．
+Common constructions: very short lengths (especially all single-point intervals), and very long lengths (especially all intervals being the entire sequence).
 
-#### 需要分解因数的题目
+#### Problems Requiring Factorization
 
-可重质因数个数尽量多：$2$ 的幂．
+Maximize the number of prime factors with multiplicity: powers of $2$.
 
-去重后质因数个数尽量多：最小的若干个质数相乘．
+Maximize the number of distinct prime factors: the product of the smallest several primes.
 
-约数尽量多：可以参考 OEIS 上的 [A002182](http://oeis.org/A002182) 数列．
+Maximize the number of divisors: you can refer to the [A002182](http://oeis.org/A002182) sequence on OEIS.
 
-#### 需要求最大公因数的题目
+#### Problems Requiring the Greatest Common Divisor
 
-让需要求最大公因数的两个数为 [斐波那契数列](../math/combinatorics/fibonacci.md) 的相邻两项，可以让欧几里得算法达到最坏时间复杂度．
+Make the two numbers whose greatest common divisor needs to be found adjacent terms of the [Fibonacci sequence](../math/combinatorics/fibonacci.md), which can make the Euclidean algorithm reach its worst-case time complexity.
 
-#### 树上问题
+#### Tree Problems
 
-常用构造：
+Common constructions:
 
--   链
--   菊花
--   完全二叉树
--   将完全二叉树的每个节点替换为一条长为 $\sqrt n$ 的链
--   菊花上挂一条链
--   链上挂一些单点
--   一棵高度为 $d$ 且 $d>1$ 的树的根节点有两个儿子，左子树是一条长为 $d-1$ 的链，右子树是一棵高度为 $d-1$ 的这样的树．
+-   Chain
+-   Star
+-   Complete binary tree
+-   Replace every node of a complete binary tree with a chain of length $\sqrt n$
+-   Attach a chain to a star
+-   Attach some single nodes to a chain
+-   The root of a tree of height $d$ with $d>1$ has two children: the left subtree is a chain of length $d-1$, and the right subtree is such a tree of height $d-1$.
 
-如果不是在考场上，还可以使用 [Tree-Generator](https://github.com/ouuan/Tree-Generator) 来生成各种各样的树．
+If not in an exam room, you can also use [Tree-Generator](https://github.com/ouuan/Tree-Generator) to generate all kinds of trees.
 
-### 批量生成数据
+### Batch Data Generation
 
-笔者推荐使用命令行参数 + bat/sh 的方法．
+The author recommends using command-line arguments + bat/sh scripts.
 
-例如：
+For example:
 
 `gen.cpp`:
 
@@ -377,12 +377,12 @@ int main(int argc, char* argv[]) {
   for (i = 1; i <= n; ++i) p.push_back(i);
 
   shuffle(p.begin(), p.end());
-  // 使用 rnd.next() 进行 shuffle
+  // Use rnd.next() for shuffle
 
   printf("%d %d %d\n", n, m, k);
   for (i = 0; i < n; ++i) {
     printf("%d%c", p[i], " \n"[i == n - 1]);
-    // 把字符串当作数组用，中间空格，末尾换行，是一个造数据时常用的技巧
+    // Using a string as an array, with spaces in the middle and a newline at the end, is a common trick when generating data
   }
 
   return 0;
@@ -399,199 +399,199 @@ gen 2000 1000 > 4.in
 gen 100000 100000 > 5.in
 ```
 
-这样做的好处是，对于不同的数据只需要写一个 generator，并且可以方便地修改某个测试点的参数．
+The advantage of this approach is that for different data, you only need to write one generator, and you can conveniently modify the parameters of a certain test point.
 
-### 造数据的要求
+### Requirements for Data Generation
 
-数据应当包含各个参数的最小值和最大值．
+The data should include the minimum and maximum values of every parameter.
 
-数据应当包含各种边角情况．
+The data should include various corner cases.
 
-在使用 subtask 时，数据（包括输入、输出）最好覆盖到值域中的各个范围，而不是只有数据范围的最大值．
+When using subtasks, the data (including input and output) should preferably cover every range in the value domain, rather than only the maximum values of the data ranges.
 
-为了防止针对特殊构造的特判过掉，可以将不同的构造结合在一个测试点中，或者数据的大部分是构造，掺杂小部分的随机．
+To prevent special-case checks targeting special constructions from passing, you can combine different constructions in one test point, or make most of the data constructed and mix in a small amount of randomness.
 
-数据中应当包含各种各样的构造，即使你不知道什么错解会挂在这组构造上．（在按测试点给分的赛制中需要酌情处理．）
+The data should include all kinds of constructions, even if you do not know what wrong solution will fail on this construction. (Handle this at your discretion in contest systems that score by test point.)
 
-当然，如果你已知一个（正常人能想的到、写的出的）正确性有问题的错解，要尽量卡掉它．
+Of course, if you know of a wrong solution with correctness issues that a normal person could think of and write, you should try to hack it.
 
-需要特别提醒的是，如果有整型溢出的可能，一定要卡掉会溢出的做法．在有部分分的赛制中，不应使不开 long long 的人得到和暴力一样甚至更低的分数．
+It is especially worth reminding that if integer overflow is possible, you must hack solutions that overflow. In contest systems with partial scores, contestants who do not use long long should not receive the same score as brute force or even a lower score.
 
-如果有 pretests，pretests 应尽量强，（同时尽量少）．换言之，你需要在 pretests 中（用尽量少的数据组数）包含该题的所有已知叉点．
+If there are pretests, the pretests should be as strong as possible (while being as few as possible). In other words, you need to include all known pitfalls of the problem in the pretests using as few test cases as possible.
 
-如果你希望出现少量而非没有 FST，仍然应当保证 pretests 的强度，因为实际比赛中很可能出现你意想不到的错误，导致远远高出预期的 FST 数量．
+If you want there to be a small number of FSTs rather than none, you should still ensure the strength of the pretests, because many unexpected mistakes may appear in the actual contest, causing the number of FSTs to be far higher than expected.
 
-### 数据的格式
+### Data Format
 
-这里提供一些通常情况下输入数据的格式要求，可作为一般情况下的参考：
+Here are some general input data format requirements, which can serve as a general reference:
 
-> 1.  使用测试环境下的换行格式．
-> 2.  文件最后一行的末尾有换行符，即整个文件的最后一个字符需要是 `\n`．
-> 3.  任何一行的开头和末尾都没有空白字符．
-> 4.  连续的空格不超过 1 个．
+> 1.  Use the newline format of the testing environment.
+> 2.  The last line of the file ends with a newline character; that is, the last character of the entire file needs to be `\n`.
+> 3.  There are no whitespace characters at the beginning or end of any line.
+> 4.  Consecutive spaces do not exceed 1.
 
-在 Windows 环境下生成的数据，其换行格式通常为 `\r\n`，而主流测评系统均在 Linux 环境下运行，其换行格式为 `\n`．若在 Linux 环境下读入 Windows 格式的换行数据，可能会导致读入字符串时换行处理异常，进而导致不同环境下程序运行结果不同；若在 Linux 环境下比较 Linux 环境下生成的输出和 Windows 环境下生成的标准输出，可能由于换行格式不同而导致比较存在差异．为了保持程序行为一致，所有数据的换行格式必须转换为程序运行环境下的换行格式．
+Data generated in a Windows environment usually uses `\r\n` as its newline format, while mainstream judging systems all run in Linux environments and use `\n` as their newline format. If Windows-format newline data is read in a Linux environment, it may cause abnormal newline handling when reading strings, which can in turn cause different program results in different environments. If output generated in a Linux environment is compared with standard output generated in a Windows environment in Linux, differences may occur due to different newline formats. To keep program behavior consistent, the newline format of all data must be converted to the newline format of the program's running environment.
 
-一般可以通过如下方式生成 Linux 格式换行的数据：
+Generally, data with Linux-format newlines can be generated in the following ways:
 
-1.  直接使用 Linux 环境生成数据．
-2.  通过 [`dos2unix`](https://dos2unix.sourceforge.io/) 工具对输入输出文件进行转换，此工具包含于 Cygwin, MinGW 等工具链中．
-3.  使用二进制方式打开输出文件，并且使用 `\n` 换行格式．
-4.  参考 [此页面](https://help.luogu.com.cn/manual/luogu/problem/testcase-format#附录windows-环境下造数据注意事项) 中 `dos2unix.cpp` 代码自行编写工具．
+1.  Generate data directly in a Linux environment.
+2.  Use the [`dos2unix`](https://dos2unix.sourceforge.io/) tool to convert input and output files. This tool is included in toolchains such as Cygwin and MinGW.
+3.  Open the output file in binary mode and use the `\n` newline format.
+4.  Refer to the `dos2unix.cpp` code on [this page](https://help.luogu.com.cn/manual/luogu/problem/testcase-format#附录windows-环境下造数据注意事项) and write a tool yourself.
 
 ## Special Judge
 
-[SPJ 编写教程](../tools/special-judge.md)
+[SPJ Writing Tutorial](../tools/special-judge.md)
 
-输出方案题和输出浮点数题是两种较为常见的需要使用 SPJ 的题型，其它题目视情况也需要使用 SPJ．在 CF 上，所有题目都必须使用基于 testlib 的 checker，例如：题目要求输出若干个整数时，使用 testlib 自带的 ncmp checker，选手可以任意输出空白字符（既可以空格也可以换行）．
+Problems that output a construction and problems that output floating-point numbers are two common types of problems that need SPJ. Other problems may also need SPJ depending on the situation. On CF, all problems must use a testlib-based checker. For example, when the problem requires outputting several integers, use testlib's built-in ncmp checker; contestants may output whitespace arbitrarily (either spaces or newlines).
 
-checker 一般使用 testlib 编写．由于 checker 要应对各种各样的不合法输出，需要极强的鲁棒性，不使用 testlib 是很难写好 checker 的．
+Checkers are generally written using testlib. Since a checker must handle all kinds of invalid output, it needs very strong robustness; without testlib, it is very hard to write a good checker.
 
-编写 checker 需要注意以下两点：
+Pay attention to the following two points when writing a checker:
 
-1.  你需要应对各种不合法的输出，因此，请检查读入的每个变量是否在合法范围中（`readInt(minvalue, maxvalue)`）．例如：读入一个在 check 过程中会作为数组下标的变量时必须检查其范围，否则可能引发数组越界，有时这会导致 RE，有时则可能判为 AC．
-2.  原则上 checker 中不应检查空白字符（即，不应使用 `readSpace()`、`readEoln()`、`readEof()`，值得一提的是，testlib 会自动检查是否有多余的输出）．
+1.  You need to handle all kinds of invalid output, so please check whether every variable read is within the valid range (`readInt(minvalue, maxvalue)`). For example, when reading a variable that will be used as an array index during checking, you must check its range; otherwise, it may cause an out-of-bounds array access, which sometimes leads to RE and sometimes may be judged as AC.
+2.  In principle, a checker should not check whitespace characters (that is, it should not use `readSpace()`, `readEoln()`, or `readEof()`; it is worth mentioning that testlib automatically checks whether there is extra output).
 
-## 题解
+## Editorial
 
-题解的目标是让预计会来参加比赛的人都能看懂．所以官方题解详细程度的要求会比一般的题解高．
+The goal of an editorial is to let everyone expected to participate in the contest understand it. Therefore, the required level of detail for official editorials is higher than that for ordinary editorials.
 
-### 关于部分分
+### About Partial Scores
 
-在有部分分的题目中，题解里可以考虑写一写部分分的做法．
+For problems with partial scores, the editorial can consider describing the partial-score solutions.
 
-### 关于知识点
+### About Knowledge Points
 
-解题中用到的知识点应当明确指出．对于一些难度和题目难度相当的知识点，最好给出学习该知识点的资料（比如一篇博客的地址）．
+Knowledge points used in the solution should be clearly stated. For knowledge points whose difficulty is comparable to the problem difficulty, it is best to provide materials for learning them (such as a blog URL).
 
-### 关于定义
+### About Definitions
 
-题解中不要凭空冒出来一些概念．
+Do not introduce concepts out of nowhere in the editorial.
 
-例如：dp 的题解要解释清楚状态的定义．
+For example, an editorial for a dp problem should clearly explain the definition of the states.
 
-### 关于细节
+### About Details
 
-具体的实现细节如果比较巧妙最好写出来，否则的话「详见代码」也是可以的．如果「详见代码」的话，最好在代码中加上一定的注释．
+If specific implementation details are clever, it is best to write them out. Otherwise, "see the code for details" is also acceptable. If you say "see the code for details", it is best to add some comments in the code.
 
-### 标程
+### Standard Solution
 
-标程中最好去掉冗余部分．比如，有的题解中保留了完整的 define 模板（为了提高做题速度，包含大量 define 与常用函数，常用于 CF 等在线比赛），并且其中很大一部分都没有用到，这是不好的．
+Redundant parts should preferably be removed from the standard solution. For example, some editorials keep a complete define template (used to improve problem-solving speed, containing many defines and common functions, and often used in online contests such as CF), while a large part of it is unused. This is bad.
 
-如果涉及到一些题解中没有详细说明的实现细节，最好加上适量的注释．
+If there are implementation details not described in detail in the editorial, it is best to add an appropriate amount of comments.
 
-## 比赛
+## Contest
 
-### 比赛通知中的题目难度需真实
+### Problem Difficulty in Contest Announcements Must Be Truthful
 
 > Remember that authors tend to underestimate the difficulty of their problems.
 >
-> ——Codeforces PROPOSE A PROBLEM 页面的提醒
+> --Reminder on the Codeforces PROPOSE A PROBLEM page
 
-出题人很可能错误估计题目的难度，因此，如果要在比赛通知中写上比赛难度，需要谨慎考虑，最好提前请人来验题并进行评估．
+Problem setters are very likely to misjudge the difficulty of their problems. Therefore, if you want to write the contest difficulty in the contest announcement, you need to consider it carefully, and it is best to ask others to test the problems and evaluate them in advance.
 
-### 题目难度的分配
+### Distribution of Problem Difficulty
 
-在类国内 OI 的模拟赛中，往往是三道题的整体难度与比赛难度相当即可．
+In mock contests similar to domestic OI, it is usually enough for the overall difficulty of the three problems to match the contest difficulty.
 
-在类 CF/ATC 这种线上赛的比赛中，需要尽量保证难度的递增（虽然由于对难度的误估很多时候都并不能真正做到），并且尽量避免出现大的 difficulty gap．可以通过把一题分为难易两题（两个 subtask）来减少 difficulty gap，但是分 subtask 需要谨慎考虑，也有很多人不喜欢 CF 赛制中的 subtask（[Are subtasks evil?](https://codeforces.com/blog/entry/71700)），原因包括但不限于：
+In online contests similar to CF/ATC, you need to try to ensure increasing difficulty (although due to misestimation of difficulty this often cannot truly be achieved), and try to avoid large difficulty gaps. You can reduce a difficulty gap by splitting one problem into an easier problem and a harder problem (two subtasks). However, splitting into subtasks needs careful consideration, and many people dislike subtasks in the CF system ([Are subtasks evil?](https://codeforces.com/blog/entry/71700)), for reasons including but not limited to:
 
--   由于赛制原因，可能先做 easy version 再做 hard version 罚时更少而总分更高
--   subtask 的赋分往往与题目难度不成正比
--   很多时候 easy version 的题目并不是一道合格的题目（不有趣）
--   很多时候 easy version 的解法对于思考 hard version 的正解没有帮助
+-   Because of the contest system, solving the easy version first and then the hard version may incur less penalty time and yield a higher total score
+-   The scores assigned to subtasks are often not proportional to problem difficulty
+-   In many cases, the easy version is not a qualified problem (not interesting)
+-   In many cases, the solution to the easy version does not help with thinking about the intended solution of the hard version
 
-### 题目知识点的分配
+### Distribution of Problem Knowledge Points
 
-一场比赛应尽量涵盖较广的知识点（专题训练赛当然除外）．
+A contest should cover as broad a range of knowledge points as possible (topic-based training contests are of course excluded).
 
-经典反例：涵盖了动态规划、期望、组合计数、容斥原理、多项式等多种知识点的 CTS2019．
+Classic counterexample: CTS2019, which covered dynamic programming, expectation, combinatorial counting, inclusion-exclusion, polynomials, and many other knowledge points.
 
-> 我要从五道题里选六道，我也很无奈啊．
+> I have to choose six problems from five; I am helpless too.
 >
-> ——CTS2019 组题人给出的理由，没有收到足够多的题目投稿
+> --Reason given by the CTS2019 problem selection team: they did not receive enough problem submissions
 
-## 出题平台
+## Problemsetting Platforms
 
 ### Polygon
 
-Polygon 是一个功能非常强大的多人合作出题平台，可以作为在任何网站（使用 package 功能导出到不支持 Polygon 的网站）多人合作出题的首选方案，单人出题（尤其是在不同设备上出题）时也是很不错的选择，使用方法参见 [Polygon 简介](../tools/polygon.md)．
+Polygon is a very powerful collaborative problemsetting platform. It can be the first choice for collaborative problemsetting on any website (using the package feature to export to websites that do not support Polygon), and it is also a good choice for solo problemsetting (especially when working on different devices). For usage, see [Introduction to Polygon](../tools/polygon.md).
 
 ### Codeforces
 
-Codeforces 是全球最著名的算法竞赛网站之一，题目质量较高，非常适合有一定出题经验并且想进一步提升出题水平、想要出一套高质量题目的出题人．不足之处是审核速度较慢（一般要几个月），但你也可以在审核期间就开始题目的准备（虽然有题目被否掉导致准备白费了的风险）．
+Codeforces is one of the world's most famous algorithm contest websites. Its problem quality is high, making it very suitable for problem setters who already have some problemsetting experience and want to further improve their problemsetting level or create a high-quality problemset. Its downside is slow review speed (usually several months), but you can also start preparing the problems during review (although there is a risk that a problem is rejected and the preparation is wasted).
 
-#### 出题资格
+#### Eligibility to Set Problems
 
--   蓝名且参加过至少 25 场 rated 比赛；
--   紫名且参加过至少 15 场 rated 比赛；
--   橙名且参加过至少 5 场 rated 比赛；
--   红名或黑红名．
+-   Blue name and participation in at least 25 rated contests;
+-   Violet name and participation in at least 15 rated contests;
+-   Orange name and participation in at least 5 rated contests;
+-   Red name or legendary grandmaster.
 
-#### 提交比赛申请
+#### Submit a Contest Application
 
-有了出题资格后，在侧边栏可以看到 [Propose a contest/problems](http://codeforces.com/proposals/new-contest) 按钮．
+After obtaining problemsetting eligibility, you can see the [Propose a contest/problems](http://codeforces.com/proposals/new-contest) button in the sidebar.
 
-点进去之后，先写一份 contest proposal（在 PROPOSE A CONTEST 里写），然后再写 problem proposal 并添加进比赛里．
+After entering, first write a contest proposal (in PROPOSE A CONTEST), then write problem proposals and add them to the contest.
 
-题目决定好之后，就可以将 contest proposal open to review（提交审核）了．
+After the problems are decided, you can open the contest proposal to review (submit it for review).
 
-#### 在 Polygon 上准备题目
+#### Prepare Problems on Polygon
 
-参考 [Polygon 简介](../tools/polygon.md)．
+Refer to [Introduction to Polygon](../tools/polygon.md).
 
-#### 与管理之间的联系
+#### Contact with Coordinators
 
-与管理联系有两个作用：
+Contacting coordinators has two purposes:
 
-1.  加快审核速度．
-2.  进入准备阶段后管理会提供建议和帮助．
+1.  Speeding up the review.
+2.  After entering the preparation stage, coordinators will provide suggestions and help.
 
-正规的联系方式是在 proposal system 中以 proposal 的形式提交申请，管理开始审核之后以 comment 的形式在 proposal 的下方进行讨论．
+The formal contact method is to submit an application in the proposal system as a proposal, and after coordinators start reviewing, discuss below the proposal in the form of comments.
 
-实际上，如果 proposal 长时间没有过审，可以考虑私信联系管理（其实 CF 上写了 "Don't send private messages or emails to coordinators"，但 300iq 在 [评论](http://codeforces.com/blog/entry/64077#comment-478933) 中表示可以私信他）．
+In practice, if a proposal has not been approved for a long time, you can consider privately messaging a coordinator (CF actually says "Don't send private messages or emails to coordinators", but 300iq said in a [comment](http://codeforces.com/blog/entry/64077#comment-478933) that you can privately message him).
 
 ### Comet OJ
 
-[Comet OJ 链接](https://www.cometoj.com/)
+[Comet OJ link](https://www.cometoj.com/)
 
-已经不再活跃（截至 2021 年 11 月，最后一场比赛是 2020 年 1 月的）．
+No longer active (as of November 2021, the last contest was in January 2020).
 
-出题申请：<https://info.cometoj.com/contests/Questionnaire_IssuerInfo/>
+Problemsetting application: <https://info.cometoj.com/contests/Questionnaire_IssuerInfo/>
 
 ### CodeChef
 
-印度的算法竞赛平台，有三种赛制：10 天且带 challenge 的 Long Challenge，2.5h 类 ICPC 的 Cook-Off，3h 类 IOI 的 LunchTime．
+An Indian algorithm contest platform with three contest formats: the 10-day Long Challenge with challenges, the 2.5h ICPC-style Cook-Off, and the 3h IOI-style LunchTime.
 
-出题 FAQ：<https://www.codechef.com/wiki/faq-problem-setters>
+Problemsetting FAQ: <https://www.codechef.com/wiki/faq-problem-setters>
 
-出题指南：<https://www.codechef.com/problemsetting>
+Problemsetting guide: <https://www.codechef.com/problemsetting>
 
 ### AtCoder
 
-日本的算法竞赛平台，出题联系方式：<contest@atcoder.jp>．
+A Japanese algorithm contest platform. Problemsetting contact: <contest@atcoder.jp>.
 
 ### UOJ & LOJ
 
-比赛不多的国内 OJ．
+Domestic OJs with few contests.
 
-### 洛谷
+### Luogu
 
-参与出题工作人员需要有一定的奖项认证等级，创建比赛后由负责人在 [工单系统](https://www.luogu.com.cn/ticket) 中提交申请．
+Staff participating in problemsetting need a certain award certification level. After creating a contest, the responsible person submits an application in the [ticket system](https://www.luogu.com.cn/ticket).
 
-公开赛规范：<https://help.luogu.com.cn/rules/academic/opencontest-standard>
+Open contest standard: <https://help.luogu.com.cn/rules/academic/opencontest-standard>
 
-## 参考资料
+## References
 
 1.  [vfk《UOJ 精神之源流》][1]
 
 2.  [王天懿《论偏题的危害》][2]
 
-3.  [CF 出题人须知][3]（[国内可访问的图片版](https://github.com/OI-wiki/libs/blob/master/topic/rules.jpg)）
+3.  [Guidelines for CF problem setters][3] ([image version accessible in China](https://github.com/OI-wiki/libs/blob/master/topic/rules.jpg))
 
 4.  [CF 出题人的自我修养][4]
 
-本文由作者本人自 [ouuan 的出题规范](https://ouuan.github.io/post/ouuan-的出题规范/) 搬运而来并有所修改、补充．
+This article was moved by the author from [ouuan 的出题规范](https://ouuan.github.io/post/ouuan-的出题规范/) and modified and supplemented.
 
 [1]: https://vfleaking.blog.uoj.ac/blog/909 "vfk《UOJ 精神之源流》"
 

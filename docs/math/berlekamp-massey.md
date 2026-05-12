@@ -1,57 +1,57 @@
 author: AntiLeaf
 
-Berlekamp–Massey 算法是一种用于求数列的最短递推式的算法．给定一个长为 $n$ 的数列，如果它的最短递推式的阶数为 $m$，则 Berlekamp–Massey 算法能够在 $O(nm)$ 时间内求出数列的每个前缀的最短递推式．最坏情况下 $m = O(n)$，因此算法的最坏复杂度为 $O(n^2)$．
+The Berlekamp-Massey algorithm is an algorithm for finding the shortest linear recurrence relation of a sequence. Given a sequence of length $n$, if the shortest linear recurrence relation has order $m$, then the Berlekamp-Massey algorithm can find the shortest linear recurrence relation for each prefix of the sequence in $O(nm)$ time. In the worst case $m = O(n)$, so the worst-case time complexity is $O(n^2)$.
 
-### 定义
+### Definitions
 
-定义一个数列 $\{a_0 \dots a_{n - 1} \}$ 的递推式为满足下式的序列 $\{r_0\dots r_m\}$：
+Define a recurrence relation of a sequence $\{a_0 \dots a_{n - 1}\}$ as a sequence $\{r_0\dots r_m\}$ satisfying:
 
 $\sum_{j = 0} ^ m r_j a_{i - j} = 0, \forall i \ge m$
 
-其中 $r_0 = 1$．$m$ 称为该递推式的 **阶数**．
+where $r_0 = 1$. $m$ is called the **order** of the recurrence relation.
 
-数列 $\{a_i\}$ 的最短递推式即为阶数最小的递推式．
+The shortest linear recurrence relation of sequence $\{a_i\}$ is the recurrence relation with the smallest order.
 
-### 做法
+### Algorithm
 
-与上面定义的稍有不同，这里定义一个新的递推系数 $\{f_0 \dots f_{m - 1}\}$，满足：
+Slightly different from the definition above, we define a new set of recurrence coefficients $\{f_0 \dots f_{m - 1}\}$ satisfying:
 
 $a_i = \sum_{j = 0} ^ {m - 1} f_j a_{i - j - 1}, \forall i \ge m$
 
-容易看出 $f_i = -r_{i + 1}$，并且阶数 $m$ 与之前的定义是相同的．
+It is easy to see that $f_i = -r_{i + 1}$, and the order $m$ is the same as in the previous definition.
 
-我们可以增量地求递推式，按顺序考虑 $\{a_i\}$ 的每一位，并在递推结果出现错误时对递推系数 $\{f_i\}$ 进行调整．方便起见，以下将前 $i$ 位的最短递推式记为 $F_i = \{f_{i, j}\}$．
+We can compute the recurrence relation incrementally by considering each element of $\{a_i\}$ in order and adjusting the recurrence coefficients $\{f_i\}$ whenever the recurrence result becomes incorrect. For convenience, denote the shortest recurrence relation of the first $i$ elements as $F_i = \{f_{i, j}\}$.
 
-显然初始时有 $F_0 = \{\}$．假设递推系数 $F_{i - 1}$ 对数列 $\{a_i\}$ 的前 $i - 1$ 项均成立，这时对第 $i$ 项就有两种情况：
+Obviously, initially $F_0 = \{\}$. Assuming the recurrence coefficients $F_{i - 1}$ hold for the first $i - 1$ elements of sequence $\{a_i\}$, there are two cases for the $i$-th element:
 
-1.  递推系数对 $a_i$ 也成立，这时不需要进行任何调整，直接令 $F_i = F_{i - 1}$ 即可．
-2.  递推系数对 $a_i$ 不成立，这时需要对 $F_{i - 1}$ 进行调整，得到新的 $F_i$．
+1.  The recurrence coefficients also hold for $a_i$, in which case no adjustment is needed and we can simply set $F_i = F_{i - 1}$.
+2.  The recurrence coefficients do not hold for $a_i$, in which case we need to adjust $F_{i - 1}$ to get a new $F_i$.
 
-设 $\Delta_i = a_i - \sum_{j = 0} ^ m f_{i - 1, j} a_{i - j - 1}$，即 $a_i$ 与 $F_{i - 1}$ 的递推结果的差值．
+Let $\Delta_i = a_i - \sum_{j = 0} ^ m f_{i - 1, j} a_{i - j - 1}$, which is the difference between $a_i$ and the recurrence result from $F_{i - 1}$.
 
-如果这是第一次对递推系数进行修改，则说明 $a_i$ 是序列中的第一个非零项．这时直接令 $F_i$ 为 $i$ 个 $0$ 即可，显然这是一个合法的最短递推式．
+If this is the first time modifying the recurrence coefficients, it means $a_i$ is the first non-zero element in the sequence. In this case, simply set $F_i$ to $i$ zeros, which is obviously a valid shortest recurrence relation.
 
-否则设上一次对递推系数进行修改时，已考虑的 $\{a_i\}$ 的项数为 $k$．如果存在一个序列 $G = \{g_0 \dots g_{m' - 1}\}$，满足：
+Otherwise, let $k$ be the number of elements of $\{a_i\}$ that had been considered when the recurrence coefficients were last modified. If there exists a sequence $G = \{g_0 \dots g_{m' - 1}\}$ satisfying:
 
 $\sum_{j = 0} ^ {m' - 1} g_j a_{i' - j - 1} = 0, \forall i' \in [m', i)$
 
-并且 $\sum_{j = 0} ^ {m' - 1} g_j a_{i - j - 1} = \Delta_i$，那么不难发现将 $F_k$ 与 $G$ 按位分别相加之后即可得到一个合法的递推系数 $F_i$．
+and $\sum_{j = 0} ^ {m' - 1} g_j a_{i - j - 1} = \Delta_i$, then it is easy to see that adding $F_k$ and $G$ element-wise yields a valid recurrence coefficient $F_i$.
 
-考虑如何构造 $G$．一种可行的构造方案是令
+Consider how to construct $G$. One valid construction is
 
 $G = \{0, 0, \dots, 0, \frac{\Delta_i}{\Delta_k}, -\frac{\Delta_i}{\Delta_k}F_{k-1}\}$
 
-其中前面一共有 $i - k - 1$ 个 $0$，且最后的 $-\frac{\Delta_i}{\Delta_k} F_{k-1}$ 表示将 $F_{k-1}$ 每项乘以 $-\frac{\Delta_i}{\Delta_k}$ 后接在序列后面．
+where there are $i - k - 1$ zeros at the beginning, and $-\frac{\Delta_i}{\Delta_k} F_{k-1}$ means multiplying each term of $F_{k-1}$ by $-\frac{\Delta_i}{\Delta_k}$ and appending it to the end of the sequence.
 
-不难验证此时 $\sum_{j = 0} ^ {m' - 1} g_j a_{i - j - 1} = \Delta_k \frac{\Delta_i}{\Delta_k} = \Delta_i$，因此这样构造出的是一个合法的 $G$．将 $F_i$ 赋值为 $F_k$ 与 $G$ 逐项相加后的结果即可．
+It is easy to verify that $\sum_{j = 0} ^ {m' - 1} g_j a_{i - j - 1} = \Delta_k \frac{\Delta_i}{\Delta_k} = \Delta_i$, so this construction yields a valid $G$. We can then set $F_i$ to the element-wise sum of $F_k$ and $G$.
 
-如果要求的是符合最开始定义的递推式 $\{r_i\}$，则将 $\{f_j\}$ 全部取相反数后在最开始插入 $r_0 = 1$ 即可．
+If the recurrence relation $\{r_i\}$ from the original definition is needed, simply negate all $\{f_j\}$ and insert $r_0 = 1$ at the beginning.
 
-从上述算法流程中可以看出，如果数列的最短递推式的阶数为 $m$，则算法的复杂度为 $O(nm)$．最坏情况下 $m = O(n)$，因此算法的最坏复杂度为 $O(n^2)$．
+From the algorithm described above, if the shortest linear recurrence relation of the sequence has order $m$, then the algorithm's complexity is $O(nm)$. In the worst case $m = O(n)$, so the worst-case complexity is $O(n^2)$.
 
-在实现算法时，由于每次调整递推系数时都只需要用到上次调整时的递推系数 $F_k$，因此如果只需要求整个数列的最短递推式，可以只存储当前递推系数和上次调整时的递推系数，空间复杂度为 $O(n)$．
+When implementing the algorithm, since each adjustment of the recurrence coefficients only requires the recurrence coefficients from the previous adjustment $F_k$, if we only need to find the shortest recurrence relation for the entire sequence, we can just store the current recurrence coefficients and the recurrence coefficients from the last adjustment, giving a space complexity of $O(n)$.
 
-??? note "参考实现"
+??? note "Reference Implementation"
     ```cpp
     vector<int> berlekamp_massey(const vector<int> &a) {
       vector<int> v, last;  // v is the answer, 0-based, p is the module
@@ -99,67 +99,67 @@ $G = \{0, 0, \dots, 0, \frac{\Delta_i}{\Delta_k}, -\frac{\Delta_i}{\Delta_k}F_{k
     }
     ```
 
-朴素的 Berlekamp–Massey 算法求解的是有限项数列的最短递推式．如果待求递推式的序列有无限项，但已知最短递推式的阶数上界，则只需取出序列的前 $2m$ 项即可求出整个序列的最短递推式．（证明略）
+The naive Berlekamp-Massey algorithm finds the shortest linear recurrence relation for a finite-length sequence. If the sequence to find the recurrence relation for has infinitely many terms but the upper bound of the order of the shortest recurrence relation is known, we only need to take the first $2m$ terms of the sequence to find the shortest recurrence relation for the entire sequence. (Proof omitted)
 
-### 应用
+### Applications
 
-由于 Berlekamp–Massey 算法的数值稳定性比较差，在处理实数问题时一般很少使用．为了叙述方便，以下均假定在某个质数 $p$ 的剩余系下进行运算．
+Since the Berlekamp-Massey algorithm has relatively poor numerical stability, it is rarely used when dealing with real numbers. For the sake of exposition, we assume all operations are performed in the residue field of a prime $p$.
 
-#### 求向量列或矩阵列的最短递推式
+#### Finding the shortest linear recurrence relation for a vector sequence or matrix sequence
 
-如果要求向量列 $\boldsymbol{v}_i$ 的最短递推式，设向量的维数为 $n$，我们可以随机一个 $n$ 维行向量 $\mathbf u^T$，并计算标量序列 $\{\boldsymbol{u}^T\boldsymbol{v}_i\}$ 的最短递推式．由 Schwartz–Zippel 引理，二者的最短递推式有至少 $1 - \frac n p$ 的概率相同．
+To find the shortest linear recurrence relation of a vector sequence $\boldsymbol{v}_i$, let the dimension of the vector be $n$. We can randomly select an $n$-dimensional row vector $\mathbf u^T$ and compute the shortest linear recurrence relation of the scalar sequence $\{\boldsymbol{u}^T\boldsymbol{v}_i\}$. By the Schwartz-Zippel lemma, the two shortest linear recurrence relations are the same with probability at least $1 - \frac n p$.
 
-求矩阵列 $\{A_i\}$ 的最短递推式也是类似的，设矩阵的大小为 $n \times m$，则只需随机一个 $1 \times n$ 的行向量 $\mathbf u^T$ 和一个 $m \times 1$ 的列向量 $\boldsymbol{v}$，并计算标量序列 $\{\boldsymbol{u}^T A_i \boldsymbol{v}\}$ 的最短递推式即可．由 Schwartz–Zippel 引理可以类似地得到二者相同的概率至少为 $1 - \frac{n + m} p$．
+Finding the shortest linear recurrence relation for a matrix sequence $\{A_i\}$ is similar. Let the size of the matrix be $n \times m$. We only need to randomly select a $1 \times n$ row vector $\mathbf u^T$ and an $m \times 1$ column vector $\boldsymbol{v}$, and compute the shortest linear recurrence relation of the scalar sequence $\{\boldsymbol{u}^T A_i \boldsymbol{v}\}$. By the Schwartz-Zippel lemma, we can similarly obtain that the two are the same with probability at least $1 - \frac{n + m} p$.
 
-#### 优化矩阵快速幂
+#### Optimizing matrix exponentiation
 
-设 $\boldsymbol{f}_i$ 是一个 $n$ 维列向量，并且转移满足 $\boldsymbol{f}_i = A \boldsymbol{f}_{i - 1}$，则可以发现 $\{\boldsymbol{f}_i\}$ 是一个不超过 $n$ 阶的线性递推向量列．（证明略）
+Let $\boldsymbol{f}_i$ be an $n$-dimensional column vector, and the transition satisfies $\boldsymbol{f}_i = A \boldsymbol{f}_{i - 1}$. Then we can see that $\{\boldsymbol{f}_i\}$ is a linear recurrence vector sequence of order at most $n$. (Proof omitted)
 
-我们可以直接暴力求出 $\boldsymbol{f}_0 \dots \boldsymbol{f}_{2n - 1}$，然后用前面提到的做法求出 $\{\boldsymbol{f}_i\}$ 的最短递推式，再调用 [常系数齐次线性递推](./poly/linear-recurrence.md) 即可．
+We can directly compute $\boldsymbol{f}_0 \dots \boldsymbol{f}_{2n - 1}$ by brute force, then use the method described above to find the shortest linear recurrence relation of $\{\boldsymbol{f}_i\}$, and finally invoke [linear recurrence with constant coefficients](./poly/linear-recurrence.md).
 
-如果要求的向量是 $\boldsymbol{f}_m$，则算法的复杂度是 $O(n^3 + n\log n \log m)$．如果 $A$ 是一个只有 $k$ 个非零项的稀疏矩阵，则复杂度可以降为 $O(nk + n\log n \log m)$．但由于算法至少需要 $O(nk)$ 的时间预处理，因此在压力不大的情况下也可以使用 $O(n^2 \log m)$ 的线性递推算法，复杂度同样是可以接受的．
+If the vector we need is $\boldsymbol{f}_m$, the complexity of the algorithm is $O(n^3 + n\log n \log m)$. If $A$ is a sparse matrix with only $k$ non-zero entries, the complexity can be reduced to $O(nk + n\log n \log m)$. However, since the algorithm requires at least $O(nk)$ time for preprocessing, the linear recurrence algorithm with $O(n^2 \log m)$ can also be used when the pressure is not too high, and the complexity is still acceptable.
 
-#### 求矩阵的最小多项式
+#### Finding the minimal polynomial of a matrix
 
-方阵 $A$ 的最小多项式是次数最小的并且满足 $f(A) = 0$ 的多项式 $f$．
+The minimal polynomial of a square matrix $A$ is the polynomial $f$ with the smallest degree such that $f(A) = 0$.
 
-实际上最小多项式就是 $\{A^i\}$ 的最小递推式，所以直接调用 Berlekamp–Massey 算法就可以了．如果 $A$ 是一个 $n$ 阶方阵，则显然最小多项式的次数不超过 $n$．
+In fact, the minimal polynomial is exactly the shortest linear recurrence relation of $\{A^i\}$, so we can directly call the Berlekamp-Massey algorithm. If $A$ is an $n \times n$ matrix, the degree of the minimal polynomial is obviously at most $n$.
 
-瓶颈在于求出 $A^i$，因为如果直接每次做矩阵乘法的话复杂度会达到 $O(n^4)$．但考虑到求矩阵列的最短递推式时实际上求的是 $\{\boldsymbol{u}^T A^i \boldsymbol{v}\}$ 的最短递推式，因此我们只要求出 $A^i \boldsymbol{v}$ 就行了．
+The bottleneck is computing $A^i$, because if we directly perform matrix multiplication each time, the complexity reaches $O(n^4)$. However, considering that when finding the shortest linear recurrence relation of a matrix sequence, we are actually finding the shortest linear recurrence relation of $\{\boldsymbol{u}^T A^i \boldsymbol{v}\}$, we only need to compute $A^i \boldsymbol{v}$.
 
-假设 $A$ 有 $k$ 个非零项，则复杂度为 $O(kn + n^2)$．
+Assuming $A$ has $k$ non-zero entries, the complexity is $O(kn + n^2)$.
 
-#### 求稀疏矩阵行列式
+#### Finding the determinant of a sparse matrix
 
-如果能求出方阵 $A$ 的特征多项式，则常数项乘上 $(-1)^n$ 就是行列式．但是最小多项式不一定就是特征多项式．
+If we can find the characteristic polynomial of a square matrix $A$, then the constant term multiplied by $(-1)^n$ is the determinant. However, the minimal polynomial is not necessarily the characteristic polynomial.
 
-实际上如果把 $A$ 乘上一个随机对角阵 $B$，则 $AB$ 的最小多项式有至少 $1 - \frac {2n^2 - n} p$ 的概率就是特征多项式．最后再除掉 $\text{det}\;B$ 就行了．
+In fact, if we multiply $A$ by a random diagonal matrix $B$, then the minimal polynomial of $AB$ is the characteristic polynomial with probability at least $1 - \frac {2n^2 - n} p$. Finally, we divide by $\text{det}\;B$.
 
-设 $A$ 为 $n$ 阶方阵，且有 $k$ 个非零项，则复杂度为 $O(kn + n ^ 2)$．
+Let $A$ be an $n \times n$ matrix with $k$ non-zero entries, then the complexity is $O(kn + n ^ 2)$.
 
-#### 求稀疏矩阵的秩
+#### Finding the rank of a sparse matrix
 
-设 $A$ 是一个 $n\times m$ 的矩阵，首先随机一个 $n\times n$ 的对角阵 $P$ 和一个 $m\times m$ 的对角阵 $Q$, 然后计算 $Q A P A^T Q$ 的最小多项式即可．
+Let $A$ be an $n\times m$ matrix. First, randomly select an $n\times n$ diagonal matrix $P$ and an $m\times m$ diagonal matrix $Q$, then compute the minimal polynomial of $Q A P A^T Q$.
 
-实际上不用调用矩阵乘法，因为求最小多项式时要用 $Q A P A^T Q$ 乘一个向量，所以我们依次把这几个矩阵乘到向量里就行了．答案就是最小多项式除掉所有 $x$ 因子后剩下的次数．
+In fact, we do not need to call matrix multiplication, because when finding the minimal polynomial we need to multiply $Q A P A^T Q$ by a vector, so we can multiply these matrices onto the vector one by one. The answer is the degree of the minimal polynomial after removing all factors of $x$.
 
-设 $A$ 有 $k$ 个非零项，且 $n \le m$，则复杂度为 $O(kn + n ^ 2)$．
+Let $A$ have $k$ non-zero entries and $n \le m$, then the complexity is $O(kn + n ^ 2)$.
 
-#### 解稀疏方程组
+#### Solving sparse systems of equations
 
-**问题**：已知 $A \mathbf x = \mathbf b$, 其中 $A$ 是一个 $n \times n$ 的 **满秩** 稀疏矩阵，$\mathbf b$ 和 $\mathbf x$ 是 $1\times n$ 的列向量．$A, \mathbf b$ 已知，需要在低于 $n^\omega$ 的复杂度内解出 $x$．
+**Problem**: Given $A \mathbf x = \mathbf b$, where $A$ is a **full-rank** $n \times n$ sparse matrix, $\mathbf b$ and $\mathbf x$ are $1\times n$ column vectors. $A, \mathbf b$ are known, and we need to solve for $x$ with complexity lower than $n^\omega$.
 
-**做法**：显然 $\mathbf x = A^{-1} \mathbf b$．如果我们能求出 $\{A^i \mathbf b\}$($i \ge 0$) 的最小递推式 $\{r_0 \dots r_{m - 1}\}$($m \le n$), 那么就有结论
+**Solution**: Obviously $\mathbf x = A^{-1} \mathbf b$. If we can find the shortest linear recurrence relation $\{r_0 \dots r_{m - 1}\}$ ($m \le n$) of $\{A^i \mathbf b\}$ ($i \ge 0$), then we have the conclusion
 
 $A^{-1} \mathbf b = -\frac 1 {r_{m - 1}} \sum_{i = 0} ^ {m - 2} A^i \mathbf b r_{m - 2 - i}$
 
-（证明略）
+(Proof omitted)
 
-因为 $A$ 是稀疏矩阵，直接按定义递推出 $\mathbf b \dots A^{2n - 1} \mathbf b$ 即可．
+Since $A$ is a sparse matrix, we can directly compute $\mathbf b \dots A^{2n - 1} \mathbf b$ by recurrence according to the definition.
 
-同样地，设 $A$ 中有 $k$ 个非零项，则复杂度为 $O(kn + n^2)$．
+Similarly, let $A$ have $k$ non-zero entries, then the complexity is $O(kn + n^2)$.
 
-??? note "参考实现"
+??? note "Reference Implementation"
     ```cpp
     vector<int> solve_sparse_equations(const vector<tuple<int, int, int>> &A,
                                        const vector<int> &b) {
@@ -202,7 +202,7 @@ $A^{-1} \mathbf b = -\frac 1 {r_{m - 1}} \sum_{i = 0} ^ {m - 2} A^i \mathbf b r_
     }
     ```
 
-### 例题
+### Practice Problems
 
-1.  [LibreOJ #163. 高斯消元 2](https://loj.ac/p/163)
-2.  [ICPC2021 台北 Gym103443E. Composition with Large Red Plane, Yellow, Black, Gray, and Blue](https://codeforces.com/gym/103443/problem/E)
+1.  [LibreOJ #163. Gaussian Elimination 2](https://loj.ac/p/163)
+2.  [ICPC2021 Taipei Gym103443E. Composition with Large Red Plane, Yellow, Black, Gray, and Blue](https://codeforces.com/gym/103443/problem/E)

@@ -1,11 +1,11 @@
-本章将介绍介绍离线算法（Offline Algorithm）的思想、常见算法及优化．
+This chapter introduces the idea of offline algorithms, common algorithms, and optimizations.
 
-离线算法是基于「**求解前已知所有数据**」这一假设来设计的，适用于有多组询问的题目．相对的还有 [在线算法](https://en.wikipedia.org/wiki/Online_algorithm)（Online Algorithm）．
+Offline algorithms are designed under the assumption that **all data is known before solving**. They are suitable for problems with multiple queries. The counterpart is the [online algorithm](https://en.wikipedia.org/wiki/Online_algorithm).
 
-例如 [选择排序](../basic/selection-sort.md) 必须知道数组的全局最小元素才能执行，所以是离线算法，而 [插入排序](../basic/insertion-sort.md) 可以动态接收数据进行排序，不强制要求执行前已知全部数据，所以是在线算法．
+For example, [selection sort](../basic/selection-sort.md) must know the global minimum element of the array before it can run, so it is an offline algorithm. In contrast, [insertion sort](../basic/insertion-sort.md) can dynamically receive data and sort it without requiring all data to be known beforehand, so it is an online algorithm.
 
-对于相同的问题，在设计难度等方面，离线算法往往优于在线算法．为了阻止选手使用离线算法，有时题目会使用「强制在线」的方式，常见的有需要前一个询问的答案才能得到下一个询问的参数（[交互题](../contest/problems.md#交互题) 与 [通信题](../contest/problems.md#通信题) 也属于此类）．
+For the same problem, offline algorithms are often easier to design than online algorithms. To prevent contestants from using offline algorithms, some problems use a "forced online" setting. Common examples require the answer to the previous query to obtain the parameters of the next query ([interactive problems](../contest/problems.md#交互题) and [communication problems](../contest/problems.md#通信题) also fall into this category).
 
-离线算法的常见思路包括将询问统一求解（如 [CDQ 分治](./cdq-divide.md)）、通过一个询问的答案求出另外相似询问的答案（如 [整体二分](./parallel-binsearch.md) 和 [莫队算法](./mo-algo-intro.md)）等．
+Common ideas for offline algorithms include solving all queries together (such as [CDQ divide and conquer](./cdq-divide.md)) and deriving the answers to similar queries from one query's answer (such as [parallel binary search](./parallel-binsearch.md) and [Mo's algorithm](./mo-algo-intro.md)).
 
-由于离线算法是一种思想而并不是某种具体的算法，因此它会搭配各种各样的数据结构或算法一起使用，与之相关的题目种类也更为繁杂．
+Because an offline algorithm is an idea rather than a specific algorithm, it is used together with many different data structures and algorithms, and related problem types are more diverse.

@@ -1,343 +1,341 @@
-## 引言
+## Introduction
 
-**拟阵（Matroid）** 是哈斯勒·惠特尼（Hassler Whitney）于 1935 年提出的一种抽象代数结构，旨在统一和推广关于独立性的概念，例如线性代数中的线性无关性和图论中的无环性．
+A **matroid** is an abstract algebraic structure proposed by Hassler Whitney in 1935, aimed at unifying and generalizing concepts of independence such as linear independence in linear algebra and acyclicity in graph theory.
 
-拟阵为处理与独立性相关的优化问题提供了强大的理论工具，广泛应用于组合数学、图论、算法设计等领域，尤其在为贪心算法等优化方法提供数学理论支持方面发挥了重要作用．
+Matroids provide a powerful theoretical tool for solving optimization problems related to independence, widely used in combinatorics, graph theory, algorithm design, and other fields. They play an important role in providing mathematical theoretical support for optimization methods such as greedy algorithms.
 
-## 定义
+## Definition
 
-### 拟阵
+### Matroid
 
-一个 **拟阵（Matroid）** 可以表示为 $M = (E, \mathcal{I})$，其中：
+A **matroid** can be denoted as $M = (E, \mathcal{I})$, where:
 
--   $E$ 是一个有限集，称为 **基础集（Ground Set）**．
--   $\mathcal{I}$ 是 $E$ 的子集族，称为 **独立集族（Family of Independent Sets）**，其中的集合称为 **独立集（Independent Set）**．有以下三个性质：
+- $E$ is a finite set, called the **ground set**.
+- $\mathcal{I}$ is a family of subsets of $E$, called the **family of independent sets**. The sets in $\mathcal{I}$ are called **independent sets** and satisfy three properties:
 
-    -   **非空性**：空集是独立的，即 $\emptyset \in \mathcal{I}$．
+    - **Non-emptiness**: The empty set is independent, i.e., $\emptyset \in \mathcal{I}$.
 
-    -   **遗传性**：独立集的任意子集也是独立集．若 $I \in \mathcal{I}$，则对于任意 $I' \subseteq I$，都有 $I' \in \mathcal{I}$．
+    - **Heredity**: Any subset of an independent set is also independent. If $I \in \mathcal{I}$, then for any $I' \subseteq I$, we have $I' \in \mathcal{I}$.
 
-    -   **扩张性**：若 $I, J \in \mathcal{I}$ 且 $|I| < |J|$，则存在 $j \in J \setminus I$，使得 $I \cup \{j\} \in \mathcal{I}$．
+    - **Exchange**: If $I, J \in \mathcal{I}$ and $|I| < |J|$, then there exists $j \in J \setminus I$ such that $I \cup \{j\} \in \mathcal{I}$.
 
-如果一个形如 $(E, \mathcal{I})$ 的结构满足上述三个性质，则称其为一个拟阵．
+If a structure of the form $(E, \mathcal{I})$ satisfies these three properties, it is called a matroid.
 
-### 基
+### Basis
 
-**基（Basis）** 是拟阵中极大的独立集，即无法再添加元素而保持独立性的独立集．所有基的集合称为 **基集族**，记为 $\mathcal{B}$．
+A **basis** is a maximal independent set in a matroid, i.e., an independent set to which no more elements can be added while preserving independence. The set of all bases is called the **basis family**, denoted by $\mathcal{B}$.
 
-**性质**：
+**Properties**:
 
-1.  **等基数性**：所有基的大小都相同，称为拟阵的 **秩（Rank）**．
+1. **Equal cardinality**: All bases have the same size, called the **rank** of the matroid.
 
-2.  **扩张性**：任何独立集通过添加基中的元素都可以扩张为一个基．
+2. **Exchange**: Any independent set can be extended to a basis by adding elements from a basis.
 
-### 圈
+### Circuit
 
-**圈（Circuit）** 是拟阵中最小的依赖集，即其所有真子集都是独立的，但自身不是独立集，任意两个圈之间不存在包含关系．
+A **circuit** is the smallest dependent set in a matroid, i.e., all its proper subsets are independent, but it itself is not independent. There is no inclusion relationship between any two circuits.
 
-### 秩
+### Rank
 
-**秩函数（Rank Function）** $r: 2^E \rightarrow \mathbb{Z}_{\geq 0}$ 将基础集 $E$ 的子集映射到非负整数．对于任意 $S \subseteq E$，$r(S)$ 定义为 $S$ 中最大独立集的大小，即
+The **rank function** $r: 2^E \rightarrow \mathbb{Z}_{\geq 0}$ maps subsets of the ground set $E$ to nonnegative integers. For any $S \subseteq E$, $r(S)$ is defined as the size of the largest independent set in $S$, i.e.,
 
 $$
 r(S) = \max \{ |I| \mid I \subseteq S \wedge I \in \mathcal{I} \}.
 $$
 
-**性质**：
+**Properties**:
 
-1.  **非负性**：对于任意 $S \subseteq E$，有 $0 \leq r(S) \leq |S|$．
+1. **Non-negativity**: For any $S \subseteq E$, we have $0 \leq r(S) \leq |S|$.
 
-2.  **单调性**：若 $A \subseteq B \subseteq E$，则 $r(A) \leq r(B)$．
+2. **Monotonicity**: If $A \subseteq B \subseteq E$, then $r(A) \leq r(B)$.
 
-3.  **次模性**：对于任意 $A, B \subseteq E$，有 $r(A \cup B) + r(A \cap B) \leq r(A) + r(B)$．
+3. **Submodularity**: For any $A, B \subseteq E$, we have $r(A \cup B) + r(A \cap B) \leq r(A) + r(B)$.
 
-## 典型示例
+## Typical Examples
 
-### 1. 均匀拟阵（Uniform Matroid）
+### 1. Uniform Matroid
 
-**定义**：给定基础集 $E$ 和非负整数 $k$，均匀拟阵 $U_{k,E}$ 的独立集族是所有大小不超过 $k$ 的子集，表示为：
-
-$$
-\mathcal{I} = \{ I \subseteq E \mid |I| \leq k \}．
-$$
-
--   **基（Bases）**：所有大小为 $k$ 的子集．
-
--   **圈（Circuits）**：所有大小为 $k + 1$ 的子集．
-
--   **秩（Rank）**：$r(E) = \min(k, |E|)$，即独立集中最多能有 $k$ 个元素．
-
-### 2. 图拟阵（Graphical Matroid）
-
-**定义**：给定一个无向图 $G = (V, E)$，图拟阵 $M(G)$ 的基础集是边集 $E$，其独立集族是所有不包含环的边集，即所有的森林．
-
--   **基**：图中的生成树（在连通图的情况下）．生成树是极大的独立集，无法再增加边而不形成环．
-
--   **圈**：图中的简单环，去掉环中的任意一条边，剩余部分都为独立集．
-
--   **秩**：$r(E) = |V|  - c$，其中 $c$ 是图的连通分支数．对于一个连通的无向图，其秩等于顶点数减一，即 $|V|  - 1$．
-
-### 3. 线性拟阵（Linear Matroid）
-
-**定义**：线性拟阵基于向量空间．给定向量空间 $V$，基础集 $E$ 是 $V$ 中的一组有限向量，其独立集族是 $E$ 中所有线性无关的向量子集．
-
--   **基**：极大的线性无关向量集，其大小等于向量空间的维数．
-
--   **圈**：最小的线性相关向量集合，其任意真子集都是独立的，而自身是线性相关的．
-
--   **秩**：线性拟阵的秩 $r(E) = \dim(V)$，即向量空间的维数．独立集的大小不能超过向量空间的维数．
-
-### 4. 划分拟阵（Partition Matroid）
-
-**定义**：将基础集 $E$ 划分为不相交的子集 $E_1, E_2, \dots, E_m$，并为每个子集 $E_i$ 指定一个非负整数 $k_i$．划分拟阵的独立集族由满足每个部分选取元素数量不超过 $k_i$ 的子集组成，表示为：
+**Definition**: Given a ground set $E$ and a nonnegative integer $k$, the independent set family of the uniform matroid $U_{k,E}$ consists of all subsets of size at most $k$, expressed as:
 
 $$
-\mathcal{I} = \left\{ I \subseteq E \mid \forall i,\, |I \cap E_i|  \leq k_i \right\}．
+\mathcal{I} = \{ I \subseteq E \mid |I| \leq k \}.
 $$
 
--   **基**：满足 $|I \cap E_i| = k_i$ 的独立集是划分拟阵的基．每个基在每个子集中选取了恰好 $k_i$ 个元素．
+- **Bases**: All subsets of size $k$.
 
--   **圈**：划分拟阵的圈是最小的依赖集，即包含至少一个元素数量超过 $k_i$ 的子集．
+- **Circuits**: All subsets of size $k + 1$.
 
--   **秩**：划分拟阵的秩为 $r(E) = \sum_{i=1}^m k_i$，即最大独立集的大小等于每个子集中允许选取的最大元素数的总和．
+- **Rank**: $r(E) = \min(k, |E|)$, i.e., an independent set can contain at most $k$ elements.
 
-### 5. 有色拟阵（Colored Matroid）
+### 2. Graphical Matroid
 
-**定义**：有色拟阵是划分拟阵的一种特殊形式，其中每个元素都赋予了颜色．给定基础集 $E$ 和颜色集 $C$，每个元素 $e \in E$ 都与某个颜色 $c \in C$ 相关联．有色拟阵的独立集不仅需要满足普通拟阵的独立性条件，还必须遵守颜色上指定的限制，例如同一种颜色的元素在独立集中最多选取一定数量．
+**Definition**: Given an undirected graph $G = (V, E)$, the graphical matroid $M(G)$ has the edge set $E$ as its ground set, and its independent set family consists of all edge sets that contain no cycles, i.e., all forests.
 
--   **基**：有色拟阵的基是符合颜色限制和独立性条件的极大独立集．
+- **Bases**: Spanning trees in the graph (in the case of a connected graph). A spanning tree is a maximal independent set; no more edges can be added without forming a cycle.
 
--   **圈**：圈是最小的依赖集，包含至少一个违反独立性或颜色限制的元素集合．
+- **Circuits**: Simple cycles in the graph; removing any edge from a cycle leaves an independent set.
 
--   **秩**：有色拟阵的秩是满足颜色限制条件下的最大独立集大小．它既依赖于拟阵的结构，也依赖于颜色限制的具体规定．
+- **Rank**: $r(E) = |V| - c$, where $c$ is the number of connected components of the graph. For a connected undirected graph, its rank equals the number of vertices minus one, i.e., $|V| - 1$.
 
-## 构造和运算
+### 3. Linear Matroid
 
-### 对偶
+**Definition**: A linear matroid is based on a vector space. Given a vector space $V$, the ground set $E$ is a finite set of vectors in $V$, and its independent set family consists of all linearly independent subsets of $E$.
 
-给定拟阵 $M = (E, \mathcal{I})$，其 **对偶拟阵**  $M^* = (E, \mathcal{I}^*)$ 定义为：
+- **Bases**: Maximal linearly independent sets of vectors, whose size equals the dimension of the vector space.
 
-$$
-\mathcal{I}^* = \{ I^* \subseteq E \mid \exists B \in \mathcal{I}, |B| = r(E), B \subseteq E \setminus I^* \}．
-$$
+- **Circuits**: The smallest linearly dependent set of vectors; any proper subset is independent, while the set itself is linearly dependent.
 
-**性质**：
+- **Rank**: The rank of a linear matroid $r(E) = \dim(V)$, i.e., the dimension of the vector space. The size of an independent set cannot exceed the dimension of the vector space.
 
--   **基**：对偶拟阵 $M^*$ 的基是 $M$ 的基在基础集 $E$ 中的补集．换句话说，如果 $B$ 是 $M$ 的基，那么 $E \setminus B$ 就是 $M^*$ 的基．
+### 4. Partition Matroid
 
--   **秩函数**：对偶拟阵的秩函数为 $r^*(S) = |S| - r(E) + r(E \setminus S)$，其中 $S$ 是 $E$ 的子集．这意味着对偶拟阵的秩可以通过基础集的大小、原拟阵的秩以及从基础集中移除 $S$ 后的秩来计算．
-
--   **自反性**：对偶拟阵的对偶仍是原拟阵，即 $(M^*)^* = M$．
-
-**示例**：
-
-对于一个无向图 $G = (V, E)$，图拟阵 $M(G)$ 的对偶 $M(G)^*$ 是由图的割集组成的拟阵．图拟阵 $M(G)$ 的基是图中的生成树，而其对偶 $M(G)^*$ 的基是这些生成树的补集，对偶 $M(G)^*$ 的圈则是图的最小割集，即将图分成两个不连通部分的最小边集．
-
-例如，考虑一个简单的三角形图 $G$，其边集为 $E = \{e_1, e_2, e_3\}$．图拟阵 $M(G)$ 的基是两条边的集合（如 $\{e_1, e_2\}$），而对偶拟阵 $M(G)^*$ 的基是单条边的集合（如 $\{e_3\}$），$M(G)^*$ 的圈是两条边的集合（即最小割集，如 $\{e_2,e_3\}$），因为移除其中的一条边就会将图分割为两个连通分支．
-
-### 删除和收缩
-
-**删除（Deletion）**：
-
-对于 $A \subseteq E$，拟阵 $M$ 删除 $A$ 后得到新的拟阵 $M \setminus A$，其独立集族 $\mathcal{I}'$ 定义为：
+**Definition**: The ground set $E$ is partitioned into disjoint subsets $E_1, E_2, \dots, E_m$, and each subset $E_i$ is assigned a nonnegative integer $k_i$. The independent set family of a partition matroid consists of subsets that satisfy the condition that the number of elements selected from each part does not exceed $k_i$, expressed as:
 
 $$
-\mathcal{I}' = \{ I \subseteq E \setminus A \mid I \in \mathcal{I} \}．
+\mathcal{I} = \left\{ I \subseteq E \mid \forall i,\, |I \cap E_i| \leq k_i \right\}.
 $$
 
-可以看出，删除操作就是从拟阵中移除某些元素，并保留剩余元素形成的独立集，其保持原独立集不变，只是移除了元素．
+- **Bases**: An independent set satisfying $|I \cap E_i| = k_i$ is a basis of the partition matroid. Each basis selects exactly $k_i$ elements from each subset.
 
-**收缩（Contraction）**：
+- **Circuits**: The circuits of a partition matroid are the smallest dependent sets, i.e., subsets that contain at least one element exceeding $k_i$.
 
-对于 $A \subseteq E$，拟阵 $M$ 收缩 $A$ 后得到拟阵 $M / A$，其独立集族 $\mathcal{I}''$ 定义为：
+- **Rank**: The rank of a partition matroid is $r(E) = \sum_{i=1}^m k_i$, i.e., the maximum size of an independent set equals the sum of the maximum number of elements allowed in each subset.
+
+### 5. Colored Matroid
+
+**Definition**: A colored matroid is a special form of a partition matroid where each element is assigned a color. Given a ground set $E$ and a color set $C$, each element $e \in E$ is associated with some color $c \in C$. A colored matroid's independent sets must not only satisfy the independence conditions of a ordinary matroid but also comply with color-specific constraints, such as selecting at most a certain number of elements of the same color in an independent set.
+
+- **Bases**: The bases of a colored matroid are maximal independent sets that satisfy both the color constraints and the independence conditions.
+
+- **Circuits**: Circuits are the smallest dependent sets containing at least one element that violates independence or color constraints.
+
+- **Rank**: The rank of a colored matroid is the maximum size of an independent set under the color constraints. It depends both on the structure of the matroid and on the specific color constraints.
+
+## Constructions and Operations
+
+### Duality
+
+Given a matroid $M = (E, \mathcal{I})$, its **dual matroid** $M^* = (E, \mathcal{I}^*)$ is defined as:
+
+$$
+\mathcal{I}^* = \{ I^* \subseteq E \mid \exists B \in \mathcal{I}, |B| = r(E), B \subseteq E \setminus I^* \}.
+$$
+
+**Properties**:
+
+- **Bases**: The bases of the dual matroid $M^*$ are the complements of the bases of $M$ in the ground set $E$. In other words, if $B$ is a basis of $M$, then $E \setminus B$ is a basis of $M^*$.
+
+- **Rank function**: The rank function of the dual matroid is $r^*(S) = |S| - r(E) + r(E \setminus S)$, where $S$ is a subset of $E$. This means the rank of the dual matroid can be calculated from the size of the ground set, the rank of the original matroid, and the rank after removing $S$ from the ground set.
+
+- **Reflexivity**: The dual of the dual is the original matroid, i.e., $(M^*)^* = M$.
+
+**Example**:
+
+For an undirected graph $G = (V, E)$, the dual of the graphical matroid $M(G)$ is a matroid composed of the graph's cut sets. The bases of the graphical matroid $M(G)$ are the spanning trees in the graph, while the bases of its dual $M(G)^*$ are the complements of these spanning trees. The circuits of $M(G)^*$ are the minimal cut sets, i.e., the minimal edge sets that disconnect the graph.
+
+For example, consider a simple triangle graph $G$ with edge set $E = \{e_1, e_2, e_3\}$. The bases of the graphical matroid $M(G)$ are sets of two edges (such as $\{e_1, e_2\}$), while the bases of the dual matroid $M(G)^*$ are single edge sets (such as $\{e_3\}$). The circuits of $M(G)^*$ are sets of two edges (i.e., minimal cut sets, such as $\{e_2, e_3\}$), because removing either edge disconnects the graph into two connected components.
+
+### Deletion and Contraction
+
+**Deletion**:
+
+For $A \subseteq E$, deleting $A$ from matroid $M$ yields a new matroid $M \setminus A$, whose independent set family $\mathcal{I}'$ is defined as:
+
+$$
+\mathcal{I}' = \{ I \subseteq E \setminus A \mid I \in \mathcal{I} \}.
+$$
+
+As can be seen, deletion removes some elements from the matroid and retains the independent sets formed by the remaining elements, keeping the original independent sets unchanged except for the removed elements.
+
+**Contraction**:
+
+For $A \subseteq E$, contracting $A$ from matroid $M$ yields matroid $M / A$, whose independent set family $\mathcal{I}''$ is defined as:
 
 $$
 \mathcal{I}'' = \left\{ I \subseteq E \setminus A \,\bigg|\, \exists B \subseteq A,\, B \in \mathcal{I},\, r(B) = r(A),\, I \cup B \in \mathcal{I} \right\}
 $$
 
-收缩操作可以理解为将集合 $A$ 中的元素缩约，并考虑剩下的元素与 $A$ 的基一起形成的独立集．收缩的结果依赖于集合 $A$ 的基，缩约后的独立集实际上是对原拟阵中更高秩的子集进行约简后得到的独立集．
+Contraction can be understood as shrinking the elements in set $A$ and considering the independent sets formed by the remaining elements together with the bases of $A$. The result of contraction depends on the bases of set $A$; the contracted independent sets are actually those obtained by reducing higher-rank subsets of the original matroid.
 
-**示例 - 图拟阵**：
+**Example - Graphical Matroid**:
 
--   **删除**：在图拟阵中，删除操作即从图中删除一些边．一个图 $G$ 删除某条边后，考虑的是剩余边所形成的独立集，即那些不包含环的边集．例如，如果从一个三角形图中删除一条边，剩下的两个边仍然是一个森林．
+- **Deletion**: In a graphical matroid, deletion means removing some edges from the graph. After deleting an edge from a graph $G$, we consider the independent sets formed by the remaining edges, i.e., those edge sets that contain no cycles. For example, if we delete one edge from a triangle graph, the remaining two edges still form a forest.
 
--   **收缩**：收缩操作则是将某条边收缩为一个顶点．对于图拟阵，收缩一条边相当于将这条边的两个顶点合并成一个顶点，并删除该边，合并顶点后，图中的其他边仍然可以形成独立集．例如，在一个三角形图中，收缩任意一条边将把两个顶点合并成一个，剩下的两条边将构成一个新的拟阵．
+- **Contraction**: Contraction contracts an edge into a vertex. For a graphical matroid, contracting an edge is equivalent to merging the two endpoints of that edge into one vertex and deleting the edge. After merging vertices, the other edges in the graph can still form independent sets. For example, in a triangle graph, contracting any edge merges two vertices into one, and the remaining two edges form a new matroid.
 
-## 拟阵和贪心
+## Matroids and Greedy
 
-**问题描述**：
+**Problem description**:
 
-拟阵的应用之一是解决贪心算法中的最优化问题．具体而言，给定一个拟阵 $M = (S, \mathcal{I})$，其中 $S$ 是基础集，$\mathcal{I}$ 是独立集族．对于每个元素 $x \in S$，赋予一个正整数权值 $w(x)$，目标是找到权值最大的独立集，形式化为：
+One application of matroids is to solve optimization problems in greedy algorithms. Specifically, given a matroid $M = (S, \mathcal{I})$, where $S$ is the ground set and $\mathcal{I}$ is the independent set family. For each element $x \in S$, assign a positive integer weight $w(x)$. The goal is to find the independent set with maximum weight, formalized as:
 
 $$
 \max_{A \in \mathcal{I}} w(A) = \max_{A \in \mathcal{I}} \sum_{x \in A} w(x)
 $$
 
-显然，权值最大独立集必须是极大独立集．如果一个独立集 $A$ 不是极大独立集，则存在一个可以加入 $A$ 的元素 $x$，且由于 $w(x) > 0$，加入该元素后权值会增加，说明 $A$ 不是权值最大的独立集．
+Obviously, a maximum-weight independent set must be a maximal independent set. If an independent set $A$ is not maximal, then there exists an element $x$ that can be added to $A$, and since $w(x) > 0$, adding this element would increase the weight, indicating that $A$ is not a maximum-weight independent set.
 
-### 步骤
+### Steps
 
-贪心算法求解权值最大独立集的步骤如下：
+The steps for the greedy algorithm to find the maximum-weight independent set are as follows:
 
-1.  **元素排序**：将基础集 $S$ 按照权值从大到小排序，记为序列 $e_1, e_2, \dots, e_n$．
-2.  **初始化**：设独立集 $A = \emptyset$．
-3.  **构建独立集**：依次考虑排序后的元素 $e_i$，如果 $A \cup \{ e_i \} \in \mathcal{I}$，则更新 $A = A \cup \{ e_i \}$．
-4.  **输出结果**：最终的集合 $A$ 即为权值最大的独立集．
+1. **Sort elements**: Sort the ground set $S$ by weight in descending order, giving the sequence $e_1, e_2, \dots, e_n$.
+2. **Initialize**: Let independent set $A = \emptyset$.
+3. **Build independent set**: Consider the sorted elements $e_i$ one by one. If $A \cup \{ e_i \} \in \mathcal{I}$, update $A = A \cup \{ e_i \}$.
+4. **Output result**: The final set $A$ is the maximum-weight independent set.
 
-**复杂度分析**：
+**Complexity analysis**:
 
-设 $n = |S|$ 为基础集的大小，$f(n)$ 表示判断一个集合是否为独立集的复杂度．贪心算法的时间复杂度为：
+Let $n = |S|$ be the size of the ground set, and $f(n)$ be the complexity of checking whether a set is independent. The time complexity of the greedy algorithm is:
 
 $$
 O(n \log n + n f(n))
 $$
 
-其中，$O(n \log n)$ 是排序的复杂度，$O(n f(n))$ 是逐一判断独立性的复杂度．
+where $O(n \log n)$ is the complexity of sorting, and $O(n f(n))$ is the complexity of checking independence one by one.
 
-???+ note "备注"
-    -   在图拟阵中，可以使用 [并查集](../ds/dsu.md) 来高效检测是否形成环，从而使 $f(n)$ 接近常数时间．
-    -   在线性拟阵中，独立性检测通常涉及矩阵运算，其复杂度依赖于具体实现方式．
+???+ note "Note"
+    - In graphical matroids, [disjoint set union](../ds/dsu.md) can be used to efficiently detect cycle formation, making $f(n)$ close to constant time.
+    - In linear matroids, independence detection usually involves matrix operations, whose complexity depends on the specific implementation.
 
-**正确性证明**：
+**Correctness proof**:
 
-设 $M = (S, \mathcal{I})$ 是一个拟阵，$A \in \mathcal{I}$ 是一个独立集，且 $A$ 是某个权值最大独立集 $T$ 的子集．定义集合 $P = \{ x \in S \setminus A \mid A \cup \{x\} \in \mathcal{I} \}$，即所有加入 $A$ 后，仍然使 $A$ 保持独立性的元素所构成的集合．
+Let $M = (S, \mathcal{I})$ be a matroid, and $A \in \mathcal{I}$ be an independent set that is a subset of some maximum-weight independent set $T$. Define the set $P = \{ x \in S \setminus A \mid A \cup \{x\} \in \mathcal{I} \}$, i.e., all elements that can be added to $A$ while keeping $A$ independent.
 
-设 $y$ 为 $P$ 中权值最大的元素，则 $A' = A \cup \{ y \}$ 也是某个权值最大独立集的子集，证明如下：
+Let $y$ be the element with maximum weight in $P$. Then $A' = A \cup \{ y \}$ is also a subset of some maximum-weight independent set, proven as follows:
 
-假设 $A' = A \cup \{ y \}$ 不是任何权值最大独立集的子集，则存在一个权值最大的独立集 $T$，且 $|A'| < |T|$．
+Assume $A' = A \cup \{ y \}$ is not a subset of any maximum-weight independent set. Then there exists a maximum-weight independent set $T$ with $|A'| < |T|$.
 
-由于 $|A'|< |T|$，根据拟阵的 **扩张性**，存在 $x \in T \setminus A'$ 使得 $A' \cup \{ x \} \in \mathcal{I}$．
+Since $|A'| < |T|$, according to the **exchange property** of matroids, there exists $x \in T \setminus A'$ such that $A' \cup \{ x \} \in \mathcal{I}$.
 
-利用 **扩张性**，不断将 $x$ 加入 $A'$，最终构造出一个新的独立集 $A''$，使得 $|A''| = |T|$．
+Using the **exchange property** repeatedly, we can continuously add $x$ to $A'$ to eventually construct a new independent set $A''$ such that $|A''| = |T|$.
 
-设 $K = A'' \cap T$，此时有 $x = T \setminus K$，$y = A'' \setminus K$．由于 $y$ 为 $P$ 中权值最大的元素，有 $w(x) \leq w(y)$．
+Let $K = A'' \cap T$. Then we have $x = T \setminus K$, $y = A'' \setminus K$. Since $y$ is the element with maximum weight in $P$, we have $w(x) \leq w(y)$.
 
-因此，$w(A'') = w(K) + w(y) \geq w(K) + w(x) = w(T)$，此时：
+Therefore, $w(A'') = w(K) + w(y) \geq w(K) + w(x) = w(T)$. At this point:
 
--   若 $w(A'') > w(T)$，则 $T$ 不是权值最大独立集，与假设矛盾．
--   若 $w(A'') = w(T)$，则 $A''$ 为权值最大独立集，且 $A'$ 为其子集，与假设 $A'$ 不是任何权值最大独立集的子集矛盾．
+- If $w(A'') > w(T)$, then $T$ is not a maximum-weight independent set, contradicting the assumption.
+- If $w(A'') = w(T)$, then $A''$ is a maximum-weight independent set, and $A'$ is its subset, contradicting the assumption that $A'$ is not a subset of any maximum-weight independent set.
 
-综上，假设不成立，即 $A' = A \cup \{ y \}$ 必须是某个权值最大独立集的子集，因此通过不断使用贪心策略，最终可以找到权值最大的独立集．
+In summary, the assumption is false, i.e., $A' = A \cup \{ y \}$ must be a subset of some maximum-weight independent set. Therefore, by repeatedly using the greedy strategy, we can eventually find the maximum-weight independent set.
 
-### 示例
+### Examples
 
-**最小生成树**：
+**Minimum spanning tree**:
 
-给定一个连通无向图 $G = (V, E)$，每条边 $e \in E$ 都具有权值 $w(e)$．目标为找到一棵生成树，使其包含所有顶点且总权值最小．
+Given a connected undirected graph $G = (V, E)$, each edge $e \in E$ has a weight $w(e)$. The goal is to find a spanning tree that contains all vertices with minimum total weight.
 
-**拟阵的构建**：
+**Constructing the matroid**:
 
-为了将最小生成树问题形式化为拟阵问题，可以构建图拟阵 $M(G)$：
+To formulate the minimum spanning tree problem as a matroid problem, we can construct the graphical matroid $M(G)$:
 
--   **基础集**：$S = E$，即图中的所有边．
--   **独立集族**：$\mathcal{I}$ 为所有不包含环的边集（即所有森林）．
+- **Ground set**: $S = E$, i.e., all edges in the graph.
+- **Independent set family**: $\mathcal{I}$ is all edge sets that contain no cycles (i.e., all forests).
 
-**贪心算法**：
+**Greedy algorithm**:
 
-在图拟阵的框架下，[Kruskal 算法](../graph/mst.md#kruskal-算法) 是一个典型的基于拟阵理论的贪心算法，可以用于构建最小生成树．虽然 [Prim 算法](../graph/mst.md#prim-算法) 也是一种有效的贪心算法，同样能够找到最小生成树，但它并不严格依赖于拟阵的贪心．因此，在拟阵理论的讨论中，Kruskal 算法是主要的贪心算法实例．
+Within the framework of graphical matroids, [Kruskal's algorithm](../graph/mst.md#kruskal-算法) is a typical greedy algorithm based on matroid theory that can be used to construct a minimum spanning tree. Although [Prim's algorithm](../graph/mst.md#prim-算法) is also an effective greedy algorithm that can also find a minimum spanning tree, it does not strictly depend on the matroid greedy approach. Therefore, in discussions of matroid theory, Kruskal's algorithm is the main example of a greedy algorithm.
 
--   **Kruskal 算法**：
-    1.  **边排序**：将所有边按权值从小到大排序．
-    2.  **逐步选择**：依次选择权值最小的边，若加入后不形成环，则将其加入生成树．
-    3.  **终止条件**：重复上述过程，直到生成树包含 $|V| - 1$ 条边．
+- **Kruskal's algorithm**:
+    1. **Sort edges**: Sort all edges by weight in ascending order.
+    2. **Select progressively**: Select edges with minimum weight in order. If adding an edge does not form a cycle, add it to the spanning tree.
+    3. **Termination condition**: Repeat the above process until the spanning tree contains $|V| - 1$ edges.
 
--   **Prim 算法**：
-    -   **原理**：Prim 算法通过从一个起始顶点开始，逐步扩展生成树，每次选择连接树内与树外的最小权值边．
-    -   虽然 Prim 算法也是贪心的，但其选择策略不同于其他基于拟阵扩张性质的贪心算法．因此，在拟阵理论的严格意义下，Prim 算法不被视为典型的拟阵贪心算法．
+- **Prim's algorithm**:
+    - **Principle**: Prim's algorithm starts from a vertex and progressively expands the spanning tree, selecting the minimum-weight edge connecting the tree to outside at each step.
+    - Although Prim's algorithm is also greedy, its selection strategy differs from other greedy algorithms based on the matroid exchange property. Therefore, in the strict sense of matroid theory, Prim's algorithm is not considered a typical matroid greedy algorithm.
 
-## 拟阵交
+## Matroid Intersection
 
-对于定义在同一基础集 $S$ 上的两个拟阵 $M_1 = (S, \mathcal{I}_1)$ 和 $M_2 = (S, \mathcal{I}_2)$，若 $\mathcal{I} = \mathcal{I}_1 \cap \mathcal{I}_2$ 满足拟阵独立集族的三条性质，则称 $M = (S, \mathcal{I})$ 为 $M_1$ 和 $M_2$ 的 **交**．
+For two matroids $M_1 = (S, \mathcal{I}_1)$ and $M_2 = (S, \mathcal{I}_2)$ defined on the same ground set $S$, if $\mathcal{I} = \mathcal{I}_1 \cap \mathcal{I}_2$ satisfies the three properties of a matroid independent set family, then $M = (S, \mathcal{I})$ is called the **intersection** of $M_1$ and $M_2$.
 
-**注意**：并非任意两个拟阵的交都是一个拟阵，只有当其独立集族的交集满足拟阵独立集族定义中的三条性质时，其交才构成一个拟阵．
+**Note**: The intersection of any two matroids is not necessarily a matroid. Only when the intersection of their independent set families satisfies the three properties in the definition of a matroid independent set family does the intersection form a matroid.
 
-### 问题描述
+### Problem description
 
-1.  **最大独立集**：在 $\mathcal{I}_1 \cap \mathcal{I}_2$ 中找到最大的独立集（即具有最大基数的独立集）．
-2.  **加权最大独立集**：给定权值函数 $w: S \to \mathbb{R}$，在 $\mathcal{I}_1 \cap \mathcal{I}_2$ 中找到权值和最大的独立集．
+1. **Maximum independent set**: Find the largest independent set (i.e., the one with maximum cardinality) in $\mathcal{I}_1 \cap \mathcal{I}_2$.
+2. **Weighted maximum independent set**: Given a weight function $w: S \to \mathbb{R}$, find the independent set with maximum total weight in $\mathcal{I}_1 \cap \mathcal{I}_2$.
 
-### 算法
+### Algorithm
 
-**无权版本**：
+**Unweighted version**:
 
-1.  **初始化**：选择一个初始独立集 $I \in \mathcal{I}_1 \cap \mathcal{I}_2$，通常设定 $I = \emptyset$．
-2.  **迭代**：
-    -   **构建交换图**：根据当前独立集 $I$ 构建交换图 $D_{M_1, M_2}(I)$．
-    -   **路径选择**：在交换图中，寻找从源点 $s$ 到汇点 $t$ 的增广路径 $P$．
-    -   **增广**：沿路径 $P$ 从 $s$ 到 $t$ 遍历每一个节点：
-        -   如果节点属于左部顶点（即 $I$ 中的元素），则将该元素从 $I$ 中移除．
-        -   如果节点属于右部顶点（即 $S \setminus I$ 中的元素），则将该元素加入 $I$ 中．
-    -   **重复**：更新独立集 $I$ 后，重复上述步骤，直到无法找到新的增广路径为止．
-3.  **结果**：最终得到的独立集 $I$ 即为拟阵交 $M = M_1 \cap M_2$ 中的一个最大独立集．
+1. **Initialize**: Choose an initial independent set $I \in \mathcal{I}_1 \cap \mathcal{I}_2$, typically $I = \emptyset$.
+2. **Iterate**:
+    - **Build exchange graph**: Build the exchange graph $D_{M_1, M_2}(I)$ based on the current independent set $I$.
+    - **Path selection**: In the exchange graph, find an augmenting path $P$ from source $s$ to sink $t$.
+    - **Augment**: Traverse each node along path $P$ from $s$ to $t$:
+        - If the node belongs to the left part (i.e., elements in $I$), remove that element from $I$.
+        - If the node belongs to the right part (i.e., elements in $S \setminus I$), add that element to $I$.
+    - **Repeat**: After updating independent set $I$, repeat the above steps until no new augmenting path can be found.
+3. **Result**: The final independent set $I$ is a maximum independent set in the matroid intersection $M = M_1 \cap M_2$.
 
-**加权版本**：
+**Weighted version**:
 
-为了找到权值和最大的独立集，算法需要在增广路径的选择上进行优化．
+To find the independent set with maximum total weight, the algorithm needs to optimize the selection of augmenting paths.
 
-1.  **权值设置**：对于每个元素 $e \in S$，定义其在交换图中的权值 $w'(e)$：
-    -   **左部顶点**（$I$ 中的元素）：$w'(e) = -w(e)$．
-    -   **右部顶点**（$S \setminus I$ 中的元素）：$w'(e) = w(e)$．
-2.  **路径选择**：在交换图 $D_{M_1, M_2}(I)$ 中，寻找一条从源点 $s$ 到汇点 $t$ 的 **增广路径**  $P$，使得沿路径进行增广操作后，独立集 $I$ 的总权值增加最大．
-    -   **增广条件**：路径 $P$ 上加入的元素的权值总和大于移除的元素的权值总和，即 $\sum_{y \in \text{加入的元素}} w(y) > \sum_{x \in \text{移除的元素}} w(x)$
-3.  **增广操作**：沿路径 $P$ 从 $s$ 到 $t$ 遍历每一个节点：
-    -   如果节点属于左部顶点（即 $I$ 中的元素），则将该元素从 $I$ 中移除．
-    -   如果节点属于右部顶点（即 $S \setminus I$ 中的元素），则将该元素加入 $I$ 中．
-4.  **迭代**：重复步骤 1 至 3，不断构建交换图并寻找增广路径，逐步优化独立集 $I$ 的总权值．
-5.  **终止条件**：当无法在交换图中找到满足增广条件的路径时，算法终止．
-6.  **结果**：最终得到的独立集 $I$ 即为拟阵交 $M = M_1 \cap M_2$ 中的一个 **权值最大独立集**．
+1. **Weight setting**: For each element $e \in S$, define its weight in the exchange graph $w'(e)$:
+    - **Left part vertices** (elements in $I$): $w'(e) = -w(e)$.
+    - **Right part vertices** (elements in $S \setminus I$): $w'(e) = w(e)$.
+2. **Path selection**: In the exchange graph $D_{M_1, M_2}(I)$, find an **augmenting path** $P$ from source $s$ to sink $t$ such that after augmentation along the path, the total weight of independent set $I$ increases the most.
+    - **Augmentation condition**: The sum of weights of elements added along path $P$ is greater than the sum of weights of elements removed, i.e., $\sum_{y \in \text{added elements}} w(y) > \sum_{x \in \text{removed elements}} w(x)$.
+3. **Augmentation operation**: Traverse each node along path $P$ from $s$ to $t$:
+    - If the node belongs to the left part (i.e., elements in $I$), remove that element from $I$.
+    - If the node belongs to the right part (i.e., elements in $S \setminus I$), add that element to $I$.
+4. **Iterate**: Repeat steps 1 to 3, continuously building exchange graphs and finding augmenting paths to progressively optimize the total weight of independent set $I$.
+5. **Termination condition**: When no path satisfying the augmentation condition can be found in the exchange graph, the algorithm terminates.
+6. **Result**: The final independent set $I$ is a **maximum-weight independent set** in the matroid intersection $M = M_1 \cap M_2$.
 
-**复杂度**：
+**Complexity**:
 
--   **增广次数**：设两个拟阵的最大秩分别为 $r_1$ 和 $r_2$，则最大增广次数为 $\min(r_1, r_2)$．
+- **Number of augmentations**: Let the maximum ranks of the two matroids be $r_1$ and $r_2$. Then the maximum number of augmentations is $\min(r_1, r_2)$.
 
--   **每次增广的复杂度**：
-    -   构建交换图的复杂度为 $O(n^2)$，其中 $n = |S|$．
-    -   寻找增广路径的复杂度取决于路径搜索策略，通常为 $O(n^2)$，例如使用广度优先搜索．
+- **Complexity of each augmentation**:
+    - The complexity of building the exchange graph is $O(n^2)$, where $n = |S|$.
+    - The complexity of finding an augmenting path depends on the path search strategy, typically $O(n^2)$, e.g., using breadth-first search.
 
--   **总时间复杂度**：总体的时间复杂度为 $O(r \cdot n^2)$，其中 $r = \min(r_1, r_2)$．
+- **Total time complexity**: Overall time complexity is $O(r \cdot n^2)$, where $r = \min(r_1, r_2)$.
 
-## 例题
+## Example Problems
 
-**最小生成树**：
+**Minimum spanning tree**:
 
-给定一个无向图 $G = (V, E)$，每条边 $e \in E$ 都有一个权值 $w(e)$．寻找一棵生成树，使其包含所有顶点且总权值最小．
+Given an undirected graph $G = (V, E)$, each edge $e \in E$ has a weight $w(e)$. Find a spanning tree that contains all vertices with minimum total weight.
 
--   详细介绍：[最小生成树](../graph/mst.md)．
--   题目模板：[洛谷 P3366【模板】最小生成树](https://www.luogu.com.cn/problem/P3366)．
+- Detailed introduction: [Minimum spanning tree](../graph/mst.md).
+- Problem template: [Luogu P3366 [Template] Minimum Spanning Tree](https://www.luogu.com.cn/problem/P3366).
 
-??? note "解题思路"
-    使用 Kruskal 算法，将所有边按权值从小到大排序，然后逐步选择边，若加入后不形成环，则将其加入生成树，最终得到的生成树即为最小生成树．
+??? note "Solution approach"
+    Use Kruskal's algorithm: sort all edges by weight in ascending order, then progressively select edges. If adding an edge does not form a cycle, add it to the spanning tree. The final spanning tree is the minimum spanning tree.
 
-**Colorful Graph**：
+**Colorful Graph**:
 
-给定一张带有多种颜色的无向图 $G = (V, E)$，每条边有一个颜色属性．寻找一个最大的边集，使得：
+Given an undirected graph $G = (V, E)$ with multiple colors, each edge has a color attribute. Find the largest edge set such that:
 
-1.  所选边不形成任何环．
-2.  每种颜色的边数不超过 $k$ 条（$k$ 为给定的正整数）．
+1. The selected edges do not form any cycle.
+2. The number of edges of each color does not exceed $k$ (where $k$ is a given positive integer).
 
-??? note "解题思路"
-    1.  **拟阵建模**：
-    
-        -   **图拟阵 ($M_1$)**：定义为所有不形成环的边集，即独立集族 $\mathcal{I}_1$ 包含所有不构成环的边集合．
-        -   **颜色拟阵 ($M_2$)**：定义为每种颜色的边数不超过 $k$ 的边集，即独立集族 $\mathcal{I}_2$ 包含所有满足每种颜色边数 $\leq k$ 的边集合．
-    2.  **求解拟阵交**：通过求解 $M = M_1 \cap M_2$，找到既不形成环又满足每种颜色边数不超过 $k$ 的最大边集．
+??? note "Solution approach"
+    1. **Matroid modeling**:
+        - **Graph matroid ($M_1$)**: Defined as all edge sets that do not form cycles, i.e., independent set family $\mathcal{I}_1$ contains all edge sets that do not contain cycles.
+        - **Color matroid ($M_2$)**: Defined as edge sets with at most $k$ edges of each color, i.e., independent set family $\mathcal{I}_2$ contains all edge sets satisfying that the number of edges of each color $\leq k$.
+    2. **Solve matroid intersection**: By solving $M = M_1 \cap M_2$, find the largest edge set that neither forms cycles nor exceeds $k$ edges of any color.
 
-**约束的资源分配问题**:
+**Constrained resource allocation problem**:
 
-在一个资源分配问题中，有一组资源 $R = \{r_1, r_2, \dots, r_n\}$ 和一组项目 $P = \{p_1, p_2, \dots, p_m\}$．每个项目 $p_i$ 需要分配一定数量的资源，且每种资源的总分配量不能超过其供应量．
+In a resource allocation problem, there is a set of resources $R = \{r_1, r_2, \dots, r_n\}$ and a set of projects $P = \{p_1, p_2, \dots, p_m\}$. Each project $p_i$ requires a certain amount of resources, and the total allocation of each resource cannot exceed its supply.
 
-**目标**：寻找一个资源分配方案，使其满足所有项目需求且不超过资源供应量．
+**Goal**: Find a resource allocation scheme that satisfies all project requirements and does not exceed resource supplies.
 
-??? note "解题思路"
-    1.  **拟阵建模**：
-    
-        -   **需求拟阵 ($M_1$)**：定义为满足各项目资源需求的分配方案，即独立集族 $\mathcal{I}_1$ 包含所有满足项目需求的资源分配集合．
-        -   **供应拟阵 ($M_2$)**：定义为不超过每种资源供应量的分配方案，即独立集族 $\mathcal{I}_2$ 包含所有满足资源供应限制的资源分配集合．
-    2.  **求解拟阵交**：通过求解 $M = M_1 \cap M_2$，找到既满足所有项目需求又不超过资源供应量的资源分配方案．
+??? note "Solution approach"
+    1. **Matroid modeling**:
+        - **Demand matroid ($M_1$)**: Defined as allocation schemes that satisfy project resource requirements, i.e., independent set family $\mathcal{I}_1$ contains all resource allocation sets that satisfy project demands.
+        - **Supply matroid ($M_2$)**: Defined as allocation schemes that do not exceed each resource's supply, i.e., independent set family $\mathcal{I}_2$ contains all resource allocation sets that satisfy resource supply limits.
+    2. **Solve matroid intersection**: By solving $M = M_1 \cap M_2$, find a resource allocation scheme that satisfies all project requirements and does not exceed resource supplies.
 
-## 参考资料与注释
+## References and Notes
 
-1.  [Wikipedia - Matroid](https://en.wikipedia.org/wiki/Matroid)
-2.  [百度百科 - 拟阵](https://baike.baidu.com/item/%E6%8B%9F%E9%98%B5)
-3.  [洛谷 - 拟阵与最优化问题](https://www.luogu.com.cn/article/87d02q9f)
-4.  [洛谷 - 从拟阵基础到 Shannon 开关游戏](https://www.luogu.com.cn/article/fuj3x886)
+1. [Wikipedia - Matroid](https://en.wikipedia.org/wiki/Matroid)
+2. [Baidu Baike - Matroid](https://baike.baidu.com/item/%E6%8B%9F%E9%98%B5)
+3. [Luogu - Matroid and Optimization Problems](https://www.luogu.com.cn/article/87d02q9f)
+4. [Luogu - From Matroid Basics to Shannon Switching Game](https://www.luogu.com.cn/article/fuj3x886)

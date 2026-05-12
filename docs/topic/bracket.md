@@ -1,53 +1,53 @@
 author: sshwy
 
-定义一个合法括号序列（balanced bracket sequence）为仅由 $($ 和 $)$ 构成的字符串且：
+A balanced bracket sequence is defined as a string consisting only of $($ and $)$ such that:
 
--   空串 $\varepsilon$ 是一个合法括号序列．
--   如果 $s$ 是合法括号序列，那么 $(s)$ 也是合法括号序列．
--   如果 $s,t$ 都是合法括号序列，那么 $st$ 也是合法括号序列．
+-   The empty string $\varepsilon$ is a balanced bracket sequence.
+-   If $s$ is a balanced bracket sequence, then $(s)$ is also a balanced bracket sequence.
+-   If both $s,t$ are balanced bracket sequences, then $st$ is also a balanced bracket sequence.
 
-例如 $(())()$ 是合法括号序列，而 $)()$ 不是．
+For example, $(())()$ is a balanced bracket sequence, while $)()$ is not.
 
-有时候会有多种不同的括号，如 $[()]\{\}$．这样的变种括号序列与朴素括号序列有相似的定义．
+Sometimes there are several different kinds of brackets, such as $[()]\{\}$. Such variants have definitions similar to the plain bracket sequence.
 
-本文将会介绍与括号序列相关的经典问题．
+This article introduces classic problems related to bracket sequences.
 
-注：英语中一般称左括号为 opening bracket，而右括号是 closing bracket．
+Note: in English, a left bracket is usually called an opening bracket, while a right bracket is called a closing bracket.
 
-## 判断是否合法
+## Checking Validity
 
-判断 $s$ 是否为合法括号序列的经典方法是贪心思想．该算法同样适用于变种括号序列．
+The classic way to determine whether $s$ is a balanced bracket sequence is greedy. The same algorithm also works for variant bracket sequences.
 
-我们维护一个栈，对于 $i=1,2,\ldots,|s|$ 依次考虑：
+Maintain a stack, and consider $i=1,2,\ldots,|s|$ in order:
 
--   如果 $s_i$ 是右括号且栈非空且栈顶元素是 $s_i$ 对应的左括号，就弹出栈顶元素．
--   若不满足上述条件，则将 $s_i$ 压入栈中．
+-   If $s_i$ is a closing bracket, the stack is nonempty, and the top of the stack is the opening bracket corresponding to $s_i$, pop the stack top.
+-   Otherwise, push $s_i$ onto the stack.
 
-在遍历整个 $s$ 后，若栈是空的，那么 $s$ 就是合法括号序列，否则就不是．时间复杂度 $O(n)$．
+After traversing all of $s$, if the stack is empty, then $s$ is a balanced bracket sequence; otherwise it is not. The time complexity is $O(n)$.
 
-## 合法括号序列计数
+## Counting Balanced Bracket Sequences
 
-考虑求出长度为 $2n$ 的合法括号序列 $s$ 的个数 $f_n$．不妨枚举与 $s_1$ 匹配的括号的位置，假设是 $2i+2$．它将整个序列又分成了两个更短的合法括号序列．因此
+Consider balanced bracket sequences of length $2n$: for such a sequence $s$, let the number of them be $f_n$. Enumerate the position matched with $s_1$; suppose it is $2i+2$. This splits the whole sequence into two shorter balanced bracket sequences. Therefore,
 
 $$
 f_n=\sum_{i=0}^{n-1}f_if_{n-i-1}
 $$
 
-这同样是卡特兰数的递推式．也就是说 $f_n=\frac{1}{n+1}\binom{2n}{n}$．
+This is also the recurrence for the Catalan numbers. That is, $f_n=\frac{1}{n+1}\binom{2n}{n}$.
 
-当然，对于变种合法括号序列的计数，方法是类似的．假设有 $k$ 种不同类型的括号，那么有 $f'_n=\frac{1}{n+1}\binom{2n}{n}k^n$．
+For counting variant balanced bracket sequences, the method is similar. If there are $k$ different types of brackets, then $f'_n=\frac{1}{n+1}\binom{2n}{n}k^n$.
 
-## 字典序后继
+## Lexicographic Successor
 
-给出合法的括号序列 $s$，我们要求出按字典序升序排序的长度为 $|s|$ 的所有合法括号序列中，序列 $s$ 的下一个合法括号序列．在本问题中，我们认为左括号的字典序小于右括号，且不考虑变种括号序列．
+Given a balanced bracket sequence $s$, we want to find, among all balanced bracket sequences of length $|s|$ sorted in increasing lexicographic order, the next balanced bracket sequence after $s$. In this problem, we consider opening brackets to be lexicographically smaller than closing brackets, and we do not consider variant bracket sequences.
 
-我们需要找到一个最大的 $i$ 使得 $s_i$ 是左括号．然后，将其变成右括号，并将 $s[i+1,|s|]$ 这部分重构一下．另外，$i$ 必须满足：$s[1,i-1]$ 中左括号的数量 **大于** 右括号的数量．
+We need to find the largest $i$ such that $s_i$ is an opening bracket. Then change it into a closing bracket and reconstruct the suffix $s[i+1,|s|]$. In addition, $i$ must satisfy: in $s[1,i-1]$, the number of opening brackets is **greater than** the number of closing brackets.
 
-不妨设当 $s_i$ 变成右括号后，$s[1,i]$ 中左括号比右括号多了 $k$ 个．那么我们就让 $s$ 的最后 $k$ 个字符变成右括号，而 $s[i+1,|s|-k]$ 则用 $((\dots(())\dots))$ 的形式填充即可，因为这样填充的字典序最小．
+Suppose that after changing $s_i$ into a closing bracket, the number of opening brackets in $s[1,i]$ exceeds the number of closing brackets by $k$. Then for $s$, make the last $k$ characters closing brackets, and fill $s[i+1,|s|-k]$ in the form $((\dots(())\dots))$, because this gives the lexicographically smallest filling.
 
-该算法的时间复杂度是 $O(n)$．
+The time complexity of this algorithm is $O(n)$.
 
-??? note "参考实现"
+??? note "Reference Implementation"
     ```cpp
     bool next_balanced_sequence(string& s) {
       int n = s.size();
@@ -72,22 +72,22 @@ $$
     }
     ```
 
-## 字典序计算
+## Lexicographic Rank
 
-给出合法的括号序列 $s$，我们要求出它的字典序排名．
+Given a balanced bracket sequence $s$, we want to find its lexicographic rank.
 
-考虑求出字典序比 $s$ 小的括号序列 $p$ 的个数．
+For $s$, consider computing the number of bracket sequences $p$ that are lexicographically smaller.
 
-不妨设 $p_i<s_i$ 且 $\forall 1\le j<i,p_j=s_i$．显然 $p_i$ 是左括号而 $s_i$ 是右括号．枚举 $i$（满足 $s_i$ 为右括号），假设 $p[1,i]$ 中左括号比右括号多 $k$ 个，那么相当于我们要统计长度为 $|s|-i$ 且存在 $k$ 个未匹配的右括号且不存在未匹配的左括号的括号序列的个数．
+Suppose $p_i<s_i$ and $\forall 1\le j<i,p_j=s_i$. Clearly, $p_i$ is an opening bracket and $s_i$ is a closing bracket. Enumerate $i$ (where $s_i$ is a closing bracket). Suppose that in $p[1,i]$, the number of opening brackets exceeds the number of closing brackets by $k$. Then we need to count bracket sequences of length $|s|-i$ with $k$ unmatched closing brackets and no unmatched opening brackets.
 
-不妨设 $f(i,j)$ 表示长度为 $i$ 且存在 $j$ 个未匹配的右括号且不存在未匹配的左括号的括号序列的个数．
+Let $f(i,j)$ denote the number of bracket sequences of length $i$ with $j$ unmatched closing brackets and no unmatched opening brackets.
 
-通过枚举括号序列第一个字符是什么，可以得到 $f$ 的转移：$f(i,j) = f(i-1,j-1)+f(i-1,j+1)$．初始时 $f(0,0)=1$．其实 $f$ 是 [OEIS - A053121](http://oeis.org/A053121)．
+By enumerating the first character of the bracket sequence, we get the transition for $f$: $f(i,j) = f(i-1,j-1)+f(i-1,j+1)$. Initially, $f(0,0)=1$. In fact, $f$ is [OEIS - A053121](http://oeis.org/A053121).
 
-这样我们就可以 $O(|s|^2)$ 计算字典序了．
+Thus we can compute the lexicographic rank in $O(|s|^2)$.
 
-对于变种括号序列，方法是类似的，只不过我们需要对每个 $s_i$ 考虑比它小的那些字符进行计算（在上述算法中因为不存在比左括号小的字符，所以我们只考虑了 $s_i$ 为右括号的情况）．
+For variant bracket sequences, the method is similar, except that for each $s_i$ we need to consider all characters smaller than it (in the algorithm above, since no character is smaller than an opening bracket, we only considered positions where $s_i$ is a closing bracket).
 
-另外，利用 $f$ 数组，我们同样可以求出字典序排名为 $k$ 的合法括号序列．
+In addition, using the $f$ array, we can also construct the balanced bracket sequence with lexicographic rank $k$.
 
-**本页面主要译自博文 <http://e-maxx.ru/algo/bracket_sequences> 与其英文翻译版 [Balanced bracket sequences](https://cp-algorithms.com/combinatorics/bracket_sequences.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the blog post <http://e-maxx.ru/algo/bracket_sequences> and its English translation [Balanced bracket sequences](https://cp-algorithms.com/combinatorics/bracket_sequences.html). The Russian version is licensed as Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

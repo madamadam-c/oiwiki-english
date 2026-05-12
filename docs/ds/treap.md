@@ -1,103 +1,103 @@
 author: Dev-XYS, ttzytt, Sora233, qwqAutomaton
 
-前置知识：[朴素二叉搜索树](./bst.md)，[堆基础](./heap.md)．
+Prerequisites: [Plain binary search tree](./bst.md), [Heap basics](./heap.md).
 
-## 简介
+## Introduction
 
-Treap（树堆）是一种 **弱平衡** 的 **二叉搜索树**．
+A treap is a **weakly balanced** **binary search tree**.
 
-Treap 的结点除了被维护的 **权值**（$\textit{val}$）之外，还附加了一个随机的 **优先级**（$\textit{priority}$）．其中，权值满足二叉搜索树性质，优先级满足堆性质（小根堆或大根堆）．
+Besides the maintained **value** ($\textit{val}$), each treap node also has an additional random **priority** ($\textit{priority}$). The values satisfy the binary-search-tree property, while the priorities satisfy the heap property (either a min-heap or a max-heap).
 
-其中，二叉搜索树的性质是指：
+The binary-search-tree property means:
 
--   左子树所有节点的权值（$\textit{val}$）比父节点小．
--   右子树所有节点的权值（$\textit{val}$）比父节点大．
+-   The values ($\textit{val}$) of all nodes in the left subtree are smaller than the parent node's value.
+-   The values ($\textit{val}$) of all nodes in the right subtree are greater than the parent node's value.
 
-堆的性质是：
+The heap property is:
 
--   子节点优先级（$\textit{priority}$）比父节点大或小（取决于是小根堆还是大根堆）．
+-   A child node's priority ($\textit{priority}$) is greater or smaller than its parent's priority, depending on whether it is a min-heap or a max-heap.
 
-不难看出，如果用的是同一个值，那么这两种数据结构在组合后会变成一条链，所以我们再在搜索树的基础上，引入一个给堆的值 $\textit{priority}$．对于 $\textit{val}$ 值，我们维护搜索树的性质，对于 $\textit{priority}$ 值，我们维护堆的性质．其中 $\textit{priority}$ 这个值是随机给出的．
+It is not hard to see that if the same value is used for both structures, combining them would turn the tree into a chain. Therefore, on top of the search tree, we introduce another value $\textit{priority}$ for the heap. For $\textit{val}$, we maintain the search-tree property; for $\textit{priority}$, we maintain the heap property. The value of $\textit{priority}$ is assigned randomly.
 
-下图就是一个 Treap 的例子（这里使用的是小根堆，即根节点的优先级最小）．
+The following figure is an example of a treap. Here a min-heap is used, so the root node has the smallest priority.
 
-![一个 Treap 的例子](./images/treap-treap-example.svg)
+![An example of a treap](./images/treap-treap-example.svg)
 
-那我们为什么需要大费周章的去让这个数据结构符合树和堆的性质，并且随机给出堆的值呢？
+Why do we go to all this trouble to make the data structure satisfy both tree and heap properties, and to assign heap values randomly?
 
-要理解这个，首先需要理解朴素二叉搜索树的问题．在给朴素搜索树插入一个新节点时，我们需要从这个搜索树的根节点开始递归，如果新节点比当前节点小，那就向左递归，反之亦然．
+To understand this, first consider the problem with a plain binary search tree. When inserting a new node into a plain search tree, we recursively start from the root of the search tree. If the new node is smaller than the current node, we recurse to the left; otherwise, we recurse to the right.
 
-最后当发现当前节点没有子节点时，就根据新节点的值的大小，让新节点成为当前节点的左或右子节点．
+Finally, when we find that the current node has no child in the needed direction, we make the new node the left or right child of the current node according to its value.
 
-如果插入结点的权值是随机的（换言之，是随机插入的），那这个朴素搜索树的高度较小（接近 $\log n$，其中 $n$ 为结点数），而每一层的节点数较多，即它的形状会非常的「胖」．上图的 Treap 就是一个例子．因此此时的任意操作复杂度都将会是 $O(\log n)$ 左右．
+If the values of inserted nodes are random, or equivalently if insertions are random, the height of this plain search tree is small, close to $\log n$ where $n$ is the number of nodes, and each level contains many nodes. In other words, its shape is quite "fat". The treap in the figure above is an example. Therefore, the complexity of any operation at this point is around $O(\log n)$.
 
-不过，这只是在随机情况下的复杂度，如果我们按照下面这个非常有序的顺序给一个朴素的搜索树插入节点：
+However, this is only the complexity in the random case. If we insert nodes into a plain search tree in the following highly ordered sequence:
 
 ```plain
 1 2 3 4 5
 ```
 
-那么这棵树将会退化成链，即变得非常「瘦长」（每次插入的节点都比前面的大，所以都被安排到右子节点了）：
+then the tree degenerates into a chain, becoming very "thin and long". Every inserted node is larger than the previous ones, so it is always placed as a right child:
 
-![退化成链的例子](./images/treap-search-tree-chain.svg)
+![Example of degeneration into a chain](./images/treap-search-tree-chain.svg)
 
-不难看出，查询的复杂度也从 $O(\log n)$ 变成了 $O(n)$.
+It is not hard to see that query complexity also changes from $O(\log n)$ to $O(n)$.
 
-而 treap 为了解决这个问题、达到一个较为「平衡」的状态，通过维护随机的优先级满足堆性质，「打乱」了节点的插入顺序，从而让二叉搜索树达到了理想的复杂度，避免了退化成链的问题．
+To solve this problem and reach a relatively "balanced" state, a treap maintains random priorities that satisfy the heap property. This "shuffles" the insertion order of nodes, allowing the binary search tree to achieve the desired complexity and avoiding degeneration into a chain.
 
-## Treap 复杂度的证明
+## Proof of Treap Complexity
 
-由于 treap 各种操作的复杂度都和所操作的节点的深度有关，我们首先证明，所有节点的期望深度都是 $O(\log n)$．
+Since the complexity of treap operations is related to the depth of the operated node, we first prove that the expected depth of every node is $O(\log n)$.
 
-### 记号约定
+### Notation
 
-为了方便表述，我们约定：
+For convenience, we use the following notation:
 
--   $n$ 是节点个数．
--   Treap 节点中满足二叉搜索树性质的称为 **权值**，满足堆性质的（也就是随机的）称为 **优先级**．不妨设优先级满足小根堆性质．
--   $x_k$ 表示权值第 $k$ 小的节点．
--   $X_{i,j}$ 表示集合 $\{x_i,x_{i+1},\cdots,x_{j-1},x_j\}$，即按权值升序排列后第 $i$ 个到第 $j$ 个的节点构成的集合．
--   $\operatorname{dep}(x)$ 表示节点 $x$ 的深度．规定根节点的深度是 $0$．
--   $Y_{i,j}$ 是一个指示器随机变量，当 $x_i$ 是 $x_j$ 的祖先时值为 $1$，否则为 $0$．特别地，$Y_{i,i}=0$．
--   $\Pr(A)$ 表示事件 $A$ 发生的概率．
+-   $n$ is the number of nodes.
+-   In a treap node, the field satisfying the binary-search-tree property is called the **value**, and the field satisfying the heap property, namely the random one, is called the **priority**. Without loss of generality, assume priorities satisfy the min-heap property.
+-   $x_k$ denotes the node with the $k$-th smallest value.
+-   $X_{i,j}$ denotes the set $\{x_i,x_{i+1},\cdots,x_{j-1},x_j\}$, namely the set of nodes from the $i$-th to the $j$-th after sorting by value in ascending order.
+-   $\operatorname{dep}(x)$ denotes the depth of node $x$. The root node has depth $0$.
+-   $Y_{i,j}$ is an indicator random variable. When $x_i$ is an ancestor of $x_j$, it is $1$, and otherwise $0$. In particular, $Y_{i,i}=0$.
+-   $\Pr(A)$ denotes the probability that event $A$ occurs.
 
-### 节点期望深度的证明
+### Proof of Expected Node Depth
 
-由于节点 $x_i$ 的深度等于它祖先的个数，因此有
+Since the depth of node $x_i$ equals the number of its ancestors, we have
 
 $$
 \operatorname{dep}(x_i)=\sum_{k=1}^nY_{k,i}.
 $$
 
-那么根据期望的线性性，有
+By linearity of expectation,
 
 $$
 E(\operatorname{dep}(x_i))=E\left(\sum_{k=1}^nY_{k,i}\right)=\sum_{k=1}^nE(Y_{k,i}).
 $$
 
-由于 $Y_{k,i}$ 是指示器随机变量，它的期望就等于它为 $1$ 的概率，因此
+Since $Y_{k,i}$ is an indicator random variable, its expectation equals the probability that it is $1$. Therefore,
 
 $$
 E(\operatorname{dep}(x_i))=\sum_{k=1}^n\Pr(Y_{k,i}=1).
 $$
 
-我们先证明引理：$Y_{i,j}=1$ 当且仅当 $x_i$ 的优先级是 $X_{i,j}$ 中最小的．
+We first prove a lemma: $Y_{i,j}=1$ if and only if $x_i$ has the smallest priority in $X_{i,j}$.
 
-??? note "引理的证明"
-    考虑分类讨论 $x_i$ 和 $x_j$ 的情况．
+??? note "Proof of the lemma"
+    Consider the cases for $x_i$ and $x_j$.
     
-    1.  若 $x_i$ 是根节点：由于优先级满足小根堆性质，$x_i$ 的优先级最小，并且对于任意的 $x_j$，$x_i$ 都是 $x_j$ 的祖先．
-    2.  若 $x_j$ 是根节点：同理，$x_j$ 优先级最小，因此 $x_i$ 不是 $X_{i,j}$ 中优先级最小的；同时 $x_i$ 也不是 $x_j$ 的祖先．
-    3.  若 $x_i$ 和 $x_j$ 在根节点的两个子树中（一左一右），那么根节点 $r\in X_{i,j}$. 因此 $x_i$ 的优先级不可能是 $X_{i,j}$ 中最小的（因为根节点的比它小）．同时，由于 $x_i$ 和 $x_j$ 分属两个子树，$x_i$ 也不是 $x_j$ 的祖先．
-    4.  若 $x_i$ 和 $x_j$ 在根节点的同一个子树中，此时可以将这个子树单独拿出来作为一棵新的 treap，递归进行上面的证明即可．
+    1.  If $x_i$ is the root: since priorities satisfy the min-heap property, $x_i$ has the smallest priority, and for any $x_j$, $x_i$ is an ancestor of $x_j$.
+    2.  If $x_j$ is the root: similarly, $x_j$ has the smallest priority, so $x_i$ does not have the smallest priority in $X_{i,j}$; also, $x_i$ is not an ancestor of $x_j$.
+    3.  If $x_i$ and $x_j$ are in the two subtrees of the root, one on the left and one on the right, then the root $r\in X_{i,j}$. Thus $x_i$ cannot have the smallest priority in $X_{i,j}$, because the root's priority is smaller. Also, since $x_i$ and $x_j$ are in different subtrees, $x_i$ is not an ancestor of $x_j$.
+    4.  If $x_i$ and $x_j$ are in the same subtree of the root, we can treat that subtree alone as a new treap and recursively apply the proof above.
 
-那么根据引理，深度的期望可以转化成
+By the lemma, the expected depth can be transformed into
 
 $$
 E(\operatorname{dep}(x_i))=\sum_{k=1}^n\Pr(x_k=\min X_{i,k}\land k\neq i).
 $$
 
-又因为节点的优先级是随机的，我们假定集合 $X_{i,j}$ 中任何一个节点的优先级最小的概率都相同，那么
+Because node priorities are random, we assume every node in $X_{i,j}$ is equally likely to have the smallest priority. Then
 
 $$
 \begin{aligned}
@@ -111,47 +111,47 @@ E(\operatorname{dep}(x_i))&=\sum_{k=1}^n\Pr(x_k=\min X_{i,k}\land k\neq i)\\
 \end{aligned}
 $$
 
-因此每个节点的期望深度都是 $O(\log n)$．
+Therefore, the expected depth of every node is $O(\log n)$.
 
-而朴素的二叉搜索树的操作的复杂度均是 $O(h)$，同时 treap 维护堆性质的复杂度也是 $O(h)$ 的，因此 treap 各种操作的期望复杂度都是 $O(\log n)$．
+The operations of a plain binary search tree all have complexity $O(h)$, and maintaining the heap property in a treap also costs $O(h)$. Therefore, the expected complexity of all treap operations is $O(\log n)$.
 
-???+ note "期望复杂度的感性理解"
-    首先，我们需要认识到一个节点的 $\textit{priority}$ 属性是和它所在的层数有直接关联的．再回忆堆的性质：
+???+ note "Intuitive understanding of expected complexity"
+    First, we need to realize that a node's $\textit{priority}$ attribute is directly related to its level. Recall the heap property:
     
-    -   子节点值（$\textit{priority}$）比父节点大或小（取决于是小根堆还是大根堆）
+    -   A child node's value ($\textit{priority}$) is greater or smaller than its parent's value, depending on whether it is a min-heap or a max-heap.
     
-    我们发现层数低的节点，比如整个树的根节点，它的 $\textit{priority}$ 属性也会更小（在小根堆中）．并且，在朴素的搜索树中，先被插入的节点，也更有可能会有比较小的层数．我们可以把这个 $\textit{priority}$ 属性和被插入的顺序关联起来理解，这样，也就理解了为什么 treap 可以把节点插入的顺序通过 $\textit{priority}$ 打乱．
+    We can see that nodes at smaller depths, such as the root of the whole tree, also have smaller $\textit{priority}$ values in a min-heap. In a plain search tree, nodes inserted earlier are also more likely to be at smaller depths. We can understand the $\textit{priority}$ attribute as being associated with insertion order. This explains why a treap can use $\textit{priority}$ to shuffle the order in which nodes are inserted.
 
-给 treap 插入新节点时，需要同时维护树和堆的性质．其中，搜索树的性质可以在插入时维护，而堆性质的维护则有两种处理方法，分别是旋转和分裂、合并．使用这两种方法的 treap 被分别称为 **旋转 treap** 和 **无旋 treap**．
+When inserting a new node into a treap, both the tree property and the heap property must be maintained. The search-tree property can be maintained during insertion, while the heap property can be maintained in two ways: rotations, or split and merge. Treaps using these two methods are called **rotating treaps** and **rotationless treaps**, respectively.
 
-## 旋转 treap
+## Rotating Treap
 
-**旋转 treap** 维护平衡的方式为旋转，和 AVL 树的旋转操作类似，分为 **左旋** 和 **右旋**．即在满足二叉搜索树的条件下根据堆的优先级对 treap 进行平衡操作．
+A **rotating treap** maintains balance by rotations. Similar to rotations in an AVL tree, they are divided into **left rotations** and **right rotations**. That is, while preserving the binary-search-tree condition, the treap is balanced according to heap priorities.
 
-旋转 treap 在做普通平衡树题的时候，是所有平衡树中常数较小的．
+For ordinary balanced-tree problems, rotating treaps have relatively small constant factors among balanced trees.
 
-下面的讲解中的代码用指针实现了旋转 treap，文末附有数组形式的完整实现．
+The code in the following explanation implements a rotating treap with pointers. A complete array-based implementation is included at the end.
 
 ???+ info "Info"
-    代码中的 `rank` 代表前面讲的优先级（$\textit{priority}$ 属性），该属性满足的是小根堆性质．
+    In the code, `rank` represents the priority mentioned above, the $\textit{priority}$ attribute. It satisfies the min-heap property.
 
-### 节点结构
+### Node Structure
 
 ```cpp
 struct Node {
-  Node *ch[2];  // 两个子节点的地址
+  Node *ch[2];  // addresses of the two child nodes
   int val, rank;
-  int rep_cnt;  // 当前这个值（val）重复出现的次数
-  int siz;      // 以当前节点为根的子树大小
+  int rep_cnt;  // number of occurrences of the current value (val)
+  int siz;      // size of the subtree rooted at the current node
 
   Node(int val) : val(val), rep_cnt(1), siz(1) {
     ch[0] = ch[1] = nullptr;
     rank = rand();
-    // 注意初始化的时候，rank 是随机给出的
+    // Note that rank is assigned randomly during initialization.
   }
 
   void upd_siz() {
-    // 用于旋转和删除过后，重新计算 siz 的值
+    // Recompute siz after rotation or deletion.
     siz = rep_cnt;
     if (ch[0] != nullptr) siz += ch[0]->siz;
     if (ch[1] != nullptr) siz += ch[1]->siz;
@@ -159,72 +159,72 @@ struct Node {
 };
 ```
 
-### 旋转
+### Rotation
 
-旋转操作是 treap 的一个非常重要的操作，主要用来在保持 treap 树性质的同时，调整不同节点的层数，以达到维护堆性质的作用．
+Rotation is a very important treap operation. It is mainly used to adjust the depths of different nodes while preserving the treap's tree property, thereby maintaining the heap property.
 
-旋转操作的左旋和右旋可能不是特别容易区分，以下是两个较为明显的特点：
+Left rotation and right rotation may not be especially easy to distinguish. Here are two relatively clear characteristics:
 
-旋转操作的含义：
+Meaning of a rotation:
 
--   在不影响搜索树性质的前提下，把和旋转方向相反的子树变成根节点（如左旋，就是把右子树变成根节点）
--   不影响性质，并且在旋转过后，跟旋转方向相同的子节点变成了原来的根节点（如左旋，旋转完之后的左子节点是旋转前的根节点）
+-   Without affecting the search-tree property, make the subtree opposite to the rotation direction become the root. For example, a left rotation makes the right subtree become the root.
+-   The property is preserved, and after rotation, the child in the same direction as the rotation becomes the original root. For example, after a left rotation, the left child is the root before rotation.
 
-左旋和右旋操作是相互的，如下图．
+Left rotation and right rotation are inverse operations, as shown below.
 
-![旋转操作](./images/treap-rotate.svg)
+![Rotation operation](./images/treap-rotate.svg)
 
 ```cpp
 enum rot_type { LF = 1, RT = 0 };
 
 void _rotate(Node *&cur,
-             rot_type dir) {  // dir参数代表旋转的方向 0为右旋，1为左旋
-  // 注意传进来的 cur 是指针的引用，也就是改了这个
-  // cur，变量是跟着一起改的，如果这个 cur 是别的 树的子节点，根据 ch
-  // 找过来的时候，也是会找到这里的
+             rot_type dir) {  // dir indicates the rotation direction: 0 for right, 1 for left
+  // Note that cur is passed as a reference to a pointer. Changing this cur also
+  // changes the corresponding variable. If this cur is a child node of another
+  // tree, following ch from that tree will still reach the updated node here.
 
-  // 以下的代码解释的均是左旋时的情况
-  Node *tmp = cur->ch[dir];  // 让 C 变成根节点，
-                             // 这里的 tmp
-                             // 是一个临时的节点指针，指向成为新的根节点的节点
+  // The following comments explain the left-rotation case.
+  Node *tmp = cur->ch[dir];  // Let C become the root.
+                             // tmp is a temporary node pointer that points to
+                             // the node that will become the new root.
 
-  /* 左旋：也就是让右子节点变成根节点
+  /* Left rotation: make the right child become the root.
    *         A                 C
    *        / \               / \
    *       B  C    ---->     A   E
    *         / \            / \
    *        D   E          B   D
    */
-  cur->ch[dir] = tmp->ch[!dir];    // 让 A 的右子节点变成 D
-  tmp->ch[!dir] = cur;             // 让 C 的左子节点变成 A
-  cur->upd_siz(), tmp->upd_siz();  // 更新大小信息
-  cur = tmp;  // 最后把临时储存 C 树的变量赋值到当前根节点上（注意 cur 是引用）
+  cur->ch[dir] = tmp->ch[!dir];    // Make A's right child become D.
+  tmp->ch[!dir] = cur;             // Make C's left child become A.
+  cur->upd_siz(), tmp->upd_siz();  // Update size information.
+  cur = tmp;  // Finally assign the temporary C-tree variable to the current root.
 }
 ```
 
-### 插入
+### Insertion
 
-类似普通二叉搜索树的插入，但是需要在插入的过程中通过旋转来维护优先级的堆性质．
+It is similar to insertion in an ordinary binary search tree, but rotations are needed during insertion to maintain the heap property of priorities.
 
 ```cpp
 void _insert(Node *&cur, int val) {
   if (cur == nullptr) {
-    // 没这个节点直接新建
+    // Create the node directly if it does not exist.
     cur = new Node(val);
     return;
   } else if (val == cur->val) {
-    // 如果有这个值相同的节点，就把重复数量加一
+    // If a node with this value already exists, increase the duplicate count.
     cur->rep_cnt++;
     cur->siz++;
   } else if (val < cur->val) {
-    // 维护搜索树性质，val 比当前节点小就插到左边，反之亦然
+    // Maintain the search-tree property: insert to the left if val is smaller.
     _insert(cur->ch[0], val);
     if (cur->ch[0]->rank < cur->rank) {
-      // 小根堆中，上面节点的优先级一定更小
-      // 因为新插的左子节点比父节点小，现在需要让左子节点变成父节点
-      _rotate(cur, RT);  // 注意前面的旋转性质，要把左子节点转上来，需要右旋
+      // In a min-heap, upper nodes must have smaller priorities.
+      // Since the newly inserted left child is smaller than the parent, make it the parent.
+      _rotate(cur, RT);  // To rotate the left child upward, use a right rotation.
     }
-    cur->upd_siz();  // 插入之后大小会变化，需要更新
+    cur->upd_siz();  // Size changes after insertion, so update it.
   } else {
     _insert(cur->ch[1], val);
     if (cur->ch[1]->rank < cur->rank) {
@@ -235,161 +235,162 @@ void _insert(Node *&cur, int val) {
 }
 ```
 
-### 删除
+### Deletion
 
-主要就是分类讨论，不同的情况有不同的处理方法，删完了树的大小会有变化，要注意更新．并且如果要删的节点有左子树和右子树，就要考虑删除之后让谁来当父节点（维护 rank 小的节点在上面）．
+Deletion is mainly a case analysis: different cases require different handling. After deletion, the tree size changes, so remember to update it. If the node to be deleted has both left and right subtrees, we must decide which node becomes the parent after deletion, keeping the node with smaller `rank` above.
 
 ```cpp
 void _del(Node *&cur, int val) {
   if (val > cur->val) {
     _del(cur->ch[1], val);
-    // 值更大就在右子树，反之亦然
+    // A larger value is in the right subtree, and vice versa.
     cur->upd_siz();
   } else if (val < cur->val) {
     _del(cur->ch[0], val);
     cur->upd_siz();
   } else {
     if (cur->rep_cnt > 1) {
-      // 如果要删除的节点是重复的，可以直接把重复值减小
+      // If the node to delete has duplicates, just decrease the count.
       cur->rep_cnt--, cur->siz--;
       return;
     }
     uint8_t state = 0;
     state |= (cur->ch[0] != nullptr);
     state |= ((cur->ch[1] != nullptr) << 1);
-    // 00都无，01有左无右，10，无左有右，11都有
+    // 00: none; 01: left only; 10: right only; 11: both.
     Node *tmp = cur;
     switch (state) {
       case 0:
         delete cur;
         cur = nullptr;
-        // 没有任何子节点，就直接把这个节点删了
+        // If there is no child, delete this node directly.
         break;
-      case 1:  // 有左无右
+      case 1:  // left child only
         cur = tmp->ch[0];
-        // 把根变成左儿子，然后把原来的根节删了，注意这里的 tmp 是从 cur
-        // 复制的，而 cur 是引用
+        // Make the root its left child, then delete the original root.
+        // Note that tmp was copied from cur, while cur is a reference.
         delete tmp;
         break;
-      case 2:  // 有右无左
+      case 2:  // right child only
         cur = tmp->ch[1];
         delete tmp;
         break;
       case 3:
         rot_type dir = cur->ch[0]->rank < cur->ch[1]->rank
                            ? RT
-                           : LF;  // dir 是 rank 更小的那个儿子
-        _rotate(cur, dir);  // 这里的旋转可以把优先级更小的儿子转上去，rt 是 0，
-                            // 而 lf 是 1，刚好跟实际的子树下标反过来
+                           : LF;  // dir is the child with the smaller rank.
+        _rotate(cur, dir);  // This rotates the child with smaller priority upward.
+                            // rt is 0 and lf is 1, opposite to actual subtree indices.
         _del(
             cur->ch[!dir],
-            val);  // 旋转完成后原来的根节点就在旋方向那边，所以需要
-                   // 继续把这个原来的根节点删掉
-                   // 如果说要删的这个节点是在整个树的「上层的」，那我们会一直通过这
-                   // 这里的旋转操作，把它转到没有子树了（或者只有一个），再删掉它．
+            val);  // After rotation, the original root is on the rotation-direction side,
+                   // so continue deleting that original root.
+                   // If the node to delete is near the top of the whole tree, these
+                   // rotations keep moving it downward until it has no subtree, or only
+                   // one subtree, and then it is deleted.
         cur->upd_siz();
-        // 删除会造成大小改变
+        // Deletion changes the size.
         break;
     }
   }
 }
 ```
 
-### 根据值查询排名
+### Query Rank by Value
 
-操作含义：查询以 cur 为根节点的子树中，val 这个值的大小的排名（该子树中小于 val 的节点的个数 + 1）
+Meaning of the operation: query the rank of value `val` in the subtree rooted at `cur`, namely the number of nodes in this subtree with value less than `val`, plus 1.
 
 ```cpp
 int _query_rank(Node *cur, int val) {
   int less_siz = cur->ch[0] == nullptr ? 0 : cur->ch[0]->siz;
-  // 这个树中小于 val 的节点的数量
+  // Number of nodes in this tree that are less than val.
   if (val == cur->val)
-    // 如果这个节点就是要查的节点
+    // If this node is the queried node.
     return less_siz + 1;
   else if (val < cur->val) {
     if (cur->ch[0] != nullptr)
       return _query_rank(cur->ch[0], val);
     else
-      return 1;  // 如果左子树是空的，说比最小的节点还要小，那这个数字就是最小的
+      return 1;  // If the left subtree is empty, this value is smaller than the minimum.
   } else {
     if (cur->ch[1] != nullptr)
-      // 如果要查的值比这个节点大，那这个节点的左子树以及这个节点自身肯定都比要查的值小
-      // 所以要加上这两个值，再加上往右边找的结果
-      // （以右子树为根的子树中，val 这个值的大小的排名）
+      // If the queried value is larger than this node, both this node's left subtree
+      // and this node itself must be smaller than the queried value.
+      // Add these two parts, then add the result found in the right subtree.
+      // That result is the rank of val in the subtree rooted at the right child.
       return less_siz + cur->rep_cnt + _query_rank(cur->ch[1], val);
     else
       return cur->siz + 1;
-    // 没有右子树的话直接整个树 + 1 相当于 less_siz + cur->rep_cnt + 1
+    // If there is no right subtree, use the whole tree + 1, equivalent to less_siz + cur->rep_cnt + 1.
   }
 }
 ```
 
-### 根据排名查询值
+### Query Value by Rank
 
-要根据排名查询值，我们首先要知道如何判断要查的节点在树的哪个部分：
+To query a value by rank, we first need to know how to determine which part of the tree contains the target node:
 
-以下是一个判断方法的表：
+The following table gives a way to decide:
 
-| 左子树         | 根节点/当前节点                           | 右子树                    |
+| Left subtree | Root/current node | Right subtree |
 | ----------- | ---------------------------------- | ---------------------- |
-| 排名 ≤ 左子树的大小 | 排名 > 左子树的大小，并且 ≤ 左子树的大小 + 根节点的重复次数 | 排名 > 左子树的大小 + 根节点的重复次数 |
+| rank ≤ size of left subtree | rank > size of left subtree and rank ≤ size of left subtree + duplicate count of root | rank > size of left subtree + duplicate count of root |
 
-注意如果在右子树，递归的时候需要对原来的 `rank` 进行处理．递归的时候就相当去查，在右子树中为这个排名的值，为了把排名转换成基于右子树的，需要把原来的 `rank` 减去左子树的大小和根节点的重复次数．
+Note that if the target is in the right subtree, the original `rank` must be adjusted during recursion. Recursing there is equivalent to querying a rank within the right subtree. To convert the rank to be relative to the right subtree, subtract the size of the left subtree and the duplicate count of the root from the original `rank`.
 
-可以把所有节点想象成一个排好序的数组，或者数轴（如下），
+You can imagine all nodes as a sorted array or number line, as below:
 
-    1 -> |左子树的节点|根节点|右子树的节点| -> n
+    1 -> |left subtree nodes|root node|right subtree nodes| -> n
                                ^
-                               要查的排名
-                         ⬇转换成基于右子树的排名
-    1 -> |右子树的节点| -> n
+                               rank to query
+                         convert to a rank based on the right subtree
+    1 -> |right subtree nodes| -> n
            ^
-           要查的排名
+           rank to query
 
-这里的转换方法就是直接把排名减去左子树的大小和根节点的重复数量．
+The conversion simply subtracts the size of the left subtree and the duplicate count of the root from the rank.
 
 ```cpp
 int _query_val(Node *cur, int rank) {
-  // 查询树中第 rank 大的节点的值
+  // Query the value of the node with rank rank in the tree.
   int less_siz = cur->ch[0] == nullptr ? 0 : cur->ch[0]->siz;
-  // less siz 是左子树的大小
+  // less_siz is the size of the left subtree.
   if (rank <= less_siz)
     return _query_val(cur->ch[0], rank);
   else if (rank <= less_siz + cur->rep_cnt)
     return cur->val;
   else
-    return _query_val(cur->ch[1], rank - less_siz - cur->rep_cnt);  // 见前文
+    return _query_val(cur->ch[1], rank - less_siz - cur->rep_cnt);  // See above.
 }
 ```
 
-### 查询第一个比 val 小的节点
+### Query the First Node Smaller Than `val`
 
-注意这里使用了一个类中的全局变量，`q_prev_tmp`．
+Note that this uses a class-level variable, `q_prev_tmp`.
 
-这个值是只有在 val 比当前节点值大的时候才会被更改的，所以返回这个变量就是返回 val 最后一次比当前节点的值大，之后就是更小了．
+This value is changed only when `val` is greater than the current node's value. Therefore, returning this variable returns the last current-node value that was smaller than `val`.
 
 ```cpp
 int _query_prev(Node *cur, int val) {
   if (val <= cur->val) {
-    // 还是比 val 大，所以往左子树找
+    // The current node is still not smaller than val, so search in the left subtree.
     if (cur->ch[0] != nullptr) return _query_prev(cur->ch[0], val);
   } else {
-    // 只有能进到这个 else 里，才会更新 q_prev_tmp 的值
+    // q_prev_tmp is updated only when execution enters this else branch.
     q_prev_tmp = cur->val;
-    // 当前节点已经比 val，小了，但是不确定是否是最大的，所以要到右子树继续找
+    // The current node is already smaller than val, but it may not be the largest one, so continue searching the right subtree.
     if (cur->ch[1] != nullptr) _query_prev(cur->ch[1], val);
-    // 接下来的递归可能不会更改 q_prev_tmp
-    // 了，那就直接返回这个值，总之返回的就是最后一次进到 这个 else 中的
-    // cur->val
+    // The following recursion may no longer change q_prev_tmp, so return it directly.
+    // In short, this returns cur->val from the last time this else branch was entered.
     return q_prev_tmp;
   }
   return NIL;
 }
 ```
 
-### 查询第一个比 val 大的节点
+### Query the First Node Greater Than `val`
 
-跟前一个很相似，只是大于小于号换了一下．
+This is very similar to the previous operation, except the greater-than and less-than signs are swapped.
 
 ```cpp
 int _query_nex(Node *cur, int val) {
@@ -404,44 +405,45 @@ int _query_nex(Node *cur, int val) {
 }
 ```
 
-## 无旋 treap
+## Rotationless Treap
 
-无旋 treap 的操作方式使得它天生支持维护序列、可持久化等特性．
+The way a rotationless treap operates makes it naturally support features such as maintaining sequences and persistence.
 
-**无旋 treap** 又称分裂合并 treap．它仅有两种核心操作，即为 **分裂** 与 **合并**．通过这两种操作，在很多情况下可以比旋转 treap 更方便的实现别的操作．下面逐一介绍这两种操作．
+A **rotationless treap** is also called a split-merge treap. It has only two core operations: **split** and **merge**. With these two operations, many other operations can often be implemented more conveniently than with a rotating treap. We introduce the two operations below.
 
-???+ note "注释"
-    讲解无旋 treap 应当提到 **FHQ-Treap**（by 范浩强）．即可持久化，支持区间操作的无旋 Treap．更多内容请参照《范浩强谈数据结构》ppt．
+???+ note "Note"
+    A discussion of rotationless treaps should mention **FHQ-Treap** by Fan Haoqiang: a persistent rotationless treap that supports interval operations. For more, refer to the PPT *Fan Haoqiang on Data Structures*.
 
-### 分裂（split）
+### Split
 
-#### 按值分裂
+#### Split by Value
 
-分裂过程接受两个参数：根指针 $\textit{cur}$、关键值 $\textit{key}$．结果为将根指针指向的 treap 分裂为两个 treap，第一个 treap 所有结点的值（$\textit{val}$）小于等于 $\textit{key}$，第二个 treap 所有结点的值大于 $\textit{key}$．
+The split procedure takes two parameters: the root pointer $\textit{cur}$ and the key value $\textit{key}$. It splits the treap pointed to by the root pointer into two treaps. All node values ($\textit{val}$) in the first treap are less than or equal to $\textit{key}$, and all node values in the second treap are greater than $\textit{key}$.
 
-该过程首先判断 $\textit{key}$ 是否小于 $\textit{cur}$ 的值，若小于，则说明 $\textit{cur}$ 及其右子树全部大于 $\textit{key}$，属于第二个 treap．当然，也可能有一部分的左子树的值大于 $\textit{key}$，所以还需要继续向左子树递归地分裂．对于大于 $\textit{key}$ 的那部分左子树，我们把它作为 $\textit{cur}$ 的左子树，这样，整个 $\textit{cur}$ 上的节点都是大于 $\textit{key}$ 的．
+The procedure first checks whether $\textit{key}$ is smaller than the value of $\textit{cur}$. If it is, then $\textit{cur}$ and its entire right subtree are greater than $\textit{key}$, so they belong to the second treap. Of course, part of the left subtree may also have values greater than $\textit{key}$, so we must continue recursively splitting the left subtree. For the part of the left subtree that is greater than $\textit{key}$, we make it the left subtree of $\textit{cur}$; then all nodes under $\textit{cur}$ are greater than $\textit{key}$.
 
-相应的，如果 $\textit{key}$ 大于等于 $\textit{cur}$ 的值，说明 $\textit{cur}$ 的整个左子树以及其自身都小于等于 $\textit{key}$，属于分裂后的第一个 treap．并且，$\textit{cur}$ 的部分右子树也可能有部分小于等于 $\textit{key}$，因此我们需要继续递归地分裂右子树．把小于等于 $\textit{key}$ 的那部分作为 $\textit{cur}$ 的右子树，这样，整个 $\textit{cur}$ 上的节点都小于等于 $\textit{key}$．
+Correspondingly, if $\textit{key}$ is greater than or equal to the value of $\textit{cur}$, then the entire left subtree of $\textit{cur}$ and cur itself are less than or equal to $\textit{key}$, so they belong to the first treap after splitting. Also, part of $\textit{cur}$'s right subtree may be less than or equal to $\textit{key}$, so we must continue recursively splitting the right subtree. We make the part less than or equal to $\textit{key}$ the right subtree of $\textit{cur}$; then all nodes under $\textit{cur}$ are less than or equal to $\textit{key}$.
 
-下图展示了 $\textit{cur}$ 的值小于等于 $\textit{key}$ 时按值分裂的情况．[^ref1]
+The following figure shows splitting by value when the value of $\textit{cur}$ is less than or equal to $\textit{key}$.[^ref1]
 
-![按值分裂](./images/treap-none-rot-split-by-val.svg)
+![Split by value](./images/treap-none-rot-split-by-val.svg)
 
 ```cpp
 pair<Node *, Node *> split(Node *cur, int key) {
   if (cur == nullptr) return {nullptr, nullptr};
   if (cur->val <= key) {
-    // cur 以及它的左子树一定属于分裂后的第一个树
+    // cur and its left subtree must belong to the first tree after splitting.
     auto temp = split(cur->ch[1], key);
-    // 但是它可能有部分右子树也比 key 小
+    // But part of its right subtree may also be smaller than key.
     cur->ch[1] = temp.first;
-    // 我们把小于 key 的那部分拿出来，作为 cur 的右子树，这样整个 cur 都是小于
-    // key 的 剩下的那部分右子树成为分裂后的第二个 treap
+    // Take out the part smaller than key and make it cur's right subtree, so all of
+    // cur is smaller than key. The remaining part of the right subtree becomes the
+    // second treap after splitting.
     cur->upd_siz();
-    // 分裂过后树的大小会变化，需要更新
+    // The tree size changes after splitting, so update it.
     return {cur, temp.second};
   } else {
-    // 同上
+    // Same as above.
     auto temp = split(cur->ch[0], key);
     cur->ch[0] = temp.second;
     cur->upd_siz();
@@ -450,40 +452,40 @@ pair<Node *, Node *> split(Node *cur, int key) {
 }
 ```
 
-#### 按排名分裂
+#### Split by Rank
 
-比起按值分裂，这个操作更像是旋转 treap 中的根据排名（某个节点的排名是树中所有小于此节点值的节点的数量 $+ 1$）查询值：
+Compared with splitting by value, this operation is more like querying a value by rank in a rotating treap, where a node's rank is the number of nodes in the tree with values smaller than this node's value, plus $+ 1$.
 
-此函数接受两个参数，节点指针 $\textit{cur}$ 和排名 $\textit{rk}$，返回分裂后的三个 treap．
+This function takes two parameters, the node pointer $\textit{cur}$ and the rank $\textit{rk}$, and returns the three treaps after splitting.
 
-其中，第一个 treap 中每个节点的排名都小于 $\textit{rk}$，第二个的排名等于 $\textit{rk}$，并且第二个 treap 只有一个节点（不可能有多个等于的，如果有的话会增加 `Node` 结构体中的 `cnt`），第三个则是大于．
+In the first treap, every node has rank less than $\textit{rk}$. The second treap has rank equal to $\textit{rk}$ and contains only one node; there cannot be multiple equal nodes, because if duplicates exist they are counted in `cnt` in the `Node` structure. The third treap contains nodes with greater ranks.
 
-此操作的重点在于判断排名和 $\textit{cur}$ 相等的节点在树的哪个部分，这也是旋转 treap 根据排名查询值操作时的重要部分，在前文有非常详细的解释，这里不过多讲解．
+The key point of this operation is determining which part of the tree contains the node with rank $\textit{cur}$. This is also the important part of querying by rank in a rotating treap, and was explained in detail earlier, so we will not elaborate here.
 
-并且，此操作的递归部分和按值分裂也非常相似，这里不赘述．
+The recursive part of this operation is also very similar to splitting by value, so we will not repeat the details.
 
 ```cpp
 tuple<Node *, Node *, Node *> split_by_rk(Node *cur, int rk) {
   if (cur == nullptr) return {nullptr, nullptr, nullptr};
   int ls_siz = cur->ch[0] == nullptr ? 0 : cur->ch[0]->siz;
   if (rk <= ls_siz) {
-    // 排名和 cur 相等的节点在左子树
+    // The node with rank rk is in the left subtree.
     Node *l, *mid, *r;
     tie(l, mid, r) = split_by_rk(cur->ch[0], rk);
-    cur->ch[0] = r;  // 返回的第三个 treap 中的排名都大于 rk
-    // cur 的左子树被设成 r 后，整个 cur 中节点的排名都大于 rk
+    cur->ch[0] = r;  // The returned third treap contains ranks greater than rk.
+    // After setting cur's left subtree to r, all nodes in cur have ranks greater than rk.
     cur->upd_siz();
     return {l, mid, cur};
   } else if (rk <= ls_siz + cur->cnt) {
-    // 和 cur 相等的就是当前节点
+    // The node equal to cur is the current node.
     Node *lt = cur->ch[0];
     Node *rt = cur->ch[1];
     cur->ch[0] = cur->ch[1] = nullptr;
-    // 分裂后第二个 treap 只有一个节点，所有要把它的子树设置为空
+    // After splitting, the second treap has only one node, so set its subtrees to null.
     return {lt, cur, rt};
   } else {
-    // 排名和 cur 相等的节点在右子树
-    // 递归过程同上
+    // The node with rank rk is in the right subtree.
+    // The recursive process is the same as above.
     Node *l, *mid, *r;
     tie(l, mid, r) = split_by_rk(cur->ch[1], rk - ls_siz - cur->cnt);
     cur->ch[1] = l;
@@ -493,49 +495,49 @@ tuple<Node *, Node *, Node *> split_by_rk(Node *cur, int rk) {
 }
 ```
 
-### 合并（merge）
+### Merge
 
-合并过程接受两个参数：左 treap 的根指针 $\textit{u}$、右 treap 的根指针 $\textit{v}$．必须满足 $\textit{u}$ 中所有结点的值小于等于 $\textit{v}$ 中所有结点的值．一般来说，我们合并的两个 treap 都是原来从一个 treap 中分裂出去的，所以不难满足 $\textit{u}$ 中所有节点的值都小于 $\textit{v}$
+The merge procedure takes two parameters: the root pointer $\textit{u}$ of the left treap and the root pointer $\textit{v}$ of the right treap. It must satisfy that all node values in $\textit{u}$ are less than or equal to all node values in $\textit{v}$. In general, the two treaps being merged were originally split from one treap, so it is not hard to ensure that all node values in $\textit{u}$ are less than those in $\textit{v}$.
 
-在旋转 treap 中，我们借助旋转操作来维护 $\textit{priority}$ 符合堆的性质，同时旋转时还不能改变树的性质．在无旋 treap 中，我们用合并达到相同的效果．
+In a rotating treap, we use rotations to maintain that $\textit{priority}$ satisfies the heap property, while rotations must not change the tree property. In a rotationless treap, we use merge to achieve the same effect.
 
-因为两个 treap 已经有序，所以我们在合并的时候只需要考虑把哪个树「放在上面」，把哪个「放在下面」，也就是是需要判断将哪个一个树作为子树．显然，根据堆的性质，我们需要把 $\textit{priority}$ 小的放在上面（这里采用小根堆）．
+Because the two treaps are already ordered, when merging we only need to decide which tree is placed "above" and which is placed "below", that is, which tree should become a subtree. Clearly, by the heap property, the one with smaller $\textit{priority}$ should be placed above, since we use a min-heap here.
 
-同时，我们还需要满足搜索树的性质，所以若 $\textit{u}$ 的根结点的 $\textit{priority}$ 小于 $\textit{v}$ 的，那么 $\textit{u}$ 即为新根结点，并且 $\textit{v}$ 因为值比 $\textit{u}$ 更大，应与 $\textit{u}$ 的右子树合并；反之，则 $\textit{v}$ 作为新根结点，然后因为 $u$ 的值比 $\textit{v}$ 小，与 $v$ 的左子树合并．
+At the same time, we must also satisfy the search-tree property. Therefore, if $\textit{u}$'s root has smaller $\textit{priority}$ than $\textit{v}$'s, then $\textit{u}$ becomes the new root. Since values in $\textit{v}$ are greater than those in $\textit{u}$, it should be merged with $\textit{u}$'s right subtree. Otherwise, $\textit{v}$ becomes the new root, and since values in $u$ are smaller than those in $\textit{v}$, $v$'s left subtree is merged with them.
 
 ```cpp
 Node *merge(Node *u, Node *v) {
-  // 传进来的两个树的内部已经符合搜索树的性质了
-  // 并且 u 内所有节点的值 < v 内所有节点的值
-  // 所以在合并的时候需要维护堆的性质
-  // 这里用的是小根堆
+  // The two input trees already internally satisfy the search-tree property,
+  // and all node values in u are less than all node values in v.
+  // Therefore, merging only needs to maintain the heap property.
+  // A min-heap is used here.
   if (u == nullptr && v == nullptr) return nullptr;
   if (u != nullptr && v == nullptr) return u;
   if (v != nullptr && u == nullptr) return v;
 
   if (u->prio < v->prio) {
-    // u 的 prio 比较小，u应该作为父节点
+    // u has the smaller prio, so u should be the parent.
     u->ch[1] = merge(u->ch[1], v);
-    // 因为 v 比 u 大，所以把 v 作为 u 的右子树
+    // Since v is greater than u, make v part of u's right subtree.
     u->upd_siz();
     return u;
   } else {
-    // v 比较小，v应该作为父节点
+    // v is smaller, so v should be the parent.
     v->ch[0] = merge(u, v->ch[0]);
-    // u 比 v 小，所以递归时的参数是这样的
+    // u is smaller than v, so the recursive parameters are arranged this way.
     v->upd_siz();
     return v;
   }
 }
 ```
 
-### 插入
+### Insertion
 
-在无旋 treap 中，插入，删除，根据值查询排名等基础操作既可以用普通二叉查找树的方法实现，也可以用分裂和合并来实现．通常来说，使用分裂和合并来实现更加简洁，但是速度会慢一点[^ref2]．为了帮助更好的理解无旋 treap，下面的操作全部使用分裂和合并实现．
+In a rotationless treap, basic operations such as insertion, deletion, and querying rank by value can be implemented either with ordinary binary-search-tree methods or with split and merge. Generally speaking, implementations using split and merge are more concise, but slightly slower.[^ref2] To help understand rotationless treaps better, all operations below are implemented with split and merge.
 
-在实现插入操作时，我们利用了分裂操作的一些性质．也就是值小于等于 $\textit{val}$ 的节点会被分到第一个 treap．
+When implementing insertion, we use a property of the split operation: nodes with values less than or equal to $\textit{val}$ are assigned to the first treap.
 
-所以，假设我们根据 $\textit{val}$ 分裂当前这个 treap．会有下面两棵树，并符合以下条件：
+Suppose we split the current treap by $\textit{val}$. We obtain the following two trees, satisfying these conditions:
 
 $$
 \begin{aligned}
@@ -544,9 +546,9 @@ T_2 &> val
 \end{aligned}
 $$
 
-其中 $T_1$ 表示分裂后所有被分到第一个 treap 的节点的集合，$T_2$ 则是第二个．
+Here $T_1$ denotes the set of all nodes assigned to the first treap after splitting, and $T_2$ denotes the second.
 
-如果我们再按照 $\textit{val} - 1$ 继续分裂 $T_1$，那么会产生下面两棵树，并符合以下条件：
+If we further split by $\textit{val} - 1$ on $T_1$, the following two trees are produced and satisfy these conditions:
 
 $$
 \begin{gathered}
@@ -555,24 +557,24 @@ T_{1\ \text{right}} > val - 1 \ \And \ T_{1\ \text{right}} \le val
 \end{gathered}
 $$
 
-其中 $T_{1\ \text{left}}$ 表示 $T_1$ 分裂后所有被分到第一个 treap 的节点的集合，$T_{1\ \text{right}}$ 则是第二个．并且上面的式子中，后半部分的 $\And \ T_{1\ \text{right}} \le val$ 来自于 $T_1$ 所符合的条件 $T_1 \le val$．
+Here $T_{1\ \text{left}}$ denotes the set of all nodes assigned to the first treap after splitting $T_1$, and $T_{1\ \text{right}}$ denotes the second. In the formula above, the latter part $\And \ T_{1\ \text{right}} \le val$ comes from $T_1$ satisfying the condition $T_1 \le val$.
 
-不难发现，只要 $\textit{val}$ 和节点的值是一个整数（大多数使用场景下会使用整数）那么符合 $T_{1\ \text{right}}$ 条件的节点只有一个，也就是值等于 $\textit{val}$ 的节点．
+It is not hard to see that as long as $\textit{val}$ and node values are integers, which is the case in most use scenarios, the only nodes satisfying the condition for $T_{1\ \text{right}}$ have value equal to $\textit{val}$.
 
-在插入时，如果我们发现符合 $T_{1\ \text{right}}$ 的节点存在，那就可以直接增加重复次数，否则，就新开一个节点．
+During insertion, if we find that a node satisfying $T_{1\ \text{right}}$ already exists, we can directly increase its duplicate count; otherwise, we create a new node.
 
-注意把树分裂好了还需要用合并操作把它「粘」回去，这样下次还能继续使用．并且，还需要注意合并操作的参数顺序是有要求的，第一个树的所有节点的值都需要小于第二个．
+After splitting the tree, remember to "glue" it back together with merge so it can continue to be used next time. Also note that the argument order of merge matters: all node values in the first tree must be smaller than those in the second.
 
 ```cpp
 void insert(int val) {
   auto temp = split(root, val);
-  // 根据 val 的值把整个树分成两个
-  // 注意 split 的实现，等于 val 的子树是在左子树的
+  // Split the whole tree into two according to val.
+  // Note the split implementation: the subtree equal to val is in the left tree.
   auto l_tr = split(temp.first, val - 1);
-  // l_tr 的左子树 <= val - 1，如果有 = val 的节点，那一定在右子树
+  // l_tr's left tree <= val - 1. If there is a node equal to val, it must be in the right tree.
   Node *new_node;
   if (l_tr.second == nullptr) {
-    // 没有这个节点就新开，否则直接增加重复次数．
+    // Create a new node if it does not exist; otherwise just increase the duplicate count.
     new_node = new Node(val);
   } else {
     l_tr.second->cnt++;
@@ -580,28 +582,28 @@ void insert(int val) {
   }
   Node *l_tr_combined =
       merge(l_tr.first, l_tr.second == nullptr ? new_node : l_tr.second);
-  // 合并 T_1 left 和 T_1 right
+  // Merge T_1 left and T_1 right.
   root = merge(l_tr_combined, temp.second);
-  // 合并 T_1 和 T_2
+  // Merge T_1 and T_2.
 }
 ```
 
-### 删除
+### Deletion
 
-删除操作也使用和插入操作相似的方法，找到值和 $\textit{val}$ 相等的节点，并且删除它．
+Deletion uses a method similar to insertion: find the node whose value equals $\textit{val}$, and delete it.
 
 ```cpp
 void del(int val) {
   auto temp = split(root, val);
   auto l_tr = split(temp.first, val - 1);
   if (l_tr.second->cnt > 1) {
-    // 如果这个节点的重复次数大于 1，减小即可
+    // If this node has duplicate count greater than 1, just decrease it.
     l_tr.second->cnt--;
     l_tr.second->upd_siz();
     l_tr.first = merge(l_tr.first, l_tr.second);
   } else {
     if (temp.first == l_tr.second) {
-      // 有可能整个 T_1 只有这个节点，所以也需要把这个点设成 null 来标注已经删除
+      // The whole T_1 may contain only this node, so set it to null to mark it deleted.
       temp.first = nullptr;
     }
     delete l_tr.second;
@@ -611,28 +613,28 @@ void del(int val) {
 }
 ```
 
-### 根据值查询排名
+### Query Rank by Value
 
-排名是比这个值小的节点的数量 $+ 1$，所以我们根据 $\textit{val} - 1$ 分裂当前树，那么分裂后的第一个树就符合：
+The rank is the number of nodes smaller than this value, plus $+ 1$. Therefore, if we split the current tree by $\textit{val} - 1$, the first tree after splitting satisfies:
 
 $$
 T_1 \le val - 1
 $$
 
-如果树的值和 $\textit{val}$ 为整数，那么 $T_1$ 就包含了所有值小于 $\textit{val}$ 的节点．
+If the tree values and $\textit{val}$ are integers, then $T_1$ contains all nodes with values smaller than $\textit{val}$.
 
 ```cpp
 int qrank_by_val(Node* cur, int val) {
   auto temp = split(cur, val - 1);
-  int ret = (temp.first == nullptr ? 0 : temp.first->siz) + 1;  // 根据定义 + 1
-  root = merge(temp.first, temp.second);  // 拆好了再粘回去
+  int ret = (temp.first == nullptr ? 0 : temp.first->siz) + 1;  // +1 by definition.
+  root = merge(temp.first, temp.second);  // Glue it back after splitting.
   return ret;
 }
 ```
 
-### 根据排名查询值
+### Query Value by Rank
 
-调用 `split_by_rk()` 函数后，会返回分裂好的三个 treap，其中第二个只包含一个节点，它的排名等于 $\textit{rk}$，所以我们直接返回这个节点的 $\textit{val}$．
+After calling `split_by_rk()`, the three split treaps are returned. The second contains only one node, whose rank equals $\textit{rk}$, so we directly return that node's $\textit{val}$.
 
 ```cpp
 int qval_by_rank(Node *cur, int rk) {
@@ -644,122 +646,122 @@ int qval_by_rank(Node *cur, int rk) {
 }
 ```
 
-### 查询第一个比 val 小的节点
+### Query the First Node Smaller Than `val`
 
-可以把这个问题转化为，在比 $\textit{val}$ 小的所有节点中，找出排名最大的．我们根据 $\textit{val}$ 来分裂这个 treap，返回的第一个 treap 中的节点的值就全部小于 $\textit{val}$，然后我们调用 `qval_by_rank()` 找出这个树中值最大的节点．
+This problem can be transformed into finding the node with the largest rank among all nodes smaller than $\textit{val}$. We split this treap by $\textit{val}$, so all node values in the returned first treap are smaller than $\textit{val}$. Then we call `qval_by_rank()` to find the node with the largest value in this tree.
 
 ```cpp
 int qprev(int val) {
   auto temp = split(root, val - 1);
-  // temp.first 就是值小于 val 的子树
+  // temp.first is the subtree whose values are less than val.
   int ret = qval_by_rank(temp.first, temp.first->siz);
-  // 这里查询的是，所有小于 val 的节点里面，最大的那个的值
+  // Query the largest value among all nodes smaller than val.
   root = merge(temp.first, temp.second);
   return ret;
 }
 ```
 
-### 查询第一个比 val 大的节点
+### Query the First Node Greater Than `val`
 
-和上个操作类似，可以把这个问题转化为，在比 $\textit{val}$ 大的所有节点中，找出排名最小的．那么根据 $\textit{val}$ 分裂后，返回的第二个 treap 中的所有节点的值就大于 $\textit{val}$．
+Similar to the previous operation, this problem can be transformed into finding the node with the smallest rank among all nodes greater than $\textit{val}$. After splitting by $\textit{val}$, all node values in the returned second treap are greater than $\textit{val}$.
 
-然后我们去查询这个树中排名为 $1$ 的节点（也就是值最小的节点）的值，就可以成功查到第一个比 $\textit{val}$ 大的节点．
+Then we query the value of the node with rank $1$ in this tree, namely the node with the smallest value, and obtain the first node greater than $\textit{val}$.
 
 ```cpp
 int qnex(int val) {
   auto temp = split(root, val);
   int ret = qval_by_rank(temp.second, 1);
-  // 查询所有大于 val 的子树里面，值最小的那个
+  // Query the smallest value in the subtree containing all values greater than val.
   root = merge(temp.first, temp.second);
   return ret;
 }
 ```
 
-### 建树（build）
+### Build
 
-将一个有 $n$ 个节点的序列 $\{a_n\}$ 转化为一棵 treap．
+Convert a sequence with $n$ nodes, $\{a_n\}$, into a treap.
 
-可以依次暴力插入这 $n$ 个节点，每次插入一个权值为 $v$ 的节点时，将整棵 treap 按照权值分裂成权值小于等于 $v$ 的和权值大于 $v$ 的两部分，然后新建一个权值为 $v$ 的节点，将两部分和新节点按从小到大的顺序依次合并，单次插入时间复杂度 $O(\log n)$，总时间复杂度 $O(n\log n)$．
+We can brute-force insert these $n$ nodes one by one. Each time we insert a node with value $v$, split the whole treap by value into a part with values less than or equal to $v$ and a part with values greater than $v$, create a new node with value $v$, and then merge the two parts and the new node in ascending order. A single insertion takes $O(\log n)$ time, and the total time complexity is $O(n\log n)$.
 
-在某些题目内，可能会有多次插入一段有序序列的操作，这是就需要在 $O(n)$ 的时间复杂度内完成建树操作．
+In some problems, there may be many operations that insert an ordered sequence. In this case, building the tree must be completed in $O(n)$ time.
 
-方法一：在递归建树的过程中，每次选取当前区间的中点作为该区间的树根，并对每个节点钦定合适的优先值，使得新树满足堆的性质．这样能保证树高为 $O(\log n)$．
+Method 1: During recursive construction, choose the midpoint of the current interval as the root of that interval each time, and assign suitable priority values to each node so that the new tree satisfies the heap property. This guarantees tree height $O(\log n)$.
 
-方法二：在递归建树的过程中，每次选取当前区间的中点作为该区间的树根，然后给每个节点一个随机优先级．这样能保证树高为 $O(\log n)$，但不保证其满足堆的性质．这样也是正确的，因为无旋式 treap 的优先级是用来使 `merge` 操作更加随机一点，而不是用来保证树高的．
+Method 2: During recursive construction, choose the midpoint of the current interval as the root of that interval each time, and then assign every node a random priority. This guarantees tree height $O(\log n)$, but does not guarantee that the heap property is satisfied. This is still correct, because in a rotationless treap the priority is used to make the `merge` operation more random, not to guarantee tree height.
 
-方法三：观察到 treap 是笛卡尔树，利用笛卡尔树的 $O(n)$ 建树方法即可，用单调栈维护右链即可．
+Method 3: Observe that a treap is a Cartesian tree, and use the $O(n)$ Cartesian-tree construction method, maintaining the right chain with a monotonic stack.
 
-### 无旋 treap 的区间操作
+### Interval Operations on a Rotationless Treap
 
-#### 建树
+#### Build
 
-无旋 treap 相比旋转 treap 的一大好处就是可以实现各种区间操作，下面我们以文艺平衡树的 [模板题](https://loj.ac/problem/105) 为例，介绍 treap 的区间操作．
+One major advantage of a rotationless treap over a rotating treap is that it can implement various interval operations. Below, we use the [template problem](https://loj.ac/problem/105) for the literary balanced tree as an example to introduce treap interval operations.
 
-> 您需要写一种数据结构（可参考题目标题），来维护一个有序数列．
+> You need to write a data structure, as hinted by the problem title, to maintain an ordered sequence.
 >
-> 其中需要提供以下操作：翻转一个区间，例如原有序序列是 $5\ 4\ 3\ 2\ 1$，翻转区间是 $[2,4]$ 的话，结果是 $5\ 2\ 3\ 4\ 1$．
-> 对于 $100\%$ 的数据，$1 \le n$（初始区间长度）$m$（翻转次数）$\le 10^5$
+> It must support the following operation: reverse an interval. For example, if the original ordered sequence is $5\ 4\ 3\ 2\ 1$ and the reversed interval is $[2,4]$, the result is $5\ 2\ 3\ 4\ 1$.
+> For $100\%$ of the data, $1 \le n$ (initial interval length), $m$ (number of reversals) $\le 10^5$.
 
-在这道题目中，我们需要实现的是区间翻转，那么我们首先需要考虑如何建树，建出来的树需要是初始的区间．
+In this problem, we need to implement interval reversal, so we first need to consider how to build the tree. The constructed tree must represent the initial interval.
 
-我们只需要把区间的下标依次插入 treap 中，这样在中序遍历（先遍历左子树，然后当前节点，最后右子树）时，就可以得到这个区间[^ref3]．
+We only need to insert the indices of the interval into the treap in order. Then an inorder traversal, visiting the left subtree, then the current node, then the right subtree, yields this interval.[^ref3]
 
-我们知道在朴素的二叉查找树中按照递增的顺序插入节点，建出来的树是一个长链，按照中序遍历，自然可以得到这个区间．
+We know that in a plain binary search tree, inserting nodes in increasing order builds a long chain. An inorder traversal naturally yields this interval.
 
 <div align=center>
   <img style="width: 50%; " src="../images/treap-search-tree-chain.svg" >
 </div>
 
-如上图，按照 $1\ 2\ 3\ 4\ 5$ 的顺序给朴素搜索树插入节点，中序遍历时，得到的也是 $1\ 2\ 3\ 4\ 5$．
+As shown above, inserting nodes into a plain search tree in the order $1\ 2\ 3\ 4\ 5$ also gives $1\ 2\ 3\ 4\ 5$ during inorder traversal.
 
-但是在 treap 中，按增序插入节点后，在合并操作时还会根据 $\textit{priority}$ 调整树的结构，在这样的情况下，如何确保中序遍历一定能正确的输出呢？
+However, in a treap, after inserting nodes in increasing order, merge operations also adjust the tree structure according to $\textit{priority}$. In this situation, how can we ensure that inorder traversal always outputs the correct sequence?
 
-可以参考 [笛卡尔树的单调栈建树方法](./cartesian-tree.md) 来理解这个问题．
+You can refer to the [monotonic-stack construction method for Cartesian trees](./cartesian-tree.md) to understand this issue.
 
-设新插入的节点为 $\textit{u}$．
+Let the newly inserted node be $\textit{u}$.
 
-首先，因为是递增地插入节点，每一个新插入的节点肯定会被连接到 treap 的右链（即从根结点一直往右子树走，经过的结点形成的链）上．
+First, because nodes are inserted in increasing order, every newly inserted node must be connected to the treap's right chain: the chain formed by starting at the root and repeatedly going to the right subtree.
 
-从根节点开始，右链上的节点的 $\textit{priority}$ 是递增的（小根堆）．那我们可以找到右链上第一个 $\textit{priority}$ 大于 $\textit{u}$ 的节点，我们叫这个节点 $\textit{v}$，并把这个节点换成 $\textit{u}$．
+Starting from the root, the $\textit{priority}$ values on the right chain are increasing in a min-heap. We can find the first node on the right chain whose $\textit{priority}$ is greater than that of $\textit{u}$; call this node $\textit{v}$, and replace it with $\textit{u}$.
 
-因为 $\textit{u}$ 一定大于这个树上其他的全部节点，我们需要把 $\textit{v}$ 以及它的子树作为 $\textit{u}$ 的左子树．并且此时 $\textit{u}$ 没有右子树．
+Because $\textit{u}$ must be greater than every other node in the tree, we need to make $\textit{v}$ and its subtree the left subtree of $\textit{u}$. At this time, $\textit{u}$ has no right subtree.
 
-可以发现，中序遍历时 $\textit{u}$ 一定是最后一个被遍历到的（因为 $\textit{u}$ 是右链中的最后一个，而中序遍历中，右子树是最后被遍历到的）．
+We can see that $\textit{u}$ must be the last node visited in inorder traversal, because $\textit{u}$ is the last node on the right chain, and the right subtree is visited last in inorder traversal.
 
-下图是一个 treap 根据递增顺序插入 $1 \sim 5$ 号节点时，插入 $5$ 号节点时的变化，可以用这张图更好的理解按照增序插入的过程．
+The following figure shows, when inserting nodes $1 \sim 5$ in increasing order, the change when inserting node $5$ into a treap. It can help you better understand the process of increasing-order insertion.
 
-![插入结点](./images/treap-none-rot-seg-build.svg)
+![Insert a node](./images/treap-none-rot-seg-build.svg)
 
-#### 区间翻转
+#### Interval Reversal
 
-翻转 $[l, r]$ 这个区间时，基本思路是将树分裂成 $[1, l - 1],\ [l, r],\ [r + 1, n]$ 三个区间，再对中间的 $[l, r]$ 进行翻转[^ref3]．
+When reversing the interval $[l, r]$, the basic idea is to split the tree into three intervals, $[1, l - 1],\ [l, r],\ [r + 1, n]$, and then reverse the middle interval $[l, r]$.[^ref3]
 
-翻转的具体操作是把区间内的子树的每一个左，右子节点交换位置．如下图就展示了翻转上图中 treap 的 $[3, 4]$ 和 $[3, 5]$ 区间后的 treap．
+The concrete reversal operation swaps the left and right children of every subtree inside the interval. The following figure shows the treap after reversing intervals $[3, 4]$ and $[3, 5]$ in the treap above.
 
-![区间翻转](./images/treap-none-rot-seg-flip-ex.svg)
+![Interval reversal](./images/treap-none-rot-seg-flip-ex.svg)
 
-注意如果按照这个方法翻转，那么每次翻转 $[l, r]$ 区间时，就会有 $r - l$ 个节点会被交换位置，这样频繁的操作显然不能满足 $10^5$ 的数据范围，其 $O(n \times \log_2 n)$ 的单次翻转复杂度甚至不如暴力（因为我们除了需要花线性时间交换节点外，还需要在树中花费 $O(\log_2 n)$ 的时间找到需要交换的节点）．
+Note that if we reverse using this method directly, then every reversal of interval $[l, r]$ causes $r - l$ nodes to be swapped. Such frequent operations clearly cannot satisfy the $10^5$ data range. Its $O(n \times \log_2 n)$ complexity for a single reversal is even worse than brute force, because besides spending linear time swapping nodes, we also spend $O(\log_2 n)$ time in the tree to find the nodes to swap.
 
-再观察题目要求，可以发现因为只需要最后输出操作完的区间，所以并不需要每次都真的去交换．如此一来，便可以使用线段树中常用的懒标记（lazy tag）来优化复杂度．交换时，只需要在父节点打上标记，代表这个子树下的每个左右子节点都需要交换就行了．
+Looking again at the problem requirements, we can see that because only the final interval after all operations needs to be output, there is no need to actually swap every time. Thus we can use the lazy tag commonly used in segment trees to optimize the complexity. During a swap, it is enough to mark the parent node, indicating that every pair of left and right children under this subtree needs to be swapped.
 
-在线段树中，我们一般在更新和查询时下传懒标记．这是因为，在更新和查询时，我们想要更新/查询的范围不一定和懒标记代表的范围重合，所以要先下传标记，确保查到和更新后的值是正确的．
+In a segment tree, we usually push down lazy tags during updates and queries. This is because the range we want to update or query may not coincide with the range represented by a lazy tag, so we push the tag down first to ensure the queried or updated values are correct.
 
-在无旋 treap 中也是一样．具体操作时我们会把 treap 分裂成前文讲到的三个树，然后给中间的树打上懒标记后合并这三棵树．因为我们想要翻转的区间和懒标记代表的区间不一定重合，所以要在分裂时下传标记．并且，分裂和合并操作会造成每个节点及其懒标记所代表的节点发生变动，所以也需要在合并前下传懒标记．
+The same applies in a rotationless treap. In the concrete operation, we split the treap into the three trees mentioned above, mark the middle tree with a lazy tag, and then merge the three trees. Because the interval we want to reverse may not coincide with the interval represented by a lazy tag, we must push tags down while splitting. Also, split and merge operations change each node and the set of nodes represented by its lazy tag, so lazy tags also need to be pushed down before merging.
 
-换句话说，是当树的结构发生改变的时候，当我们进行分裂或合并操作时需要改变某一个点的左右儿子信息时之前，应该下放标记，而非之后，因为懒标记是需要下传给儿子节点的，但更改左右儿子信息之后若懒标记还未下放，则懒标记就丢失了下放的对象．[^ref4]
+In other words, when the tree structure changes, before a split or merge operation changes the left or right child information of some node, we should push the tag down, not afterward. This is because a lazy tag must be propagated to child nodes; if the left and right child information is changed before an unpushed lazy tag is propagated, the lazy tag loses the targets it should have been pushed to.[^ref4]
 
-<!-- TODO: 可以加一张图解释为什么需要在分裂和合并时下传标记 -->
+<!-- TODO: Add a figure explaining why tags need to be pushed down during split and merge. -->
 
-以下为代码讲解，代码参考了[^ref3]．
+The following is a code explanation. The code references [^ref3].
 
-因为区间操作中大部分操作都和普通的无旋 treap 相同，所以这里只讲解和普通无旋 treap 不同的地方．
+Because most interval operations are the same as in an ordinary rotationless treap, we only explain the parts that differ from an ordinary rotationless treap.
 
-#### 下传标记
+#### Push Down Tags
 
-需要注意这里的懒标记代表需要把这个树中的每一个子节点交换位置．所以如果当前节点的子节点也有懒标记，那两次翻转就抵消了．如果子节点不需要翻转，那么这个懒标记就需要继续被下传到子节点上．
+Note that the lazy tag here means every pair of child nodes in this tree needs to be swapped. Therefore, if a child of the current node also has a lazy tag, the two reversals cancel out. If the child does not need to be reversed yet, this lazy tag must continue to be pushed down to the child.
 
 ```cpp
-// 这里这个 pushdown 是 Node 类的成员函数，其中 to_rev 是懒标记
+// Here pushdown is a member function of the Node class, where to_rev is the lazy tag.
 void pushdown() {
   swap(ch[0], ch[1]);
   if (ch[0] != nullptr) ch[0]->to_rev ^= 1;
@@ -772,22 +774,22 @@ void check_tag() {
 }
 ```
 
-#### 分裂
+#### Split
 
-注意在这个题目中，因为翻转操作，treap 中的 $\textit{val}$ 会不符合二叉搜索树的性质（见区间翻转部分的图），所以我们不能根据 $\textit{val}$ 来判断应该往左子树还是右子树递归．
+Note that in this problem, because of reversal operations, $\textit{val}$ in the treap may no longer satisfy the binary-search-tree property; see the figure in the interval reversal section. Therefore, we cannot decide whether to recurse into the left or right subtree based on $\textit{val}$.
 
-所以这里的分裂跟普通无旋 treap 中的按排名分裂更相似，是根据当前树的大小判断往左还是右子树递归的，换言之，我们是按照开始时这个节点在树中的位置来判断的．
+Thus the split here is more similar to splitting by rank in an ordinary rotationless treap. It decides whether to recurse left or right according to the size of the current tree; in other words, it uses the node's original position in the tree.
 
-返回的第一个 treap 中节点的排名全部小于等于 $\textit{sz}$，而第二个 treap 中节点的排名则全部大于 $\textit{sz}$．
+In the returned result, all node ranks in the first treap are less than or equal to $\textit{sz}$, while all node ranks in the second treap are greater than $\textit{sz}$.
 
 ```cpp
 #define siz(_) (_ == nullptr ? 0 : _->siz)
 
 pair<Node*, Node*> split(Node* cur, int sz) {
-  // 按照树的大小判断
+  // Decide according to tree size.
   if (cur == nullptr) return {nullptr, nullptr};
   cur->check_tag();
-  // 分裂前先下传
+  // Push down before splitting.
   if (sz <= siz(cur->ch[0])) {
     auto temp = split(cur->ch[0], sz);
     cur->ch[0] = temp.second;
@@ -797,7 +799,7 @@ pair<Node*, Node*> split(Node* cur, int sz) {
     auto temp =
         split(cur->ch[1],
               sz - siz(cur->ch[0]) -
-                  1);  // 这里的转换在有旋 treap 的 「根据排名查询值有讲」
+                  1);  // This conversion was explained in "Query Value by Rank" for rotating treaps.
     cur->ch[1] = temp.first;
     cur->upd_siz();
     return {cur, temp.second};
@@ -805,9 +807,9 @@ pair<Node*, Node*> split(Node* cur, int sz) {
 }
 ```
 
-#### 合并
+#### Merge
 
-唯一需要注意的是在合并前下传懒标记
+The only thing to note is that lazy tags must be pushed down before merging.
 
 ```cpp
 Node *merge(Node *sm, Node *bg) {
@@ -828,45 +830,45 @@ Node *merge(Node *sm, Node *bg) {
 }
 ```
 
-#### 区间翻转
+#### Interval Reversal
 
-和前面介绍的一样，分裂出 $[1, l - 1],\ [l, r],\ [r + 1, n]$ 三个区间，然后对中间的区间打上标记后再合并．
+As introduced earlier, split out the three intervals $[1, l - 1],\ [l, r],\ [r + 1, n]$, mark the middle interval, and then merge them back.
 
 ```cpp
 void seg_rev(int l, int r) {
-  // 这里的 less 和 more 是相对于 l 的
+  // Here less and more are relative to l.
   auto less = split(root, l - 1);
-  // 所有小于等于 l - 1 的会在 less 的左子树
+  // All elements less than or equal to l - 1 are in less's left tree.
   auto more = split(less.second, r - l + 1);
-  // 从 l 开始的前 r - l + 1 个元素的区间
+  // The interval of the first r - l + 1 elements starting from l.
   more.first->to_rev = true;
   root = merge(less.first, merge(more.first, more.second));
 }
 ```
 
-#### 中序遍历打印
+#### Print by Inorder Traversal
 
-要注意在打印时要下传标记．
+Remember to push down tags while printing.
 
 ```cpp
 void print(Node* cur) {
   if (cur == nullptr) return;
   cur->check_tag();
-  // 中序遍历 -> 先左子树，再自己，最后右子树
+  // Inorder traversal: left subtree first, then self, then right subtree.
   print(cur->ch[0]);
   cout << cur->val << " ";
   print(cur->ch[1]);
 }
 ```
 
-## 完整代码
+## Complete Code
 
-### 旋转 treap
+### Rotating Treap
 
-#### 指针实现
+#### Pointer Implementation
 
-??? note "完整代码"
-    以下是前文讲解的代码的完整版本，是普通平衡树的模板代码．
+??? note "Complete code"
+    The following is the complete version of the code explained above. It is template code for an ordinary balanced tree.
     
     ```cpp
     // author: (ttzytt)[ttzytt.com]
@@ -897,13 +899,13 @@ void print(Node* cur) {
      private:
       Node *root;
     
-      constexpr static int NIL = -1;  // 用于表示查询的值不存在
+      constexpr static int NIL = -1;  // Used to indicate that the queried value does not exist.
     
       enum rot_type { LF = 1, RT = 0 };
     
       int q_prev_tmp = 0, q_nex_tmp = 0;
     
-      void _rotate(Node *&cur, rot_type dir) {  // 0为右旋，1为左旋
+      void _rotate(Node *&cur, rot_type dir) {  // 0 for right rotation, 1 for left rotation.
         Node *tmp = cur->ch[dir];
         cur->ch[dir] = tmp->ch[!dir];
         tmp->ch[!dir] = cur;
@@ -948,18 +950,18 @@ void print(Node* cur) {
           uint8_t state = 0;
           state |= (cur->ch[0] != nullptr);
           state |= ((cur->ch[1] != nullptr) << 1);
-          // 00都无，01有左无右，10，无左有右，11都有
+          // 00: none; 01: left only; 10: right only; 11: both.
           Node *tmp = cur;
           switch (state) {
             case 0:
               delete cur;
               cur = nullptr;
               break;
-            case 1:  // 有左无右
+            case 1:  // left child only
               cur = tmp->ch[0];
               delete tmp;
               break;
-            case 2:  // 有右无左
+            case 2:  // right child only
               cur = tmp->ch[1];
               delete tmp;
               break;
@@ -1070,21 +1072,21 @@ void print(Node* cur) {
     }
     ```
 
-#### 数组实现
+#### Array Implementation
 
-以下是 bzoj 普通平衡树模板代码，使用数组实现．
+The following is bzoj template code for an ordinary balanced tree, implemented with arrays.
 
-??? note "完整代码"
+??? note "Complete code"
     ```cpp
     --8<-- "docs/ds/code/treap/treap_1.cpp"
     ```
 
-### 无旋 treap
+### Rotationless Treap
 
-#### 指针实现
+#### Pointer Implementation
 
-??? note "完整代码"
-    以下是前文讲解的代码的完整版本，是普通平衡树的模板代码．
+??? note "Complete code"
+    The following is the complete version of the code explained above. It is template code for an ordinary balanced tree.
     
     ```cpp
     
@@ -1271,12 +1273,12 @@ void print(Node* cur) {
     }
     ```
 
-### 无旋 treap 的区间操作
+### Interval Operations on a Rotationless Treap
 
-#### 指针实现
+#### Pointer Implementation
 
-??? note "完整代码"
-    以下是前文讲解的代码的完整版本，是文艺平衡树题目的模板代码．
+??? note "Complete code"
+    The following is the complete version of the code explained above. It is template code for the literary balanced tree problem.
     
     ```cpp
     
@@ -1286,13 +1288,13 @@ void print(Node* cur) {
     #include <iostream>
     using namespace std;
     
-    // 参考：https://www.cnblogs.com/Equinox-Flower/p/10785292.html
+    // Reference: https://www.cnblogs.com/Equinox-Flower/p/10785292.html
     struct Node {
       Node* ch[2];
       int val, prio;
       int cnt;
       int siz;
-      bool to_rev = false;  // 需要把这个子树下的每一个节点都翻转过来
+      bool to_rev = false;  // Every node under this subtree needs to be reversed.
     
       Node(int _val) : val(_val), cnt(1), siz(1) {
         ch[0] = ch[1] = nullptr;
@@ -1309,8 +1311,8 @@ void print(Node* cur) {
       void pushdown() {
         swap(ch[0], ch[1]);
         if (ch[0] != nullptr) ch[0]->to_rev ^= 1;
-        // 如果原来子节点也要翻转，那两次翻转就抵消了，如果子节点不翻转，那这个
-        //  tag 就需要继续被 push 到子节点上
+        // If the child originally also needs reversal, the two reversals cancel out.
+        // If the child does not need reversal, this tag must continue to be pushed to it.
         if (ch[1] != nullptr) ch[1]->to_rev ^= 1;
         to_rev = false;
       }
@@ -1325,18 +1327,18 @@ void print(Node* cur) {
     #define siz(_) (_ == nullptr ? 0 : _->siz)
     
       pair<Node*, Node*> split(Node* cur, int sz) {
-        // 按照树的大小划分
+        // Split according to tree size.
         if (cur == nullptr) return {nullptr, nullptr};
         cur->check_tag();
         if (sz <= siz(cur->ch[0])) {
-          // 左边的子树就够了
+          // The left subtree is enough.
           auto temp = split(cur->ch[0], sz);
-          // 左边的子树不一定全部需要，temp.second 是不需要的
+          // The entire left subtree may not be needed; temp.second is the unneeded part.
           cur->ch[0] = temp.second;
           cur->upd_siz();
           return {temp.first, cur};
         } else {
-          // 左边的加上右边的一部分（当然也包括这个节点本身）
+          // The left part plus part of the right part, including this node itself.
           auto temp = split(cur->ch[1], sz - siz(cur->ch[0]) - 1);
           cur->ch[1] = temp.first;
           cur->upd_siz();
@@ -1372,11 +1374,11 @@ void print(Node* cur) {
       }
     
       void seg_rev(int l, int r) {
-        // 这里的 less 和 more 是相对于 l 的
+        // Here less and more are relative to l.
         auto less = split(root, l - 1);
-        // 所有小于等于 l - 1 的会在 less 的左边
+        // All elements less than or equal to l - 1 are on the left side of less.
         auto more = split(less.second, r - l + 1);
-        // 拿出从 l 开始的前 r - l + 1 个
+        // Take out the first r - l + 1 elements starting from l.
         more.first->to_rev = true;
         root = merge(less.first, merge(more.first, more.second));
       }
@@ -1406,21 +1408,21 @@ void print(Node* cur) {
     }
     ```
 
-## 例题
+## Example Problems
 
-[普通平衡树](https://loj.ac/problem/104)
+[Ordinary Balanced Tree](https://loj.ac/problem/104)
 
-[文艺平衡树（Splay）](https://loj.ac/problem/105)
+[Literary Balanced Tree (Splay)](https://loj.ac/problem/105)
 
-[「ZJOI2006」书架](https://www.luogu.com.cn/problem/P2596)
+[ZJOI2006 Bookcase](https://www.luogu.com.cn/problem/P2596)
 
-[「NOI2005」维护数列](https://www.luogu.com.cn/problem/P2042)
+[NOI2005 Maintaining a Sequence](https://www.luogu.com.cn/problem/P2042)
 
 [CF 702F T-Shirts](http://codeforces.com/problemset/problem/702/F)
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: 本图的设计参考了 [维基百科 treap 词条的配图](https://en.wikipedia.org/wiki/Treap)
+[^ref1]: The design of this figure refers to the illustration in the [Wikipedia Treap article](https://en.wikipedia.org/wiki/Treap).
 
 [^ref2]: <https://charleswu.site/archives/1051>
 

@@ -1,71 +1,71 @@
-## 概述
+## Overview
 
-当某事件已经发生时，一些随机事件的概率会因为已知信息的增加发生变化．例如在手游抽卡时，我们可能会认为单次抽卡出六星与不出六星是等概率的，但随着我们连抽 $50$ 发一个六星都没有，再固执地认为「出六星与不出六星等概率」就显得不是那么明智．
+When some event has already occurred, the probabilities of some random events change due to the increase in known information. For example, when drawing in a mobile game, we might think that getting a 6-star and not getting a 6-star in a single draw are equally likely. But after drawing 50 times without a single 6-star, insisting that "getting and not getting a 6-star are equally likely" seems less reasonable.
 
-总之，研究在某些已知条件下事件发生的概率是必要的．
+In any case, studying the probability of events under certain known conditions is necessary.
 
-## 条件概率
+## Conditional Probability
 
-### 定义
+### Definition
 
-若已知事件 $A$ 发生，在此条件下事件 $B$ 发生的概率称为 **条件概率**，记作 $P(B|A)$．
+If event $A$ is known to have occurred, the probability of event $B$ occurring under this condition is called **conditional probability**, denoted $P(B|A)$.
 
-在概率空间 $(\Omega, \mathcal{F}, P)$ 中，若事件 $A \in \mathcal{F}$ 满足 $P(A) > 0$，则条件概率 $P(\cdot|A)$ 定义为
+In the probability space $(\Omega, \mathcal{F}, P)$, if event $A \in \mathcal{F}$ satisfies $P(A) > 0$, then the conditional probability $P(\cdot|A)$ is defined as
 
 $$
 P(B|A) = \frac{P(AB)}{P(A)} \quad \forall B \in \mathcal{F}
 $$
 
-可以验证根据上式定义出的 $P(\cdot|A)$ 是 $(\Omega, \mathcal{F})$ 上的概率函数．
+It can be verified that $P(\cdot|A)$ defined by the above formula is a probability function on $(\Omega, \mathcal{F})$.
 
-根据条件概率的定义可以直接推出下面两个等式：
+The following two equalities can be directly derived from the definition of conditional probability:
 
--   **概率乘法公式**：在概率空间 $(\Omega, \mathcal{F}, P)$ 中，若 $P(A) > 0$，则对任意事件 $B$ 都有
+-   **Multiplication rule of probability**: In the probability space $(\Omega, \mathcal{F}, P)$, if $P(A) > 0$, then for any event $B$,
 
 $$
 P(AB) = P(A)P(B|A)
 $$
 
--   **全概率公式**：在概率空间 $(\Omega, \mathcal{F}, P)$ 中，若一组事件 $A_1, \cdots, A_n$ 两两不交且和为 $\Omega$，则对任意事件 $B$ 都有
+-   **Law of total probability**: In the probability space $(\Omega, \mathcal{F}, P)$, if a set of events $A_1, \cdots, A_n$ are pairwise disjoint and their union is $\Omega$, then for any event $B$,
 
 $$
 P(B) = \sum_{i=1}^{n} P(A_i)P(B|A_i)
 $$
 
-### Bayes 公式
+### Bayes' Formula
 
-一般来说，设可能导致事件 $B$ 发生的原因为 $A_1, A_2, \cdots, A_n$，则在 $P(A_i)$ 和 $P(B|A_i)$ 已知时可以通过全概率公式计算事件 $B$ 发生的概率．但在很多情况下，我们需要根据「事件 $B$ 发生」这一结果反推其各个原因事件的发生概率．于是有
+Generally, let the causes that could lead to event $B$ be $A_1, A_2, \cdots, A_n$. When $P(A_i)$ and $P(B|A_i)$ are known, the probability of event $B$ can be calculated using the law of total probability. But in many cases, we need to infer the probabilities of each cause event occurring based on the result that "event $B$ occurred." Thus,
 
 $$
 P(A_i|B) = \frac{P(A_iB)}{P(B)} = \frac{P(A_i)P(B|A_i)}{\sum_{j=1}^{n} P(A_j)P(B|A_j)}
 $$
 
-上式即 Bayes 公式．
+The above is Bayes' formula.
 
-## 事件的独立性
+## Independence of Events
 
-在研究条件概率的过程中，可能会出现 $P(B|A) = P(B)$ 的情况．从直观上讲就是事件 $B$ 是否发生并不会告诉我们关于事件 $A$ 的任何信息，即事件 $B$ 与事件 $A$「无关」．于是我们就有了下面的定义
+In the study of conditional probability, the situation $P(B|A) = P(B)$ may occur. Intuitively, this means that whether event $B$ occurs does not tell us any information about event $A$; that is, event $B$ is "unrelated" to event $A$. Hence we have the following definition.
 
-### 定义
+### Definition
 
-若同一概率空间中的事件 $A$,$B$ 满足
+If events $A$ and $B$ in the same probability space satisfy
 
 $$
 P(AB) = P(A)P(B)
 $$
 
-则称 $A$,$B$  **独立**．对于多个事件 $A_1, A_2, \cdots, A_n$，我们称其独立，当且仅当对任意一组事件 $\{ A_{i_k} : 1 \leq i_1 < i_2 < \cdots < i_k \leq n \}$ 都有
+then $A$ and $B$ are said to be **independent**. For multiple events $A_1, A_2, \cdots, A_n$, we say they are independent if and only if for any set of events $\{ A_{i_k} : 1 \leq i_1 < i_2 < \cdots < i_k \leq n \}$,
 
 $$
 P( A_{i_1}A_{i_2} \cdots A_{i_r} ) = \prod_{k=1}^{r} P(A_{i_k})
 $$
 
-### 多个事件的独立性
+### Independence of Multiple Events
 
-对于多个事件，一般不能从两两独立推出这些事件独立．考虑以下反例：
+For multiple events, pairwise independence generally does not imply joint independence. Consider the following counterexample:
 
-有一个正四面体骰子，其中三面被分别涂成红色、绿色、蓝色，另一面则三色皆有．现在扔一次该骰子，令事件 $A$,$B$,$C$ 分别表示与桌面接触的一面包含红色、绿色、蓝色．
+There is a regular tetrahedron die, with three faces painted red, green, and blue respectively, and the remaining face having all three colors. Now roll this die once. Let events $A$, $B$, $C$ respectively represent that the face touching the table contains red, green, and blue.
 
-不难计算 $P(A) = P(B) = P(C) = \frac{1}{2}$，而 $P(AB) = P(BC) = P(CA) = P(ABC) = \frac{1}{4}$．
+It is easy to calculate $P(A) = P(B) = P(C) = \frac{1}{2}$, and $P(AB) = P(BC) = P(CA) = P(ABC) = \frac{1}{4}$.
 
-显然 $A, B, C$ 两两独立，但由于 $P(ABC) \neq P(A)P(B)P(C)$，故 $A, B, C$ 不独立．
+Clearly $A, B, C$ are pairwise independent, but since $P(ABC) \neq P(A)P(B)P(C)$, $A, B, C$ are not independent.

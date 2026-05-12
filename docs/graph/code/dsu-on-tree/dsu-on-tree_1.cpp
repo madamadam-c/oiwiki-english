@@ -6,19 +6,19 @@ constexpr int N = 2e5 + 5;
 
 int n, m;
 
-// g[u]: 存储与 u 相邻的结点
+// g[u]: stores nodes adjacent to u
 vector<int> g[N];
 
-// sz: 子树大小
-// big: 重儿子
-// col: 结点颜色
-// L[u]: 结点 u 的 DFS 序
-// R[u]: 结点 u 子树中结点的 DFS 序的最大值
-// Node[i]: DFS 序为 i 的结点
-// totdfn: 节点计数器，也是当前遍历过节点的 DFS 序最大值
-// ans: 存答案
-// cnt[i]: 颜色为 i 的结点个数
-// totColor: 目前出现过的颜色个数
+// sz: subtree size
+// big: heavy child
+// col: node color
+// L[u]: DFS order of node u
+// R[u]: maximum DFS order among nodes in u's subtree
+// Node[i]: node whose DFS order is i
+// totdfn: node counter, also the current maximum DFS order among visited nodes
+// ans: stores answers
+// cnt[i]: number of nodes with color i
+// totColor: number of colors that have appeared so far
 int sz[N], big[N], col[N], L[N], R[N], Node[N], totdfn;
 int ans[N], cnt[N], totColor;
 
@@ -48,18 +48,18 @@ void dfs0(int u, int p) {
 }
 
 void dfs1(int u, int p, bool keep) {
-  // 计算轻儿子的答案
+  // Compute answers for light children
   for (int v : g[u])
     if (v != p && v != big[u]) {
       dfs1(v, u, false);
     }
-  // 计算重儿子答案并保留计算过程中的数据（用于继承）
+  // Compute the heavy child's answer and keep the intermediate data for reuse
   if (big[u]) {
     dfs1(big[u], u, true);
   }
   for (int v : g[u])
     if (v != p && v != big[u]) {
-      // 子树结点的 DFS 序构成一段连续区间，可以直接遍历
+      // DFS orders of subtree nodes form a contiguous interval, so iterate directly
       for (int i = L[v]; i <= R[v]; i++) {
         add(Node[i]);
       }

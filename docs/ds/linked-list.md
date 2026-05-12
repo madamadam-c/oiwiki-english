@@ -1,29 +1,29 @@
-本页面将简要介绍链表．
+This page briefly introduces linked lists.
 
-## 引入
+## Introduction
 
-链表是一种用于存储数据的数据结构，通过如链条一般的指针来连接元素．它的特点是插入与删除数据十分方便，但寻找与读取数据的表现欠佳．
+A linked list is a data structure for storing data. It connects elements with pointers like links in a chain. Its advantage is that insertion and deletion are very convenient, but searching and reading data are less efficient.
 
-## 与数组的区别
+## Differences from Arrays
 
-链表和数组都可用于存储数据．与链表不同，数组将所有元素按次序依次存储．不同的存储结构令它们有了不同的优势：
+Both linked lists and arrays can store data. Unlike a linked list, an array stores all elements sequentially. Their different storage structures give them different advantages:
 
-链表因其链状的结构，能方便地删除、插入数据，操作次数是 $O(1)$．但也因为这样，寻找、读取数据的效率不如数组高，在随机访问数据中的操作次数是 $O(n)$．
+Because of its chain-like structure, a linked list can delete and insert data conveniently, with $O(1)$ operations. However, for the same reason, searching and reading are less efficient than in arrays; random access takes $O(n)$ operations.
 
-数组可以方便地寻找并读取数据，在随机访问中操作次数是 $O(1)$．但删除、插入的操作次数是 $O(n)$ 次．
+An array can find and read data conveniently, with $O(1)$ random access. However, deletion and insertion take $O(n)$ operations.
 
-## 构建链表
+## Building a Linked List
 
 ???+ tip "Tip"
-    构建链表时，使用指针的部分比较抽象，光靠文字描述和代码可能难以理解，建议配合作图来理解．
+    When building a linked list, the parts involving pointers are relatively abstract. Text descriptions and code alone may be hard to understand, so drawing diagrams is recommended.
 
-### 单向链表
+### Singly Linked List
 
-单向链表中包含数据域和指针域，其中数据域用于存放数据，指针域用来连接当前结点和下一节点．
+A singly linked list contains a data field and a pointer field. The data field stores data, and the pointer field connects the current node to the next node.
 
 ![](images/list.svg)
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         struct Node {
@@ -40,13 +40,13 @@
                 self.next = next
         ```
 
-### 双向链表
+### Doubly Linked List
 
-双向链表中同样有数据域和指针域．不同之处在于，指针域有左右（或上一个、下一个）之分，用来连接上一个结点、当前结点、下一个结点．
+A doubly linked list also has data and pointer fields. The difference is that the pointer field is split into left/right (or previous/next) pointers, used to connect the previous node, current node, and next node.
 
 ![](images/double-list.svg)
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         struct Node {
@@ -65,25 +65,25 @@
                 self.right = right
         ```
 
-## 向链表中插入（写入）数据
+## Inserting (Writing) Data into a Linked List
 
-### 单向链表
+### Singly Linked List
 
-流程大致如下：
+The rough procedure is as follows:
 
-1.  初始化待插入的数据 `node`；
-2.  将 `node` 的 `next` 指针指向 `p` 的下一个结点；
-3.  将 `p` 的 `next` 指针指向 `node`．
+1.  Initialize the data `node` to be inserted.
+2.  Point `node`'s `next` pointer to the node after `p`.
+3.  Point `p`'s `next` pointer to `node`.
 
-具体过程可参考下图：
+See the figures below for the detailed process:
 
 1.  ![](./images/list-insert-1.svg)
 2.  ![](./images/list-insert-2.svg)
 3.  ![](./images/list-insert-3.svg)
 
-代码实现如下：
+The code implementation is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void insertNode(int i, Node *p) {
@@ -103,27 +103,27 @@
             p.next = node
         ```
 
-### 单向循环链表
+### Singly Circular Linked List
 
-将链表的头尾连接起来，链表就变成了循环链表．由于链表首尾相连，在插入数据时需要判断原链表是否为空：为空则自身循环，不为空则正常插入数据．
+Connecting the head and tail of a linked list turns it into a circular linked list. Since the list is circular, insertion must check whether the original list is empty: if it is empty, the new node loops to itself; otherwise, insert normally.
 
-大致流程如下：
+The rough procedure is as follows:
 
-1.  初始化待插入的数据 `node`；
-2.  判断给定链表 `p` 是否为空；
-3.  若为空，则将 `node` 的 `next` 指针和 `p` 都指向自己；
-4.  否则，将 `node` 的 `next` 指针指向 `p` 的下一个结点；
-5.  将 `p` 的 `next` 指针指向 `node`．
+1.  Initialize the data `node` to be inserted.
+2.  Check whether the given list `p` is empty.
+3.  If it is empty, point both `node`'s `next` pointer and `p` to `node` itself.
+4.  Otherwise, point `node`'s `next` pointer to the node after `p`.
+5.  Point `p`'s `next` pointer to `node`.
 
-具体过程可参考下图：
+See the figures below for the detailed process:
 
 1.  ![](./images/list-insert-cyclic-1.svg)
 2.  ![](./images/list-insert-cyclic-2.svg)
 3.  ![](./images/list-insert-cyclic-3.svg)
 
-代码实现如下：
+The code implementation is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void insertNode(int i, Node *p) {
@@ -154,23 +154,23 @@
                 p.next = node
         ```
 
-### 双向循环链表
+### Doubly Circular Linked List
 
-在向双向循环链表插入数据时，除了要判断给定链表是否为空外，还要同时修改左、右两个指针．
+When inserting data into a doubly circular linked list, besides checking whether the given list is empty, both the left and right pointers must be modified.
 
-大致流程如下：
+The rough procedure is as follows:
 
-1.  初始化待插入的数据 `node`；
-2.  判断给定链表 `p` 是否为空；
-3.  若为空，则将 `node` 的 `left` 和 `right` 指针，以及 `p` 都指向自己；
-4.  否则，将 `node` 的 `left` 指针指向 `p`;
-5.  将 `node` 的 `right` 指针指向 `p` 的右结点；
-6.  将 `p` 右结点的 `left` 指针指向 `node`；
-7.  将 `p` 的 `right` 指针指向 `node`．
+1.  Initialize the data `node` to be inserted.
+2.  Check whether the given list `p` is empty.
+3.  If it is empty, point `node`'s `left` and `right` pointers, as well as `p`, to `node` itself.
+4.  Otherwise, point `node`'s `left` pointer to `p`.
+5.  Point `node`'s `right` pointer to `p`'s right node.
+6.  Point the `left` pointer of `p`'s right node to `node`.
+7.  Point `p`'s `right` pointer to `node`.
 
-代码实现如下：
+The code implementation is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void insertNode(int i, Node *p) {
@@ -205,28 +205,28 @@
                 p.right = node
         ```
 
-## 从链表中删除数据
+## Deleting Data from a Linked List
 
-### 单向（循环）链表
+### Singly (Circular) Linked List
 
-设待删除结点为 `p`，从链表中删除它时，将 `p` 的下一个结点 `p->next` 的值覆盖给 `p` 即可，与此同时更新 `p` 的下下个结点．
+Suppose the node to delete is `p`. To delete it from the linked list, copy the value of `p`'s next node `p->next` into `p`, and update the link to the node after `p->next`.
 
-流程大致如下：
+The rough procedure is as follows:
 
-1.  将 `p` 下一个结点的值赋给 `p`，以抹掉 `p->value`；
-2.  新建一个临时结点 `t` 存放 `p->next` 的地址；
-3.  将 `p` 的 `next` 指针指向 `p` 的下下个结点，以抹掉 `p->next`；
-4.  删除 `t`．此时虽然原结点 `p` 的地址还在使用，删除的是原结点 `p->next` 的地址，但 `p` 的数据被 `p->next` 覆盖，`p` 名存实亡．
+1.  Assign the value of the node after `p` to `p`, overwriting `p->value`.
+2.  Create a temporary node `t` to store the address of `p->next`.
+3.  Point `p`'s `next` pointer to the node after `p->next`, removing `p->next` from the list.
+4.  Delete `t`. At this point, although the original address of node `p` is still in use and the deleted address is the original `p->next`, `p`'s data has been overwritten by `p->next`, so the original `p` effectively no longer exists.
 
-具体过程可参考下图：
+See the figures below for the detailed process:
 
 1.  ![](./images/list-delete-1.svg)
 2.  ![](./images/list-delete-2.svg)
 3.  ![](./images/list-delete-3.svg)
 
-代码实现如下：
+The code implementation is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void deleteNode(Node *p) {
@@ -244,19 +244,19 @@
             p.next = p.next.next
         ```
 
-### 双向循环链表
+### Doubly Circular Linked List
 
-流程大致如下：
+The rough procedure is as follows:
 
-1.  将 `p` 左结点的右指针指向 `p` 的右节点；
-2.  将 `p` 右结点的左指针指向 `p` 的左节点；
-3.  新建一个临时结点 `t` 存放 `p` 的地址；
-4.  将 `p` 的右节点地址赋给 `p`，以避免 `p` 变成悬垂指针；
-5.  删除 `t`．
+1.  Point the right pointer of `p`'s left node to `p`'s right node.
+2.  Point the left pointer of `p`'s right node to `p`'s left node.
+3.  Create a temporary node `t` to store the address of `p`.
+4.  Assign the address of `p`'s right node to `p` to avoid making `p` a dangling pointer.
+5.  Delete `t`.
 
-代码实现如下：
+The code implementation is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void deleteNode(Node *&p) {
@@ -276,12 +276,11 @@
             p = p.right
         ```
 
-## 技巧
+## Tricks
 
-### 异或链表
+### XOR Linked List
 
-异或链表（XOR Linked List）本质上还是 **双向链表**，但它利用按位异或的值，仅使用一个指针的内存大小便可以实现双向链表的功能．
+An XOR linked list is still essentially a **doubly linked list**, but it uses bitwise XOR values to implement the functionality of a doubly linked list using only the memory size of one pointer.
 
-我们在结构 `Node` 中定义 `lr = left ^ right`，即前后两个元素地址的 **按位异或值**．正向遍历时用前一个元素的地址异
-或当前节点的 `lr` 可得到后一个元素的地址，反向遍历时用后一个元素的地址异或当前节点的 `lr` 又可得到前一个的元素地址．
-这样一来，便可以用一半的内存实现双向链表同样的功能．
+In the `Node` structure, define `lr = left ^ right`, the **bitwise XOR** of the addresses of the previous and next elements. During forward traversal, XOR the address of the previous element with the current node's `lr` to obtain the address of the next element. During backward traversal, XOR the address of the next element with the current node's `lr` to obtain the address of the previous element.
+In this way, the same functionality as a doubly linked list can be implemented with half the memory.

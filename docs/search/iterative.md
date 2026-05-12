@@ -1,20 +1,20 @@
-## 定义
+## Definition
 
-迭代加深是一种 **每次限制搜索深度的** 深度优先搜索．
+Iterative deepening is a depth-first search that **limits the search depth each time**.
 
-## 解释
+## Explanation
 
-迭代加深搜索的本质还是深度优先搜索，只不过在搜索的同时带上了一个深度 $d$，当 $d$ 达到设定的深度时就返回，一般用于找最优解．如果一次搜索没有找到合法的解，就让设定的深度加一，重新从根开始．
+Iterative deepening search is still essentially depth-first search, except that the search carries a depth $d$ and returns when $d$ reaches the configured depth. It is generally used to find an optimal solution. If one search does not find a valid solution, increase the configured depth by one and restart from the root.
 
-既然是为了找最优解，为什么不用 BFS 呢？我们知道 BFS 的基础是一个队列，队列的空间复杂度很大，当状态比较多或者单个状态比较大时，使用队列的 BFS 就显出了劣势．事实上，迭代加深就类似于用 DFS 方式实现的 BFS，它的空间复杂度相对较小．
+Since the goal is to find an optimal solution, why not use BFS? BFS is based on a queue, whose space complexity is large. When there are many states or each individual state is large, BFS with a queue shows its disadvantage. In fact, iterative deepening is similar to implementing BFS in a DFS style, and its space complexity is relatively small.
 
-当搜索树的分支比较多时，每增加一层的搜索复杂度会出现指数级爆炸式增长，这时前面重复进行的部分所带来的复杂度几乎可以忽略，这也就是为什么迭代加深是可以近似看成 BFS 的．
+When the search tree has many branches, adding one more level causes the search complexity to explode exponentially. At that point, the cost of the repeatedly searched earlier parts is almost negligible, which is why iterative deepening can be approximately viewed as BFS.
 
-## 过程
+## Process
 
-首先设定一个较小的深度作为全局变量，进行 DFS．每进入一次 DFS，将当前深度加一，当发现 $d$ 大于设定的深度 $\textit{limit}$ 就返回．如果在搜索的途中发现了答案就可以回溯，同时在回溯的过程中可以记录路径．如果没有发现答案，就返回到函数入口，增加设定深度，继续搜索．
+First set a small depth as a global variable and run DFS. Each time DFS is entered, increase the current depth by one; when $d$ is found to be greater than the configured depth $\textit{limit}$, return. If an answer is found during the search, backtracking can begin, and the path can be recorded during backtracking. If no answer is found, return to the function entry point, increase the configured depth, and continue searching.
 
-???+ note "实现（伪代码）"
+???+ note "Implementation (pseudocode)"
     ```text
     IDDFS(u,d)
         if d>limit
@@ -25,6 +25,6 @@
     return
     ```
 
-## 注意事项
+## Notes
 
-在大多数的题目中，广度优先搜索还是比较方便的，而且容易判重．当发现广度优先搜索在空间上不够优秀，而且要找最优解的问题时，就应该考虑迭代加深．
+In most problems, breadth-first search is still convenient and makes duplicate detection easy. When breadth-first search is not good enough in terms of space and the problem asks for an optimal solution, consider iterative deepening.

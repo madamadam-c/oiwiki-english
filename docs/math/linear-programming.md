@@ -1,32 +1,32 @@
 author: Ir1d, YZircon, huhaoo, QAQAutoMaton, Enter-tainer, Marcythm, sshwy, partychicken, Konano, H-J-Granger, baker221, isdanni, ksyx
 
-## 引入
+## Introduction
 
-线性规划（linear programming, LP）是研究线性约束条件下线性目标函数最值问题的方法总称，是运筹学的一个分支，在多方面均有应用．线性规划的某些特殊情况，如网络流、多商品流量等问题都有可能在算法竞赛题目中出现．算法竞赛很少会出现只能用线性规划算法解决的问题，绝大多数这类问题可以通过网络流建模等方法更高效地解决．
+Linear programming (LP) is a general term for methods that study the extremal values of linear objective functions under linear constraints. It is a branch of operations research with applications in many fields. Some special cases of linear programming, such as network flow and multi-commodity flow problems, may appear in programming contest problems. In programming contests, problems that can only be solved by linear programming algorithms are extremely rare; most such problems can be solved more efficiently through network flow modeling and other methods.
 
-### 一个简单的例子
+### A Simple Example
 
-一个问题能够写成线性规划的形式，既要有若干个线性约束条件，又要有线性的目标函数．
+For a problem to be expressed in the form of linear programming, there must be several linear constraints and a linear objective function.
 
-考虑下面的例子：
+Consider the following example:
 
-???+ example "例子"
-    早点师傅每天可以制作一定数量的包子和油条，这两种早餐深受顾客喜爱．为了最大化利润，师傅希望尽可能多地制作早点，但在实际操作中受到食材、时间等多种资源的限制．为此，师傅统计了制作每份早点所需的食材用量、制作时间及其对应的利润，具体如下表所示：
+???+ example "Example"
+    The breakfast master can make a certain number of buns and fried dough sticks every day. These two breakfast items are very popular among customers. To maximize profit, the master wants to make as much breakfast as possible, but in actual operation, they are limited by various resources such as ingredients and time. To this end, the master recorded the ingredients needed, cooking time, and corresponding profit for each breakfast item as follows:
     
-    |  早点 | 植物油 |  面粉 |  时间 |  利润 |
+    | Breakfast | Vegetable Oil | Flour | Time | Profit |
     | :-: | :-: | :-: | :-: | :-: |
-    |  包子 | $4$ | $7$ | $8$ | $5$ |
-    |  油条 | $7$ | $3$ | $6$ | $6$ |
+    | Bun | $4$ | $7$ | $8$ | $5$ |
+    | Fried Dough | $7$ | $3$ | $6$ | $6$ |
     
-    假设师傅每天最多可以购入 $66$ 单位的植物油和 $60$ 单位的面粉，并且最多可以投入 $96$ 单位的制作时间．那么，师傅应如何合理安排包子和油条的生产数量，才能使每天的利润最大化？
+    Suppose the master can purchase at most $66$ units of vegetable oil and $60$ units of flour per day, and can invest at most $96$ units of cooking time. Then, how should the master reasonably arrange the production quantities of buns and fried dough to maximize daily profit?
 
-用数学语言描述，可以设 $x_1$ 和 $x_2$ 分别是师傅制作包子和油条的数量．那么，「总共需要的植物油不超过 $66$ 单位」就可以表示为
+In mathematical terms, let $x_1$ and $x_2$ be the number of buns and fried dough sticks the master makes, respectively. Then, "total vegetable oil required does not exceed $66$ units" can be expressed as
 
 $$
 4x_1 + 7x_2 \le 66.
 $$
 
-类似地，「总共需要的面粉不超过 $60$ 单位」和「总共需要的时间不超过 $96$ 单位」可以表示为
+Similarly, "total flour required does not exceed $60$ units" and "total time required does not exceed $96$ units" can be expressed as
 
 $$
 \begin{aligned}
@@ -35,25 +35,25 @@ $$
 \end{aligned}
 $$
 
-另外，师傅不可能生产出负数单位的早点，所以，还有条件
+Additionally, the master cannot produce a negative number of breakfast items, so we also have
 
 $$
 x_1,x_2\ge 0.
 $$
 
-师傅就是要在这些限制下，最大化利润：
+The master wants to maximize profit under these constraints:
 
 $$
 z = 5x_1 + 6x_2.
 $$
 
-这就是一个典型的线性规划问题．它的目标函数是关于决策变量的线性函数，约束条件则由决策变量构成的线性等式或不等式组成．
+This is a typical linear programming problem. Its objective function is a linear function of the decision variables, and its constraints consist of linear equalities or inequalities formed by the decision variables.
 
-### 图解法
+### Graphical Method
 
-对于只有两个决策变量的线性规划问题，可以通过图解法直观地解决问题．
+For linear programming problems with only two decision variables, the problem can be solved intuitively using the graphical method.
 
-考虑本节的问题
+Consider the problem in this section
 
 $$
 \begin{aligned}
@@ -65,47 +65,47 @@ $$
 \end{aligned}
 $$
 
-对应的几何图像．最后一行约束表示可选的点 $(x_1,x_2)$ 都出现在第一象限，另外的三个约束则表示可选的点一定在直线 $4x_1 + 7x_2 = 66$、直线 $7x_1 + 3x_2 = 60$ 和直线 $8x_1 + 6x_2 = 96$ 的下方．这些区域的交集（如下图绿色区域所示）就是所有可供选择的点的集合：
+The corresponding geometric figure. The last constraint means that all feasible points $(x_1,x_2)$ lie in the first quadrant, while the other three constraints mean that feasible points must lie below the lines $4x_1 + 7x_2 = 66$, $7x_1 + 3x_2 = 60$, and $8x_1 + 6x_2 = 96$. The intersection of these regions (the green region shown in the figure below) is the set of all feasible points:
 
 ![](images/linear-programming.svg)
 
-接下来要最大化 $z=5x_1+6x_2$ 的取值．如果将该等式视作直线 $5x_1+6x_2=z$ 的方程，则随着 $z$ 的变化，将得到一族平行直线，且 $z$ 越大，直线就越靠近右上方．因此，只需要不断移动直线直至达到某一临界位置，使得再向右上移动一点点，直线就不再和图中所示区域相交，此时直线对应的 $z$ 就是所求的最大值．
+Next, we need to maximize the value of $z=5x_1+6x_2$. If we consider this equation as representing the line $5x_1+6x_2=z$, then as $z$ changes, we get a family of parallel lines, and larger $z$ values move the line toward the upper right. Therefore, we only need to keep moving the line until it reaches a critical position where moving it slightly further to the upper right would make it no longer intersect with the region shown in the figure. The $z$ value corresponding to this line is the maximum value sought.
 
-如图所示，这样的情形发生在红点所示位置．它是直线 $4x_1 + 7x_2 = 66$ 和直线 $7x_1 + 3x_2 = 60$ 的交点．联立两直线方程可知，它的坐标是 $(6,6)$．这是本问题唯一的最优解．早点师傅的最大利润是 $z=66$．
+As shown in the figure, this situation occurs at the red point. It is the intersection of the line $4x_1 + 7x_2 = 66$ and the line $7x_1 + 3x_2 = 60$. Solving the two line equations simultaneously shows that its coordinates are $(6,6)$. This is the unique optimal solution for this problem. The breakfast master's maximum profit is $z=66$.
 
-当问题涉及多于两个决策变量时，图解法不再适用．但是，本节的例子中的一些观察仍然有效．线性规划问题中的每个不等式约束都描述了一个「半平面」，所有可行的解的集合就是这些「半平面」的交集，因此，总是一个「凸多边形」．规划问题的最优解总是可以在该「凸多边形」的某个「顶点」处取得．这些「顶点」的坐标可以通过联立这些「半平面」的「边界」的方程求得．将这些观察拓展到高维空间，就发展出了一个高效的求解线性规划问题的方法——单纯形法．这也是算法竞赛中最常应用的方法．
+When the problem involves more than two decision variables, the graphical method is no longer applicable. However, some observations from this example still hold. Each inequality constraint in a linear programming problem describes a "half-plane", and the set of all feasible solutions is the intersection of these "half-planes", which is always a "convex polygon". The optimal solution to a programming problem can always be obtained at some "vertex" of this "convex polygon". The coordinates of these "vertices" can be obtained by solving the equations of the "boundaries" of these "half-planes" simultaneously. Extending these observations to higher dimensions leads to an efficient method for solving linear programming problems—the simplex method. This is also the most commonly applied method in programming contests.
 
-另外一个值得注意的问题是，原则上，早点师傅制作的包子和油条都不是无限可分的，应当是某个整数．虽然本题求解过程中没有明确地限制这一点，但是由于最终的最优解的确是整数，所以，即使加上整数限制，本题的答案仍然是可行的．但是对于很多规划问题，最优解可能无法取得在整点处，这些问题实际上是一类整数规划问题，而非简单的线性规划问题．本文的结尾简单地讨论了这一类问题．
+Another noteworthy issue is that, in principle, the buns and fried dough sticks made by the master are not infinitely divisible and should be integers. Although this constraint was not explicitly stated in the solution process, since the final optimal solution is indeed an integer, the answer to this problem remains feasible even with the integer constraint. However, for many programming problems, the optimal solution may not be obtainable at integer points. These problems are actually a type of integer programming problem, not simple linear programming problems. This class of problems is briefly discussed at the end of this article.
 
-## 基本概念
+## Basic Concepts
 
-本节介绍线性规划问题的基本概念．
+This section introduces the basic concepts of linear programming problems.
 
-### 线性规划问题
+### Linear Programming Problem
 
-一个线性规划问题 $P$ 通常由如下两部分组成：
+A linear programming problem $P$ typically consists of two parts:
 
--   线性目标函数，即形如
+-   A linear objective function, i.e., a function of the form
 
     $$
     f(x_1,x_2,\cdots,x_n)=c_1x_1+c_2x_2+\cdots+c_nx_n
     $$
 
-    的函数，其中，$c_i\in\mathbf R$ 是常数；
+    where $c_i\in\mathbf R$ are constants;
 
--   线性约束，即形如
+-   Linear constraints, i.e., inequality or equality constraints of the form
 
     $$
     g_j(x_1,x_2,\cdots,x_n)=a_{j1}x_1+a_{j2}x_2+\cdots+a_{jn}x_n \le (=,\ge) b_j
     $$
 
-    的不等式或等式约束，其中，$a_{ji},b_j\in\mathbf R$ 都是常数．
+    where $a_{ji},b_j\in\mathbf R$ are all constants.
 
-线性规划问题，就是要在满足所给约束的前提下，最大化或者最小化目标函数．满足所给约束的解 $(x_1,x_2,\cdots,x_n)\in\mathbf R^n$ 称为 **可行解**（feasible solution）；在所有可行解中，使得目标函数取得最值的解称为 **最优解**（optimal solution）．
+A linear programming problem is to maximize or minimize the objective function subject to the given constraints. A solution $(x_1,x_2,\cdots,x_n)\in\mathbf R^n$ that satisfies the given constraints is called a **feasible solution**; among all feasible solutions, the one that achieves the extremal value of the objective function is called an **optimal solution**.
 
-### 标准形式
+### Standard Form
 
-为了方便描述和进一步处理，通常需要指定一个线性规划问题的标准形式．不同文献可能有不同的规定方式，本文规定线性规划的标准形式如下：
+To facilitate description and further processing, it is customary to specify a standard form for linear programming problems. Different literature may have different conventions. This article adopts the following standard form for linear programming:
 
 $$
 \begin{aligned}
@@ -115,18 +115,18 @@ $$
 \end{aligned}
 $$
 
-也就是说，线性规划问题是最小化问题，所有决策变量都有非负约束，且除此之外只包含若干右侧常量非负的等式约束．利用 [矩阵](./linear-algebra/matrix.md) 可以更为简洁地表达这一问题：
+That is, the linear programming problem is a minimization problem, all decision variables have non-negativity constraints, and in addition, it contains only several equality constraints with non-negative right-hand side constants. This problem can be expressed more concisely using [matrices](./linear-algebra/matrix.md):
 
 $$
 \max\{c^Tx : Ax = b \ge 0,~ x\ge 0\}.
 $$
 
-其中，$x=(x_i)\in\mathbf R^n$ 是决策变量，$b=(b_j)\in\mathbf R^m$ 和 $A=(a_{ji})\in\mathbf R^{m\times n}$ 是约束中涉及的常量．线性规划问题的规模就是指它的决策变量的数目和它的约束的个数．
+Here, $x=(x_i)\in\mathbf R^n$ is the decision variable, $b=(b_j)\in\mathbf R^m$ and $A=(a_{ji})\in\mathbf R^{m\times n}$ are the constants involved in the constraints. The size of a linear programming problem refers to the number of its decision variables and the number of its constraints.
 
-???+ tip "向量不等式"
-    本文中会多次出现像 $b \ge 0$ 这样的向量不等式．一般地，对于向量 $x,y\in\mathbf R^n$，不等式 $x\le y$ 表示 $\forall i(x_i\le y_i)$，即逐维地进行实数意义上的比较．这一关系是向量空间上的 [偏序关系](./order-theory.md#二元关系)，也就是说，存在两个向量无法比较的情形．
+???+ tip "Vector Inequality"
+    This article will repeatedly encounter vector inequalities like $b \ge 0$. Generally, for vectors $x,y\in\mathbf R^n$, the inequality $x\le y$ means $\forall i(x_i\le y_i)$, i.e., a component-wise comparison in the real number sense. This relation is a [partial order relation](./order-theory.md#binary-relations) on the vector space, meaning that there exist two vectors that cannot be compared.
 
-标准形式的选取只是为了行文方便，而并没有任何特别之处，因为任何线性规划问题都可以等价地写成下面的六种形式：
+The choice of standard form is only for convenience of presentation and has no special significance, because any linear programming problem can be equivalently written in one of the following six forms:
 
 $$
 \begin{aligned}
@@ -139,18 +139,18 @@ $$
 \end{aligned}
 $$
 
-下列操作可以将所有线性规划问题都等价地转化为这六种形式之一：
+The following operations can transform any linear programming problem equivalently into one of these six forms:
 
-1.  通过添加负号，即将 $c$ 变为 $-c$，就可以完成最大化问题和最小化问题的相互转化．
-2.  通过添加负号，即将 $a_j^Tx \lesseqqgtr b_j$ 替换成 $-a_j^Tx \gtreqqless -b_j$，就可以完成不等式约束的两种方向的相互转化，或将等式约束的右侧常量变为非负数．
-3.  所有的等式约束 $a_j^Tx = b_j$ 都可以替换成两个相反方向的不等式约束 $a_j^Tx \ge b_j$ 和 $a_j^Tx \le b_j$．
-4.  所有的不等式约束 $a_j^Tx \le(\ge) b_j$ 都可以通过添加非负松弛变量 $s_j$ 的方式，转化为等式约束 $a_j^Tx +(-) s_j = b_j$ 以及相应的非负约束 $s_j\ge 0$．
-5.  如果某个决策变量 $x_i$ 没有非负约束，那么，可以将它替换成两个非负变量的差值，即 $x_j = x^+_j - x^-_j$ 且 $x^+_j,x^-_j \ge 0$．
+1.  By adding a negative sign, i.e., changing $c$ to $-c$, maximization and minimization problems can be interchanged.
+2.  By adding a negative sign, i.e., replacing $a_j^Tx \lesseqqgtr b_j$ with $-a_j^Tx \gtreqqless -b_j$, the two directions of inequality constraints can be interchanged, or the right-hand side constant of an equality constraint can be made non-negative.
+3.  All equality constraints $a_j^Tx = b_j$ can be replaced by two opposite inequality constraints $a_j^Tx \ge b_j$ and $a_j^Tx \le b_j$.
+4.  All inequality constraints $a_j^Tx \le(\ge) b_j$ can be converted to equality constraints $a_j^Tx +(-) s_j = b_j$ along with the corresponding non-negativity constraint $s_j\ge 0$ by adding non-negative slack variables $s_j$.
+5.  If a decision variable $x_i$ has no non-negativity constraint, it can be replaced by the difference of two non-negative variables, i.e., $x_j = x^+_j - x^-_j$ with $x^+_j,x^-_j \ge 0$.
 
-通过这些操作转化得到的线性规划问题的规模不超过原问题的规模的二倍，而且这些问题的可行解和最优解都很容易相互转化．因此，对于一般形式的线性规划问题，总是可以首先将它转化为标准形式（或上述六种形式之一）再进行求解．
+The size of the linear programming problem obtained through these transformations does not exceed twice the size of the original problem, and the feasible solutions and optimal solutions of these problems can be easily transformed into each other. Therefore, for general forms of linear programming problems, we can always first transform them into standard form (or one of the six forms above) before solving them.
 
-??? example "例子"
-    考虑线性规划问题
+??? example "Example"
+    Consider the linear programming problem
     
     $$
     \begin{aligned}
@@ -162,7 +162,7 @@ $$
     \end{aligned}
     $$
     
-    通过操作 1、2 和 3 可以将它转化为形式 $\min\{c^Tx : Ax \ge b\}$，即
+    Through operations 1, 2, and 3, it can be transformed into the form $\min\{c^Tx : Ax \ge b\}$, i.e.,
     
     $$
     \begin{aligned}
@@ -176,7 +176,7 @@ $$
     \end{aligned}
     $$
     
-    通过操作 4 和 5 可以将它转化为形式 $\max\{c^Tx : Ax = b,~ x\ge 0\}$，即
+    Through operations 4 and 5, it can be transformed into the form $\max\{c^Tx : Ax = b,~ x\ge 0\}$, i.e.,
     
     $$
     \begin{aligned}
@@ -188,71 +188,71 @@ $$
     \end{aligned}
     $$
 
-### 可行域与问题的解
+### Feasible Region and Problem Solutions
 
-所有可行解的集合 $\mathcal D\subseteq\mathbf R^n$ 称为线性规划问题 $P$ 的 **可行域**（feasible region）．从几何角度看，每个不等式约束 $a_j^T x \le b_j$ 都描述了一个半空间 $\{x\in\mathbf R^n:a_j^T x \le b_j\}$，每个等式约束 $a^T_jx = b_j$ 都描述了一个超平面 $\{x\in\mathbf R^n:a_j^Tx=b_j\}$，所以，可行域一定是有限多个半空间和超平面的交集．在优化领域[^poly-names]，这样的几何体通常称为 $\mathbf R^n$ 中的 **多面体**（polyhedron）．多面体一定是闭凸集，但未必是有界的．有界的多面体也称为 **多胞形**（polytope）．多胞形可以看作是平面上的多边形在高维空间的推广，而多面体将它进一步推广到可能无界的情形．
+The set of all feasible solutions $\mathcal D\subseteq\mathbf R^n$ is called the **feasible region** (feasible region) of the linear programming problem $P$. From a geometric perspective, each inequality constraint $a_j^T x \le b_j$ describes a half-space $\{x\in\mathbf R^n:a_j^T x \le b_j\}$, and each equality constraint $a^T_jx = b_j$ describes a hyperplane $\{x\in\mathbf R^n:a_j^Tx=b_j\}$. Therefore, the feasible region is always the intersection of a finite number of half-spaces and hyperplanes. In the optimization field[^poly-names], such geometric objects are usually called **polyhedra** (polyhedron) in $\mathbf R^n$. A polyhedron is always a closed convex set, but may not be bounded. A bounded polyhedron is also called a **polytope** (polytope). A polytope can be considered as the generalization of polygons in the plane to higher dimensions, and a polyhedron further extends this to possibly unbounded cases.
 
-???+ example "多面体的例子"
-    此处列举了一些常见的多面体：
+???+ example "Examples of Polyhedra"
+    Some common polyhedra are listed here:
     
-    1.  空集 $\varnothing$，又称为 **零胞形**（nullitope），维度规定为 $-1$．
-    2.  **仿射子空间**（affine subspace），即若干超平面的交集 $\{x\in\mathbf R^n:Ax = b\}$．它相当于线性方程组 $Ax = b$ 的解集：当方程组无解时，它就是空集；否则，它总是可以写成 $x_0+V$ 的形式，其中，$x_0\in\mathbf R^n$ 且 $V\subseteq\mathbf R^n$ 是 $n-\operatorname{rank}(A)$ 维线性子空间．特别地，超平面也是仿射子空间．
-    3.  **多面体锥**（polyhedral cone），即空间中有限多个点 $\{x_i\}$ 的全体非负线性组合 $\{\sum_i\alpha_ix_i:\alpha_i\ge 0\}$．它是顶点位于原点的凸锥体．等价地，它可以看作是由若干个经过原点的超平面围成的多面体，即 $\{x\in\mathbf R^n : Ax\le 0\}$．特别地，半空间也是多面体锥．
-    4.  多胞形，即有界的多面体．特别地，$-1$、$0$、$1$、$2$、$3$ 维的多胞形就是常见的空集、点、线段、多边形和（通常意义下的）多面体．一个集合是多胞形，当且仅当它是有限多个点 $\{x_i\}$ 的凸包 $\{\sum_i\alpha_ix_i:\alpha_i\ge 0,~\sum_i\alpha_i=1\}$．一个 $k$ 维的多胞形至少是由 $k+1$ 个点生成的凸包．
-    5.  **单纯形**（simplex），即恰由 $k+1$ 个点生成的 $k$ 维多胞形．它是最简单的 $k$ 维多胞形．特别地，$-1$、$0$、$1$、$2$、$3$ 维的多胞形分别是空集、点、线段、三角形和四面体．最简单的 $k$ 维单纯形的例子，就是 $\{x\in\mathbf R^k:x_i\ge 0,~\sum_ix_i=1\}$．实际上，任何 $k$ 维单纯形都可以通过仿射变换（即平移和伸缩）变为这样一种特殊情形．值得注意的是，单纯形法并不是真的在单纯形上进行的．
-    
-    任何多面体，都可以看作是一个多面体锥和一个多胞形的 [Minkowski 和](../geometry/convex-hull.md#闵可夫斯基和)：前者描述了多面体无界的部分，后者描述了多面体有界部分的形状．这个多面体锥是唯一的：多面体 $\{x\in\mathbf R^n:Ax\le b\}$ 分解得到的多面体锥一定是 $\{x\in\mathcal R^n:Ax\le 0\}$．
+    1.  The empty set $\varnothing$, also called a **nullitope** (nullitope), with dimension defined as $-1$.
+    2.  **Affine subspaces** (affine subspace), i.e., the intersection of several hyperplanes $\{x\in\mathbf R^n:Ax = b\}$. It is equivalent to the solution set of the system of linear equations $Ax = b$: when the system has no solution, it is the empty set; otherwise, it can always be written in the form $x_0+V$, where $x_0\in\mathbf R^n$ and $V\subseteq\mathbf R^n$ is a linear subspace of dimension $n-\operatorname{rank}(A)$. In particular, hyperplanes are also affine subspaces.
+    3.  **Polyhedral cones** (polyhedral cone), i.e., the set of all non-negative linear combinations of a finite number of points $\{x_i\}$ in space $\{\sum_i\alpha_ix_i:\alpha_i\ge 0\}$. It is a convex cone with its vertex at the origin. Equivalently, it can be viewed as a polyhedron bounded by several hyperplanes passing through the origin, i.e., $\{x\in\mathbf R^n : Ax\le 0\}$. In particular, half-spaces are also polyhedral cones.
+    4.  Polytopes, i.e., bounded polyhedra. In particular, polytopes of dimensions $-1$, $0$, $1$, $2$, and $3$ are the commonly known empty set, point, line segment, polygon, and (ordinary) polyhedron, respectively. A set is a polytope if and only if it is the convex hull of a finite number of points $\{x_i\}$ $\{\sum_i\alpha_ix_i:\alpha_i\ge 0,~\sum_i\alpha_i=1\}$. A $k$-dimensional polytope is at least the convex hull of $k+1$ points.
+    5.  **Simplex** (simplex), i.e., a $k$-dimensional polytope generated by exactly $k+1$ points. It is the simplest $k$-dimensional polytope. In particular, polytopes of dimensions $-1$, $0$, $1$, $2$, and $3$ are the empty set, point, line segment, triangle, and tetrahedron, respectively. The simplest example of a $k$-dimensional simplex is $\{x\in\mathbf R^k:x_i\ge 0,~\sum_ix_i=1\}$. In fact, any $k$-dimensional simplex can be transformed into this special case through affine transformation (i.e., translation and scaling). It is worth noting that the simplex method is not actually performed on a simplex.
 
-线性规划的解与多面体的结构紧密相关．对于多面体 $\mathcal D\in\mathbf R^n$ 和向量 $c\in\mathbf R^n\setminus\{0\}$，考虑如下的线性规划问题 $P$：（对最小化的情形也可以类似地讨论）
+Any polyhedron can be viewed as the [Minkowski sum](../geometry/convex-hull.md#minkowski-sum) of a polyhedral cone and a polytope: the former describes the unbounded part of the polyhedron, and the latter describes the shape of the bounded part. This polyhedral cone is unique: the polyhedral cone obtained from decomposing the polyhedron $\{x\in\mathbf R^n:Ax\le b\}$ must be $\{x\in\mathcal R^n:Ax\le 0\}$.
+
+The solutions of linear programming are closely related to the structure of polyhedra. For a polyhedron $\mathcal D\in\mathbf R^n$ and a vector $c\in\mathbf R^n\setminus\{0\}$, consider the following linear programming problem $P$ (the minimization case can be discussed similarly):
 
 $$
 \max\{c^Tx:x\in\mathcal D\}.
 $$
 
-从几何角度看，这相当于在超平面 $H:c^Tx = z$ 与可行域 $\mathcal{D}$ 至少有一个交点的前提下，沿着向量 $c$ 的方向移动超平面 $H$，使得 $z$ 尽可能大．这就存在三种可能性：
+From a geometric perspective, this is equivalent to moving the hyperplane $H:c^Tx = z$ along the direction of vector $c$ as far as possible while ensuring that it has at least one intersection with the feasible region $\mathcal{D}$. There are three possibilities:
 
--   可行域 $\mathcal D$ 是空集．这说明问题 $P$ 没有可行解，它的某些约束是相互矛盾的．此时，称问题 $P$ 是 **不可行的**（infeasible），它的最优价值规定为 $-\infty$．
+-   The feasible region $\mathcal D$ is empty. This means problem $P$ has no feasible solution; some of its constraints are mutually contradictory. In this case, problem $P$ is called **infeasible** (infeasible), and its optimal value is defined as $-\infty$.
 
--   可行域 $\mathcal D$ 非空，但是它包含一条方向向量为 $c$ 的射线，即存在 $x_0\in\mathbf R^n$ 使得 $x_0+tc\in\mathcal D$ 对于所有 $t\ge 0$ 都成立．因为沿着向量 $c$ 的方向可以不断地移动超平面 $H$，而且移动过程中，集合 $H\cap\mathcal D$ 至少含有这条射线中的某个点，一定是非空的，所以，目标函数 $c^Tx = c^Tx_0 + tc^Tc$ 可以取得任意大的值．此时，称问题 $P$ 是 **无界的**（unbounded），它的最优价值规定为 $+\infty$．
+-   The feasible region $\mathcal D$ is non-empty, but it contains a ray with direction vector $c$, i.e., there exists $x_0\in\mathbf R^n$ such that $x_0+tc\in\mathcal D$ holds for all $t\ge 0$. Because the hyperplane $H$ can be continuously moved in the direction of vector $c$, and during the movement, the set $H\cap\mathcal D$ always contains at least one point on this ray and is therefore non-empty, the objective function $c^Tx = c^Tx_0 + tc^Tc$ can take arbitrarily large values. In this case, problem $P$ is called **unbounded** (unbounded), and its optimal value is defined as $+\infty$.
 
--   可行域 $\mathcal D$ 非空，且不含有任何方向向量为 $c$ 的射线．此时，问题 $P$ 称为 **有界的**（bounded）．记 $z^*\in\mathbf R$ 为问题 $P$ 的最优价值．超平面 $H^*:c^Tx = z^*$ 处于一种临界位置：它与多面体 $\mathcal D$ 相交，且 $\mathcal D$ 包含于半空间 $\{x:c^Tx\le z^*\}$ 中．这样的超平面称为多面体 $\mathcal D$ 的一个 **支撑超平面**（supporting hyperlane）．问题 $P$ 的最优解集就是 $H^*\cap\mathcal D$．作为支撑超平面和多面体的交集，集合 $H^*\cap\mathcal D$ 一定是多面体，且包含在 $\mathcal D$ 的边界中．它称为多面体 $\mathcal D$ 的一个 **面**（face）．形象地说，多面体就是由这些面围成的．除了这些由支撑超平面和多面体相交形成的面之外，一般来说，多面体还有两个面：空集和多面体本身．多面体的所有面在集合的包含关系下，形成了 [格](../math/order-theory.md#有向集与格) 的结构．
+-   The feasible region $\mathcal D$ is non-empty and contains no ray with direction vector $c$. In this case, problem $P$ is called **bounded** (bounded). Let $z^*\in\mathbf R$ be the optimal value of problem $P$. The hyperplane $H^*:c^Tx = z^*$ is in a critical position: it intersects with the polyhedron $\mathcal D$, and $\mathcal D$ is contained in the half-space $\{x:c^Tx\le z^*\}$. Such a hyperplane is called a **supporting hyperplane** (supporting hyperplane) of the polyhedron $\mathcal D$. The optimal solution set of problem $P$ is $H^*\cap\mathcal D$. As the intersection of a supporting hyperplane and a polyhedron, the set $H^*\cap\mathcal D$ is always a polyhedron and is contained in the boundary of $\mathcal D$. It is called a **face** (face) of the polyhedron $\mathcal D$. Intuitively, a polyhedron is enclosed by these faces. In addition to the faces formed by the intersection of supporting hyperplanes and the polyhedron, a polyhedron generally has two more faces: the empty set and the polyhedron itself. All faces of a polyhedron form a [lattice](./order-theory.md#directed-sets-and-lattices) structure under set inclusion.
 
-    一个 $d$ 维的多面体的面的维度一定是 $0$ 和 $d$ 之间的整数．维度为 $0$ 的面（即一个点）称为多面体 $\mathcal D$ 的 **顶点**（vertex）或 **角点**（corner point），维度为 $1$ 的面称为多面体 $\mathcal D$ 的 **边**（edge），维度为 $d-1$ 的面则称为多面体 $\mathcal D$ 的 **维面**（facet）．但是，并非所有多面体都有顶点．因为多面体的面的面仍然是多面体的面，而只有仿射子空间才没有严格更小的非空面，所以，多面体 $\mathcal D$ 的所有极小面都是仿射子空间．而且，同一个多面体的极小面的维度是相同的；特别地，多面体 $\mathcal D=\{x\in\mathbf R^n:Ax\le b\}$ 的极小面的维度是 $n-\operatorname{rank}A$．
+    A face of a $d$-dimensional polyhedron must have dimension between $0$ and $d$. A face of dimension $0$ (i.e., a point) is called a **vertex** (vertex) or **corner point** (corner point) of polyhedron $\mathcal D$, a face of dimension $1$ is called an **edge** (edge) of $\mathcal D$, and a face of dimension $d-1$ is called a **facet** (facet) of $\mathcal D$. However, not all polyhedra have vertices. Because a face of a polyhedron is still a face of the polyhedron, and only affine subspaces have no strictly smaller non-empty faces, all minimal faces of polyhedron $\mathcal D$ are affine subspaces. Moreover, the minimal faces of the same polyhedron have the same dimension; in particular, the minimal faces of polyhedron $\mathcal D=\{x\in\mathbf R^n:Ax\le b\}$ have dimension $n-\operatorname{rank}A$.
 
-    因为多面体的面就是有界线性规划问题的解集，所以，需要搞清楚如何确定多面体的面的方程．设多面体 $\mathcal D$ 由若干个约束 $a_j^Tx \lesseqqgtr b_j$ 描述，且 $F$ 是 $\mathcal D$ 的一个面．如果某个约束在所有 $x\in F$ 处都取得等号，就称该约束在面 $F$ 上是 **紧的**（tight）．面 $F$ 上的点显然满足这些紧约束取等号得到的方程组，而这个方程组确定的仿射子空间和多面体 $\mathcal D$ 的交集，就是面 $F$．反过来，任意选取多面体 $\mathcal D$ 的约束的一个子集，将这些约束取等、联立、求解得到的仿射子空间和多面体的交集，就是 $\mathcal D$ 的一个面．而且，选取的紧约束越多，得到的面（在包含意义下）就越小．
+    Because a face of a polyhedron is exactly the solution set of a bounded linear programming problem, we need to understand how to determine the equations of faces of a polyhedron. Suppose polyhedron $\mathcal D$ is described by several constraints $a_j^Tx \lesseqqgtr b_j$, and $F$ is a face of $\mathcal D$. If a constraint attains equality at all $x\in F$, it is said to be **tight** (tight) on face $F$. Points on face $F$ obviously satisfy the system of equations obtained from these tight constraints taking equality, and the intersection of the affine subspace determined by this system of equations and the polyhedron $\mathcal D$ is face $F$. Conversely, by arbitrarily selecting a subset of constraints of $\mathcal D$, taking them as equalities, solving them simultaneously, and taking the intersection with $\mathcal D$, we obtain a face of $\mathcal D$. Moreover, the more tight constraints are selected, the smaller the resulting face is (under inclusion).
 
-    特别地，标准形式的线性规划的可行域 $\mathcal D=\{x\in\mathbf R^n:Ax=b,~x\ge 0\}$ 的系数矩阵 $\begin{pmatrix}A\\ I\end{pmatrix}$ 的秩是 $n$，因此，它的极小面就是它的顶点．也就是说，如果问题有界，那么它的最优解一定可以选取为某个顶点．而且，这个顶点可以通过选取 $n$ 个线性独立的紧约束联立得到．这正是线性规划的标准形式的方便之处．
+    In particular, for the feasible region $\mathcal D=\{x\in\mathbf R^n:Ax=b,~x\ge 0\}$ of a linear programming problem in standard form, the rank of the coefficient matrix $\begin{pmatrix}A\\ I\end{pmatrix}$ is $n$. Therefore, its minimal faces are its vertices. That is, if the problem is bounded, its optimal solution can always be chosen as some vertex. Moreover, this vertex can be obtained by selecting $n$ linearly independent tight constraints and solving them simultaneously. This is precisely the convenience of the standard form of linear programming.
 
-???+ example "例子"
-    下图中，$\mathcal D$ 为可行域．目标函数中的系数是 $c_1,c_2,c_3$ 时，分别对应着唯一最优解、多组最优解和无界三种情形．对于前两种情形，相应的红色粗实线就是解集对应的支撑超平面（之一），最优解集分别是多面体 $\mathcal D$ 的顶点 $B$ 和边 $\overline{CD}$．对于第三种情形，因为可行域 $\mathcal D$ 中包含方向为 $c_3$ 的射线，所以，以 $c_3$ 为法向量的超平面可以不断沿着 $c_3$ 方向移动，进而问题是无界的．
+???+ example "Example"
+    In the figure below, $\mathcal D$ is the feasible region. When the coefficients in the objective function are $c_1$, $c_2$, and $c_3$, they correspond to the three cases of unique optimal solution, multiple optimal solutions, and unbounded, respectively. For the first two cases, the corresponding red thick solid lines are (one of) the supporting hyperplane(s) of the solution sets, and the optimal solution sets are the vertex $B$ and the edge $\overline{CD}$ of polyhedron $\mathcal D$, respectively. For the third case, because the feasible region $\mathcal D$ contains a ray in direction $c_3$, the hyperplane with normal vector $c_3$ can continuously move in direction $c_3$, and thus the problem is unbounded.
     
     ![](./images/lp-feasible.svg)
 
-这些讨论忽略了 $c=0$ 的情形．此时，线性规划问题显然不能是无界的，所以要么问题本身是不可行的，要么最优价值等于 $0$，且最优解集就是 $\mathcal D$ 本身．这类特殊的线性规划也称为 **可行性线性规划**（feasibility linear programming）．
+These discussions ignore the case where $c=0$. In this case, the linear programming problem obviously cannot be unbounded, so either the problem itself is infeasible, or the optimal value equals $0$, and the optimal solution set is $\mathcal D$ itself. This special type of linear programming is also called **feasibility linear programming** (feasibility linear programming).
 
-值得指出的是，判定线性规划问题是否可行、是否有界，以及求出不等式组的可行解等问题，都和解线性规划问题本身同样困难[^reducible]．比如说，下文中强对偶定理的证明就说明，解一个有界的线性规划问题，就相当于寻找一组不等式的可行解．因此，对于判断不等式组是否有解和判断方程组是否有非负解等任务，最有效的方式就是求解相应的可行性线性规划[^other-methods]．
+It is worth noting that determining whether a linear programming problem is feasible or bounded, and finding feasible solutions for a system of inequalities, are all as difficult as solving the linear programming problem itself[^reducible]. For example, the proof of the strong duality theorem below shows that solving a bounded linear programming problem is equivalent to finding a feasible solution to a system of inequalities. Therefore, for tasks such as determining whether a system of inequalities has solutions or whether a system of equations has non-negative solutions, the most effective method is to solve the corresponding feasibility linear programming problem[^other-methods].
 
-另外，如果线性规划问题的一个约束，在可行域的所有面上都不是紧的，那么这个约束就是 **冗余的**（redundant）．本文开头早点师傅的例子中，工作时间的约束就是一个冗余约束．在给定的不等式组中判定某个不等式 $a_j^Tx\le b_j$ 是否冗余这一问题，可以通过求解线性规划问题 $\max\{a_j^Tx:x\in\mathcal D\}$，并将它与 $b_j$ 相比较来解决．
+Additionally, if a constraint of a linear programming problem is not tight on any face of the feasible region, then this constraint is **redundant** (redundant). In the breakfast master example at the beginning of this article, the working time constraint is a redundant constraint. To determine whether an inequality $a_j^Tx\le b_j$ in a given system of inequalities is redundant, one can solve the linear programming problem $\max\{a_j^Tx:x\in\mathcal D\}$ and compare it with $b_j$.
 
-## 常见算法
+## Common Algorithms
 
-算法竞赛中，很少有问题只能通过线性规划的算法解决．大多数可以用线性规划方法求解的题目，通常也可以通过网络流等更为专门也更为高效的算法来解决．
+In programming contests, there are few problems that can only be solved by linear programming algorithms. Most problems that can be solved by linear programming methods can also be solved more efficiently and specifically through algorithms like network flow.
 
-解决线性规划问题的常见算法如下：
+Common algorithms for solving linear programming problems are as follows:
 
--   [单纯形法](./simplex.md)
--   椭球法
--   内点法
+-   [Simplex Method](./simplex.md)
+-   Ellipsoid Method
+-   Interior Point Method
 
-尽管单纯形法的最差情形复杂度是指数级的，而内点法的复杂度是多项式的，但这两类算法在大多数实际问题中的表现都非常出色．相比之下，虽然椭球法的理论复杂度是多项式级别的，但是通常运行缓慢，并不实用．
+Although the worst-case complexity of the simplex method is exponential, while that of the interior point method is polynomial, both types of algorithms perform very well in most practical problems. In contrast, although the theoretical complexity of the ellipsoid method is polynomial, it is usually slow in practice and not useful.
 
-目前尚不清楚线性规划问题是否存在强多项式复杂度的算法．
+It is currently unknown whether there exists a strongly polynomial-time algorithm for linear programming problems.
 
-## 对偶问题
+## Dual Problems
 
-每个线性规划问题都对应着一个对偶问题．原问题和对偶问题的解有着紧密的联系．通过对偶问题，不仅有助于更深入地理解问题的结构，还常常可以提升原问题的求解效率．
+Every linear programming problem has a corresponding dual problem. The solutions of the primal and dual problems are closely related. Through the dual problem, not only can we gain a deeper understanding of the problem's structure, but we can also often improve the efficiency of solving the original problem.
 
-对于线性规划问题 $P$（所涉小写字母变量均为向量）
+For the linear programming problem $P$ (all lowercase letter variables in the following are vectors)
 
 $$
 \begin{aligned}
@@ -264,7 +264,7 @@ $$
 \end{aligned}
 $$
 
-它的对偶问题 $D$ 是指线性规划问题
+its dual problem $D$ is the linear programming problem
 
 $$
 \begin{aligned}
@@ -276,216 +276,216 @@ $$
 \end{aligned}
 $$
 
-其中，对偶问题的决策变量 $y_1,y_2,y_3$ 分别是原问题的三类约束的 Lagrange 乘子；反过来，原问题的决策变量 $x_1,x_2,x_3$ 也分别是对偶问题的三类约束的 Lagrange 乘子．容易验证，对偶问题的对偶问题就是原问题．
+Here, the dual variables $y_1,y_2,y_3$ are the Lagrange multipliers of the three types of constraints in the original problem; conversely, the decision variables $x_1,x_2,x_3$ of the original problem are also the Lagrange multipliers of the three types of constraints in the dual problem. It is easy to verify that the dual of the dual problem is the original problem.
 
-原问题 $P$ 和对偶问题 $D$ 的对应关系如下：
+The correspondence between the primal problem $P$ and the dual problem $D$ is as follows:
 
-|  最小化问题 |  最大化问题 |
+|  Minimization Problem |  Maximization Problem |
 | :----: | :----: |
-| 大于等于约束 |  非负变量  |
-| 小于等于约束 |  非正变量  |
-|  等式约束  |  无约束变量 |
-|  非负变量  | 小于等于约束 |
-|  非正变量  | 大于等于约束 |
-|  无约束变量 |  等式约束  |
-| 目标函数系数 | 约束右侧常量 |
-| 约束右侧常量 | 目标函数系数 |
+| Greater-than-or-equal-to constraint | Non-negative variable |
+| Less-than-or-equal-to constraint | Non-positive variable |
+|  Equality constraint  | Unrestricted variable |
+|  Non-negative variable | Less-than-or-equal-to constraint |
+|  Non-positive variable | Greater-than-or-equal-to constraint |
+|  Unrestricted variable | Equality constraint  |
+| Objective function coefficients | Right-hand side constants |
+| Right-hand side constants | Objective function coefficients |
 
-特别地，标准形式的线性规划问题
+In particular, the dual problem of the linear programming problem in standard form
 
 $$
 \min\{c^Tx:Ax=b,~x\ge 0\}
 $$
 
-的对偶问题是
+is
 
 $$
 \max\{b^Ty:A^Ty\le c\}.
 $$
 
-### 对偶原理
+### Duality Principle
 
-原问题和对偶问题不仅在形式上互为镜像，而且两者的解也紧密相关．这称为 **对偶原理**（duality principal）．为表述方便，本节在叙述和证明定理时，将采用标准形式的原问题．
+The primal and dual problems are not only mirror images of each other in form, but their solutions are also closely related. This is called the **duality principle** (duality principal). For the sake of clarity in stating and proving theorems, this section will use the standard form of the primal problem.
 
-首先，**弱对偶定理**（weak duality theorem）说明，对偶问题的最大值不超过原问题的最小值．
+First, the **weak duality theorem** (weak duality theorem) states that the maximum value of the dual problem does not exceed the minimum value of the primal problem.
 
-???+ note "弱对偶定理"
-    对于所有 $A\in\mathbf R^{m\times n}$，$b\in\mathbf R^m$ 和 $c\in\mathbf R^n$，总有
+???+ note "Weak Duality Theorem"
+    For all $A\in\mathbf R^{m\times n}$, $b\in\mathbf R^m$ and $c\in\mathbf R^n$, we always have
     
     $$
     \max\{b^Ty:A^Ty\le c\} \le \min\{c^Tx:Ax=b,~x\ge 0\}.
     $$
 
-??? note "证明"
-    如果原问题和对偶问题中的任何一个不可行，那么该不等式就是平凡的．假设两个问题都是可行的．那么，对于所有可行的 $x$ 和 $y$，都有
+??? note "Proof"
+    If either the primal or dual problem is infeasible, then this inequality is trivial. Suppose both problems are feasible. Then, for all feasible $x$ and $y$, we have
     
     $$
     b^Ty = x^TA^Ty \le x^Tc.
     $$
     
-    因此，将两侧取最值，就得到弱对偶定理成立．
+    Therefore, by taking the maximum on both sides, the weak duality theorem holds.
 
-基于弱对偶定理，原问题和对偶问题的解的情况只能有下面四种情形：
+Based on the weak duality theorem, there are only four possible cases for the solutions of the primal and dual problems:
 
-1.  原问题和对偶问题均不可行，即 $-\infty\le+\infty$；
-2.  原问题不可行，对偶问题无界，即 $+\infty\le+\infty$；
-3.  原问题无界，对偶问题不可行，即 $-\infty\le-\infty$；
-4.  原问题和对偶问题均有界．
+1.  Both the primal and dual problems are infeasible, i.e., $-\infty\le+\infty$;
+2.  The primal problem is infeasible and the dual problem is unbounded, i.e., $+\infty\le+\infty$;
+3.  The primal problem is unbounded and the dual problem is infeasible, i.e., $-\infty\le-\infty$;
+4.  Both the primal and dual problems are bounded.
 
-弱对偶定理有很多推论．例如，它实际上给出了利用原问题和对偶问题的可行性判定原问题无界的方法．
+There are many corollaries of the weak duality theorem. For example, it actually provides a method to determine that the primal problem is unbounded by using the feasibility of the primal and dual problems.
 
-???+ note "推论"
-    线性规划问题无界，当且仅当它可行，且它的对偶问题不可行．
+???+ note "Corollary"
+    A linear programming problem is unbounded if and only if it is feasible and its dual problem is infeasible.
 
-将弱对偶定理应用于可行性线性规划问题，就得到 Farkas 引理（和它的各种变体）．
+Applying the weak duality theorem to feasibility linear programming problems yields Farkas' lemma (and its various variants).
 
-???+ note "Farkas 引理"
-    对于 $A\in\mathbf R^{m\times n}$ 和 $b\in\mathbf R^n$，下列情形中恰有一种成立：
+???+ note "Farkas' Lemma"
+    For $A\in\mathbf R^{m\times n}$ and $b\in\mathbf R^n$, exactly one of the following holds:
     
-    1.  存在 $x\in\mathbf R^n$，使得 $Ax=b$ 且 $x\ge 0$；
-    2.  存在 $y\in\mathbf R^m$，使得 $A^T y\ge 0$ 且 $b^Ty<0$．
+    1.  There exists $x\in\mathbf R^n$ such that $Ax=b$ and $x\ge 0$;
+    2.  There exists $y\in\mathbf R^m$ such that $A^T y\ge 0$ and $b^Ty<0$.
 
-??? note "证明"
-    考虑线性规划问题 $\max\{0:Ax=b,~x\ge 0\}$，它的对偶问题是 $\min\{b^Ty:A^Ty\ge 0\}$．对偶问题显然是可行的，因为至少 $0\in\mathbf R^m$ 是一组可行解．因此，根据弱对偶定理，要么原问题可行，要么对偶问题无界，二者必择其一．原问题可行就是 Farkas 引理中的情形 1，而对偶问题无界就等价于 Farkas 引理中的情形 2．这就证明了 Farkas 引理．
+??? note "Proof"
+    Consider the linear programming problem $\max\{0:Ax=b,~x\ge 0\}$, whose dual problem is $\min\{b^Ty:A^Ty\ge 0\}$. The dual problem is clearly feasible because at least $0\in\mathbf R^m$ is a feasible solution. Therefore, according to the weak duality theorem, either the primal problem is feasible or the dual problem is unbounded, one must hold. The primal problem being feasible corresponds to case 1 in Farkas' lemma, and the dual problem being unbounded corresponds to case 2. This proves Farkas' lemma.
 
-Farkas 实际上是一种 [超平面分离定理](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem)．情形 1 是在说，点 $b$ 位于 $A$ 的列向量生成的多面体锥 $C$ 里；因此，Farkas 引理说明，当且仅当点 $b$ 不在这一凸锥 $C$ 中时，存在经过原点且法向量为 $y$ 的超平面 $H:y^Tx = 0$ 强分离了点 $b$ 和多面体锥 $C$．
+Farkas' lemma is actually a [hyperplane separation theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). Case 1 states that point $b$ lies in the polyhedral cone $C$ generated by the column vectors of $A$. Therefore, Farkas' lemma states that point $b$ lies in this convex cone $C$ if and only if there exists a hyperplane $H:y^Tx = 0$ passing through the origin with normal vector $y$ that strongly separates point $b$ and the polyhedral cone $C$.
 
-事实上，对于弱对偶定理允许的第四种情形，有更强的结论成立：原问题和对偶问题的最优值是相等的．将后三种情形合在一起，就得到 **强对偶定理**（strong duality theorem）：只要原问题或对偶问题之一是可行的，它们的最优值就必然相等．
+In fact, for the fourth case allowed by the weak duality theorem, a stronger conclusion holds: the optimal values of the primal and dual problems are equal. Combining the latter three cases yields the **strong duality theorem** (strong duality theorem): as long as either the primal or dual problem is feasible, their optimal values are necessarily equal.
 
-???+ note "强对偶定理"
-    对于所有 $A\in\mathbf R^{m\times n}$，$b\in\mathbf R^m$ 和 $c\in\mathbf R^n$，都有
+???+ note "Strong Duality Theorem"
+    For all $A\in\mathbf R^{m\times n}$, $b\in\mathbf R^m$ and $c\in\mathbf R^n$, we have
     
     $$
     \max\{b^Ty:A^Ty\le c\} = \min\{c^Tx:Ax=b,~x\ge 0\}.
     $$
     
-    只要两个集合之一非空．
+    As long as one of the two sets is non-empty.
 
-??? note "证明"
-    弱对偶定理唯一没有包含的情形，就是原问题和对偶问题都可行的情形．此时，考虑如下可行性线性规划问题 $Q$：
+??? note "Proof"
+    The only case not covered by the weak duality theorem is when both the primal and dual problems are feasible. In this case, consider the following feasibility linear programming problem $Q$:
     
     $$
     \max\{0:c^Tx \le b^Ty,~Ax=b,~x\ge 0,~A^Ty\le c\}.
     $$
     
-    如果问题 $Q$ 有可行解 $(x^*,y^*)\in\mathbf R^n\times\mathbf R^m$，那么，由弱对偶定理和最优性可知
+    If problem $Q$ has a feasible solution $(x^*,y^*)\in\mathbf R^n\times\mathbf R^m$, then, by the weak duality theorem and optimality, we have
     
     $$
     b^Ty^* \le \max\{b^Ty:A^Ty\le c\} \le \min\{c^Tx:Ax=b,~x\ge 0\} \le c^Tx^*,
     $$
     
-    但是 $c^Tx^*\le b^Ty^*$，故而所有这些不等式都可以取得等号，也就是说，不仅强对偶成立，而且 $x^*$ 和 $y^*$ 分别是原问题和对偶问题的最优解．
+    but since $c^Tx^*\le b^Ty^*$, all these inequalities can attain equality. That is, not only does strong duality hold, but $x^*$ and $y^*$ are also optimal solutions to the primal and dual problems, respectively.
     
-    因此，只需要证明问题 $Q$ 是可行的．假设不然．仿照 Farkas 引理的证明，可以考虑问题 $Q$ 的对偶问题 $DQ$：
+    Therefore, we only need to prove that problem $Q$ is feasible. Suppose not. Following the proof of Farkas' lemma, consider the dual problem $DQ$ of problem $Q$:
     
     $$
     \min\{c^T\mu - b^T\lambda : ct - A^T\lambda \ge 0,~ -bt + A\mu = 0,~t\ge 0,~\mu\ge 0\}.
     $$
     
-    因为 $(t,\lambda,\mu)=(0,0,0)$ 是对偶问题 $DQ$ 的一组可行解，所以由弱对偶定理可知，问题 $Q$ 不可行，就意味着对偶问题 $DQ$ 无界，即存在一组 $(t^*,\lambda^*,\mu^*)$ 使得
+    Because $(t,\lambda,\mu)=(0,0,0)$ is a feasible solution to the dual problem $DQ$, by the weak duality theorem, if problem $Q$ is infeasible, then the dual problem $DQ$ is unbounded, i.e., there exists $(t^*,\lambda^*,\mu^*)$ such that
     
     $$
     c^T\mu^* - b^T\lambda^* <0,~ ct^* - A^T\lambda^* \ge 0,~ -bt^* + A\mu^* = 0,~t^*\ge 0,~\mu^*\ge 0.
     $$
     
-    此时，如果 $t^*>0$，那么这些不等式实际说明 $(x,y)=(\mu^*/t^*,\lambda^*/t^*)$ 是前述问题的一组可行解，与假设矛盾．所以，只能有 $t^*=0$．这说明
+    In this case, if $t^*>0$, then these inequalities actually show that $(x,y)=(\mu^*/t^*,\lambda^*/t^*)$ is a feasible solution to the aforementioned problem, contradicting the assumption. So we must have $t^*=0$. This shows that
     
     $$
     c^T\mu^* < b^T\lambda^*,~ A^T\lambda^*\le 0,~ A\mu^*=0,~\mu^*\ge 0.
     $$
     
-    但是，因为已经假设定理中的原问题和对偶问题都可行，也就是说，存在 $(x_0,y_0)$ 使得
+    However, since we have already assumed that the primal and dual problems in the theorem are both feasible, i.e., there exists $(x_0,y_0)$ such that
     
     $$
     Ax_0 = b,~ x_0\ge 0,~ A^Ty_0\le c
     $$
     
-    成立，所以，有
+    holds, we have
     
     $$
     0 = (A\mu^*)^Ty_0 = (A^Ty_0)^T\mu^* \le c^T\mu^* < b^T\lambda^* = x_0^TA^T\lambda^* \le 0.
     $$
     
-    这显然矛盾．这一矛盾说明问题 $Q$ 是可行的，进而说明强对偶成立．
+    This is clearly contradictory. This contradiction shows that problem $Q$ is feasible, which in turn shows that strong duality holds.
 
-从强对偶定理的证明过程还能得到如下推论：
+The following corollary can also be obtained from the proof process of the strong duality theorem:
 
-???+ note "推论"
-    设原问题和对偶问题的一组可行解 $x^*$ 和 $y^*$ 满足强对偶性，即 $c^Tx^* = b^Ty^*$．那么，它们同样分别是原问题和对偶问题的最优解．
+???+ note "Corollary"
+    Let $x^*$ and $y^*$ be feasible solutions to the primal and dual problems, respectively, satisfying strong duality, i.e., $c^Tx^* = b^Ty^*$. Then they are also optimal solutions to the primal and dual problems, respectively.
 
-强对偶定理说明，对于可行的线性规划问题，只需要求解它的对偶问题，就能够得到原问题的最优价值．
+The strong duality theorem shows that for feasible linear programming problems, one only needs to solve its dual problem to obtain the optimal value of the original problem.
 
-### 互补松弛条件
+### Complementary Slackness Conditions
 
-和其它的优化问题一样，互补松弛条件是线性规划问题的最优性条件的一部分．而且，因为目标函数是线性的，所以对于线性规划问题来说，互补松弛条件是可行解成为最优解的充分必要条件．
+Like other optimization problems, complementary slackness conditions are part of the optimality conditions for linear programming problems. Moreover, because the objective function is linear, for linear programming problems, complementary slackness conditions are necessary and sufficient conditions for a feasible solution to be optimal.
 
-所谓 **互补松弛**（complementary slackness）条件，就是指只有在原问题（对偶问题）中的约束取得等号（即约束是紧的）的时候，对偶问题（原问题）中与之对应的变量才能取非零值．如果将变量取非零值也当成一条松弛的约束，那么这就相当于说，原问题和对偶问题中相对应的变量和约束不能同时是松弛的．因此，这一条件称为互补松弛条件．
+The so-called **complementary slackness** (complementary slackness) condition means that only when a constraint in the original (dual) problem attains equality (i.e., the constraint is tight) can the corresponding variable in the dual (original) problem take a non-zero value. If taking a non-zero value for a variable is also considered a slack constraint, then this is equivalent to saying that the corresponding variables and constraints in the primal and dual problems cannot both be slack. Therefore, this condition is called the complementary slackness condition.
 
-以标准形式的线性规划问题为例，如下结论成立：
+For linear programming problems in standard form, the following conclusion holds:
 
-???+ note "定理"
-    假设 $x^*$ 和 $y^*$ 分别是原问题 $\min\{c^Tx:Ax=b,~x\ge 0\}$ 和对偶问题 $\max\{b^Ty:A^Ty\le c\}$ 的可行解．那么，当且仅当互补松弛条件成立，即
+???+ note "Theorem"
+    Suppose $x^*$ and $y^*$ are feasible solutions to the primal problem $\min\{c^Tx:Ax=b,~x\ge 0\}$ and the dual problem $\max\{b^Ty:A^Ty\le c\}$, respectively. Then, if and only if the complementary slackness condition holds, i.e.,
     
     $$
     x^T(A^Ty-c) = 0
     $$
     
-    时，$x^*$ 和 $y^*$ 也分别是原问题和对偶问题的最优解．
+    $x^*$ and $y^*$ are also optimal solutions to the primal and dual problems, respectively.
 
-??? note "证明"
-    因为 $x^*$ 和 $y^*$ 都是可行解，所以，有
+??? note "Proof"
+    Because $x^*$ and $y^*$ are both feasible solutions, we have
     
     $$
     b^Ty^* - c^Tx^* = (x^*)^T(A^T y^* - c).
     $$
     
-    因此，互补松弛条件成立，当且仅当 $b^Ty^* = c^Tx^*$．根据强对偶定理的推论，这一条件成立，当且仅当 $x^*$ 和 $y^*$ 分别是原问题的最优解．
+    Therefore, the complementary slackness condition holds if and only if $b^Ty^* = c^Tx^*$. According to the corollary of the strong duality theorem, this condition holds if and only if $x^*$ and $y^*$ are optimal solutions to the primal problem, respectively.
 
-标准形式可能太过特殊．该定理的稍微一般的形式如下：
+The standard form may be too special. A slightly more general form of this theorem is as follows:
 
-???+ note "定理"
-    假设 $x^*$ 和 $y^*$ 分别是原问题 $\min\{c^Tx:Ax\ge b,~x\ge 0\}$ 和对偶问题 $\max\{b^Ty:A^Ty\le c,~y\ge 0\}$ 的可行解．那么，当且仅当互补松弛条件成立，即
+???+ note "Theorem"
+    Suppose $x^*$ and $y^*$ are feasible solutions to the primal problem $\min\{c^Tx:Ax\ge b,~x\ge 0\}$ and the dual problem $\max\{b^Ty:A^Ty\le c,~y\ge 0\}$, respectively. Then, if and only if the complementary slackness condition holds, i.e.,
     
     $$
     x^T(A^Ty-c) = y^T(Ax-b) = 0
     $$
     
-    时，$x^*$ 和 $y^*$ 也分别是原问题和对偶问题的最优解．
+    $x^*$ and $y^*$ are also optimal solutions to the primal and dual problems, respectively.
 
-??? note "证明"
-    证明基本同上，只是这次要将差值写成
+??? note "Proof"
+    The proof is essentially the same as above, except this time the difference is written as
     
     $$
     b^Ty^* - c^Tx^* = (x^*)^T(A^T y^* - c) - (y^*)^T(Ax^*-b).
     $$
 
-互补松弛条件提供了判断线性规划问题的可行解的最优性的简单条件．
+The complementary slackness conditions provide simple criteria for checking the optimality of feasible solutions to linear programming problems.
 
-### 原始‑对偶方法
+### Primal-Dual Method
 
-对偶问题可以辅助原问题的求解．在解决线性规划问题时，常常会用到的一种方法是 **原始‑对偶方法**（primal-dual method）．它通过求解一系列相对简单的辅助问题，逐步改进对偶问题的解，进而获得原始问题的最优解．
+The dual problem can assist in solving the primal problem. A commonly used method in solving linear programming problems is the **primal-dual method** (primal-dual method). It obtains the optimal solution to the original problem by solving a series of relatively simple auxiliary problems and progressively improving the solution to the dual problem.
 
-对于标准形式的原问题
+For the primal problem in standard form
 
 $$
 (P)\qquad\min\{c^Tx : Ax=b\ge 0,~ x\ge 0\}
 $$
 
-和它的对偶问题
+and its dual problem
 
 $$
 (D)\qquad\max\{b^Ty : A^Ty\le c\},
 $$
 
-上一节已经说明，要找到它们的最优解，只需要找到问题 $(P)$ 和 $(D)$ 的一组可行解，使得它们满足互补松弛条件 $x^T(A^Ty-c)=0$．那不妨考虑如下流程：
+the previous section has shown that to find their optimal solutions, we only need to find a pair of feasible solutions to problems $(P)$ and $(D)$ that satisfy the complementary slackness condition $x^T(A^Ty-c)=0$. Therefore, consider the following process:
 
-1.  从对偶问题 $(D)$ 的一个可行解 $y$ 出发，计算对偶问题的紧约束的集合
+1.  Starting from a feasible solution $y$ to the dual problem $(D)$, compute the set of tight constraints of the dual problem
 
     $$
     I = \{i : (A^Ty - c)_i = 0\}.
     $$
 
-2.  根据互补松弛条件，如果存在问题 $(P)$ 的可行解 $x$ 使得 $x_i>0$ 仅在 $i\in I$ 上成立，就意味着已经找到一组最优解．因此，考虑线性规划问题
+2.  According to the complementary slackness condition, if there exists a feasible solution $x$ to problem $(P)$ such that $x_i>0$ only holds for $i\in I$, it means we have already found a pair of optimal solutions. Therefore, consider the linear programming problem
 
     $$
     (RP)\qquad
@@ -498,7 +498,7 @@ $$
     \end{aligned}
     $$
 
-3.  如果问题 $(RP)$ 的最小值是 $0$，那么最优解 $(x^*,0)$ 中的 $x^*$ 就是原问题 $(P)$ 的最优解．否则，可以求出它的对偶问题 $(DRP)$ 的解 $\bar y$：
+3.  If the minimum value of problem $(RP)$ is $0$, then the $x^*$ in the optimal solution $(x^*,0)$ is the optimal solution to the original problem $(P)$. Otherwise, we can find the solution $\bar y$ to its dual problem $(DRP)$:
 
     $$
     (DRP)\qquad
@@ -509,33 +509,33 @@ $$
     \end{aligned}
     $$
 
-    根据强对偶定理可知，$b^T\bar y = 1^Ts^*>0$．
+    According to the strong duality theorem, we have $b^T\bar y = 1^Ts^*>0$.
 
-4.  根据问题 $(DRP)$ 的解改进对偶问题 $(D)$ 的可行解．设 $y' = y + \varepsilon \bar y$，其中，$\varepsilon>0$，则一定有 $b^Ty' = b^Ty + \varepsilon b^T\bar y > b^Ty$．因此，只要保证 $y'$ 仍然是对偶问题的可行解 $(D)$，就要尽可能大地选取 $\varepsilon$ 的值．
+4.  Use the solution to problem $(DRP)$ to improve the feasible solution to the dual problem $(D)$. Let $y' = y + \varepsilon \bar y$, where $\varepsilon>0$. Then we must have $b^Ty' = b^Ty + \varepsilon b^T\bar y > b^Ty$. Therefore, as long as $y'$ remains a feasible solution to the dual problem $(D)$, we should choose the largest possible value of $\varepsilon$.
 
-    对于 $i\in I$，有
+    For $i\in I$, we have
 
     $$
     \sum_ja_{ji}y'_j = \sum_ja_{ji}y_j + \varepsilon \sum_ja_{ji}\bar y_j \le c_i,
     $$
 
-    所以，问题 $(D)$ 的这些约束总是可以满足的．
+    so these constraints of problem $(D)$ can always be satisfied.
 
-    对于剩下的约束，即 $i\notin I$ 时，只需要取
+    For the remaining constraints, i.e., when $i\notin I$, we only need to take
 
     $$
     \varepsilon = \min\left\{\dfrac{c_i - \sum_{j}a_{ji}y_j}{\sum_{j}a_{ji}\bar y_j}:i\notin I,~\textstyle\sum_{j}a_{ji}\bar y_j>0\right\}
     $$
 
-    就可以在保证可行性的前提下，尽可能大地改进对偶问题的解，然后回到步骤 1 继续迭代．特别地，如果上式中的集合为空集，即 $\varepsilon=+\infty$，那么，对偶问题 $(D)$ 无界，原问题 $(P)$ 不可行．
+    to improve the solution to the dual problem as much as possible while ensuring feasibility, and then return to step 1 to continue iterating. In particular, if the set in the above formula is empty, i.e., $\varepsilon=+\infty$, then the dual problem $(D)$ is unbounded and the primal problem $(P)$ is infeasible.
 
-这个过程中其实只有问题 $(DRP)$ 是确实需要求解的，它与问题 $(RP)$ 通过强对偶定理相互联系．问题 $(DRP)$ 提供了一个改进对偶问题解的方向，而且相对于对偶问题 $(D)$ 本身，问题 $(DRP)$ 的形式更加简单．问题 $(DRP)$ 的可行性由 Farkas 引理保证，而约束 $y\le 1$ 只是一组规范化条件，保证了问题 $(DRP)$ 有界．
+In this process, only problem $(DRP)$ actually needs to be solved, and it is related to problem $(RP)$ through the strong duality theorem. Problem $(DRP)$ provides a direction to improve the solution to the dual problem, and compared to the dual problem $(D)$ itself, the form of problem $(DRP)$ is simpler. The feasibility of problem $(DRP)$ is guaranteed by Farkas' lemma, and the constraint $y\le 1$ is just a set of normalization conditions that ensure problem $(DRP)$ is bounded.
 
-算法竞赛中，原始‑对偶方法广泛地应用于各类组合优化问题．例如二分图最大权匹配的 [匈牙利算法](../graph/graph-matching/bigraph-weight-match.md#hungarian-algorithmkuhnmunkres-algorithm)、最小费用流的 [消圈算法](../graph/flow/min-cost.md) 和 [SSP 算法（原始‑对偶算法）](../graph/flow/min-cost.md#ssp-算法)、最短路的 [Dijkstra 算法](../graph/shortest-path.md#dijkstra-算法)、最大流的 [Ford–Fulkerson 增广算法](../graph/flow/max-flow.md#fordfulkerson-增广) 等，都可以看作是原始‑对偶方法的直接应用．
+In programming contests, the primal-dual method is widely applied to various combinatorial optimization problems. For example, the [Hungarian algorithm](../graph/graph-matching/bigraph-weight-match.md#hungarian-algorithmkuhnmunkres-algorithm) for maximum weight matching in bipartite graphs, the [cycle-canceling algorithm](../graph/flow/min-cost.md) and [SSP algorithm (primal-dual algorithm)](../graph/flow/min-cost.md#ssp-algorithm) for minimum cost flow, Dijkstra's algorithm for shortest path, and the Ford-Fulkerson augmentation algorithm for maximum flow can all be viewed as direct applications of the primal-dual method.
 
-## 整数规划
+## Integer Programming
 
-**整数规划**（integer programming）通常指 **整数线性规划**（integer linear programming, ILP）．标准形式的整数线性规划如下：
+**Integer programming** (integer programming) usually refers to **integer linear programming** (ILP). The standard form of integer linear programming is as follows:
 
 $$
 \begin{aligned}
@@ -546,58 +546,58 @@ $$
 \end{aligned}
 $$
 
-其中，$A\in\mathbf R^{m\times n}$，$b\in\mathbf R^m$，$c\in\mathbf R^n$．也就是说，整数线性规划是在线性规划问题上添加决策变量必须为整数这一约束条件所得到的问题．
+where $A\in\mathbf R^{m\times n}$, $b\in\mathbf R^m$, $c\in\mathbf R^n$. That is, integer linear programming is obtained by adding the constraint that decision variables must be integers to the linear programming problem.
 
-整数约束显著增加了整数规划问题的复杂性．许多组合优化问题，例如背包问题、适定性问题以及众多图论中的优化问题，都可以表示为整数规划模型，而这些问题中的多数被证明是 NP 困难的．
+Integer constraints significantly increase the complexity of integer programming problems. Many combinatorial optimization problems, such as the knapsack problem, satisfiability problems, and many optimization problems in graph theory, can be expressed as integer programming models, and most of these problems have been proven to be NP-hard.
 
-### 全幺模矩阵
+### Totally Unimodular Matrices
 
-正因如此，对于很多大规模的整数优化问题，有时候会考虑将它的整数约束松弛掉，转而求解一个线性规划问题．通常来说，松弛后的线性规划问题的最优价值只是原来的整数规划问题的一个下界估计（假设问题是最小化问题）．但是，如果松弛后的线性规划问题的最优解恰好是整数解，那么，它也一定是原来的整数规划问题的最优解．
+For this reason, for many large-scale integer optimization problems, sometimes we consider relaxing the integer constraints and instead solving a linear programming problem. Generally, the optimal value of the relaxed linear programming problem is only a lower bound estimate for the original integer programming problem (assuming the problem is a minimization problem). However, if the optimal solution of the relaxed linear programming problem happens to be an integer solution, then it is also the optimal solution to the original integer programming problem.
 
-一个自然的问题是，是否存在条件，能够保证线性规划问题的最优解都是整数解？全幺模矩阵的概念就提供了这样的一个条件．
+A natural question is whether there exists a condition that can guarantee that all optimal solutions to a linear programming problem are integer solutions. The concept of totally unimodular matrices provides such a condition.
 
-???+ abstract "全幺模矩阵"
-    如果矩阵 $A\in\mathbf R^{m\times n}$ 的所有子方阵的行列式都是 $0$ 或 $\pm 1$，那么，矩阵 $A$ 就称为一个 **全幺模矩阵**（totally unimodular matrix）．
+???+ abstract "Totally Unimodular Matrix"
+    If all subdeterminants of a matrix $A\in\mathbf R^{m\times n}$ are $0$ or $\pm 1$, then $A$ is called a **totally unimodular matrix** (totally unimodular matrix).
 
-特别地，全幺模矩阵的所有元素都是 $0$ 或 $\pm 1$．利用全幺模矩阵的概念，可以叙述如下结论：
+In particular, all elements of a totally unimodular matrix are $0$ or $\pm 1$. Using the concept of totally unimodular matrices, we can state the following conclusion:
 
-???+ note "定理"
-    对于全幺模矩阵 $A\in\mathbf Z^{m\times n}$，$b\in\mathbf Z^{m}$ 且 $c\in\mathbf Z^n$，线性规划问题及其对偶问题
+???+ note "Theorem"
+    For a totally unimodular matrix $A\in\mathbf Z^{m\times n}$, $b\in\mathbf Z^{m}$ and $c\in\mathbf Z^n$, the linear programming problem and its dual problem
     
     $$
     \min\{c^Tx : Ax=b,x\ge 0\} = \max\{b^Ty: A^Ty\le c\}
     $$
     
-    都有整数最优解，只要它们都有界．
+    both have integer optimal solutions, as long as they are bounded.
 
-??? note "证明"
-    前文已经说明，线性规划问题的最优解集可以取作它的一个极小面，而后者是由若干线性独立的紧约束作为等式联立得到的方程组的解：
+??? note "Proof"
+    As previously shown, the optimal solution set of a linear programming problem can be taken as one of its minimal faces, which is the solution to a system of equations obtained by taking several linearly independent tight constraints as equalities:
     
     $$
     \{x\in\mathbf R^n : a_j^Tx = b_j,~\forall j\in J\}.
     $$
     
-    记这个方程组为 $A_Jx=b_J$，且 $A_J=(A_1,A_2)$，其中，$A_1$ 是满秩的方阵，行列式为 $\pm 1$．那么，由 Cramer 法则，解
+    Denote this system of equations as $A_Jx=b_J$, and let $A_J=(A_1,A_2)$, where $A_1$ is a full-rank square matrix with determinant $\pm 1$. Then, by Cramer's rule, the solution
     
     $$
     x = \begin{pmatrix}A_1^{-1}b_J \\ 0\end{pmatrix}
     $$
     
-    就是极小面上的一个整数解．
+    is an integer solution on the minimal face.
 
-常见的图论模型中，网络流、最短路、二分图等对应的线性规划问题的系数矩阵都是全幺模矩阵．因此，只需要这些问题仅涉及整数参数，它们的最优解就可以取作整数，而不用担心线性规划问题的解对应着分数流、分数匹配等情形．所以，[最大流](../graph/flow/max-flow.md)、[最小割](../graph/flow/min-cut.md)、[最小费用流](../graph/flow/min-cost.md)、[最短路](../graph/shortest-path.md)、[差分约束](../graph/diff-constraints.md)、[二分图最大（权）匹配和最小点覆盖](../graph/graph-matching/bigraph-match.md#线性规划形式) 等问题，都可以转化为线性规划问题求解．而且，最大流与最小割、最短路与差分约束、二分图最大匹配和最小点覆盖，两两互为对偶问题．
+In common graph theory models, the coefficient matrices of linear programming problems corresponding to network flow, shortest path, bipartite graphs, etc., are all totally unimodular matrices. Therefore, as long as these problems only involve integer parameters, their optimal solutions can be taken as integers, without worrying about the linear programming solution corresponding to fractional flow, fractional matching, etc. Therefore, problems such as [maximum flow](../graph/flow/max-flow.md), [minimum cut](../graph/flow/min-cut.md), [minimum cost flow](../graph/flow/min-cost.md), [shortest path](../graph/shortest-path.md), [difference constraints](../graph/diff-constraints.md), and [maximum (weighted) matching and minimum vertex cover in bipartite graphs](../graph/graph-matching/bigraph-match.md#linear-programming-form) can all be transformed into linear programming problems to solve. Moreover, maximum flow and minimum cut, shortest path and difference constraints, and maximum matching and minimum vertex cover in bipartite graphs are pairwise dual problems.
 
-除此之外，还有一些常见的图论模型，它所有的可行解恰巧是某个顶点均为整点的多胞形的全体顶点．因此，可以通过巧妙地选取约束，使得相应的组合优化问题的解，恰为某个线性规划问题的最优解．例如，一般图匹配和生成树等图论模型都属于这种情况，因此 [一般图最大（权）匹配](../graph/graph-matching/general-weight-match.md) 和 [最小生成树](../graph/mst.md) 等问题同样可以转化为线性规划问题．
+Additionally, there are some common graph theory models where all feasible solutions happen to be exactly all vertices of a polytope with integer vertices. Therefore, by cleverly selecting constraints, the solution to the corresponding combinatorial optimization problem can be exactly the optimal solution to some linear programming problem. For example, general graph matching and spanning tree models belong to this category, so problems like [general graph maximum (weighted) matching](../graph/graph-matching/general-weight-match.md) and [minimum spanning tree](../graph/mst.md) can also be transformed into linear programming problems.
 
-## 参考文献与注释
+## References and Notes
 
 -   Schrijver, Alexander. Theory of linear and integer programming. John Wiley & Sons, 1998.
 -   Papadimitriou, Christos H., and Kenneth Steiglitz. Combinatorial optimization: algorithms and complexity. Courier Corporation, 1998.
 -   [Duality in linear programming. Part 1—definition and construction. by adamant - Codeforces blog](https://codeforces.com/blog/entry/105049)
 -   [Duality in linear programming. Part 2—in competitive programming. by adamant - Codeforces blog](https://codeforces.com/blog/entry/105789)
 
-[^poly-names]: 不同文献可能对这两个名词的定义有着不同的定义：有些文献会将有界的情形称作「多面体」，而将无界的情形称作「多胞形」；有些文献不会假定它们一定是凸集；有些文献会用「多面体」称呼三维空间中的多胞形．本文采取了与 Schrijver (1998) 和 Boyd and Vandenberghe (2004) 等文献一致的定义．
+[^poly-names]: Different literature may have different definitions for these two terms: some literature calls the bounded case "polyhedron" and the unbounded case "polytope"; some literature does not assume they are necessarily convex sets; some literature uses "polyhedron" to refer to polytopes in three-dimensional space. This article adopts the definition consistent with Schrijver (1998) and Boyd and Vandenberghe (2004).
 
-[^reducible]: 更严格的表述是，它们之间可以在多项式时间内相互归约．
+[^reducible]: More precisely, they can be reduced to each other in polynomial time.
 
-[^other-methods]: 其它用于解决不等式组的方法还包括 Fourier–Motzkin 消元法和 Agmon–Motzkin–Schoenberg 松弛法等．它们更为直接，但是效率往往不高．
+[^other-methods]: Other methods for solving systems of inequalities include the Fourier-Motzkin elimination method and the Agmon-Motzkin-Schoenberg relaxation method. They are more direct but often inefficient.

@@ -1,12 +1,12 @@
 author: H-J-Granger, ranwen, abc1763613206, Ahacad, Allenyou1126, AndrewWayne, AngelKitty, AtomAlpaca, Backl1ght, billchenchina, c-forrest, CCXXXI, Cheuring, Chrogeek, ChungZH, countercurrent-time, DepletedPrism, Early0v0, EarthMessenger, Enter-tainer, F1shAndCat, GavinZhengOI, Gesrua, Great-designer, greyqz, Haohu Shen, henryrabbit, heroming, hly1204, Ir1d, isdanni, jiang1997, kenlig, Lewy Zeng, lucifer1004, Menci, muoshuosha, NachtgeistW, needtocalmdown, opsiff, ouuan, ouuan, partychicken, schtonn, Sshwy, sshwy, StudyingFather, SukkaW, Taoran-01, Tiphereth-A, TrisolarisHD, untitledunrevised, Xeonacid, YouXam, Yukimaikoriya
 
-前置知识：[复数](../complex.md)．
+Prerequisites: [Complex Numbers](../complex.md).
 
-本文将介绍一种算法，它支持在 $O(n\log n)$ 的时间内计算两个 $n$ 次多项式的乘法，比朴素的 $O(n^2)$ 算法更高效．由于两个整数的乘法也可以被当作多项式乘法，因此这个算法也可以用来加速大整数的乘法计算．
+This article will introduce an algorithm that supports computing the multiplication of two degree-$n$ polynomials in $O(n\log n)$ time, which is more efficient than the naive $O(n^2)$ algorithm. Since the multiplication of two integers can also be treated as polynomial multiplication, this algorithm can also be used to accelerate large integer multiplication.
 
-## 引入
+## Introduction
 
-我们现在引入两个多项式 $A$ 和 $B$：
+Now let's introduce two polynomials $A$ and $B$:
 
 $$
 \begin{aligned}
@@ -15,114 +15,116 @@ B ={}& 7x^2 + 2x + 1 \\
 \end{aligned}
 $$
 
-两个多项式相乘的积 $C = A \times B$，我们可以在 $O(n^2)$ 的时间复杂度中解得（这里 $n$ 为 $A$ 或者 $B$ 多项式的次数）：
+The product $C = A \times B$ can be solved in $O(n^2)$ time complexity (here $n$ is the degree of polynomial $A$ or $B$):
 
 $$
 \begin{aligned}
 C ={}& A \times B \\
-  ={}& 35x^4 + 31x^3 + 60x^2 + 17x + 7
+   ={}& 35x^4 + 31x^3 + 60x^2 + 17x + 7
 \end{aligned}
 $$
 
-很明显，多项式 $C$ 的系数 $c_i$ 满足 $c_i = \sum_{j = 0}^i a_j b_{i - j}$．而对于这种朴素算法而言，计算每一项的时间复杂度都为 $O(n)$，一共有 $O(n)$ 项，那么时间复杂度为 $O(n^2)$．
+Obviously, the coefficients $c_i$ of polynomial $C$ satisfy $c_i = \sum_{j = 0}^i a_j b_{i - j}$. For this naive algorithm, computing each term takes $O(n)$ time, and there are $O(n)$ terms, so the time complexity is $O(n^2)$.
 
-能否加速使得它的时间复杂度降低呢？如果使用快速傅里叶变换的话，那么我们可以使得其复杂度降低到 $O(n \log n)$．
+Can we accelerate it to reduce time complexity? If we use fast Fourier transform, we can reduce the complexity to $O(n \log n)$.
 
-## 傅里叶变换
+## Fourier Transform
 
-傅里叶变换（Fourier Transform）是一种分析信号的方法，它可分析信号的成分，也可用这些成分合成信号．许多波形可作为信号的成分，傅里叶变换用正弦波作为信号的成分．
+Fourier Transform is a method for analyzing signals. It can analyze the components of a signal and also synthesize signals using those components. Many waveforms can serve as components of a signal, and Fourier Transform uses sine waves as the components of signals.
 
-设 $f(t)$ 是关于时间 $t$ 的函数，则傅里叶变换可以检测频率 $\omega$ 的周期在 $f(t)$ 出现的程度：
+Let $f(t)$ be a function of time $t$. Fourier Transform can detect the degree to which a cycle of frequency $\omega$ appears in $f(t)$:
 
 $$
 F(\omega)=\mathbb{F}[f(t)]=\int_{-\infty}^{\infty}f(t)\mathrm{e}^{-\mathrm{i}{\omega}t}dt
 $$
 
-它的逆变换是
+Its inverse transform is:
 
 $$
 f(t)=\mathbb{F}^{-1}[F(\omega)]=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\omega)\mathrm{e}^{\mathrm{i}{\omega}t}d\omega
 $$
 
-逆变换的形式与正变换非常类似，分母 $2\pi$ 恰好是指数函数的周期．
+The form of the inverse transform is very similar to the forward transform. The denominator $2\pi$ is exactly the period of the exponential function.
 
-傅里叶变换相当于将时域的函数与周期为 $2\pi$ 的复指数函数进行连续的内积．逆变换仍旧为一个内积．
+Fourier Transform is equivalent to taking the continuous inner product of the time-domain function with a complex exponential function of period $2\pi$. The inverse transform is also an inner product.
 
-傅里叶变换有相应的卷积定理，可以将时域的卷积转化为频域的乘积，也可以将频域的卷积转化为时域的乘积．
+Fourier Transform has a corresponding convolution theorem, which can transform convolution in the time domain to multiplication in the frequency domain, and also transform convolution in the frequency domain to multiplication in the time domain.
 
-## 离散傅里叶变换
+## Discrete Fourier Transform
 
-**离散傅里叶变换**（Discrete Fourier transform，DFT）是傅里叶变换在时域和频域上都呈离散的形式，将信号的时域采样变换为其 DTFT（discrete-time Fourier transform）的频域采样．
+**Discrete Fourier Transform** (DFT) is the discrete form of Fourier Transform in both time domain and frequency domain, transforming the time-domain sampling of a signal into its DTFT (discrete-time Fourier transform) frequency-domain sampling.
 
-傅里叶变换是积分形式的连续的函数内积，离散傅里叶变换是求和形式的内积．
+Fourier Transform is an integral form of continuous function inner product; Discrete Fourier Transform is a summation form of inner product.
 
-设 $\{x_n\}_{n=0}^{N-1}$ 是某一满足有限性条件的序列，它的离散傅里叶变换（DFT）为：
+Let $\{x_n\}_{n=0}^{N-1}$ be a sequence satisfying some finite condition. Its discrete Fourier transform (DFT) is:
 
 $$
 X_k=\sum_{n=0}^{N-1}x_n\mathrm{e}^{-\mathrm{i}\frac{2\pi}{N}kn}
 $$
 
-其中 $\mathrm{e}$ 是自然对数的底数，$i$ 是虚数单位．通常以符号 $\mathcal {F}$ 表示这一变换，即
+Where $\mathrm{e}$ is the base of natural logarithm, $i$ is the imaginary unit. Usually this transform is denoted by $\mathcal {F}$:
 
 $$
 \hat{x}=\mathcal{F}x
 $$
 
-类似于积分形式，它的 **逆离散傅里叶变换**（IDFT）为：
+Similar to the integral form, its **inverse discrete Fourier transform** (IDFT) is:
 
 $$
 x_n=\frac{1}{N}\sum_{k=0}^{N-1}X_k\mathrm{e}^{\mathrm{i}\frac{2\pi}{N}kn}
 $$
 
-可以记为：
+Can be denoted as:
 
 $$
 x=\mathcal{F}^{-1}\hat{x}
 $$
 
-实际上，DFT 和 IDFT 变换式中和式前面的归一化系数并不重要．在上面的定义中，DFT 和 IDFT 前的系数分别为 $1$ 和 $\frac {1}{N}$．有时我们会将这两个系数都改 $\frac{1}{{\sqrt{N}}}$．
+Actually, the normalization coefficients in front of DFT and IDFT are not important. In the above definition, the coefficients before DFT and IDFT are $1$ and $\frac {1}{N}$ respectively. Sometimes we change both to $\frac{1}{{\sqrt{N}}}$.
 
-离散傅里叶变换仍旧是时域到频域的变换．由于求和形式的特殊性，可以有其他的解释方法．
+Discrete Fourier Transform is still a transform from time domain to frequency domain. Due to the special nature of the summation form, there are other interpretations.
 
-如果把序列 $x_n$ 看作多项式 $f(x)$ 的 $x^n$ 项系数，则计算得到的 $X_k$ 恰好是多项式 $f(x)$ 代入单位根 $\mathrm{e}^{\frac{-2\pi \mathrm{i}k}{N}}$ 的点值 $f(\mathrm{e}^{\frac{-2\pi \mathrm{i}k}{N}})$．
+If we view sequence $x_n$ as the coefficient of $x^n$ in polynomial $f(x)$, then the computed $X_k$ is exactly the value of polynomial $f(x)$ at the root of unity $\mathrm{e}^{\frac{-2\pi \mathrm{i}k}{N}}$, i.e., $f(\mathrm{e}^{\frac{-2\pi \mathrm{i}k}{N}})$.
 
-这便构成了卷积定理的另一种解释办法，即对多项式进行特殊的求值操作．离散傅里叶变换恰好是多项式在单位根处进行求值．
+This provides another interpretation of the convolution theorem—that is, performing a special evaluation operation on polynomials. Discrete Fourier Transform is exactly evaluating polynomials at roots of unity.
 
-例如计算：
+For example, computing:
 
 $$
 \dbinom{n}{3}+\dbinom{n}{7}+\dbinom{n}{11}+\dbinom{n}{15}+\ldots
 $$
 
-定义函数 $f(x)$ 为：
+Define function $f(x)$:
 
 $$
-f(x)={(1+x)}^n=\dbinom{n}{0}x^0+\dbinom{n}{1}x^1+\dbinom{n}{2}x^2+\dbinom{n}{3}x^3+\ldots
+f(x)={(1+x)}^n=\dbinom{n}{0}x^0+\dbinom{n}{1}x^1+\dbinom{n}{2}x^2+\dbino
+
+m{n}{3}x^3+\ldots
 $$
 
-然后可以发现，代入四次单位根 $f(\mathrm{i})$ 得到这样的序列：
+Then we can find that substituting the fourth root of unity $f(\mathrm{i})$ gives such a sequence:
 
 $$
 f(\mathrm{i})={(1+\mathrm{i})}^n=\dbinom{n}{0}+\dbinom{n}{1}\mathrm{i}-\dbinom{n}{2}-\dbinom{n}{3}\mathrm{i}+\ldots
 $$
 
-于是下面的求和恰好可以把其余各项消掉：
+So the following summation can exactly cancel out the other terms:
 
 $$
 f(1)+\mathrm{i}f(\mathrm{i})-f(-1)-\mathrm{i}f(-\mathrm{i})=4\dbinom{n}{3}+4\dbinom{n}{7}+4\dbinom{n}{11}+4\dbinom{n}{15}+\ldots
 $$
 
-因此这道数学题的答案为：
+Therefore, the answer to this math problem is:
 
 $$
 \dbinom{n}{3}+\dbinom{n}{7}+\dbinom{n}{11}+\dbinom{n}{15}+\ldots=\frac{2^n+\mathrm{i}(1+\mathrm{i})^n-\mathrm{i}(1-\mathrm{i})^n}{4}
 $$
 
-这道数学题在单位根处求值，恰好构成离散傅里叶变换．
+This math problem, by evaluating at roots of unity, exactly constitutes Discrete Fourier Transform.
 
-### 矩阵公式
+### Matrix Form
 
-由于离散傅立叶变换是一个 **线性** 算子，所以它可以用矩阵乘法来描述．在矩阵表示法中，离散傅立叶变换表示如下：
+Since Discrete Fourier Transform is a **linear** operator, it can be described by matrix multiplication. In matrix representation, Discrete Fourier Transform is expressed as:
 
 $$
 \begin{bmatrix}
@@ -149,25 +151,25 @@ $$
 \end{bmatrix}
 $$
 
-其中 $\alpha = \mathrm{e}^{-\mathrm{i}\frac{2\pi}{N}}$．
+Where $\alpha = \mathrm{e}^{-\mathrm{i}\frac{2\pi}{N}}$.
 
-## 快速傅里叶变换
+## Fast Fourier Transform
 
-FFT 是一种高效实现 DFT 的算法，称为快速傅立叶变换（Fast Fourier Transform，FFT）．它对傅里叶变换的理论并没有新的发现，但是对于在计算机系统或者说数字系统中应用离散傅立叶变换，可以说是进了一大步．快速数论变换（NTT）是快速傅里叶变换（FFT）在数论基础上的实现．
+FFT is an efficient algorithm for implementing DFT, called Fast Fourier Transform. It doesn't make new discoveries about the theory of Fourier Transform, but it's a huge step forward for applying Discrete Fourier Transform in computer systems or digital systems. Fast Number-Theoretic Transform (NTT) is the implementation of Fast Fourier Transform (FFT) based on number theory.
 
-在 1965 年，Cooley 和 Tukey 发表了快速傅里叶变换算法．事实上 FFT 早在这之前就被发现过了，但是在当时现代计算机并未问世，人们没有意识到 FFT 的重要性．一些调查者认为 FFT 是由 Runge 和 König 在 1924 年发现的．但事实上高斯早在 1805 年就发明了这个算法，但一直没有发表．
+In 1965, Cooley and Tukey published the Fast Fourier Transform algorithm. In fact, FFT was discovered even earlier than this, but at that time modern computers hadn't been invented, and people didn't realize the importance of FFT. Some investigators think FFT was discovered by Runge and König in 1924. But in fact, Gauss invented this algorithm as early as 1805 but never published it.
 
-### 分治法实现
+### Divide-and-Conquer Implementation
 
-FFT 算法的基本思想是分治．就 DFT 来说，它分治地来求当 $x=\omega_n^k$ 的时候 $f(x)$ 的值．基 - 2 FFT 的分治思想体现在将多项式分为奇次项和偶次项处理．
+The basic idea of the FFT algorithm is divide-and-conquer. For DFT, it uses divide-and-conquer to compute the value of $f(x)$ when $x=\omega_n^k$. The divide-and-conquer idea of radix-2 FFT is reflected in dividing the polynomial into odd and even terms.
 
-举个例子，对于一共 $8$ 项的多项式：
+For example, for a polynomial with 8 terms:
 
 $$
 f(x) = a_0 + a_1x + a_2x^2+a_3x^3+a_4x^4+a_5x^5+a_6x^6+a_7x^7
 $$
 
-按照次数的奇偶来分成两组，然后右边提出来一个 $x$：
+Divide by parity of degree into two groups, then extract an $x$ from the right:
 
 $$
 \begin{aligned}
@@ -176,7 +178,7 @@ f(x) &= (a_0+a_2x^2+a_4x^4+a_6x^6) + (a_1x+a_3x^3+a_5x^5+a_7x^7)\\
 \end{aligned}
 $$
 
-分别用奇偶次次项数建立新的函数：
+Create new functions from the odd and even terms:
 
 $$
 \begin{aligned}
@@ -185,45 +187,45 @@ H(x) &= a_1+a_3x+a_5x^2+a_7x^3
 \end{aligned}
 $$
 
-那么原来的 $f(x)$ 用新函数表示为：
+Then $f(x)$ can be expressed in terms of the new functions:
 
 $$
-f(x)=G\left(x^2\right) + x  \times  H\left(x^2\right)
+f(x)=G\left(x^2\right) + x \times H\left(x^2\right)
 $$
 
-利用偶数次单位根的性质 $\omega^i_n = -\omega^{i + n/2}_n$，和 $G\left(x^2\right)$ 和 $H\left(x^2\right)$ 是偶函数，我们知道在复平面上 $\omega^i_n$ 和 $\omega^{i+n/2}_n$ 的 $G(x^2)$ 的 $H(x^2)$ 对应的值相同．得到：
-
-$$
-\begin{aligned}
-f(\omega_n^k) &= G((\omega_n^k)^2) + \omega_n^k  \times H((\omega_n^k)^2) \\
-              &= G(\omega_n^{2k}) + \omega_n^k  \times H(\omega_n^{2k}) \\
-              &= G(\omega_{n/2}^k) + \omega_n^k  \times H(\omega_{n/2}^k)
-\end{aligned}
-$$
-
-和：
+Using the property of even-order roots of unity $\omega^i_n = -\omega^{i + n/2}_n$, and that $G\left(x^2\right)$ and $H\left(x^2\right)$ are even functions, we know that on the complex plane, $\omega^i_n$ and $\omega^{i+n/2}_n$ have the same values for $G(x^2)$ and $H(x^2)$. We get:
 
 $$
 \begin{aligned}
-f(\omega_n^{k+n/2}) &= G(\omega_n^{2k+n}) + \omega_n^{k+n/2}  \times H(\omega_n^{2k+n}) \\
-                    &= G(\omega_n^{2k}) - \omega_n^k  \times H(\omega_n^{2k}) \\
-                    &= G(\omega_{n/2}^k) - \omega_n^k  \times H(\omega_{n/2}^k)
+f(\omega_n^k) &= G((\omega_n^k)^2) + \omega_n^k \times H((\omega_n^k)^2) \\
+               &= G(\omega_n^{2k}) + \omega_n^k \times H(\omega_n^{2k}) \\
+               &= G(\omega_{n/2}^k) + \omega_n^k \times H(\omega_{n/2}^k)
 \end{aligned}
 $$
 
-因此我们求出了 $G(\omega_{n/2}^k)$ 和 $H(\omega_{n/2}^k)$ 后，就可以同时求出 $f(\omega_n^k)$ 和 $f(\omega_n^{k+n/2})$．于是对 $G$ 和 $H$ 分别递归 DFT 即可．
+And:
 
-考虑到分治 DFT 能处理的多项式长度只能是 $2^m(m \in \mathbf{N}^ \ast )$，否则在分治的时候左右不一样长，右边就取不到系数了．所以要在第一次 DFT 之前就把序列向上补成长度为 $2^m(m \in \mathbf{N}^\ast )$（高次系数补 $0$）、最高项次数为 $2^m-1$ 的多项式．
+$$
+\begin{aligned}
+f(\omega_n^{k+n/2}) &= G(\omega_n^{2k+n}) + \omega_n^{k+n/2} \times H(\omega_n^{2k+n}) \\
+                     &= G(\omega_n^{2k}) - \omega_n^k \times H(\omega_n^{2k}) \\
+                     &= G(\omega_{n/2}^k) - \omega_n^k \times H(\omega_{n/2}^k)
+\end{aligned}
+$$
 
-在代入值的时候，因为要代入 $n$ 个不同值，所以我们代入 $\omega_n^0,\omega_n^1,\omega_n^2,\cdots, \omega_n^{n-1} (n=2^m(m \in \mathbf{N}^ \ast ))$ 一共 $2^m$ 个不同值．
+Thus, after finding $G(\omega_{n/2}^k)$ and $H(\omega_{n/2}^k)$, we can simultaneously find $f(\omega_n^k)$ and $f(\omega_n^{k+n/2})$. So we recursively perform DFT on $G$ and $H$ separately.
 
-代码实现方面，STL 提供了复数的模板，当然也可以手动实现．两者区别在于，使用 STL 的 `complex` 可以调用 `exp` 函数求出 $\omega_n$．但事实上使用欧拉公式得到的虚数来求 $\omega_n$ 也是等价的．
+Considering that the polynomial length that divide-and-conquer DFT can handle can only be $2^m(m \in \mathbf{N}^ \ast )$, otherwise during divide-and-conquer the left and right have different lengths and the right cannot get coefficients. So before the first DFT, we need to pad the sequence up to a polynomial of length $2^m(m \in \mathbf{N}^ \ast )$ (fill high-degree coefficients with $0$), with highest degree $2^m-1$.
 
-以上就是 FFT 算法中 DFT 的介绍，它将一个多项式从系数表示法变成了点值表示法．
+When substituting values, because we need to substitute $n$ different values, we substitute $\omega_n^0,\omega_n^1,\omega_n^2,\cdots, \omega_n^{n-1} (n=2^m(m \in \mathbf{N}^ \ast ))$, a total of $2^m$ different values.
 
-值的注意的是，因为是单位复根，所以说我们需要令 $n$ 项式的高位补为零，使得 $n = 2 ^ k, k \in \mathbf{N}^ \ast$．
+In terms of code implementation, STL provides a complex number template, or we can implement it manually. The difference is that using STL's `complex` can call the `exp` function to find $\omega_n$. But in fact, using the imaginary number obtained from Euler's formula to find $\omega_n$ is equivalent.
 
-???+ note "递归版 FFT"
+This is the introduction of DFT in the FFT algorithm, which transforms a polynomial from coefficient representation to point-value representation.
+
+It is worth noting that because it's a complex root of unity, we need to fill the high positions of the $n$-term polynomial with zeros, making $n = 2 ^ k, k \in \mathbf{N}^ \ast$.
+
+???+ note "Recursive FFT"
     ```cpp
     #include <cmath>
     #include <complex>
@@ -236,11 +238,11 @@ $$
     Comp tmp[MAX_N];
     
     // rev=1, DFT; rev=-1, IDFT
-    // 应用完本函数后需要注意归一化系数的处理
+    // After applying this function, pay attention to handling normalization coefficients
     void DFT(Comp* f, int n, int rev) {
       if (n == 1) return;
       for (int i = 0; i < n; ++i) tmp[i] = f[i];
-      // 偶数放左边，奇数放右边
+      // Put even on left, odd on right
       for (int i = 0; i < n; ++i) {
         if (i & 1)
           f[n / 2 + i / 2] = tmp[i];
@@ -248,14 +250,14 @@ $$
           f[i / 2] = tmp[i];
       }
       Comp *g = f, *h = f + n / 2;
-      // 递归 DFT
+      // Recursive DFT
       DFT(g, n / 2, rev), DFT(h, n / 2, rev);
-      // cur 是当前单位复根，对于 k = 0 而言，它对应的单位复根 omega^0_n = 1．
-      // step 是两个单位复根的差，即满足 omega^k_n = step*omega^{k-1}*n，
-      // 定义等价于 exp(I*(-2*M_PI/n*rev))
+      // cur is the current complex root. For k = 0, its corresponding complex root is omega^0_n = 1.
+      // step is the difference between two complex roots, i.e., omega^k_n = step*omega^{k-1}*n,
+      // defined equivalently as exp(I*(-2*M_PI/n*rev))
       Comp cur(1, 0), step(cos(2 * M_PI / n), sin(-2 * M_PI * rev / n));
       for (int k = 0; k < n / 2;
-           ++k) {  // F(omega^k_n) = G(omega^k*{n/2}) + omega^k*n\*H(omega^k*{n/2})
+           ++k) {  // F(omega^k_n) = G(omega^k*{n/2}) + omega^k*n*H(omega^k*{n/2})
         tmp[k] = g[k] + cur * h[k];
         // F(omega^{k+n/2}*n) = G(omega^k*{n/2}) - omega^k_n*H(omega^k\_{n/2})
         tmp[k + n / 2] = g[k] - cur * h[k];
@@ -265,47 +267,48 @@ $$
     }
     ```
 
-时间复杂度 $O(n\log n)$．
+Time complexity $O(n\log n)$.
 
-### 倍增法实现
+### Doubling Implementation
 
-这个算法还可以从「分治」的角度继续优化．对于基 - 2 FFT，我们每一次都会把整个多项式的奇数次项和偶数次项系数分开，一直分到只剩下一个系数．但是，这个递归的过程需要更多的内存．因此，我们可以先「模仿递归」把这些系数在原数组中「拆分」，然后再「倍增」地去合并这些算出来的值．
+This algorithm can continue to be optimized from the "divide-and-conquer" perspective. For radix-2 FFT, each time we separate the odd and even degree coefficients of the entire polynomial until only one coefficient remains. However, this recursive process requires more memory. Therefore, we can first "mimic recursion" to "split" these coefficients in the original array, and then "double" to merge these computed values.
 
-对于「拆分」，可以使用位逆序置换实现．
+For "splitting", bit-reversal permutation can be used.
 
-对于「合并」，使用蝶形运算优化可以做到只用 $O(1)$ 的额外空间来完成．
+For "merging", butterfly operation optimization can achieve $O(1)$ extra space to complete.
 
-#### 位逆序置换
+#### Bit-Reversal Permutation
 
-以 $8$ 项多项式为例，模拟拆分的过程：
+Taking an 8-term polynomial as an example, simulate the splitting process:
 
--   初始序列为 $\{x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7\}$
--   一次二分之后 $\{x_0, x_2, x_4, x_6\},\{x_1, x_3, x_5, x_7 \}$
--   两次二分之后 $\{x_0,x_4\} \{x_2, x_6\},\{x_1, x_5\},\{x_3, x_7 \}$
--   三次二分之后 $\{x_0\}\{x_4\}\{x_2\}\{x_6\}\{x_1\}\{x_5\}\{x_3\}\{x_7 \}$
+-   Initial sequence: $\{x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7\}$
+-   After first halving: $\{x_0, x_2, x_4, x_6\},\{x_1, x_3, x_5, x_7 \}$
+-   After second halving: $\{x_0,x_4\} \{x_2, x_6\},\{x_1, x_5\},\{x_3, x_7 \}$
+-   After third halving: $\{x_0\}\{x_4\}\{x_2\}\{x_6\}\{x_1\}\{x_5\}\{x_3\}\{x_7 \}$
 
-规律：其实就是原来的那个序列，每个数用二进制表示，然后把二进制翻转对称一下，就是最终那个位置的下标．比如 $x_1$ 是 001，翻转是 100，也就是 4，而且最后那个位置确实是 4．我们称这个变换为位逆序置换（bit-reversal permutation），证明留给读者自证．
+The rule: actually, for the original sequence, represent each number in binary, then flip the binary symmetrically—that's the final position index. For example, $x_1$ is 001, flipped is 100, which is 4, and indeed the final position is 4. We call this transformation bit-reversal permutation. The proof is left to the reader.
 
-根据它的定义，我们可以在 $O(n)$ 的时间内求出每个数变换后的结果：
+According to its definition, we can find the result after transformation for each number in $O(n)$ time:
 
-???+ note "位逆序置换实现（$O(n)$）"
+???+ note "Bit-Reversal Permutation Implementation ($O(n)$)"
     ```cpp
     /*
-     * 进行 FFT 和 IFFT 前的反置变换
-     * 位置 i 和 i 的二进制反转后的位置互换
-     * len 必须为 2 的幂
+     * Perform inverse transformation before FFT and IFFT
+     * Position i and position with binary reversal of i swap
+     * len must be a power of 2
      */
     void change(Complex y[], int len) {
-      // 一开始 i 是 0...01，而 j 是 10...0，在二进制下相反对称．
-      // 之后 i 逐渐加一，而 j 依然维持着和 i 相反对称，一直到 i = 1...11．
+      // At first i is 0...01, j is 10...0, which are opposites in binary.
+      // Then i gradually increases by 1, while j remains opposite to i.
+      // Until i = 1...11.
       for (int i = 1, j = len / 2, k; i < len - 1; i++) {
-        // 交换互为小标反转的元素，i < j 保证交换一次
+        // Swap elements that are reverses of each other. i < j ensures each pair is swapped once.
         if (i < j) swap(y[i], y[j]);
-        // i 做正常的 + 1，j 做反转类型的 + 1，始终保持 i 和 j 是反转的．
-        // 这里 k 代表了 0 出现的最高位．j 先减去高位的全为 1 的数字，
-        // 直到遇到了 0，之后再加上即可．
-        // 考虑 j 中比特位的翻转次数，最高位将会翻转 n 次，
-        // 第二高位将会翻转 n/2 次，以此类推，所以时间复杂度为：
+        // i does normal +1, j does reverse-type +1, always keeping i and j reversed.
+        // Here k represents the highest bit of 0. j first subtracts the number with all high bits as 1,
+        // until it encounters 0, then adds it back.
+        // Consider the number of bit flips in j. The highest bit flips n times,
+        // second highest flips n/2 times, and so on. So time complexity is:
         // T(n) = n + n/2 + n/4 + ... = O(n)
         k = len / 2;
         while (j >= k) {
@@ -317,36 +320,36 @@ $$
     }
     ```
 
-位逆序置换也可以 $O(n)$ 从小到大递推实现，设 $len=2^k$，其中 $k$ 表示二进制数的长度，设 $R(x)$ 表示长度为 $k$ 的二进制数 $x$ 翻转后的数（高位补 $0$）．我们要求的是 $R(0),R(1),\cdots,R(n-1)$．
+Bit-reversal permutation can also be implemented in $O(n)$ from small to large. Let $len=2^k$, where $k$ is the length of binary numbers. Let $R(x)$ be the number obtained by reversing binary $x$ of length $k$ (high bits filled with $0$). We want to find $R(0),R(1),\cdots,R(n-1)$.
 
-首先 $R(0)=0$．
+First, $R(0)=0$.
 
-我们从小到大求 $R(x)$．因此在求 $R(x)$ 时，$R\left(\left\lfloor \dfrac{x}{2} \right\rfloor\right)$ 的值是已知的．因此我们把 $x$ 右移一位（除以 $2$），然后翻转，再右移一位，就得到了 $x$  **除了（二进制）个位** 之外其它位的翻转结果．
+We find $R(x)$ from small to large. So when finding $R(x)$, the value of $R\left(\left\lfloor \dfrac{x}{2} \right\rfloor\right)$ is known. So we shift $x$ right by one bit (divide by 2), then reverse, then shift right by one bit again, which gives the result of flipping all bits **except the (binary) units place** of $x$.
 
-考虑个位的翻转结果：如果个位是 $0$，翻转之后最高位就是 $0$．如果个位是 $1$，则翻转后最高位是 $1$，因此还要加上 $\dfrac{len}{2}=2^{k-1}$．综上
+Consider the result of flipping the units place: if the units place is $0$, after flipping, the highest bit is $0$. If the units place is $1$, after flipping, the highest bit is $1$, so we need to add $\dfrac{len}{2}=2^{k-1}$. In summary:
 
 $$
 R(x)=\left\lfloor \frac{R\left(\left\lfloor \frac{x}{2} \right\rfloor\right)}{2} \right\rfloor + (x\bmod 2)\times \frac{len}{2}
 $$
 
-举个例子：设 $k=5$，$len=(100000)_2$．为了翻转 $(11001)_2$：
+As an example: let $k=5$, $len=(100000)_2$. To flip $(11001)_2$:
 
-1.  考虑 $(1100)_2$，我们知道 $R((1100)_2)=R((01100)_2)=(00110)_2$，再右移一位就得到了 $(00011)_2$．
-2.  考虑个位，如果是 $1$，它就要翻转到数的最高位，即翻转数加上 $(10000)_2=2^{k-1}$，如果是 $0$ 则不用更改．
+1.  Consider $(1100)_2$, we know $R((1100)_2)=R((01100)_2)=(00110)_2)$, then shift right by one bit to get $(00011)_2$.
+2.  Consider the units place, if it's $1$, it flips to the highest bit of the number, i.e., add $(10000)_2=2^{k-1}$; if it's $0$, no change needed.
 
-???+ note "位逆序置换实现（$O(n)$）"
+???+ note "Bit-Reversal Permutation Implementation ($O(n)$)"
     ```cpp
-    // 同样需要保证 len 是 2 的幂
-    // 记 rev[i] 为 i 翻转后的值
+    // Also ensure len is a power of 2
+    // rev[i] is the reversed value of i
     void change(Complex y[], int len) {
       for (int i = 0; i < len; ++i) {
         rev[i] = rev[i >> 1] >> 1;
-        if (i & 1) {  // 如果最后一位是 1，则翻转成 len/2
+        if (i & 1) {  // If the last bit is 1, flip to len/2
           rev[i] |= len >> 1;
         }
       }
       for (int i = 0; i < len; ++i) {
-        if (i < rev[i]) {  // 保证每对数只翻转一次
+        if (i < rev[i]) {  // Ensure each pair is swapped only once
           swap(y[i], y[rev[i]]);
         }
       }
@@ -354,9 +357,9 @@ $$
     }
     ```
 
-#### 蝶形运算优化
+#### Butterfly Operation Optimization
 
-已知 $G(\omega_{n/2}^k)$ 和 $H(\omega_{n/2}^k)$ 后，需要使用下面两个式子求出 $f(\omega_n^k)$ 和 $f(\omega_n^{k+n/2})$：
+After knowing $G(\omega_{n/2}^k)$ and $H(\omega_{n/2}^k)$, we need to use the following two formulas to find $f(\omega_n^k)$ and $f(\omega_n^{k+n/2})$:
 
 $$
 \begin{aligned}
@@ -365,27 +368,27 @@ $$
 \end{aligned}
 $$
 
-使用位逆序置换后，对于给定的 $n, k$：
+After using bit-reversal permutation, for given $n, k$:
 
--   $G(\omega_{n/2}^k)$ 的值存储在数组下标为 $k$ 的位置，$H(\omega_{n/2}^k)$ 的值存储在数组下标为 $k + \dfrac{n}{2}$ 的位置．
--   $f(\omega_n^k)$ 的值将存储在数组下标为 $k$ 的位置，$f(\omega_n^{k+n/2})$ 的值将存储在数组下标为 $k + \dfrac{n}{2}$ 的位置．
+-   The value of $G(\omega_{n/2}^k)$ is stored at array index $k$, and $H(\omega_{n/2}^k)$ is stored at index $k + \dfrac{n}{2}$.
+-   The value of $f(\omega_n^k)$ will be stored at index $k$, and $f(\omega_n^{k+n/2})$ will be stored at index $k + \dfrac{n}{2}$.
 
-因此可以直接在数组下标为 $k$ 和 $k + \frac{n}{2}$ 的位置进行覆写，而不用开额外的数组保存值．此方法即称为 **蝶形运算**，或更准确的，基 - 2 蝶形运算．
+Therefore, we can directly overwrite at indices $k$ and $k + \frac{n}{2}$ without opening extra arrays to save values. This method is called **butterfly operation**, or more precisely, radix-2 butterfly operation.
 
-再详细说明一下如何借助蝶形运算完成所有段长度为 $\frac{n}{2}$ 的合并操作：
+Let's describe how to complete all merge operations of segment length $\frac{n}{2}$ with butterfly operation:
 
-1.  令段长度为 $s = \frac{n}{2}$；
-2.  同时枚举序列 $\{G(\omega_{n/2}^k)\}$ 的左端点 $l_g = 0, 2s, 4s, \cdots, N-2s$ 和序列 $\{H(\omega_{n/2}^k)\}$ 的左端点 $l_h = s, 3s, 5s, \cdots, N-s$；
-3.  合并两个段时，枚举 $k = 0, 1, 2, \cdots, s-1$，此时 $G(\omega_{n/2}^k)$ 存储在数组下标为 $l_g + k$ 的位置，$H(\omega_{n/2}^k)$ 存储在数组下标为 $l_h + k$ 的位置；
-4.  使用蝶形运算求出 $f(\omega_n^k)$ 和 $f(\omega_n^{k+n/2})$，然后直接在原位置覆写．
+1.  Let segment length be $s = \frac{n}{2}$;
+2.  Simultaneously enumerate left endpoints $l_g = 0, 2s, 4s, \cdots, N-2s$ of sequence $\{G(\omega_{n/2}^k)\}$ and left endpoints $l_h = s, 3s, 5s, \cdots, N-s$ of sequence $\{H(\omega_{n/2}^k)\}$;
+3.  When merging two segments, enumerate $k = 0, 1, 2, \cdots, s-1$. At this time, $G(\omega_{n/2}^k)$ is stored at index $l_g + k$, and $H(\omega_{n/2}^k)$ is stored at index $l_h + k$;
+4.  Use butterfly operation to find $f(\omega_n^k)$ and $f(\omega_n^{k+n/2})$, then directly overwrite in place.
 
-## 快速傅里叶逆变换
+## Inverse Fast Fourier Transform
 
-傅里叶逆变换可以用傅里叶变换表示．对此我们有两种理解方式．
+Inverse Fourier transform can be expressed using Fourier transform. We have two ways to understand this.
 
-### 线性代数角度
+### Linear Algebra Perspective
 
-IDFT（傅里叶反变换）的作用，是把目标多项式的点值形式转换成系数形式．而 DFT 本身是个线性变换，可以理解为将目标多项式当作向量，左乘一个矩阵得到变换后的向量，以模拟把单位复根代入多项式的过程：
+IDFT (Fourier inverse transform) is to convert the point-value form of the target polynomial to coefficient form. DFT itself is a linear transform, which can be understood as multiplying the target polynomial as a vector by a matrix to get the transformed vector, to simulate substituting the unit complex root into the polynomial:
 
 $$
 \begin{bmatrix}y_0 \\ y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_{n-1} \end{bmatrix}
@@ -399,41 +402,41 @@ $$
 \begin{bmatrix} a_0 \\ a_1 \\ a_2 \\ a_3 \\ \vdots \\ a_{n-1} \end{bmatrix}
 $$
 
-现在我们已经得到最左边的结果了，中间的 $x$ 值在目标多项式的点值表示中也是一一对应的，所以，根据矩阵的基础知识，我们只要在式子两边左乘中间那个大矩阵的逆矩阵就行了．
+Now we have obtained the leftmost result. The middle $x$ values also correspond one-to-one in the point-value representation of the target polynomial. So, according to basic matrix knowledge, we just need to multiply the inverse matrix of the large matrix in the middle on both sides.
 
-由于这个矩阵的元素非常特殊，它的逆矩阵也有特殊的性质，就是每一项 **取倒数**，再 **除以变换的长度 $n$**，就能得到它的逆矩阵．
+Since the elements of this matrix are very special, its inverse matrix also has special properties: each element **takes the reciprocal**, then **divides by the transform length $n$**, which gives its inverse matrix.
 
-注意：傅里叶变换的长度，并不是多项式的长度，变换的长度应比乘积多项式的长度长．待相乘的多项式不够长，需要在高次项处补 $0$．
+Note: The length of the Fourier transform is not the length of the polynomial. The transform length should be longer than the product polynomial length. If the polynomials to be multiplied are not long enough, we need to fill $0$ in high-order positions.
 
-为了使计算的结果为原来的倒数，根据欧拉公式，可以得到
+To make the result become the original reciprocal, according to Euler's formula, we can get:
 
 $$
 \frac{1}{\omega_k}=\omega_k^{-1}=\mathrm{e}^{-\frac{2\pi \mathrm{i}}{k}}=\cos\left(\frac{2\pi}{k}\right)+\mathrm{i} \sin\left(-\frac{2\pi}{k}\right)
 $$
 
-因此我们可以尝试着把单位根 $\omega_k$ 取成 $\mathrm{e}^{-\frac{2\pi \mathrm{i}}{k}}$，这样我们的计算结果就会变成原来的倒数，之后唯一多的操作就只有再 **除以它的长度 $n$**，而其它的操作过程与 DFT 是完全相同的．我们可以定义一个函数，在里面加一个参数 $1$ 或者是 $-1$，然后把它乘到 $\pi$ 上．传入 $1$ 就是 DFT，传入 $-1$ 就是 IDFT．
+Therefore, we can try to take the root of unity as $\mathrm{e}^{-\frac{2\pi \mathrm{i}}{k}}$, so our calculation result will become the original reciprocal, and then the only extra operation is to **divide by its length $n$**, while all other operations are exactly the same as DFT. We can define a function with a parameter $1$ or $-1$ and multiply it by $\pi$. Passing $1$ is DFT, passing $-1$ is IDFT.
 
-### 单位复根周期性
+### Periodicity of Complex Roots of Unity
 
-利用单位复根的周期性同样可以理解 IDFT 与 DFT 之间的关系．
+IDFT's relationship with DFT can also be understood using the periodicity of complex roots of unity.
 
-考虑原本的多项式是 $f(x)=a_0+a_1x+a_2x^2+\cdots+a_{n-1}x^{n-1}=\sum_{i=0}^{n-1}a_ix^i$．而 IDFT 就是把你的点值表示还原为系数表示．
+Consider the original polynomial $f(x)=a_0+a_1x+a_2x^2+\cdots+a_{n-1}x^{n-1}=\sum_{i=0}^{n-1}a_ix^i$. And IDFT is to restore your point-value representation to coefficient representation.
 
-考虑 **构造法**．我们已知 $y_i=f\left( \omega_n^i \right),i\in\{0,1,\cdots,n-1\}$，求 $\{a_0,a_1,\cdots,a_{n-1}\}$．构造多项式如下
+Consider **construction method**. We know $y_i=f\left( \omega_n^i \right),i\in\{0,1,\cdots,n-1\}$, find $\{a_0,a_1,\cdots,a_{n-1}\}$. Construct the polynomial:
 
 $$
 A(x)=\sum_{i=0}^{n-1}y_ix^i
 $$
 
-相当于把 $\{y_0,y_1,y_2,\cdots,y_{n-1}\}$ 当做多项式 $A$ 的系数表示法．
+This is equivalent to treating $\{y_0,y_1,2,\cdots,y_{n-1}\}$ as the coefficient representation of polynomial $A$.
 
-这时我们有两种推导方式，这对应了两种实现方法．
+Now we have two derivation methods, which correspond to two implementation methods.
 
-#### 方法一
+#### Method 1
 
-设 $b_i=\omega_n^{-i}$，则多项式 $A$ 在 $x=b_0,b_1,\cdots,b_{n-1}$ 处的点值表示法为 $\left\{ A(b_0),A(b_1),\cdots,A(b_{n-1}) \right\}$．
+Let $b_i=\omega_n^{-i}$, then the point-value representation of polynomial $A$ at $x=b_0,b_1,\cdots,b_{n-1}$ is $\{ A(b_0),A(b_1),\cdots,A(b_{n-1}) \}$.
 
-对 $A(x)$ 的定义式做一下变换，可以将 $A(b_k)$ 表示为
+Doing some transformation on the definition of $A(x)$, we can express $A(b_k)$ as:
 
 $$
 \begin{aligned}
@@ -442,11 +445,11 @@ A(b_k)&=\sum_{i=0}^{n-1}f(\omega_n^i)\omega_n^{-ik}=\sum_{i=0}^{n-1}\omega_n^{-i
 \end{aligned}
 $$
 
-记 $S\left(\omega_n^a\right)=\sum_{i=0}^{n-1}\left(\omega_n^a\right)^i$．
+Let $S\left(\omega_n^a\right)=\sum_{i=0}^{n-1}\left(\omega_n^a\right)^i$.
 
-当 $a=0 \pmod{n}$ 时，$S\left(\omega_n^a\right)=n$．
+When $a=0 \pmod{n}$, $S\left(\omega_n^a\right)=n$.
 
-当 $a\neq 0 \pmod{n}$ 时，我们错位相减
+When $a\neq 0 \pmod{n}$, we subtract term by term:
 
 $$
 \begin{aligned}
@@ -456,7 +459,7 @@ S\left(\omega_n^a\right)&=\frac{\left(\omega_n^a\right)^n-\left(\omega_n^a\right
 \end{aligned}
 $$
 
-也就是说
+That is:
 
 $$
 S\left(\omega_n^a\right)=
@@ -466,13 +469,13 @@ n,&a=0\\
 \end{cases}
 $$
 
-那么代回原式
+Then substitute back:
 
 $$
 A(b_k)=\sum_{j=0}^{n-1}a_jS\left(\omega_n^{j-k}\right)=a_k\cdot n
 $$
 
-也就是说给定点 $b_i=\omega_n^{-i}$，则 $A$ 的点值表示法为
+That is, given point $b_i=\omega_n^{-i}$, the point-value representation of $A$ is:
 
 $$
 \begin{aligned}
@@ -481,56 +484,56 @@ $$
 \end{aligned}
 $$
 
-综上所述，我们取单位根为其倒数，对 $\{y_0,y_1,y_2,\cdots,y_{n-1}\}$ 跑一遍 FFT，然后除以 $n$ 即可得到 $f(x)$ 的系数表示．
+In summary, we take the root of unity as its reciprocal, run FFT on $\{y_0,y_1,2,\cdots,y_{n-1}\}$, then divide by $n$ to get the coefficient representation of $f(x)$.
 
-#### 方法二
+#### Method 2
 
-我们直接将 $\omega_n^i$ 代入 $A(x)$．
+We directly substitute $\omega_n^i$ into $A(x)$.
 
-推导的过程与方法一大同小异，最终我们得到 $A(\omega_n^k) = \sum_{j=0}^{n-1}a_jS\left(\omega_n^{j+k}\right)$．
+The derivation process is similar to method one. Finally, we get $A(\omega_n^k) = \sum_{j=0}^{n-1}a_jS\left(\omega_n^{j+k}\right)$.
 
-当且仅当 $j+k=0 \pmod{n}$ 时有 $S\left(\omega_n^{j+k}\right) = n$，否则为 $0$．因此 $A(\omega_n^k) = a_{n-k}\cdot n$．
+Only when $j+k=0 \pmod{n}$ does $S\left(\omega_n^{j+k}\right) = n$, otherwise it is $0$. So $A(\omega_n^k) = a_{n-k}\cdot n$.
 
-这意味着我们将 $\{y_0,y_1,y_2,\cdots,y_{n-1}\}$ 做 DFT 变换后除以 $n$，再反转后 $n - 1$ 个元素，同样可以还原 $f(x)$ 的系数表示．
+This means after doing DFT transform on $\{y_0,y_1,2,\cdots,y_{n-1}\}$ and dividing by $n$, then reversing the last $n-1$ elements, we can also restore the coefficient representation of $f(x)$.
 
-### 代码实现
+### Code Implementation
 
-所以我们 FFT 函数可以集 DFT 和 IDFT 于一身．代码实现如下：
+So our FFT function can integrate DFT and IDFT. The code is as follows:
 
-???+ note "非递归版 FFT（对应方法一）"
+???+ note "Non-Recursive FFT (corresponding to method one)"
     ```cpp
     /*
-     * 做 FFT
-     * len 必须是 2^k 形式
-     * on == 1 时是 DFT，on == -1 时是 IDFT
+     * Do FFT
+     * len must be of the form 2^k
+     * on == 1 is DFT, on == -1 is IDFT
      */
     void fft(Complex y[], int len, int on) {
-      // 位逆序置换
+      // Bit-reversal permutation
       change(y, len);
-      // 模拟合并过程，一开始，从长度为一合并到长度为二，一直合并到长度为 len．
+      // Simulate merging process. First merge from length 1 to length 2, all the way to length len.
       for (int h = 2; h <= len; h <<= 1) {
-        // wn：当前单位复根的间隔：w^1_h
+        // wn: current complex root spacing: w^1_h
         Complex wn(cos(2 * PI / h), sin(on * 2 * PI / h));
-        // 合并，共 len / h 次．
+        // Merge, len/h times.
         for (int j = 0; j < len; j += h) {
-          // 计算当前单位复根，一开始是 1 = w^0_n，之后是以 wn 为间隔递增： w^1_n
+          // Compute current complex root. Initially it's 1 = w^0_n, then increases by wn as interval: w^1_n
           // ...
           Complex w(1, 0);
           for (int k = j; k < j + h / 2; k++) {
-            // 左侧部分和右侧是子问题的解
+            // Left part and right part are solutions to sub-problems
             Complex u = y[k];
             Complex t = w * y[k + h / 2];
-            // 这就是把两部分分治的结果加起来
+            // This is adding the results of the two parts of divide-and-conquer
             y[k] = u + t;
             y[k + h / 2] = u - t;
-            // 后半个 「step」 中的ω一定和 「前半个」 中的成相反数
-            // 「红圈」上的点转一整圈「转回来」，转半圈正好转成相反数
-            // 一个数相反数的平方与这个数自身的平方相等
+            // In the latter half of "step", ω is definitely opposite to that in the former half.
+            // Points on the "red circle" rotate one full circle "back", half a circle becomes opposite.
+            // The square of the opposite of a number equals the square of the number itself.
             w = w * wn;
           }
         }
       }
-      // 如果是 IDFT，它的逆矩阵的每一个元素不只是原元素取倒数，还要除以长度 len．
+      // If it's IDFT, each element of its inverse matrix is not only the reciprocal of the original element but also divided by length len.
       if (on == -1) {
         for (int i = 0; i < len; i++) {
           y[i].x /= len;
@@ -540,27 +543,27 @@ $$
     }
     ```
 
-???+ note "非递归版 FFT（对应方法二）"
+???+ note "Non-Recursive FFT (corresponding to method two)"
     ```cpp
     /*
-     * 做 FFT
-     * len 必须是 2^k 形式
-     * on == 1 时是 DFT，on == -1 时是 IDFT
+     * Do FFT
+     * len must be of the form 2^k
+     * on == 1 is DFT, on == -1 is IDFT
      */
     void fft(Complex y[], int len, int on) {
       change(y, len);
-      for (int h = 2; h <= len; h <<= 1) {             // 模拟合并过程
-        Complex wn(cos(2 * PI / h), sin(2 * PI / h));  // 计算当前单位复根
+      for (int h = 2; h <= len; h <<= 1) {             // Simulate merging process
+        Complex wn(cos(2 * PI / h), sin(2 * PI / h));  // Compute current complex root
         for (int j = 0; j < len; j += h) {
-          Complex w(1, 0);  // 计算当前单位复根
+          Complex w(1, 0);  // Compute current complex root
           for (int k = j; k < j + h / 2; k++) {
             Complex u = y[k];
             Complex t = w * y[k + h / 2];
-            y[k] = u + t;  // 这就是把两部分分治的结果加起来
+            y[k] = u + t;  // This is adding the results of the two parts of divide-and-conquer
             y[k + h / 2] = u - t;
-            // 后半个 「step」 中的ω一定和 「前半个」 中的成相反数
-            // 「红圈」上的点转一整圈「转回来」，转半圈正好转成相反数
-            // 一个数相反数的平方与这个数自身的平方相等
+            // In the latter half of "step", ω is definitely opposite to that in the former half.
+            // Points on the "red circle" rotate one full circle "back", half a circle becomes opposite.
+            // The square of the opposite of a number equals the square of the number itself.
             w = w * wn;
           }
         }
@@ -575,11 +578,11 @@ $$
     }
     ```
 
-??? note "FFT 模板（[HDU 1402 - A * B Problem Plus](http://acm.hdu.edu.cn/showproblem.php?pid=1402)）"
+??? note "FFT Template ([HDU 1402 - A * B Problem Plus](http://acm.hdu.edu.cn/showproblem.php?pid=1402))"
     ```cpp
     --8<-- "docs/math/code/poly/fft/fft_3.cpp"
     ```
 
-## 参考文献
+## References
 
-1.  [桃酱的算法笔记](https://zhuanlan.zhihu.com/p/41867199).
+1.  [Peach Sauce's Algorithm Notes](https://zhuanlan.zhihu.com/p/41867199).

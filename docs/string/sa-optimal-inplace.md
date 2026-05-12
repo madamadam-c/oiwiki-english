@@ -1,27 +1,27 @@
-本章介绍线性时间复杂度的后缀排序的就地算法[^in-place-sa-sort]（Optimal In-Place Suffix Sorting）．
+This chapter introduces an in-place algorithm for suffix sorting with linear time complexity[^in-place-sa-sort] (Optimal In-Place Suffix Sorting).
 
 ???+ warning "Warning"
-    本章 **只建议** 在 **非常非常熟悉** SA-IS[^nzc09a][^sa-is介绍]的前提下阅读．
+    This chapter **only recommends** reading it if you are **very very familiar** with SA-IS[^nzc09a][^sa-is-intro] first.
 
-## 全局设定
+## Global Settings
 
-目标字符串 $\texttt{Pat}$，后缀数组 $\texttt{SA}$，串的序号从 0 开始，结尾字符是警戒哨，不妨设为 0．
+Target string $\texttt{Pat}$, suffix array $\texttt{SA}$, string indices start from 0, and the ending character is a sentinel, which can be set to 0.
 
-## 在整形字母表上的后缀排序
+## Suffix Sorting on Integer Alphabets
 
-事实上这一部分可以看成是原地版本的 SA-IS 算法．
+In fact, this part can be viewed as an in-place version of the SA-IS algorithm.
 
-因为是原文中细节相对最清楚，实现也较为简单的算法，也是了解后续算法的基础，是本文介绍的重点．
+Because this is the algorithm with the clearest details in the original text and relatively simple implementation, as well as the foundation for understanding subsequent algorithms, it is the focus of this article.
 
-原地化的原理是用重命名的 $\texttt{Pat}$ 代替 S、L 桶，用额外 $O(n)$ 的操作代替类型桶．
+The principle of in-place is to use the renamed $\texttt{Pat}$ instead of S/L buckets, using additional $O(n)$ operations instead of type buckets.
 
-### 重命名目标串 Pat
+### Renaming Target String Pat
 
-简单来说，我们会在不改变后缀大小的相对顺序的前提下，重命名 $\texttt{Pat}$，用重命名后的 $\texttt{Pat}$ 来取代原来 S、L 桶，来指明桶头或者桶尾．
+Simply put, we rename $\texttt{Pat}$ without changing the relative order of suffix sizes, and use the renamed $\texttt{Pat}$ to replace the original S/L buckets to indicate bucket heads or bucket tails.
 
-重命名的方法是将 $\texttt{Pat}$ 中的 S 型字符替换为所在桶的桶尾索引，L  型字符替换为所在桶的桶头索引．
+The renaming method is to replace S-type characters in $\texttt{Pat}$ with the bucket tail index, and L-type characters with the bucket head index.
 
-如下图所示：
+As shown in the figure below:
 
 $$
 \begin{aligned}
@@ -33,7 +33,7 @@ $$
 \end{aligned}
 $$
 
-重命名后的 $\texttt{Pat'}$（之后直接将重命名后的 $\texttt{Pat'}$ 称做 $\texttt{Pat}$）：
+The renamed $\texttt{Pat'}$ (hereafter we will directly refer to the renamed $\texttt{Pat'}$ as $\texttt{Pat}$):
 
 $$
 \begin{aligned}
@@ -42,30 +42,30 @@ $$
 \end{aligned}
 $$
 
-由于桶内的字符，L 型字符后缀小，作为桶头；而 S 型字符后缀大，作为桶尾，因此保持了后缀大小的相对顺序．
+Since within a bucket, L-type character suffixes are smaller and serve as bucket heads; S-type character suffixes are larger and serve as bucket tails. Therefore, the relative order of suffix sizes is maintained.
 
-描述一下重命名的具体步骤：
+Let's describe the specific steps of renaming:
 
-1.  和 SA-IS 一样，对 $\texttt{Pat}$ 中每个字符计数，计算其前缀和（计数排序），来构建 S/L 桶，只不过这里用 $\texttt{SA}$ 盛放这个前缀和；
-2.  从尾到头，扫描 $\texttt{Pat}$ 的每个字符，这样只需记录上一个字符的类型，就可以动态地判断每个字符的类型，然后依据前缀和将其重命名．
+1.  As in SA-IS, count each character in $\texttt{Pat}$ and compute its prefix sum (counting sort) to build S/L buckets, except here we use $\texttt{SA}$ to hold this prefix sum;
+2.  Scan each character of $\texttt{Pat}$ from tail to head. This way, we only need to record the type of the previous character to dynamically determine the type of each character, and then rename it based on the prefix sum.
 
-### 对 LMS 字符排序
+### Sorting LMS Characters
 
-这里重点是使用了一个内部计数器的技巧．
+The key here is using an internal counter technique.
 
-#### 初始化
+#### Initialization
 
-初始的时候将 $\texttt{SA}$ 每一项设为 E（EMPTY）．
+Initially, set each item in $\texttt{SA}$ to E (EMPTY).
 
-从尾到头扫描 $\texttt{Pat}$，如果发现是 LMS 字符，$\texttt{Pat[i]}$，那么就设置 $\texttt{SA[Pat[i]]}$ 的标记：
+Scan $\texttt{Pat}$ from tail to head. If an LMS character $\texttt{Pat[i]}$ is found, then set the mark of $\texttt{SA[Pat[i]]}$:
 
-如果 $\texttt{SA[Pat[i]]}$ 是 E，就将其设为 U（UNIQUE）；
+If $\texttt{SA[Pat[i]]}$ is E, set it to U (UNIQUE);
 
-如果 $\texttt{SA[Pat[i]]}$ 是 U，就将其设为 M（MULTIPLE）；
+If $\texttt{SA[Pat[i]]}$ is U, set it to M (MULTIPLE);
 
-其他情况，不做处理．
+Other cases, do nothing.
 
-结果如下图所示：
+The result is as shown in the figure below:
 
 $$
 \begin{aligned}
@@ -76,32 +76,31 @@ $$
 \end{aligned}
 $$
 
-#### 把 LMS 字符的索引放入 SA
+#### Putting LMS Character Indices into SA
 
-从尾到头扫描 $\texttt{Pat}$，对于 LMS 字符 $\texttt{Pat[i]}$，根据 $\texttt{SA[Pat[i]]}$ 的符号进行分类讨论：
+Scan $\texttt{Pat}$ from tail to head. For LMS character $\texttt{Pat[i]}$, classify and discuss according to the symbol of $\texttt{SA[Pat[i]]}$:
 
-U：直接让 $\texttt{SA[Pat[i]] = i}$
+U: Directly set $\texttt{SA[Pat[i]] = i}$
 
-M：意味着桶中有至少两个 LMS 字符．
+M: Means there are at least two LMS characters in the bucket.
 
-1.  如果桶中有至少三个 LMS 字符：
-    就把桶中倒数第二个位置作为临时计数器，标志桶中已填充的 LMS 字符数（桶中倒数第一位就是标志 M）
-    将新的 LMS 字符从倒数第三个位置开始插入，让临时计数器自增 1．
-    如果发现桶已经满了，就把桶中从桶头到倒数第三个的所有元素向右平移 2 个位置，然后把新元素插入到桶中第二个位置（桶中第一个位置填为 E）
+1.  If there are at least three LMS characters in the bucket:
+    Use the second-to-last position in the bucket as a temporary counter to mark the number of filled LMS characters in the bucket (the last position in the bucket is the M flag).
+    Insert new LMS characters starting from the third-to-last position, and increment the temporary counter by 1.
+    If the bucket is found to be full, shift all elements from the bucket head to the third-to-last position to the right by 2 positions, then insert the new element at the second position in the bucket (the first position in the bucket is filled with E).
 
-2.  如果桶中有且只有 2 个 LMS 字符，显然不需要计数器，直接从右到左顺序插入即可．
+2.  If there are exactly 2 LMS characters in the bucket, obviously no counter is needed. Just insert from right to left in order.
 
-正常的值：
+Normal value:
 
-    根据我们之前的讨论，此时不管桶中有两个还是两个以上的 LMS 字符，这都意味着 $\texttt{i}$ 是桶中最后一个待插入的 LMS 字符的位置，
+    According to our earlier discussion, at this point, regardless of whether there are two or more than two LMS characters in the bucket, this means $\texttt{i}$ is the position of the last LMS character to be inserted in the bucket.
+    We only need to scan from the bucket head to the left, find the first position marked as E, and set it to $\texttt{i}$.
 
-    只需要从桶头开始向左扫描，找到第一个标记为 E 的位置，将其设为 $\texttt{i}$．
+Finally, scan through $\texttt{SA}$ from tail to head to clear any remaining special symbols M (since buckets are not fully filled, M and the counter are not overwritten).
 
-最后要从尾到头扫描一遍 $\texttt{SA}$，清除可能残余的特殊符号 M（桶中未被填满，所以 M 和计数器未被覆盖）．
+The method is to shift LMS characters in the bucket 2 positions to the right as described above, and fill the vacated positions on the left with E.
 
-方法是将桶中 LMS 字符如上述步骤一样向右平移 2 位，将左边空出来的位置填为 E．
-
-如下图所示：
+As shown in the figure below:
 
 $$
 \begin{aligned}
@@ -113,7 +112,7 @@ $$
 \texttt{ }\underline{\color{red}{\texttt{9}}}\texttt{ }\texttt{ }{\color{red}{\texttt{ 1 }}}\texttt{ }\texttt{ }
 {\color{red}{\texttt{M}}}\texttt{) }\texttt{(E }\texttt{ }\texttt{ E) }\texttt{(E}\texttt{ }\texttt{ }\texttt{ E }
 \texttt{ }\texttt{ E }\texttt{ }\texttt{ E)} \\
-\texttt{SA}:\qquad&\texttt{(12) }\texttt{(E)}\texttt{ (E }\texttt{ }\texttt{ }{\underline{\color{red}{\texttt{5}}}}
+\texttt{SA}:\qquad&\texttt{(12) }\texttt{(E)}\texttt{ (E }\texttt{ }{\underline{\color{red}{\texttt{5}}}}
 \texttt{ }\texttt{ }\texttt{ }{\texttt{9}}\texttt{ }\texttt{ }{\color{red}{\texttt{ 2 }}}\texttt{ }\texttt{ }
 {\color{red}{\texttt{M}}}\texttt{) }\texttt{(E }\texttt{ }\texttt{ E) }\texttt{(E}\texttt{ }\texttt{ }\texttt{ E }
 \texttt{ }\texttt{ E }\texttt{ }\texttt{ E)}\\
@@ -122,24 +121,24 @@ $$
 \end{aligned}
 $$
 
-这个阶段，由于每个桶只需要被移动和扫描一次，所以时间复杂度是 $O(n)$．
+This stage has $O(n)$ time complexity since each bucket is only moved and scanned once.
 
-### 诱导排序 LMS 子串
+### Induced Sorting of LMS Substrings
 
-#### 诱导排序 LMS 前缀
+#### Induced Sorting of LMS Prefixes
 
-将 LMS 前缀进行诱导排序，同 SA-IS 一样，这部分同后面对后缀的诱导排序完全一样（使用同一个函数），因此这里直接跳过．
+Perform induced sorting on LMS prefixes. As with SA-IS, this part is exactly the same as the induced sorting of suffixes later (using the same function), so we skip it directly.
 
-这里直接给出排序结果：
+The sorted result is given here directly:
 
 $$
 \begin{aligned}
 \texttt{Index}:\qquad&\texttt{ }\texttt{ 0   1   2   3   4   5   6   7   8   9  10  11  12} \\
-\texttt{SA}:\qquad&\texttt{(}\texttt{12}\texttt{)}\texttt{(11)}\texttt{ (1 }\texttt{ }\texttt{ 5 }\texttt{ }\texttt{ 9 }\texttt{ }\texttt{ 2 }\texttt{ }\texttt{ 6}\texttt{) }\texttt{(10 }\texttt{ }\texttt{ 0) }\texttt{(4}\texttt{ }\texttt{ }\texttt{ 8 }\texttt{ }\texttt{ 3 }\texttt{ }\texttt{ 7)}
+\texttt{SA}:\qquad&\texttt{(12)}\texttt{(11)}\texttt{ (1 }\texttt{ }\texttt{ 5 }\texttt{ }\texttt{ 9 }\texttt{ }\texttt{ 2 }\texttt{ }\texttt{ 6}\texttt{) }\texttt{(10 }\texttt{ }\texttt{ 0) }\texttt{(4}\texttt{ }\texttt{ }\texttt{ 8 }\texttt{ }\texttt{ 3 }\texttt{ }\texttt{ 7)}
 \end{aligned}
 $$
 
-#### 将已排序的 LMS 子串放到 SA 尾部
+#### Putting Sorted LMS Substrings into SA Tail
 
 $$
 \begin{aligned}
@@ -148,11 +147,11 @@ $$
 \end{aligned}
 $$
 
-### 构建规模缩减的子目标串 Pat1
+### Constructing the Reduced Sub-target String Pat1
 
-从左到右扫描 $\texttt{SA}$ 尾部的 LMS 子串，确定其大小关系「重命名」，将 $\texttt{SA[i]}$ 重命名的值存储在 $\texttt{SA}\left[\left\lfloor\frac{\texttt{SA}[i]}{2} \right\rfloor\right]$．
+Scan the LMS substrings at the tail of $\texttt{SA}$ from left to right to determine their size relationships and "rename" them. Store the renamed value of $\texttt{SA[i]}$ in $\texttt{SA}\left[\left\lfloor\frac{\texttt{SA}[i]}{2} \right\rfloor\right]$.
 
-因为 LMS 字符并不相邻，所以不会有冲突，这样做是将重命名后的值按照所代表的子串在 $\texttt{Pat}$ 中的原顺序放置：
+Since LMS characters are not adjacent, there won't be conflicts. This places the renamed values in the original order of the substrings they represent in $\texttt{Pat}$:
 
 $$
 \begin{aligned}
@@ -161,18 +160,18 @@ $$
 \end{aligned}
 $$
 
-然后扫描 $\texttt{SA}$，收集这些重命名的值到 $\texttt{SA}$ 头部：
+Then scan $\texttt{SA}$ and collect these renamed values to the head of $\texttt{SA}$:
 
 $$
 \begin{aligned}
 \texttt{Index}:\qquad&\texttt{ 0   1   2   3   4   5   6   7   8   9  10  11  12} \\
-\texttt{SA}:\qquad&\texttt{ }\underline{\color{red}{\texttt{1}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{1}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{2}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{0}}}\texttt{ }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ 12 }\texttt{ }\texttt{ 1 }\texttt{ }\texttt{ 5 }\texttt{ }\texttt{ 9 }
+\texttt{SA}:\qquad&\texttt{ }\underline{\color{red}{\texttt{1}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{1}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{2}}}\texttt{ }\texttt{ }\texttt{ }\underline{\color{red}{\texttt{0}}}\texttt{ }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ }\texttt{ E }\texttt{ 12 }\texttt{ }\texttt{ 1 }\texttt{ }\texttt{ 5 }\texttt{ }\texttt{ 9 }
 \end{aligned}
 $$
 
-### 通过递归解决 Pat1，完成对 LMS 后缀的排序
+### Solving Pat1 Recursively to Complete Sorting of LMS Suffixes
 
-同 SA-IS 一样，递归解决 $\texttt{SA}$ 头部的规模缩减的 $\texttt{Pat1}$ 的后缀排序，结果存到 $\texttt{SA}$ 尾部：
+As with SA-IS, recursively solve the suffix sorting of $\texttt{Pat1}$ at the head of $\texttt{SA}$, and store the result at the tail of $\texttt{SA}$:
 
 $$
 \begin{aligned}
@@ -181,7 +180,7 @@ $$
 \end{aligned}
 $$
 
-将 $\texttt{SA}$ 尾部的 $\texttt{SA1}$ 挪到 $\texttt{SA}$ 头部，重新从尾到头扫描 $\texttt{Pat}$，将其中 LMS 字符按照在 $\texttt{Pat}$ 中的顺序放到 $\texttt{SA}$ 尾部：
+Move the $\texttt{SA1}$ at the tail of $\texttt{SA}$ to the head of $\texttt{SA}$. Rescan $\texttt{Pat}$ from tail to head, and place the LMS characters in $\texttt{SA}$ in the order they appear in $\texttt{Pat}$:
 
 $$
 \begin{aligned}
@@ -190,7 +189,7 @@ $$
 \end{aligned}
 $$
 
-依照 $\texttt{SA}$ 尾部的「对照表」，将 $\texttt{SA1}$ 头部的 $\texttt{SA}$ 还原为 $\texttt{Pat}$ 中对应的 LMS 后缀的索引位置：
+According to the "lookup table" at the tail of $\texttt{SA}$, restore the $\texttt{SA}$ at the head of $\texttt{SA1}$ to the index positions of the corresponding LMS suffixes in $\texttt{Pat}$:
 
 $$
 \begin{aligned}
@@ -199,7 +198,7 @@ $$
 \end{aligned}
 $$
 
-将 $\texttt{SA}$ 头部的排好序的 LMS 后缀按顺序放入到对应的桶中（从尾部开始放）：
+Place the sorted LMS suffixes at the head of $\texttt{SA}$ into their corresponding buckets in order (starting from the tail):
 
 $$
 \begin{aligned}
@@ -208,11 +207,11 @@ $$
 \end{aligned}
 $$
 
-### 对 Pat1 中所有的后缀进行诱导排序
+### Induced Sorting of All Suffixes in Pat1
 
-这一部分就是利用前面用过的内部计数器技巧，进行原地版的诱导排序．
+This part uses the internal counter technique used before to perform in-place induced sorting.
 
-假如我们已经有排好序的 LMS 后缀（在桶尾），来诱导 L 型后缀[^诱导顺序]：
+Suppose we already have sorted LMS suffixes (at the bucket tail) to induce L-type suffixes[^induced-order]:
 
 $$
 \begin{aligned}
@@ -222,7 +221,7 @@ $$
 \end{aligned}
 $$
 
-如同排序 LMS 字符一样，先对 L 型字符用特殊符号计数：
+As with sorting LMS characters, first count L-type characters using special symbols:
 
 $$
 \begin{aligned}
@@ -232,13 +231,13 @@ $$
 \end{aligned}
 $$
 
-从左到右扫描 SA，同对 LMS 字符排序一样，复杂一点的是判断 $\texttt{suf[SA[i] - 1]}$ 的类型，需要分类讨论（详情参考代码）：
+Scan SA from left to right. As with sorting LMS characters, the more complex part is determining the type of $\texttt{suf[SA[i] - 1]}$. We need to classify and discuss it (see the code for details):
 
 $$
 \begin{aligned}
 \texttt{Index}:\qquad&\texttt{ }\texttt{ 0   1   2   3   4   5   6   7   8   9  10  11  12} \\
 \texttt{SA}:\qquad&\texttt{(}{\overrightarrow{\color{red}{\texttt{12}}}\texttt{)}\texttt{(}{\underline{\color{red}{\texttt{11}}}}}\texttt{)}\texttt{  (E   E   1   5   9) (M   E) (M   E   E   E)}\\
-\texttt{SA}:\qquad&\texttt{(}\texttt{12}\texttt{)}\texttt{(}{\overrightarrow{\color{red}{\texttt{11}}}}\texttt{)}\texttt{  (E   E   1   5   9)}\texttt{(}{\underline{\color{red}{\texttt{10}}}}\texttt{ }\texttt{ }\texttt{ E)}\texttt{ (M   E   E   E)}\\
+\texttt{SA}:\qquad&\texttt{(}{\overrightarrow{\color{red}{\texttt{12}}}}\texttt{)}\texttt{  (E   E   1   5   9)}\texttt{(}{\underline{\color{red}{\texttt{10}}}}\texttt{ }\texttt{ }\texttt{ E)}\texttt{ (M   E   E   E)}\\
 \texttt{SA}:\qquad&\texttt{(12)(11)}\texttt{  (E   E  }\texttt{ }\texttt{ } {\overrightarrow{\color{red}{\texttt{1}}}}\texttt{ }\texttt{  5   9)}\texttt{(10 }\texttt{ }\texttt{ }{\underline{\color{red}{\texttt{0}}}}\texttt{)}\texttt{ (M   E   E   E)}\\
 \texttt{SA}:\qquad&\texttt{(12)(11)}\texttt{  (E   E   1 }\texttt{ }\texttt{ } {\overrightarrow{\color{red}{\texttt{5}}}}\texttt{ }\texttt{  9)}\texttt{(10   0)}\texttt{ (}{\color{red}{\texttt{M   1}}}\texttt{ }\texttt{ }\texttt{ }{\underline{\color{red}{\texttt{4}}}}\texttt{ }\texttt{ }\texttt{ E)}\\
 \texttt{SA}:\qquad&\texttt{(12)(11)}\texttt{  (E   E   1   5}\texttt{ }\texttt{ } {\overrightarrow{\color{red}{\texttt{9}}}}\texttt{)}\texttt{(10   0)}\texttt{ (}{\color{red}{\texttt{M   2}}}\texttt{ }\texttt{ }\texttt{ 4 }\texttt{ }\texttt{ }{\underline{\color{red}{\texttt{8}}}}\texttt{)}\\
@@ -247,7 +246,7 @@ $$
 \end{aligned}
 $$
 
-区别于 SA-IS 的是，对一个类型字符诱导排序后，需要清理 LMS 字符以免对后面的原地诱导排序：
+Different from SA-IS, after induced sorting of one type of characters, we need to clean up LMS characters to avoid affecting subsequent in-place induced sorting:
 
 $$
 \begin{aligned}
@@ -256,15 +255,15 @@ $$
 \end{aligned}
 $$
 
-至于从 L 后缀诱导 S 后缀与从 LMS 后缀诱导 L 后缀完全对称，这里就不做多余介绍．
+As for inducing S suffixes from L suffixes, it is completely symmetric to inducing L suffixes from LMS suffixes. We won't give redundant introduction here.
 
-到这儿为止，诱导排序就完成了．
+At this point, induced sorting is complete.
 
-#### 实现
+#### Implementation
 
-时间性能上和 SA-IS 没有显著差别，空间占用变为不到原来的 $\dfrac{1}{3}$（代码量多 1 倍），算是不愧为原文 Optimal In-Place Suffix Sorting[^in-place-sa-sort]的标题．
+In terms of time performance, there is no significant difference from SA-IS. Space usage becomes less than $\frac{1}{3}$ of the original (code size increased by 1 times). It indeed lives up to the title "Optimal In-Place Suffix Sorting"[^in-place-sa-sort] of the original article.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```rust
     use std::cmp::max;
     use std::cmp::Ordering;
@@ -298,7 +297,7 @@ $$
     
     fn rename_pat(pat: &mut [usize], sa: &mut [usize]) {
         let patlastpos = pat.len() - 1;
-        // 全部刷成bucket head
+        // fill all with bucket head
         //sa.fill(0);
         for i in 0..sa.len() { sa[i] = 0 }
         
@@ -308,7 +307,7 @@ $$
         for i in 0..pat.len() - 1 {
             pat[i] = sa[pat[i]] - 1;
         };
-        // 将L-suffix刷成bucket head
+        // brush L-suffix into bucket head
         //sa.fill(0);
         for i in 0..sa.len() { sa[i] = 0 }
         
@@ -395,7 +394,7 @@ $$
         for i in (0..pat.len()).rev() {
             if sa[i] >= MULTI {
                 let c = sa[i - 1];
-                for j in (1..c + 1).rev() {  // 逆序防止前面的覆盖后面的
+                for j in (1..c + 1).rev() {  // reverse to prevent earlier from overwriting later
                     sa[i - c + j] = sa[i - 2 - c + j];
                 }
                 sa[i - c - 1] = EMPTY;
@@ -415,22 +414,22 @@ $$
         let pat_last_pos = pat.len() - 1;
         let mut lms_cnt = 0;
         let mut i = pat_last_pos;
-        let mut bucket_tail_ptr = pat_last_pos + 1;  // for renamed bucket ver
-        let mut bucket = EMPTY;  // 可以省略，但是为了书写代码方便
+        let mut bucket_tail_ptr = pat_last_pos + 1;  // for renamed bucket version
+        let mut bucket = EMPTY;  // can be omitted, but convenient for writing code
         let mut num = 0;  // S type number of bucket
         while i > 0 {
             if pat[sa[i]] != bucket {  // reach new bucket
                 num = 0;
                 
                 let mut l = 0;
-                while pat[sa[i - l]] == pat[sa[i]] {  // 扫描桶来计算桶中S字符数量，根据定义 当l=i时循环必然终止
-                    let pat_i = sa[i - l];             // l < i, 即 i - l > 0, 0 <= pat_i < patlen - 1
+                while pat[sa[i - l]] == pat[sa[i]] {  // scan bucket to calculate number of S characters in bucket, according to definition when l=i loop must terminate
+                    let pat_i = sa[i - l];             // l < i, i.e., i - l > 0, 0 <= pat_i < patlen - 1
                     if pat[pat_i] < pat[pat_i + 1] {
                         let mut k = pat_i;
                         while k > 0 && pat[k - 1] == pat[pat_i] { k -= 1 }
                         num += pat_i - k + 1;
                     } else {
-                        break;   // bucket不含S字符，结束扫描
+                        break;   // bucket doesn't contain S character, end scan
                     }
                     
                     l += 1;
@@ -465,11 +464,11 @@ $$
         let mut rank = 0;
         sa[(patlen - 1) / 2] = rank;
         let mut has_duplicated_char = false;
-        for i in patlen - lms_cnt + 1..patlen {  // 从警戒哨字符的下一个字符开始
+        for i in patlen - lms_cnt + 1..patlen {  // start from the next character after the sentinel character
             let mut j = sa[i];
-            while pat[j] <= pat[j + 1] { j += 1 } // 寻找suf(sa[i])右边第一个L字符，因为排除了警戒哨这个LMS后缀，所以必然不会越界
+            while pat[j] <= pat[j + 1] { j += 1 } // find the first L character to the right of suf(sa[i]), since the sentinel LMS suffix is excluded, it won't go out of bounds
             let mut k = j;
-            while k + 1 < patlen && pat[k] >= pat[k + 1] { k += 1 }  // 找到suf(sa[i])右边第一个LMS字符
+            while k + 1 < patlen && pat[k] >= pat[k + 1] { k += 1 }  // find the first LMS character to the right of suf(sa[i])
             let cur_lms_str_len = k + 1 - sa[i];
             let cmp_res = lms_str_cmp(&pat[sa[i]..sa[i] + cur_lms_str_len], &pat[sa[i - 1]..sa[i - 1] + prev_lms_str_len]);
             
@@ -481,7 +480,7 @@ $$
                 has_duplicated_char = true;
             }
             let rank_index = sa[i] / 2;
-            sa[rank_index] = rank;  // 整除
+            sa[rank_index] = rank;  // integer division
             
             prev_lms_str_len = cur_lms_str_len;
         }
@@ -549,7 +548,7 @@ $$
         
         let mut tail = EMPTY;
         let mut rfp = EMPTY;
-        for i in (1..lms_cnt).rev() { // sa[0] 保持原位
+        for i in (1..lms_cnt).rev() { // sa[0] stays in place
             if pat[sa[i]] != tail {
                 tail = pat[sa[i]];
                 rfp = tail;
@@ -584,7 +583,7 @@ $$
                 let mut is_ltype = false;
                 if pat[j] > pat[j + 1] {
                     is_ltype = true;
-                } else if pat[j] == pat[j + 1] {  // 判断sa[i]是否是L后缀的编号
+                } else if pat[j] == pat[j + 1] {  // determine if sa[i] is L-suffix index
                     let next_i = sa[pat[sa[i]]];
                     if next_i >= MULTI {
                         is_ltype = true;
@@ -613,7 +612,7 @@ $$
                         let e = pat[j];
                         let c = sa[e + 1];
                         let lfp = e + c + 2;
-                        if  c + 2 < sa[pat[j]] - EMPTY {  // 没到bucket尾部
+                        if  c + 2 < sa[pat[j]] - EMPTY {  // haven't reached bucket tail
                             sa[lfp] = j;
                             sa[e + 1] += 1;  // update counter
                         } else {
@@ -642,7 +641,7 @@ $$
             i += 1;
         }
         
-        // remove LMS-suff form SA, 一个桶里可能有多个LMS后缀
+        // remove LMS-suff from SA, there may be multiple LMS suffixes in one bucket
         last_scanned_type = STYPE;
         for i in (0..pat.len() - 1).rev() {
             if pat_char_type(pat[i], pat[i + 1], last_scanned_type) == STYPE {
@@ -695,7 +694,7 @@ $$
                 let mut is_stype = false;
                 if pat[j] < pat[j + 1] {
                     is_stype = true;
-                } else if pat[j] == pat[j + 1] {  // 判断sa[i]是否是S后缀的编号
+                } else if pat[j] == pat[j + 1] {  // determine if sa[i] is S-suffix index
                     let next_i = sa[pat[sa[i]]];
                     if next_i >= MULTI {
                         is_stype = true;
@@ -724,7 +723,7 @@ $$
                         let e = pat[j];
                         let c = sa[e - 1];
                         let num = sa[pat[j]] - EMPTY;
-                        if c + 2 < num {  // 没到bucket头部
+                        if c + 2 < num {  // haven't reached bucket head
                             let rfp = e - c - 2;
                             sa[rfp] = j;
                             sa[e - 1] += 1;
@@ -790,30 +789,30 @@ $$
     }
     ```
 
-## 在只读的整形字母表上的后缀排序
+## Suffix Sorting on Read-Only Integer Alphabets
 
-使用复杂方法解决复杂问题，通过分治，解决空间紧张的问题．
+Using complex methods to solve complex problems, using divide-and-conquer to solve the space constraint problem.
 
-算法实现的难点在于在 $\texttt{SA}$ 上构建 BitMaps[^np12]，来替代本来由重命名后的 T 所指示的指示桶尾/桶头的位置．
+The difficulty in implementing the algorithm lies in constructing BitMaps[^np12] on $\texttt{SA}$ to replace the bucket head/tail positions originally indicated by the renamed T.
 
-这里的 BitMaps 指得是使用比特向量（bit vector）表示的有序字典（multiset），是一种紧凑型结构（compact data structure）．
+Here, BitMaps refer to bit vectors (bit vector) representing ordered multisets, which is a compact data structure (compact data structure).
 
-有兴趣了解的暂时只能阅读原文以及本文引用的 BitMaps 的有关论文自行了解．
+Those interested can only read the original text and the BitMaps papers referenced in this article to learn more.
 
-## 在只读的一般字母表上的后缀排序
+## Suffix Sorting on Read-Only General Alphabets
 
-前置知识是归并排序和堆排序．
+The prerequisite knowledge is merge sort and heap sort.
 
-由于笔者对于其中确定字符类型的方法的时间复杂度有疑问，这里也不再介绍，建议阅读原文自行了解．
+Since the author has questions about the time complexity of determining character types here, this will not be introduced. It is recommended to read the original text to learn more.
 
-## 注解
+## Notes
 
-[^in-place-sa-sort]: Li, Zhize; Li, Jian; Huo, Hongwei (2016).*Optimal In-Place Suffix Sorting*. Proceedings of the 25th International Symposium on String Processing and Information Retrieval (SPIRE). Lecture Notes in Computer Science. 11147. Springer. pp. 268–284. arXiv:1610.08305. doi:10.1007/978-3-030-00479-8\_22. ISBN:978-3-030-00478-1.
+[^in-place-sa-sort]: Li, Zhize; Li, Jian; Huo, Hongwei (2016). *Optimal In-Place Suffix Sorting*. Proceedings of the 25th International Symposium on String Processing and Information Retrieval (SPIRE). Lecture Notes in Computer Science. 11147. Springer. pp. 268–284. arXiv:1610.08305. doi:10.1007/978-3-030-00479-8_22. ISBN:978-3-030-00478-1.
 
 [^nzc09a]: Ge Nong, Sen Zhang, and Wai Hong Chan. Linear suffix array construction by almost pure induced-sorting. In Data Compression Conference (DCC), pages 193–202. IEEE, 2009.
 
-[^sa-is介绍]: 推荐阅读 [博文](https://riteme.site/blog/2016-6-19/sais.html) 和它的 [issue 列表](https://github.com/riteme/riteme.github.io/issues/28)
+[^sa-is-intro]: Recommended reading: [blog post](https://riteme.site/blog/2016-6-19/sais.html) and its [issue list](https://github.com/riteme/riteme.github.io/issues/28)
 
-[^诱导顺序]: 如果是 LML 后缀，就先诱导 S 型后缀，唯一区别是计算 LML 后缀时需要将警戒哨也算进去．
+[^induced-order]: If it is an LML suffix, first induce S-type suffixes. The only difference is that when calculating LML suffixes, the sentinel needs to be included as well.
 
 [^np12]: Gonzalo Navarro and Eliana Providel. Fast, small, simple rank/select on bitmaps. In Proc. 11th International Symposium on Experimental Algorithms (SEA), pages 295–306, 2012.

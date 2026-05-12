@@ -1,18 +1,16 @@
-## 相关概念
+## Related Concepts
 
-### 随机变量
+### Random Variable
 
-给定概率空间 $(\Omega, \mathcal{F}, P)$，定义在样本空间 $\Omega$ 上的函数 $X : \Omega \to \mathbb{R}$ 若满足：对任意 $t \in \mathbb{R}$ 都有
+Given a probability space $(\Omega, \mathcal{F}, P)$, a function $X : \Omega \to \mathbb{R}$ defined on the sample space $\Omega$ is called a **random variable** if for any $t \in \mathbb{R}$,
 
 $$
 \{ \omega \in \Omega : X(\omega) \le t \} \in \mathcal{F}
 $$
 
-则称 $X$ 为 **随机变量**．
+### Indicator Function
 
-### 示性函数
-
-对于样本空间 $\Omega$ 上的事件 $A$，定义随机变量
+For an event $A$ on the sample space $\Omega$, define the random variable
 
 $$
 I_A(\omega) = \begin{cases}
@@ -21,81 +19,81 @@ I_A(\omega) = \begin{cases}
 \end{cases}
 $$
 
-称 $I_A$ 是事件 $A$ 的 **示性函数**．
+$I_A$ is called the **indicator function** of event $A$.
 
-### 分布函数
+### Distribution Function
 
-对于随机变量 $X$，称函数
+For a random variable $X$, the function
 
 $$
 F(x) = P( X \leq x )
 $$
 
-为随机变量 $X$ 的 **分布函数**．记作 $X \sim F(x)$．
+is called the **distribution function** of $X$. Denoted $X \sim F(x)$.
 
-分布函数具有以下性质：
+Distribution functions have the following properties:
 
--   **右连续性**：$F(x) = F(x + 0)$
--   **单调性**：在 $\mathbb{R}$ 上单调递增（非严格）
--   $F(-\infty) = 0$,$F(+\infty) = 1$
+-   **Right continuity**: $F(x) = F(x + 0)$
+-   **Monotonicity**: monotonically non-decreasing on $\mathbb{R}$
+-   $F(-\infty) = 0$, $F(+\infty) = 1$
 
-同时我们可以证明，满足上述要求的函数都是某个随机变量的分布函数．因此，分布函数与随机变量之间一一对应．
+At the same time, we can prove that any function satisfying the above requirements is the distribution function of some random variable. Therefore, there is a one-to-one correspondence between distribution functions and random variables.
 
-## 随机变量的分类
+## Classification of Random Variables
 
-随机变量按其值域（根据定义，随机变量是一个函数）是否可数分为 **离散型** 和 **连续型** 两种．
+Random variables are classified into two types based on whether their range (according to the definition, a random variable is a function) is countable: **discrete** and **continuous**.
 
-### 离散型随机变量
+### Discrete Random Variable
 
-设 $X$ 为离散型随机变量，其所有可能的取值为 $x_1, x_2, \cdots$，则我们可以用一系列形如 $P\{ X = x_i \} = p_i$ 的等式来描述 $X$．这就是我们在高中课本中学过的 **分布列**．
+Let $X$ be a discrete random variable with all possible values $x_1, x_2, \cdots$. Then we can describe $X$ using a series of equations of the form $P\{ X = x_i \} = p_i$. This is what we learned in high school textbooks as the **probability distribution table**.
 
-### 连续型随机变量
+### Continuous Random Variable
 
-设 $X$ 为连续型随机变量，考察 $P\{ X = x \}$ 往往是无意义的（因为这一概率很可能是 $0$）．
+Let $X$ be a continuous random variable. Examining $P\{ X = x \}$ is often meaningless (because this probability is likely $0$).
 
-??? note "为什么说概率「很可能」是 $0$"
-    考虑这样的随机变量 $X$：它以 $\frac{1}{2}$ 的概率取 $0$，以 $\frac{1}{2}$ 的概率服从开区间 $(0, 1)$ 上的均匀分布．显然 $X$ 满足连续型随机变量的定义．
+??? note "Why is the probability 'likely' 0"
+    Consider such a random variable $X$: it takes value $0$ with probability $\frac{1}{2}$, and follows a uniform distribution on the open interval $(0, 1)$ with probability $\frac{1}{2}$. Clearly, $X$ satisfies the definition of a continuous random variable.
     
-    对任何实数 $r \in (0, 1)$，不难得到 $P\{ X = r \} = 0$，但同时有 $P\{ X = 0 \} = \frac{1}{2}$．
+    For any real number $r \in (0, 1)$, it is easy to obtain $P\{ X = r \} = 0$, but at the same time $P\{ X = 0 \} = \frac{1}{2}$.
 
-另一方面，设 $X \sim F(x)$，则
+On the other hand, let $X \sim F(x)$, then
 
 $$
 P( l < x \leq l + \Delta x ) = F(l + \Delta x) - F(l)
 $$
 
-一个自然的想法是用极限 $\lim\limits_{\Delta x \to 0^+} \frac{F(l + \Delta x) - F(l)}{\Delta x}$ 来描述 $X$ 取值为 $l$ 的可能性．
+A natural idea is to use the limit $\lim\limits_{\Delta x \to 0^+} \frac{F(l + \Delta x) - F(l)}{\Delta x}$ to describe the likelihood of $X$ taking the value $l$.
 
-这个式子就是我们熟知的导数，于是问题转化为寻找一个非负函数 $f(x)$ 使得
+This expression is the familiar derivative. So the problem becomes finding a non-negative function $f(x)$ such that
 
 $$
 F(x) = \int_{-\infty}^{x} f(x) \text{d} x
 $$
 
-若这样的 $f(x)$ 存在，则称之为 $X$ 的 **密度函数**．
+If such an $f(x)$ exists, it is called the **density function** of $X$.
 
-## 随机变量的独立性
+## Independence of Random Variables
 
-前面讨论了随机事件的独立性．由于随机变量和随机事件紧密联系，我们还可以类似地给出随机变量独立性的定义．
+We previously discussed the independence of random events. Since random variables are closely related to random events, we can similarly give the definition of independence of random variables.
 
-### 定义
+### Definition
 
-若随机变量 $X, Y$ 满足对任意的 $x, y \in \mathbb{R}$ 都有
+If random variables $X, Y$ satisfy for any $x, y \in \mathbb{R}$,
 
 $$
 P( X \leq x, Y \leq y ) = P( X \leq x ) P( Y \leq y )
 $$
 
-则称随机变量 $X, Y$  **独立**．
+then random variables $X, Y$ are said to be **independent**.
 
 ??? note "Note"
-    有些同学也许会注意到，中学课本中对随机变量独立性的定义是用形如 $P(X = \alpha)$ 的概率定义的，但由于连续性随机变量取特定值的概率通常是 $0$，故在更一般的情形下借助分布函数定义才是更加明智的选择．
+    Some students may notice that the definition of independence of random variables in high school textbooks uses probabilities of the form $P(X = \alpha)$. However, since continuous random variables typically have probability $0$ of taking specific values, using the distribution function for a more general definition is a wiser choice.
 
-### 性质
+### Properties
 
-若随机变量 $X$,$Y$ 相互独立，则对于任意函数 $f, g$，随机变量 $f(X)$ 与 $g(Y)$ 相互独立．
+If random variables $X, Y$ are independent, then for any functions $f, g$, random variables $f(X)$ and $g(Y)$ are independent.
 
-??? warning "注意"
-    有时候我们会研究相互独立的随机变量 $X$,$Y$ 的某一函数 $f(X, Y)$（如 $XY^2$）的分布．
+??? warning "Caution"
+    Sometimes we study the distribution of some function $f(X, Y)$ of independent random variables $X, Y$ (such as $XY^2$).
     
-    尽管 $X$ 与 $Y$ 是独立的，但不能想当然地认为对 $Y$ 的某一取值 $y$，$f(X, y)$ 与 $f(X, Y)$ 服从同样的分布．
+    Although $X$ and $Y$ are independent, we cannot assume that for a particular value $y$ of $Y$, $f(X, y)$ and $f(X, Y)$ follow the same distribution.

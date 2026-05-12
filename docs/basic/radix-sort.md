@@ -1,116 +1,116 @@
-???+ warning "提醒"
-    本页面要介绍的不是 [**计数排序**](./counting-sort.md)．
+???+ warning "Note"
+    This page is not about [**counting sort**](./counting-sort.md).
 
-本页面将简要介绍基数排序．
+This page will briefly introduce radix sort.
 
-## 定义
+## Definition
 
-基数排序（英语：Radix sort）是一种非比较型的排序算法，最早用于解决卡片排序的问题．基数排序将待排序的元素拆分为 $k$ 个关键字，逐一对各个关键字排序后完成对所有元素的排序．
+Radix sort is a non-comparison-based sorting algorithm, first used to solve card sorting problems. Radix sort decomposes the elements to be sorted into $k$ keys, and completes the sorting of all elements by sorting each key sequentially.
 
-如果是从第 $1$ 关键字到第 $k$ 关键字顺序进行比较，则该基数排序称为 MSD（Most Significant Digit first）基数排序；
+If comparing from the 1st key to the $k$-th key in order, this radix sort is called MSD (Most Significant Digit first) radix sort.
 
-如果是从第 $k$ 关键字到第 $1$ 关键字顺序进行比较，则该基数排序称为 LSD（Least Significant Digit first）基数排序．
+If comparing from the $k$-th key to the 1st key in order, this radix sort is called LSD (Least Significant Digit first) radix sort.
 
-## k - 关键字元素的比较
+## Comparing k-Key Elements
 
-下面用 $a_i$ 表示元素 $a$ 的第 $i$ 关键字．
+Below, $a_i$ is used to denote the $i$-th key of element $a$.
 
-假如元素有 $k$ 个关键字，对于两个元素 $a$ 和 $b$，默认的比较方法是：
+Suppose an element has $k$ keys. For two elements $a$ and $b$, the default comparison method is:
 
--   比较两个元素的第 $1$ 关键字 $a_1$ 和 $b_1$，如果 $a_1 < b_1$ 则 $a < b$，如果 $a_1 > b_1$ 则 $a > b$，如果 $a_1 = b_1$ 则进行下一步；
--   比较两个元素的第 $2$ 关键字 $a_2$ 和 $b_2$，如果 $a_2 < b_2$ 则 $a < b$，如果 $a_2 > b_2$ 则 $a > b$，如果 $a_2 = b_2$ 则进行下一步；
+-   Compare the 1st keys of the two elements, $a_1$ and $b_1$. If $a_1 < b_1$, then $a < b$; if $a_1 > b_1$, then $a > b$; if $a_1 = b_1$, proceed to the next step.
+-   Compare the 2nd keys of the two elements, $a_2$ and $b_2$. If $a_2 < b_2$, then $a < b$; if $a_2 > b_2$, then $a > b$; if $a_2 = b_2$, proceed to the next step.
 -   ……
--   比较两个元素的第 $k$ 关键字 $a_k$ 和 $b_k$，如果 $a_k < b_k$ 则 $a < b$，如果 $a_k > b_k$ 则 $a > b$，如果 $a_k = b_k$ 则 $a = b$．
+-   Compare the $k$-th keys of the two elements, $a_k$ and $b_k$. If $a_k < b_k$, then $a < b$; if $a_k > b_k$, then $a > b$; if $a_k = b_k$, then $a = b$.
 
-例子：
+Examples:
 
--   如果对自然数进行比较，将自然数按个位对齐后往高位补齐 $0$，则一个数字从左往右数第 $i$ 位数就可以作为第 $i$ 关键字；
--   如果对字符串基于字典序进行比较，一个字符串从左往右数第 $i$ 个字符就可以作为第 $i$ 关键字；
--   C++ 自带的 `std::pair` 与 `std::tuple` 的默认比较方法与上述的相同．
+-   If comparing natural numbers, align natural numbers by their units digit and pad with $0$ towards higher digits. The $i$-th digit from the left can be used as the $i$-th key.
+-   If comparing strings based on lexicographical order, the $i$-th character from the left can be used as the $i$-th key.
+-   C++'s built-in `std::pair` and `std::tuple` use the same default comparison method as described above.
 
-## MSD 基数排序
+## MSD Radix Sort
 
-基于 k - 关键字元素的比较方法，可以想到：先比较所有元素的第 $1$ 关键字，就可以确定出各元素大致的大小关系；然后对 **具有相同第 $1$ 关键字的元素**，再比较它们的第 $2$ 关键字……以此类推．
+Based on the k-key element comparison method, one can think: by first comparing the 1st keys of all elements, the approximate size relationship of each element can be determined; then for **elements with the same 1st key**, compare their 2nd keys, and so on.
 
-由于是从第 $1$ 关键字到第 $k$ 关键字顺序进行比较，由上述思想导出的排序算法称为 MSD（Most Significant Digit first）基数排序．
+Since comparisons proceed from the 1st key to the $k$-th key, the sorting algorithm derived from this idea is called MSD (Most Significant Digit first) radix sort.
 
-### 算法流程
+### Algorithm Process
 
-将待排序的元素拆分为 $k$ 个关键字，先对第 $1$ 关键字进行稳定排序，然后对于每组 **具有相同关键字的元素** 再对第 $2$ 关键字进行稳定排序（递归执行）……最后对于每组 **具有相同关键字的元素** 再对第 $k$ 关键字进行稳定排序．
+Decompose the elements to be sorted into $k$ keys. First, perform a stable sort by the 1st key. Then, for each group **with the same key**, perform a stable sort by the 2nd key (recursively). … Finally, for each group **with the same key**, perform a stable sort by the $k$-th key.
 
-一般而言，我们默认基数排序是稳定的，所以在 MSD 基数排序中，我们也仅仅考虑借助 **稳定算法**（通常使用计数排序）完成内层对关键字的排序．
+Generally, we assume radix sort is stable. Therefore, in MSD radix sort, we only consider using a **stable algorithm** (usually counting sort) to complete the inner key sorting.
 
-正确性参考上文 k - 关键字元素的比较．
+For correctness, refer to the k-key element comparison above.
 
-### 参考代码
+### Reference Code
 
-#### 对自然数排序
+#### Sorting Natural Numbers
 
-下面是使用迭代式 MSD 基数排序对 `unsigned int` 范围内元素进行排序的 C++ 参考代码，可调整 $W$ 和 $\log_2 W$ 的值（建议将 $\log_2 W$ 设为 $2^k$ 以便位运算优化）．
+Below is C++ reference code for sorting elements within the `unsigned int` range using iterative MSD radix sort. Values of $W$ and $\log_2 W$ can be adjusted (it is recommended to set $\log_2 W$ to $2^k$ for bitwise optimization).
 
-??? example "参考代码"
+??? example "Reference Code"
     ```cpp
     --8<-- "docs/basic/code/radix-sort/radix-sort_1.cpp:core"
     ```
 
-#### 对字符串排序
+#### Sorting Strings
 
-下面是使用迭代式  MSD 基数排序对 [空终止字节字符串](https://zh.cppreference.com/w/cpp/string/byte) 基于字典序进行排序的 C++ 参考代码：
+Below is C++ reference code for sorting null-terminated byte strings using iterative MSD radix sort based on lexicographical order:
 
-??? example "参考代码"
+??? example "Reference Code"
     ```cpp
     --8<-- "docs/basic/code/radix-sort/radix-sort_2.cpp:core"
     ```
 
-由于两个字符串的比较很容易冲上 $O(n)$ 的线性复杂度，因此在字符串排序这件事情上，MSD 基数排序比大多数基于比较的排序算法在时间复杂度和实际用时上都更加优秀．
+Since comparing two strings can easily reach $O(n)$ linear complexity, for string sorting, MSD radix sort outperforms most comparison-based sorting algorithms in both time complexity and actual execution time.
 
-### 与桶排序的关系
+### Relationship with Bucket Sort
 
-前置知识：[桶排序](./bucket-sort.md)
+Prerequisite: [Bucket Sort](./bucket-sort.md)
 
-桶排序需要其它的排序算法来完成对每个桶内部元素的排序．但实际上，完全可以对每个桶继续执行桶排序，直至某一步桶的元素数量 $\le 1$．
+Bucket sort requires other sorting algorithms to complete the sorting of elements within each bucket. However, it is entirely possible to continue performing bucket sort on each bucket until the number of elements in a bucket becomes $\le 1$.
 
-因此 MSD 基数排序的另一种理解方式是：使用桶排序实现的桶排序．
+Therefore, another way to understand MSD radix sort is: bucket sort implemented using bucket sort.
 
-也因此，可以提出 MSD 基数排序在时间常数上的一种优化方法：假如到某一步桶的元素数量 $\le B$（$B$ 是自己选的常数），则直接执行插入排序然后返回，降低递归次数．
+Consequently, an optimization method for the time constant in MSD radix sort can be proposed: if at some step the number of elements in a bucket is $\le B$ (where $B$ is a constant of your choosing), directly perform insertion sort and return, reducing the number of recursive calls.
 
-## LSD 基数排序
+## LSD Radix Sort
 
-MSD 基数排序从第 $1$ 关键字到第 $k$ 关键字顺序进行比较，为此需要借助递归或迭代来实现，时间常数还是较大，而且在比较自然数上还是略显不便．
+MSD radix sort compares from the 1st key to the $k$-th key. For this, recursion or iteration is needed, and the time constant is still relatively large. It is also somewhat inconvenient for comparing natural numbers.
 
-而将递归的操作反过来：从第 $k$ 关键字到第 $1$ 关键字顺序进行比较，就可以得到 LSD（Least Significant Digit first）基数排序，不使用递归就可以完成的排序算法．
+Reversing the recursive operation: comparing from the $k$-th key to the 1st key in order yields LSD (Least Significant Digit first) radix sort, a sorting algorithm that can be completed without recursion.
 
-### 算法流程
+### Algorithm Process
 
-将待排序的元素拆分为 $k$ 个关键字，然后先对 **所有元素** 的第 $k$ 关键字进行稳定排序，再对 **所有元素** 的第 $k-1$ 关键字进行稳定排序，再对 **所有元素** 的第 $k-2$ 关键字进行稳定排序……最后对 **所有元素** 的第 $1$ 关键字进行稳定排序，这样就完成了对整个待排序序列的稳定排序．
+Decompose the elements to be sorted into $k$ keys. First, perform a stable sort of **all elements** by the $k$-th key, then perform a stable sort of **all elements** by the $k-1$-th key, then by the $k-2$-th key, … Finally, perform a stable sort of **all elements** by the 1st key. This completes the stable sorting of the entire sequence.
 
-![一个 LSD 基数排序全流程的例子](images/radix-sort-1.png "一个 LSD 基数排序全流程的例子")
+![An example of the full LSD radix sort process](images/radix-sort-1.png "An example of the full LSD radix sort process")
 
-LSD 基数排序也需要借助一种 **稳定算法** 完成内层对关键字的排序．同样的，通常使用计数排序来完成．
+LSD radix sort also requires a **stable algorithm** to complete the inner key sorting. Similarly, counting sort is usually used.
 
-LSD 基数排序的正确性可以参考 [《算法导论（第三版）》第 8.3-3 题的解法](https://walkccc.github.io/CLRS/Chap08/8.3/#83-3) 或参考下面的解释：
+The correctness of LSD radix sort can be found in the solution to Problem 8.3-3 in [Introduction to Algorithms (3rd Edition)](https://walkccc.github.io/CLRS/Chap08/8.3/#83-3), or see the explanation below:
 
-### 正确性
+### Correctness
 
-回顾一下 k - 关键字元素的比较方法，
+Reviewing the k-key element comparison method:
 
--   假如想通过 $a_1$ 和 $b_1$ 就比较出两个元素 $a$ 和 $b$ 的大小，则需要提前知道通过比较 $a_2$ 和 $b_2$ 得到的结论，以便于应对 $a_1 = b_1$ 的情况；
--   而想通过 $a_2$ 和 $b_2$ 就比较出两个元素 $a$ 和 $b$ 的大小，则需要提前知道通过比较 $a_3$ 和 $b_3$ 得到的结论，以便于应对 $a_2 = b_2$ 的情况；
+-   If you want to determine the size of two elements $a$ and $b$ by just comparing $a_1$ and $b_1$, you need to know the conclusion obtained from comparing $a_2$ and $b_2$ in advance, to handle the case where $a_1 = b_1$.
+-   If you want to determine the size of two elements $a$ and $b$ by just comparing $a_2$ and $b_2$, you need to know the conclusion obtained from comparing $a_3$ and $b_3$ in advance, to handle the case where $a_2 = b_2$.
 -   ……
--   而想通过 $a_{k-1}$ 和 $b_{k-1}$ 就比较出两个元素 $a$ 和 $b$ 的大小，则需要提前知道通过比较 $a_k$ 和 $b_k$ 得到的结论，以便于应对 $a_{k-1} = b_{k-1}$ 的情况；
--   $a_k$ 和 $b_k$ 可以直接比较．
+-   If you want to determine the size of two elements $a$ and $b$ by just comparing $a_{k-1}$ and $b_{k-1}$, you need to know the conclusion obtained from comparing $a_k$ and $b_k$ in advance, to handle the case where $a_{k-1} = b_{k-1}$.
+-   $a_k$ and $b_k$ can be compared directly.
 
-现在，将顺序反过来：
+Now, reverse the order:
 
--   $a_k$ 和 $b_k$ 可以直接比较；
--   而知道通过比较 $a_k$ 和 $b_k$ 得到的结论后，就可以得到比较 $a_{k-1}$ 和 $b_{k-1}$ 的结论；
+-   $a_k$ and $b_k$ can be compared directly.
+-   After knowing the conclusion from comparing $a_k$ and $b_k$, you can obtain the conclusion for comparing $a_{k-1}$ and $b_{k-1}$.
 -   ……
--   而知道通过比较 $a_2$ 和 $b_2$ 得到的结论后，就可以得到比较 $a_1$ 和 $b_1$ 的结论；
--   而知道通过比较 $a_1$ 和 $b_1$ 得到的结论后，就最终得到了比较 $a$ 和 $b$ 的结论．
+-   After knowing the conclusion from comparing $a_2$ and $b_2$, you can obtain the conclusion for comparing $a_1$ and $b_1$.
+-   After knowing the conclusion from comparing $a_1$ and $b_1$, you finally obtain the conclusion for comparing $a$ and $b$.
 
-在这个过程中，对每个关键字边比较边重排元素的顺序，就得到了 LSD 基数排序．
+In this process, by comparing and rearranging the order of elements for each key, you get LSD radix sort.
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -122,19 +122,19 @@ $$
 \end{array}
 $$
 
-### 参考代码
+### Reference Code
 
-下面是使用 LSD 基数排序实现的对 k - 关键字元素的排序．
+Below is the k-key element sorting using LSD radix sort.
 
-??? example "参考代码"
+??? example "Reference Code"
     ```cpp
     --8<-- "docs/basic/code/radix-sort/radix-sort_lsd.cpp:core"
     ```
 
-实际上并非必须从后往前枚举才是稳定排序，只需对 `cnt` 数组进行等价于 `std::exclusive_scan` 的操作即可．
+In fact, it is not mandatory to enumerate from back to front for stable sorting. An operation on the `cnt` array equivalent to `std::exclusive_scan` is sufficient.
 
-???+ note "例题 [洛谷 P1177【模板】快速排序](https://www.luogu.com.cn/problem/P1177)"
-    给出 $n$ 个正整数，从小到大输出．
+???+ note "Problem [Luogu P1177【Template】Quick Sort](https://www.luogu.com.cn/problem/P1177)"
+    Given $n$ positive integers, output them in ascending order.
     
     ```cpp
     #include <algorithm>
@@ -142,7 +142,7 @@ $$
     #include <utility>
     
     void radix_sort(int n, int a[]) {
-      int *b = new int[n];  // 临时空间
+      int *b = new int[n];  // temporary space
       int *cnt = new int[1 << 8];
       int mask = (1 << 8) - 1;
       int *x = a, *y = b;
@@ -150,7 +150,7 @@ $$
         for (int j = 0; j != (1 << 8); ++j) cnt[j] = 0;
         for (int j = 0; j != n; ++j) ++cnt[x[j] >> i & mask];
         for (int sum = 0, j = 0; j != (1 << 8); ++j) {
-          // 等价于 std::exclusive_scan(cnt, cnt + (1 << 8), cnt, 0);
+          // equivalent to std::exclusive_scan(cnt, cnt + (1 << 8), cnt, 0);
           sum += cnt[j], cnt[j] = sum - cnt[j];
         }
         for (int j = 0; j != n; ++j) y[cnt[x[j] >> i & mask]++] = x[j];
@@ -174,22 +174,22 @@ $$
     }
     ```
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-如果对内层关键字的排序是稳定的，则 MSD 基数排序和 LSD 基数排序都是稳定的排序算法．
+If the inner key sorting is stable, then both MSD and LSD radix sort are stable sorting algorithms.
 
-### 时间复杂度
+### Time Complexity
 
-通常而言，基数排序比基于比较的排序算法（比如快速排序）要快．但由于需要额外的内存空间，因此当内存空间稀缺时，原地置换算法（比如快速排序）或许是个更好的选择．[^ref1]
+Generally speaking, radix sort is faster than comparison-based sorting algorithms (such as quicksort). However, since additional memory space is required, when memory space is scarce, in-place sorting algorithms (such as quicksort) may be a better choice.[^ref1]
 
-一般来说，如果每个关键字的值域都不大，就可以使用 [计数排序](./counting-sort.md) 作为内层排序，此时的复杂度为 $O(kn+\sum\limits_{i=1}^k w_i)$，其中 $w_i$ 为第 $i$ 关键字的值域大小．如果关键字值域很大，就可以直接使用基于比较的 $O(nk\log n)$ 排序而无需使用基数排序了．
+Generally, if the range of each key is not large, [counting sort](./counting-sort.md) can be used as the inner sorting, with complexity $O(kn+\sum\limits_{i=1}^k w_i)$, where $w_i$ is the range size of the $i$-th key. If the key range is very large, comparison-based $O(nk\log n)$ sorting can be used directly without using radix sort.
 
-### 空间复杂度
+### Space Complexity
 
-MSD 基数排序和 LSD 基数排序的空间复杂度都为 $O(k+n)$．
+Both MSD and LSD radix sort have space complexity $O(k+n)$.
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein.*Introduction to Algorithms*(3rd ed.). MIT Press and McGraw-Hill, 2009. ISBN 978-0-262-03384-8. "8.3 Radix sort", pp. 199.
+[^ref1]: Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein. *Introduction to Algorithms* (3rd ed.). MIT Press and McGraw-Hill, 2009. ISBN 978-0-262-03384-8. "8.3 Radix sort", pp. 199.

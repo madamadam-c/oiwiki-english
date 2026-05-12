@@ -1,38 +1,38 @@
 author: ouuan, Ir1d, Marcythm, Xeonacid
 
-## 树分块的方式
+## Tree Blocking Methods
 
-可以参考 [真 - 树上莫队](../misc/mo-algo-on-tree.md)．
+You can refer to [True Mo's Algorithm on Trees](../misc/mo-algo-on-tree.md).
 
-也可以参考 [ouuan 的博客/莫队、带修莫队、树上莫队详解/树上莫队](https://ouuan.github.io/莫队、带修莫队、树上莫队详解/#树上莫队)．
+You can also refer to [ouuan's blog / Detailed explanation of Mo's algorithm, Mo's algorithm with modifications, and Mo's algorithm on trees / Mo's algorithm on trees](https://ouuan.github.io/莫队、带修莫队、树上莫队详解/#树上莫队).
 
-树上莫队同样可以参考以上两篇文章．
+Mo's algorithm on trees can also refer to the two articles above.
 
-## 树分块的应用
+## Applications of Tree Blocking
 
-树分块除了应用于莫队，还可以灵活地运用到某些树上问题中．但可以用树分块解决的题目往往都有更优秀的做法，所以相关的题目较少．
+Besides being used in Mo's algorithm, tree blocking can also be applied flexibly to some tree problems. However, problems that can be solved with tree blocking often have better approaches, so there are relatively few related problems.
 
-顺带提一句，「gty 的妹子树」的树分块做法可以被菊花图卡掉．
+Incidentally, the tree-blocking solution for "gty's Girl Tree" can be defeated by a star graph.
 
-### [BZOJ4763 雪辉](https://hydro.ac/p/bzoj-P4763)
+### [BZOJ4763 Xuehui](https://hydro.ac/p/bzoj-P4763)
 
-先进行树分块，然后对每个块的关键点，预处理出它到祖先中每个关键点的路径上颜色的 bitset，以及每个关键点的最近关键点祖先，复杂度是 $O(n\sqrt n+\frac{nc}{32})$，其中 $n\sqrt n$ 是暴力从每个关键点向上跳的复杂度，$\frac{nc}{32}$ 是把 $O(n)$ 个 `bitset` 存下来的复杂度．
+First perform tree blocking. Then, for each key point in each block, preprocess the bitset of colors on the path from it to every key-point ancestor, and preprocess each key point's nearest key-point ancestor. The complexity is $O(n\sqrt n+\frac{nc}{32})$, where $n\sqrt n$ is the complexity of brute-force jumping upward from every key point, and $\frac{nc}{32}$ is the cost of storing $O(n)$ `bitset`s.
 
-回答询问的时候，先从路径的端点暴力跳到所在块的关键点，再从所在块的关键点一块一块地向上跳，直到 $lca$ 所在块，然后再暴力跳到 $lca$．关键点之间的 `bitset` 已经预处理了，剩下的在暴力跳的过程中计算．单次询问复杂度是 $O(\sqrt n+\frac c{32})$，其中 $\sqrt n$ 是块内暴力跳以及块直接向上跳的复杂度，$O(\frac c{32})$ 是将预处理的结果与暴力跳的结果合并的复杂度．数颜色个数可以用 `bitset` 的 `count()`，求 $\operatorname{mex}$ 可以用 `bitset` 的 `_Find_first()`．
+When answering a query, first brute-force jump from the path endpoints to the key points of their blocks. Then jump block by block upward from the key point of the current block until reaching the block containing the $lca$, and finally brute-force jump to the $lca$. The `bitset`s between key points have already been preprocessed; the remaining part is computed during brute-force jumps. The complexity of a single query is $O(\sqrt n+\frac c{32})$, where $\sqrt n$ is the cost of brute-force jumping inside blocks and jumping upward between blocks, and $O(\frac c{32})$ is the cost of merging preprocessed results with brute-force results. The number of colors can be counted with `bitset`'s `count()`, and $\operatorname{mex}$ can be found with `bitset`'s `_Find_first()`.
 
-所以，总复杂度为 $O((n+m)(\sqrt n+\frac c{32}))$．
+Therefore, the total complexity is $O((n+m)(\sqrt n+\frac c{32}))$.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/ds/code/tree-decompose/tree-decompose_1.cpp"
     ```
 
-### [BZOJ4812 由乃打扑克](https://hydro.ac/p/bzoj-P4812)
+### [BZOJ4812 Yuno Plays Poker](https://hydro.ac/p/bzoj-P4812)
 
-这题和上一题基本一样，唯一的区别是得到 `bitset` 后如何计算答案．
+This problem is basically the same as the previous one. The only difference is how to compute the answer after obtaining the `bitset`.
 
-~~由于 BZOJ 是计算所有测试点总时限，不好卡，所以可以用 `_Find_next()` 水过去．~~
+~~Because BZOJ uses a total time limit over all test points and is hard to hack, `_Find_next()` can pass.~~
 
-正解是每 $16$ 位一起算，先预处理出 $2^{16}$ 种可能的情况高位连续 $1$ 的个数、低位连续 $1$ 的个数以及中间的贡献．只不过这样要手写 `bitset`，因为标准库的 `bitset` 不能取某 $16$ 位……
+The intended solution processes every $16$ bits together. Preprocess, for all $2^{16}$ possible states, the number of consecutive $1$s at the high end, the number of consecutive $1$s at the low end, and the middle contribution. However, this requires implementing `bitset` manually, because the standard library `bitset` cannot extract an arbitrary group of $16$ bits.
 
-代码可以参考 [这篇博客](https://www.cnblogs.com/FallDream/p/bzoj4763.html)．
+The code can refer to [this blog post](https://www.cnblogs.com/FallDream/p/bzoj4763.html).

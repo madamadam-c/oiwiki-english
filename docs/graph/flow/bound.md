@@ -1,73 +1,73 @@
-在阅读这篇文章之前请先阅读 [最大流](./max-flow.md) 并确保自己熟练掌握最大流算法．
+Please read [Max-Flow](./max-flow.md) and ensure you are proficient in max-flow algorithms before reading this article.
 
-## 概述
+## Overview
 
-上下界网络流本质是给流量网络的每一条边设置了流量上界 $c(u,v)$ 和流量下界 $b(u,v)$．也就是说，一种可行的流必须满足 $b(u,v) \leq f(u,v) \leq c(u,v)$．同时必须满足除了源点和汇点之外的其余点流量平衡．
+Bounded network flow essentially sets an upper bound $c(u,v)$ and a lower bound $b(u,v)$ on the flow of each edge in the flow network. That is, a feasible flow must satisfy $b(u,v) \leq f(u,v) \leq c(u,v)$. Additionally, all vertices except the source and sink must satisfy flow balance.
 
-根据题目要求，我们可以使用上下界网络流解决不同问题．
+Depending on the problem requirements, bounded network flow can be used to solve various problems.
 
-## 无源汇上下界可行流
+## Feasible Flow without Source and Sink
 
-给定无源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时每一个点流量平衡．
+Given a flow network $G$ without source and sink. Determine if there exists a way to assign flows to each edge such that each edge's flow satisfies the bounds and every vertex has balanced flow.
 
-不妨假设每条边已经流了 $b(u,v)$ 的流量，设其为初始流．同时我们在新图中加入 $u$ 连向 $v$ 的流量为 $c(u,v) - b(u,v)$ 的边．考虑在新图上进行调整．
+Assume each edge already has $b(u,v)$ flow, call this the initial flow. Add edges from $u$ to $v$ with capacity $c(u,v) - b(u,v)$ in the new graph. Consider adjustments on the new graph.
 
-由于最大流需要满足初始流量平衡条件（最大流可以看成是下界为 $0$ 的上下界最大流），但是构造出来的初始流很有可能不满足初始流量平衡．假设一个点初始流入流量减初始流出流量为 $M$．
+Since max-flow requires the initial flow balance condition (max-flow can be viewed as bounded max-flow with lower bound $0$), the constructed initial flow may not satisfy initial flow balance. Let $M$ be the initial inflow minus initial outflow for a vertex.
 
-若 $M=0$，此时流量平衡，不需要附加边．
+If $M=0$, the flow is balanced, and no additional edges are needed.
 
-若 $M>0$，此时入流量过大，需要新建附加源点 $S'$，$S'$ 向其连流量为 $M$ 的附加边．
+If $M>0$, the inflow is too large. Create a super source $S'$, and add an edge from $S'$ to this vertex with capacity $M$.
 
-若 $M<0$，此时出流量过大，需要新建附加汇点 $T'$，其向 $T'$ 连流量为 $-M$ 的附加边．
+If $M<0$, the outflow is too large. Create a super sink $T'$, and add an edge from this vertex to $T'$ with capacity $-M$.
 
-如果附加边满流，说明这一个点的流量平衡条件可以满足，否则这个点的流量平衡条件不满足．（因为原图加上附加流之后才会满足原图中的流量平衡．）
+If all additional edges are saturated, the flow balance condition for this vertex can be satisfied; otherwise, it cannot. (Because the original flow balance is satisfied only after adding the additional flow.)
 
-在建图完毕之后跑 $S'$ 到 $T'$ 的最大流，若 $S'$ 连出去的边全部满流，则存在可行流，否则不存在．
+After constructing the graph, run max-flow from $S'$ to $T'$. If all edges from $S'$ are saturated, a feasible flow exists; otherwise, it does not.
 
-## 有源汇上下界可行流
+## Feasible Flow with Source and Sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．
+Given a flow network $G$ with source and sink. Determine if there exists a way to assign flows to each edge such that each edge's flow satisfies the bounds and every vertex except the source and sink has balanced flow.
 
-假设源点为 $S$，汇点为 $T$．
+Assume the source is $S$ and the sink is $T$.
 
-则我们可以加入一条 $T$ 到 $S$ 的上界为 $\infty$，下界为 $0$ 的边转化为无源汇上下界可行流问题．
+We can add an edge from $T$ to $S$ with upper bound $\infty$ and lower bound $0$ to transform this into a feasible flow without source and sink problem.
 
-若有解，则 $S$ 到 $T$ 的可行流流量等于 $T$ 到 $S$ 的附加边的流量．
+If a solution exists, the feasible flow from $S$ to $T$ equals the flow on the added edge from $T$ to $S$.
 
-## 有源汇上下界最大流
+## Bounded Max-Flow with Source and Sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．如果存在，询问满足标定的最大流量．
+Given a flow network $G$ with source and sink. Determine if there exists a way to assign flows to each edge such that each edge's flow satisfies the bounds and every vertex except the source and sink has balanced flow. If a solution exists, find the maximum feasible flow.
 
-我们找到网络上的任意一个可行流．如果找不到解就可以直接结束．
+Find any feasible flow in the network. If no solution exists, we can stop.
 
-否则我们考虑删去所有附加边之后的残量网络并且在网络上进行调整．
+Otherwise, consider the residual network after removing all additional edges and make adjustments on the network.
 
-我们在残量网络上再跑一次 $S$ 到 $T$ 的最大流，将可行流流量和最大流流量相加即为答案．
+Run one more max-flow from $S$ to $T$ on the residual network. The sum of the feasible flow and this max-flow is the answer.
 
-??? warning "一个非常易错的问题"
-    $S$ 到 $T$ 的最大流直接在跑完有源汇上下界可行的残量网络上跑．
+??? warning "A common mistake"
+    The max-flow from $S$ to $T$ should be run directly on the residual network after finding the feasible bounded flow.
     
-    千万不可以在原来的流量网络上跑．
+    Never run it on the original flow network.
 
-## 有源汇上下界最小流
+## Bounded Min-Flow with Source and Sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．如果存在，询问满足标定的最小流量．
+Given a flow network $G$ with source and sink. Determine if there exists a way to assign flows to each edge such that each edge's flow satisfies the bounds and every vertex except the source and sink has balanced flow. If a solution exists, find the minimum feasible flow.
 
-类似的，我们考虑将残量网络中不需要的流退掉．
+Similarly, we consider removing excess flow from the residual network.
 
-我们找到网络上的任意一个可行流．如果找不到解就可以直接结束．
+Find any feasible flow in the network. If no solution exists, we can stop.
 
-否则我们考虑删去所有附加边之后的残量网络．
+Otherwise, consider the residual network after removing all additional edges.
 
-我们在残量网络上再跑一次 $T$ 到 $S$ 的最大流，将可行流流量减去最大流流量即为答案．
+Run one more max-flow from $T$ to $S$ on the residual network. The feasible flow minus this max-flow is the answer.
 
-??? note "[AHOI 2014 支线剧情](https://loj.ac/problem/2226)"
-    对于每条 $x$ 到 $y$ 花费 $v$ 的剧情边设上界为 $\infty$, 下界为 $1$．
+??? note "[AHOI 2014 Side Quest](https://loj.ac/problem/2226)"
+    For each quest edge from $x$ to $y$ with cost $v$, set upper bound to $\infty$ and lower bound to $1$.
     
-    对于每个点，向 $T$ 连边权 $c$, 上界 $\infty$, 下界为 $1$．
+    For each vertex, add an edge to $T$ with cost $c$, upper bound $\infty$, lower bound $1$.
     
-    $S$ 点为 $1$ 号节点．
+    Vertex $1$ is the source.
     
-    跑一次 上下界带源汇最小费用可行流 即可．
+    Run one bounded min-cost feasible flow with source and sink.
     
-    因为最小费用可行流解法与最小可行流类似，这里不再展开．
+    Since the min-cost feasible flow solution is similar to the min feasible flow, it is not elaborated here.

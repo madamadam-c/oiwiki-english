@@ -1,18 +1,18 @@
-## 多项式的多点求值
+## Multi-Point Evaluation of Polynomials
 
-### 描述
+### Description
 
-给出一个多项式 $f\left(x\right)$ 和 $n$ 个点 $x_{1},x_{2},\dots,x_{n}$，求
+Given a polynomial $f\left(x\right)$ and $n$ points $x_{1},x_{2},\dots,x_{n}$, compute
 
 $$
 f\left(x_{1}\right),f\left(x_{2}\right),\dots,f\left(x_{n}\right)
 $$
 
-### 解法
+### Solution
 
-考虑使用分治来将问题规模减半．
+Consider using divide-and-conquer to halve the problem size.
 
-将给定的点分为两部分：
+Divide the given points into two parts:
 
 $$
 \begin{aligned}
@@ -21,65 +21,65 @@ $$
 \end{aligned}
 $$
 
-构造多项式
+Construct the polynomial
 
 $$
 g_{0}\left(x\right)=\prod_{x_{i}\in X_{0}}\left(x-x_{i}\right)
 $$
 
-则有 $\forall x\in X_{0}:g_{0}\left(x\right)=0$．
+Then for all $x\in X_{0}$, we have $g_{0}\left(x\right)=0$.
 
-考虑将 $f\left(x\right)$ 表示为 $g_{0}\left(x\right)Q\left(x\right)+f_{0}\left(x\right)$ 的形式，即：
+Consider representing $f\left(x\right)$ as $g_{0}\left(x\right)Q\left(x\right)+f_{0}\left(x\right)$, i.e.:
 
 $$
 f_{0}\left(x\right)\equiv f\left(x\right)\pmod{g_{0}\left(x\right)}
 $$
 
-则有 $\forall x\in X_{0}:f\left(x\right)=g_{0}\left(x\right)Q\left(x\right)+f_{0}\left(x\right)=f_{0}\left(x\right)$，$X_{1}$ 同理．
+Then for all $x\in X_{0}$: $f\left(x\right)=g_{0}\left(x\right)Q\left(x\right)+f_{0}\left(x\right)=f_{0}\left(x\right)$. Similarly for $X_{1}$.
 
-至此，问题的规模被减半，可以使用分治 + 多项式取模解决．
+At this point, the problem size has been halved, which can be solved using divide-and-conquer + polynomial modulo.
 
-时间复杂度
+Time complexity:
 
 $$
 T\left(n\right)=2T\left(\frac{n}{2}\right)+O\left(n\log{n}\right)=O\left(n\log^{2}{n}\right)
 $$
 
-## 多项式的快速插值
+## Fast Polynomial Interpolation
 
-### 描述
+### Description
 
-给出一个 $n+1$ 个点的集合
+Given a set of $n+1$ points
 
 $$
 X=\left\{\left(x_{0},y_{0}\right),\left(x_{1},y_{1}\right),\dots,\left(x_{n},y_{n}\right)\right\}
 $$
 
-求一个 $n$ 次多项式 $f\left(x\right)$ 使得其满足 $\forall\left(x,y\right)\in X:f\left(x\right)=y$．
+Find an $n$-degree polynomial $f\left(x\right)$ such that for all $\left(x,y\right)\in X$: $f\left(x\right)=y$.
 
-### 解法
+### Solution
 
-考虑拉格朗日插值公式
+Consider the Lagrange interpolation formula:
 
 $$
 f(x) = \sum_{i=1}^{n} \prod_{j\neq i }\frac{x-x_j}{x_i-x_j} y_i
 $$
 
-记多项式 $M(x) = \prod_{i=1}^n (x - x_i)$，由洛必达法则可知
+Let $M(x) = \prod_{i=1}^n (x - x_i)$. By L'Hôpital's rule, we have:
 
 $$
 \prod_{j\neq i} (x_i - x_j) = \lim_{x\rightarrow x_i} \frac{\prod_{j=1}^n (x - x_j)}{x - x_i} = M'(x_i)
 $$
 
-因此多项式被表示为
+Therefore, the polynomial is expressed as:
 
 $$
 f(x) = \sum_{i = 1}^n \frac{y_i}{M'(x_i)}\prod_{j \neq i}(x - x_j)
 $$
 
-我们首先通过分治计算出 $M(x)$ 的系数表示，接着可以通过多点求值在 $O(n\log^2 n)$ 时间内计算出所有的 $M'(x_i)$．
+We first compute the coefficients of $M(x)$ using divide-and-conquer. Then we can compute all $M'(x_i)$ in $O(n\log^2 n)$ time via multi-point evaluation.
 
-我们令 $v_i = \frac{y_i}{M'(x_i)}$，接下来考虑计算出 $f(x)$．对于 $n = 1$ 的情况，有 $f(x) = v_1, M(x) = x - x_1$．否则令
+Let $v_i = \frac{y_i}{M'(x_i)}$. Now consider computing $f(x)$. For $n = 1$, we have $f(x) = v_1, M(x) = x - x_1$. Otherwise, let:
 
 $$
 \begin{aligned}
@@ -90,4 +90,4 @@ M_1(x) & = \prod_{i = \left\lfloor \frac n2 \right \rfloor+1}^n (x - x_i)
 \end{aligned}
 $$
 
-可得 $f(x) = f_0(x)M_1(x) + f_1(x)M_0(x), M(x) = M_0(x)M_1(x)$，因此可以分治计算，这一部分的复杂度同样是 $O(n\log^2 n)$．
+We get $f(x) = f_0(x)M_1(x) + f_1(x)M_0(x), M(x) = M_0(x)M_1(x)$. Thus we can compute via divide-and-conquer, and this part also has complexity $O(n\log^2 n)$.

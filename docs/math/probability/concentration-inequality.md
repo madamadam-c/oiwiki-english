@@ -1,102 +1,102 @@
-算法竞赛中有时会用到 [随机化算法](../../misc/rand-technique.md)，这些算法的正确性与时空复杂度通常依赖于「某些随机事件发生的概率很小」这一前提．例如，快速排序的复杂度依赖于「所选的 `pivot` 元素几乎是最小或最大元素」这一事件较少发生．
+In algorithm competitions, [randomized algorithms](../../misc/rand-technique.md) are sometimes used. The correctness and time/space complexity of these algorithms typically rely on the premise that "certain random events occur with very small probability." For example, the complexity of quicksort depends on the event that "the selected `pivot` element is almost the smallest or largest element" occurring rarely.
 
-本文将简要介绍一些用于分析随机化算法的工具并给出几个简单应用的例子．
+This article will briefly introduce some tools for analyzing randomized algorithms and provide several simple application examples.
 
 ## Union Bound
 
-记 $A_1, \cdots, A_m$ 为随机事件，则
+Let $A_1, \cdots, A_m$ be random events, then
 
 $$
 P\left\{ \bigcup_{i=1}^m A_i \right\} \leq \sum_{i=1}^m P\{A_i\}
 $$
 
-即：一组事件中至少一个发生的概率，不超过每一个的发生概率之和．
+That is: the probability that at least one of a set of events occurs does not exceed the sum of the probabilities of each event occurring.
 
-实际上，这一结论还可以稍作加强：
+In fact, this conclusion can be slightly strengthened:
 
--   一组事件中至少一者发生的概率，**不小于** 每一个的发生概率之和，减掉每两个同时发生的概率之和．
--   一组事件中至少一者发生的概率，**不超过** 每一个的发生概率之和，减掉每两个同时发生的概率之和，加上每三个同时发生的概率之和．
+-   The probability that at least one of a set of events occurs is **at least** the sum of the probabilities of each event, minus the sum of the probabilities of each pair occurring simultaneously.
+-   The probability that at least one of a set of events occurs is **at most** the sum of the probabilities of each event, minus the sum of the probabilities of each pair occurring simultaneously, plus the sum of the probabilities of each triple occurring simultaneously.
 -   ……
 
-随着层数越来越多，交替出现的上界和下界也越来越紧．这一系列结论形式上类似容斥原理，证明过程也和容斥类似，这里略去．
+As the number of layers increases, the alternating upper and lower bounds become tighter. This series of conclusions is formally similar to the inclusion-exclusion principle, and the proof process is similar to that of inclusion-exclusion, so it is omitted here.
 
-## Markov 不等式
+## Markov's Inequality
 
-设 $X$ 是一个取值非负的随机变量，则对任意正实数 $a$ 有
+Let $X$ be a non-negative random variable, then for any positive real number $a$,
 
 $$
 P\{ X \geq a \} \leq \frac{EX}{a}
 $$
 
-事实上，由于 Markov 不等式本身并没有用到随机变量除期望外的与分布有关的任何信息，因此直接应用这个不等式得到的约束通常很松．
+In fact, since Markov's inequality itself does not use any information about the distribution of the random variable beyond its expectation, the bound obtained by directly applying this inequality is usually quite loose.
 
-### 证明
+### Proof
 
-记 $I$ 为事件 $X \geq a$ 的示性函数，则有
+Let $I$ be the indicator function of the event $X \geq a$, then
 
 $$
 I \leq \frac{X}{a}
 $$
 
-进而
+Consequently,
 
 $$
 P\{ X \geq a \} = EI \leq E \left[ \frac{X}{a} \right] = \frac{EX}{a}
 $$
 
-## Chebyshev 不等式
+## Chebyshev's Inequality
 
-设 $X$ 是一随机变量，则对任意的 $a > 0$ 都有
+Let $X$ be a random variable, then for any $a > 0$,
 
 $$
 P \{ |X - EX| \geq a \} \leq \frac{DX}{a^2}
 $$
 
-特别地，当 $a$ 取 $k\sigma$ 时有
+In particular, when $a$ takes the value $k\sigma$,
 
 $$
 P \{ |X - EX| \geq k\sigma \} \leq \frac{1}{k^2}
 $$
 
-其中 $\sigma$ 是 $X$ 的标准差．
+where $\sigma$ is the standard deviation of $X$.
 
-### 证明
+### Proof
 
-由已知，有
+From the given, we have
 
 $$
 P \{ |X - EX| \geq a \} = P \{ (X - EX)^2 \geq a^2 \}
 $$
 
-注意到 $(X - EX)^2$ 非负，故由 Markov 不等式可知
+Noting that $(X - EX)^2$ is non-negative, by Markov's inequality,
 
 $$
 P \{ (X - EX)^2 \geq a^2 \} \leq \frac{E(X - EX)^2}{a^2} = \frac{DX}{a^2}
 $$
 
-## Chernoff 不等式
+## Chernoff Bound
 
-一般的 Chernoff 不等式可以从直接对随机变量 $\mathrm{e}^{tX}$ 应用 Markov 不等式得出：
+A general Chernoff bound can be derived by directly applying Markov's inequality to the random variable $\mathrm{e}^{tX}$:
 
-设 $X$ 是一随机变量，则对任意的 $t > 0$ 都有
+Let $X$ be a random variable, then for any $t > 0$,
 
 $$
 P\{ X \geq a \} = P\{ \mathrm{e}^{tX} > \mathrm{e}^{ta} \} \leq \frac{E \mathrm{e}^{tX}}{\mathrm{e}^{ta}}
 $$
 
-类似地，当 $t < 0$ 时有
+Similarly, when $t < 0$,
 
 $$
 P\{ X \leq a \} = P\{ \mathrm{e}^{tX} > \mathrm{e}^{ta} \} \leq \frac{E \mathrm{e}^{tX}}{\mathrm{e}^{ta}}
 $$
 
-### Poisson 试验之和的 Chernoff 不等式
+### Chernoff Bound for Sum of Poisson Trials
 
-算法竞赛中涉及的随机变量通常没有那么「一般」，我们可以用概率论中的 Poisson 试验对其进行描述．
+The random variables involved in algorithm competitions are usually not so "general." We can describe them using Poisson trials in probability theory.
 
-所谓 Poisson 试验，是指在只有两种可能结果的随机试验．
+A Poisson trial refers to a random experiment with only two possible outcomes.
 
-一次的 Poisson 试验的结果可以用一个取值为 $0$ 或 $1$ 的随机变量 $X$ 进行刻画，其概率分布为
+The outcome of a single Poisson trial can be described by a random variable $X$ taking values $0$ or $1$, with probability distribution
 
 $$
 P\{ X = i \} = \begin{cases}
@@ -105,125 +105,125 @@ P\{ X = i \} = \begin{cases}
 \end{cases}
 $$
 
-对于 Poisson 试验，我们有如下结论：
+For Poisson trials, we have the following conclusion:
 
-对于 $n$ 个独立的 Poisson 试验 $X_1, X_2, \cdots, X_n$，记 $X = \sum_{i=1}^{n} X_i$ 以及 $\mu = EX$，则对任意 $0 < \epsilon < 1$ 有
+For $n$ independent Poisson trials $X_1, X_2, \cdots, X_n$, let $X = \sum_{i=1}^{n} X_i$ and $\mu = EX$, then for any $0 < \epsilon < 1$,
 
 $$
 P\left\{ |X - \mu| \geq \epsilon \mu \right\} \leq 2 \exp\left( - \frac{1}{3} \mu \epsilon^2 \right)
 $$
 
-## Hoeffding 不等式
+## Hoeffding's Inequality
 
-若 $X_1, \cdots, X_n$ 为互相独立的实随机变量且 $X_i\in [a_i,b_i]$，记随机变量 $X=\sum\limits_{i=1}^n X_i$，则
+If $X_1, \cdots, X_n$ are independent real random variables and $X_i \in [a_i, b_i]$, and the random variable $X = \sum\limits_{i=1}^n X_i$, then
 
 $$
 P\{ |X - EX| \geq \epsilon \} \leq 2\exp \left( \frac {-2\epsilon^2}{\sum\limits_{i=1}^n (b_i-a_i)^2} \right)
 $$
 
-Chernoff 不等式和 Hoeffding 不等式都限制了随机变量偏离其期望值的程度．这两个不等式的证明过程较为冗长，有兴趣的同学可以查阅 Probability and Computing 一书中的相关章节．
+Both Chernoff bounds and Hoeffding's inequality bound the degree to which a random variable deviates from its expected value. The proofs of these two inequalities are relatively lengthy; interested readers may refer to the relevant chapters in the book "Probability and Computing."
 
-从经验上讲，如果 $EX$ 不太接近 $a_1+\cdots+a_n$，则该不等式给出的界往往相对比较紧；如果非常接近的话（例如在 [UOJ #72 全新做法](https://matthew99.blog.uoj.ac/blog/5511) 中），给出的界则往往很松，此时更好的选择是使用 Chernoff 不等式．
+Empirically, if $EX$ is not too close to $a_1 + \cdots + a_n$, the bound given by this inequality is usually relatively tight; if it is very close (for example, in [UOJ #72 New Approach](https://matthew99.blog.uoj.ac/blog/5511)), the bound is usually quite loose. In such cases, using Chernoff bounds is a better choice.
 
-## 应用举例
+## Application Examples
 
-### 例：随机撒点估算圆周率
+### Example: Estimating Pi by Random Points
 
-考虑下列估计圆周率 $\pi$ 的精确值的算法：
+Consider the following algorithm to estimate the exact value of $\pi$:
 
-在正方形区域 $[-1, 1]^2$ 内随机生成 $n$ 个点，记其中落入单位圆盘 $x^2 + y^2 \leq 1$ 的点数为 $m$，则可以取 $\dfrac{4m}{n}$ 为 $\pi$ 的近似值．
+Generate $n$ random points in the square region $[-1, 1]^2$. Let $m$ be the number of points falling inside the unit disk $x^2 + y^2 \leq 1$. Then $\dfrac{4m}{n}$ can be taken as an approximation of $\pi$.
 
-问题：若要保证上述算法以至少 $(1 - \delta)$ 的概率返回相对误差不超过 $\epsilon$ 的结果，$n$ 应该如何取定？
+Question: If we want to ensure that the above algorithm returns a result with relative error no more than $\epsilon$ with probability at least $(1 - \delta)$, how should $n$ be chosen?
 
-??? note "解答"
-    记 $X_i$ 表示事件「随机生成的第 $i$ 个点在单位圆内」，则圆内总点数 $X = \sum_{i=1}^{n} X_i$．我们需要找到一个合适的 $n$ 使得
+??? note "Solution"
+    Let $X_i$ denote the event "the i-th randomly generated point is inside the unit disk." Then the total number of points inside the disk $X = \sum_{i=1}^{n} X_i$. We need to find an appropriate $n$ such that
     
     $$
     P\left\{ \left| \frac{4X}{n} - \pi \right| \geq \epsilon \pi \right\} \leq \delta
     $$
     
-    上式等价于
+    The above is equivalent to
     
     $$
     P\left\{ \left| X - \frac{\pi}{4}n \right| \geq \epsilon \cdot \frac{\pi}{4}n  \right\} \leq \delta
     $$
     
-    根据 Chernoff 不等式，我们只需令
+    According to Chernoff bounds, we just need to set
     
     $$
     2 \exp\left( - \frac{1}{3} \epsilon^2 \cdot \frac{\pi}{4}n \right) \leq \delta
     $$
     
-    即可，由此可解得
+    From this, we can solve for
     
     $$
     n \geq \frac{12}{\pi} \epsilon^{-2} \ln \frac{2}{\delta}
     $$
     
-    即当 $n = \Omega(\epsilon^{-2} \ln \frac{1}{\delta})$ 时可以达到需要的准确率．
+    That is, when $n = \Omega(\epsilon^{-2} \ln \frac{1}{\delta})$, the required accuracy can be achieved.
 
-### 例：抽奖问题
+### Example: Prize Drawing Problem
 
-一个箱子里有 $n$ 个球，其中恰有 $k$ 个球对应着大奖．你要进行若干次独立、等概率的随机抽取，每次抽完之后会把球放回箱子．请问抽多少次能保证以至少 $(1 - \epsilon)$ 的概率，满足 **每一个** 奖球都被抽到至少一次？
+A box contains $n$ balls, of which exactly $k$ balls correspond to grand prizes. You will perform several independent, equally probable random draws, with each ball being returned to the box after drawing. How many times must you draw to ensure with probability at least $(1 - \epsilon)$ that **every** prize ball has been drawn at least once?
 
-??? note "解答"
-    假如只有一个奖球，则抽取 $M=n\log\epsilon^{-1}$ 次即可保证，因为 $M$ 次全不中的概率
+??? note "Solution"
+    If there is only one prize ball, then drawing $M = n \log \epsilon^{-1}$ times is sufficient to guarantee it, because the probability of missing all $M$ times is
     
     $$
-    \Big(1-\dfrac 1n\Big)^{n\log\epsilon^{-1}}\leq e^{\log\epsilon}=\epsilon
+    \Big(1 - \dfrac 1n\Big)^{n\log\epsilon^{-1}} \leq e^{\log\epsilon} = \epsilon
     $$
     
-    现在有 $k>1$ 个奖球，那么根据 Union Bound，我们只需保证每个奖球被漏掉的概率都不超过 $\dfrac \epsilon k$ 即可．于是答案是 $n \log \dfrac{k}{\epsilon}$．
+    Now with $k > 1$ prize balls, according to the Union Bound, we just need to ensure that the probability of missing each prize ball is no more than $\dfrac \epsilon k$. So the answer is $n \log \dfrac{k}{\epsilon}$.
 
-### 例：随机选取一半元素
+### Example: Randomly Selecting Half the Elements
 
-给出一个算法，从 $n$ 个元素中等概率随机选取一个大小为 $\dfrac{n}{2}$ 的子集，保证 $n$ 是偶数．你能使用的唯一的随机源是一枚均匀硬币，同时请你尽量减少抛硬币的次数（不要求最少）．
+Give an algorithm to select an equally probable random subset of size $\dfrac{n}{2}$ from $n$ elements, with $n$ guaranteed to be even. The only random source you can use is a fair coin, and try to minimize the number of coin flips (not necessarily optimal).
 
-??? note "解法"
-    首先可以想到这样的算法：
+??? note "Solution"
+    First, consider this algorithm:
     
-    -   通过抛 $n$ 次硬币，可以从所有子集中等概率随机选一个．
-    -   不断重复这一过程，直到选出的子集大小恰好为 $\dfrac n2$．
-        -   注意到大小为 $\dfrac n2$ 的子集至少占所有子集的 $\dfrac 1n$，因此重复次数的期望值 $\leq n$．
+    -   By flipping $n$ coins, we can select an equally probable random subset from all subsets.
+    -   Repeat this process until the selected subset has exactly $\dfrac{n}{2}$ elements.
+        -   Note that subsets of size $\dfrac{n}{2}$ constitute at least $\dfrac{1}{n}$ of all subsets, so the expected number of repetitions is $\leq n$.
     
-    这一算法期望需要抛 $n^2$ 次硬币．
+    This algorithm requires an expected $n^2$ coin flips.
     
-    另一个算法：
+    Another algorithm:
     
-    -   我们可以通过抛期望 $2\lceil\log_2 n\rceil$ 次硬币来实现随机 $n$ 选 1．
-        -   具体方法：随机生成 $\lceil\log_2 n\rceil$ 位的二进制数，如果大于等于 $n$ 则重新随机，否则选择对应编号（编号从 0 开始）的元素并结束过程．
-    -   然后我们从所有元素中选一个，再从剩下的元素中再选一个，以此类推，直到选出 $\dfrac n2$ 个元素为止．
+    -   We can implement random $n$-to-1 selection by flipping an expected $2\lceil\log_2 n\rceil$ coins.
+        -   Specific method: randomly generate a $\lceil\log_2 n\rceil$-bit binary number; if it is greater than or equal to $n$, regenerate; otherwise, select the element with the corresponding index (index starting from 0) and end the process.
+    -   Then select one element from all elements, then select one from the remaining elements, and so on, until $\dfrac{n}{2}$ elements are selected.
     
-    这一算法期望需要抛 $n\lceil\log_2 n\rceil$ 次硬币．
+    This algorithm requires an expected $n\lceil\log_2 n\rceil$ coin flips.
     
-    将两个算法缝合起来：
+    Combining the two algorithms:
     
-    -   先用第一个算法随机得到一个子集．
-    -   如果该子集大小不到 $\dfrac n2$，则利用第二个算法不断添加元素，直到将大小补到 $\dfrac n2$．
-    -   如果该子集大小超过 $\dfrac n2$，则利用第二个算法不断删除元素，直到将大小削到 $\dfrac n2$．
+    -   First, use the first algorithm to obtain a random subset.
+    -   If the subset size is less than $\dfrac{n}{2}$, use the second algorithm to continuously add elements until the size reaches $\dfrac{n}{2}$.
+    -   If the subset size exceeds $\dfrac{n}{2}$, use the second algorithm to continuously remove elements until the size is reduced to $\dfrac{n}{2}$.
     
-    尝试分析第二、第三步所需的操作次数（即添加/删除元素的次数）：
+    Now analyze the number of operations needed for steps 2 and 3 (i.e., the number of additions/removals of elements):
     
-    -   记 01 随机变量 $X_i$ 表示 $i$ 是否被选入初始的子集，令 $X:=X_1+\cdots+X_n$ 表示子集大小，则第二、第三步所需的操作次数等于 $\big|X-\mathrm{E}[X]\big|$．在 Hoeffding 不等式中取 $t=c\cdot\sqrt n$（其中 $c$ 为任意常数），得到 $\mathrm{Pr}\Big[\big|X-\mathrm{E}[X]\big|\geq t\Big]\leq 2\mathrm{e}^{-c^2}$．也就是说，我们可以通过允许 $\Theta(\sqrt n)$ 级别的偏移，来得到任意小的常数级别的失败概率．
+    -   Let indicator variable $X_i$ denote whether element $i$ is selected into the initial subset, and let $X := X_1 + \cdots + X_n$ denote the subset size. The number of operations needed in steps 2 and 3 equals $\big|X - \mathrm{E}[X]\big|$. Taking $t = c \cdot \sqrt{n}$ (where $c$ is any constant) in Hoeffding's inequality gives $\mathrm{Pr}\Big[\big|X - \mathrm{E}[X]\big| \geq t\Big] \leq 2\mathrm{e}^{-c^2}$. That is, by allowing a $\Theta(\sqrt{n})$-level deviation, we can achieve any desired constant-level failure probability.
     
-    至此我们已经说明：该算法可以以很大概率保证抛硬币次数在 $n+\Theta(\sqrt n\log n)$ 以内．
+    So far we have shown that this algorithm can with high probability guarantee the number of coin flips is within $n + \Theta(\sqrt{n}\log n)$.
     
-    -   其中 $n$ 来自获得初始子集的抛硬币次数；$\Theta(\sqrt n\log n)$ 是 $\Theta(\sqrt n)$ 次添加/删除元素的总开销．
+    -   Here $n$ comes from the coin flips needed to obtain the initial subset; $\Theta(\sqrt{n}\log n)$ is the total overhead for $\Theta(\sqrt{n})$ additions/removals.
     
-    ??? note "计算期望复杂度"
-        我们再从另一个角度分析，尝试计算该算法的期望抛硬币次数．
+    ??? note "Expected Complexity Calculation"
+        Let's analyze from another perspective, trying to calculate the expected number of coin flips for this algorithm.
         
-        用 Hoeffding 不等式求第二、第三步中操作次数期望值的上界：
+        Use Hoeffding's inequality to find an upper bound on the expected number of operations in steps 2 and 3:
         
         $$
         E|X - EX| = \int_0^\infty P\{ |X - E[X]| \geq t \} \mathrm{d}t \leq 
-        2 \int_0^\infty \exp \left(-\frac {t^2}{n}\right) \mathrm{d}t=\sqrt{\pi n}
+        2 \int_0^\infty \exp \left(-\frac {t^2}{n}\right) \mathrm{d}t = \sqrt{\pi n}
         $$
         
-        从而第二、第三步所需抛硬币次数的期望值是 $\sqrt{\pi n}\cdot2\lceil\log_2 n\rceil$．
+        Thus the expected number of coin flips needed for steps 2 and 3 is $\sqrt{\pi n} \cdot 2\lceil\log_2 n\rceil$.
         
-        综上，该算法期望需要抛 $n+2\sqrt{\pi n}\lceil\log_2 n\rceil$ 次硬币．
+        In summary, this algorithm requires an expected $n + 2\sqrt{\pi n}\lceil\log_2 n\rceil$ coin flips.
 
-### 练习：Balls and Bins
+### Exercise: Balls and Bins
 
-$n$ 个球独立随机地扔到 $n$ 个盒子里，试证明：球最多的盒子中的球数以 $1 - \dfrac{1}{n}$ 的概率不少于 $\Omega \left( \dfrac{\log n}{\log \log n} \right)$．
+$n$ balls are independently and randomly thrown into $n$ bins. Prove that with probability $1 - \dfrac{1}{n}$, the maximum number of balls in any bin is at least $\Omega \left( \dfrac{\log n}{\log \log n} \right)$.

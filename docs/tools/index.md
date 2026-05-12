@@ -1,5 +1,5 @@
-本章主要介绍与竞赛有关的工具软件，包括一些代码编辑器的介绍和 OJ 相关工具．
+This section mainly introduces software tools related to programming competitions, including introductions to code editors and OJ-related tools.
 
-程序是解决 OI 问题的工具，熟练运用代码编辑器是学习 OI 的前提．
+Programs are tools for solving OI problems, and mastering code editors is a prerequisite for learning OI.
 
-了解 OJ 相关的工具能让 OI 之旅更加舒适、便捷．
+Understanding OJ-related tools can make your OI journey more comfortable and convenient.

@@ -1,45 +1,42 @@
 author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-time, Early0v0, Enter-tainer, fearlessxjdx, Great-designer, H-J-Granger, hsfzLZH1, iamtwz, Ir1d, ksyx, Marcythm, NachtgeistW, ouuan, Persdre, shuzhouliu, StudyingFather, SukkaW, Tiphereth-A, wsyhb, Yesphet, yuhuoji, lingkerio, bililateral, q-wind
 
-## 定义
+## Definition
 
-二叉搜索树是一种二叉树的树形数据结构，其定义如下：
+A binary search tree is a binary-tree data structure defined as follows:
 
-1.  空树是二叉搜索树．
+1.  The empty tree is a binary search tree.
+2.  If the left subtree of a binary search tree is nonempty, then all additional key values in the left subtree are smaller than the root's value.
+3.  If the right subtree of a binary search tree is nonempty, then all additional key values in the right subtree are greater than the root's value.
+4.  The left and right subtrees of a binary search tree are both binary search trees.
 
-2.  若二叉搜索树的左子树不为空，则其左子树上所有点的附加权值均小于其根节点的值．
+The time spent by basic operations on a binary search tree is proportional to the tree height. For a binary search tree with $n$ nodes, the best complexity of these operations is $O(\log n)$ and the worst complexity is $O(n)$. The expected height of a randomly built binary search tree is $O(\log n)$.
 
-3.  若二叉搜索树的右子树不为空，则其右子树上所有点的附加权值均大于其根节点的值．
+## Procedures
 
-4.  二叉搜索树的左右子树均为二叉搜索树．
+### Binary Search Tree Node Definition
 
-二叉搜索树上的基本操作所花费的时间与这棵树的高度成正比．对于一个有 $n$ 个结点的二叉搜索树中，这些操作的最优时间复杂度为 $O(\log n)$，最坏为 $O(n)$．随机构造这样一棵二叉搜索树的期望高度为 $O(\log n)$．
-
-## 过程
-
-### 二叉搜索树节点的定义
-
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     struct TreeNode {
       int key;
       TreeNode* left;
       TreeNode* right;
-      // 维护其他信息，如高度，节点数量等
-      int size;   // 当前节点为根的子树大小
-      int count;  // 当前节点的重复数量
+      // Maintains extra information, such as height and node count.
+      int size;   // Size of the subtree rooted at this node.
+      int count;  // Number of duplicates of this node's value.
     
       TreeNode(int value)
           : key(value), size(1), count(1), left(nullptr), right(nullptr) {}
     };
     ```
 
-### 遍历二叉搜索树
+### Traversing A Binary Search Tree
 
-由二叉搜索树的递归定义可得，二叉搜索树的中序遍历权值的序列为非降的序列．时间复杂度为 $O(n)$．
+From the recursive definition of a binary search tree, its inorder traversal gives a nondecreasing sequence of key values. The time complexity is $O(n)$.
 
-遍历一棵二叉搜索树的代码如下：
+Code for traversing a binary search tree:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void inorderTraversal(TreeNode* root) {
       if (root == nullptr) {
@@ -51,11 +48,11 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-### 查找最小/最大值
+### Finding The Minimum/Maximum
 
-由二叉搜索树的性质可得，二叉搜索树上的最小值为二叉搜索树左链的顶点，最大值为二叉搜索树右链的顶点．时间复杂度为 $O(h)$．
+By the properties of a binary search tree, the minimum value is at the end of the left chain, and the maximum value is at the end of the right chain. The time complexity is $O(h)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int findMin(TreeNode* root) {
       if (root == nullptr) {
@@ -78,20 +75,20 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-### 搜索元素
+### Searching For An Element
 
-在以 `root` 为根节点的二叉搜索树中搜索一个值为 `value` 的节点．
+Search for a node with value `value` in the binary search tree rooted at `root`.
 
-分类讨论如下：
+Cases:
 
--   若 `root` 为空，返回 `false`．
--   若 `root` 的权值等于 `value`，返回 `true`．
--   若 `root` 的权值大于 `value`，在 `root` 的左子树中继续搜索．
--   若 `root` 的权值小于 `value`，在 `root` 的右子树中继续搜索．
+-   If `root` is empty, return `false`.
+-   If `root`'s key equals `value`, return `true`.
+-   If `root`'s key is greater than `value`, continue searching in `root`'s left subtree.
+-   If `root`'s key is less than `value`, continue searching in `root`'s right subtree.
 
-时间复杂度为 $O(h)$．
+The time complexity is $O(h)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     bool search(TreeNode* root, int target) {
       if (root == nullptr) {
@@ -107,25 +104,22 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-插入，删除，修改都需要先在二叉搜索树中进行搜索．
+Insertion, deletion, and modification all first search in the binary search tree.
 
-### 插入一个元素
+### Inserting An Element
 
-在以 `root` 为根节点的二叉搜索树中插入一个值为 `value` 的节点．
+Insert a node with value `value` into the binary search tree rooted at `root`.
 
-分类讨论如下：
+Cases:
 
--   若 `root` 为空，直接返回一个值为 `value` 的新节点．
+-   If `root` is empty, directly return a new node with value `value`.
+-   If `root`'s key equals `value`, increase the extra field that stores the occurrence count by $1$.
+-   If `root`'s key is greater than `value`, insert into `root`'s left subtree.
+-   If `root`'s key is less than `value`, insert into `root`'s right subtree.
 
--   若 `root` 的权值等于 `value`，该节点的附加域该值出现的次数自增 $1$．
+The time complexity is $O(h)$.
 
--   若 `root` 的权值大于 `value`，在 `root` 的左子树中插入权值为 `value` 的节点．
-
--   若 `root` 的权值小于 `value`，在 `root` 的右子树中插入权值为 `value` 的节点．
-
-时间复杂度为 $O(h)$．
-
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     TreeNode* insert(TreeNode* root, int value) {
       if (root == nullptr) {
@@ -136,37 +130,37 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
       } else if (value > root->key) {
         root->right = insert(root->right, value);
       } else {
-        root->count++;  // 节点值相等，增加重复数量
+        root->count++;  // Equal node value; increase duplicate count.
       }
       root->size = root->count + (root->left ? root->left->size : 0) +
-                   (root->right ? root->right->size : 0);  // 更新节点的子树大小
+                   (root->right ? root->right->size : 0);  // Update subtree size.
       return root;
     }
     ```
 
-### 删除一个元素
+### Deleting An Element
 
-在以 `root` 为根节点的二叉搜索树中删除一个值为 `value` 的节点．
+Delete a node with value `value` from the binary search tree rooted at `root`.
 
-先在二叉搜索树中搜索权值为 `value` 的节点，分类讨论如下：
+First search for the node whose key is `value`, then consider:
 
--   若该节点的附加 `count` 大于 $1$，只需要减少 `count`．
+-   If its additional `count` is greater than $1$, only decrease `count`.
 
--   若该节点的附加 `count` 为 $1$：
+-   If its additional `count` is $1$:
 
-    -   若 `root` 为叶子节点，直接删除该节点即可．
+    -   If `root` is a leaf, delete it directly.
 
-    -   若 `root` 为链节点，即只有一个儿子的节点，返回这个儿子．
+    -   If `root` is a chain node, i.e. has only one child, return that child.
 
-    -   若 `root` 有两个非空子节点，一般是用它左子树的最大值（左子树最右的节点）或右子树的最小值（右子树最左的节点）代替它，然后将它删除．
+    -   If `root` has two nonempty children, usually replace it by the maximum value in its left subtree (the rightmost node of the left subtree) or the minimum value in its right subtree (the leftmost node of the right subtree), then delete that replacement node.
 
-时间复杂度 $O(h)$．
+The time complexity is $O(h)$.
 
-???+ note "实现"
-    方法使用 `root = remove(root, 1)` 表示删除根节点为 `root` 树中值为 1 的节点，并返回新的根节点．
+???+ note "Implementation"
+    Calling `root = remove(root, 1)` means deleting the node with value 1 from the tree rooted at `root`, and returning the new root.
     
     ```cpp
-    // 此处返回值为删除 value 后的新 root
+    // Returns the new root after deleting value.
     TreeNode* remove(TreeNode* root, int value) {
       if (root == nullptr) {
         return root;
@@ -177,7 +171,7 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
         root->right = remove(root->right, value);
       } else {
         if (root->count > 1) {
-          root->count--;  // 节点重复数量大于1，减少重复数量
+          root->count--;  // Duplicate count is greater than 1; decrease it.
         } else {
           if (root->left == nullptr) {
             TreeNode* temp = root->right;
@@ -190,22 +184,22 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
           } else {
             TreeNode* successor = findMinNode(root->right);
             root->key = successor->key;
-            root->count = successor->count;  // 更新重复数量
-            // 当 successor->count > 1时，也应该删除该节点，否则
-            // 后续的删除只会减少重复数量
+            root->count = successor->count;  // Update duplicate count.
+            // If successor->count > 1, this node should still be deleted;
+            // otherwise later deletion would only decrease the duplicate count.
             successor->count = 1;
             root->right = remove(root->right, successor->key);
           }
         }
       }
-      // 继续维护size，不写成 --root->size;
-      // 是因为value可能不在树中，从而可能未发生删除
+      // Continue maintaining size. Do not write --root->size because value
+      // may not be in the tree, so deletion may not have happened.
       root->size = root->count + (root->left ? root->left->size : 0) +
                    (root->right ? root->right->size : 0);
       return root;
     }
     
-    // 此处以右子树的最小值为例
+    // Here the minimum in the right subtree is used as an example.
     TreeNode* findMinNode(TreeNode* root) {
       while (root->left != nullptr) {
         root = root->left;
@@ -214,15 +208,15 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-### 求元素的排名
+### Querying The Rank Of An Element
 
-排名定义为将数组元素升序排序后第一个相同元素之前的数的个数加一．
+The rank is defined as the number of elements before the first equal element after sorting in ascending order, plus one.
 
-查找一个元素的排名，首先从根节点跳到这个元素，若向右跳，答案加上左儿子节点个数加当前节点重复的数个数，最后答案加上终点的左儿子子树大小加一．
+To find an element's rank, start at the root and move toward the element. When moving right, add the size of the left child plus the duplicate count of the current node. At the destination, add the size of the left subtree plus one.
 
-时间复杂度 $O(h)$．
+The time complexity is $O(h)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int queryRank(TreeNode* root, int v) {
       if (root == nullptr) return 0;
@@ -233,22 +227,22 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-### 查找排名为 k 的元素
+### Finding The Element With Rank k
 
-在一棵子树中，根节点的排名取决于其左子树的大小．
+In a subtree, the root's rank depends on the size of its left subtree.
 
--   若其左子树的大小大于等于 $k$，则该元素在左子树中；
+-   If the left subtree size is at least $k$, the element lies in the left subtree.
 
--   若其左子树的大小在区间 $[k-\textit{count},k-1]$（`count` 为当前结点的值的出现次数）中，则该元素为子树的根节点；
+-   If the left subtree size is in $[k-\textit{count},k-1]$, where `count` is the occurrence count of the current node's value, the element is the subtree root.
 
--   若其左子树的大小小于 $k-\textit{count}$，则该元素在右子树中．
+-   If the left subtree size is less than $k-\textit{count}$, the element lies in the right subtree.
 
-时间复杂度 $O(h)$．
+The time complexity is $O(h)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int querykth(TreeNode* root, int k) {
-      if (root == nullptr) return -1;  // 或者根据需求返回其他合适的值
+      if (root == nullptr) return -1;  // Or return another suitable value.
       if (root->left) {
         if (root->left->size >= k) return querykth(root->left, k);
         if (root->left->size + root->count >= k) return root->key;
@@ -260,58 +254,56 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-## 平衡树简介
+## Introduction To Balanced Trees
 
-使用搜索树的目的之一是缩短插入、删除、修改和查找（插入、删除、修改都包括查找操作）节点的时间．
+One purpose of using search trees is to reduce the time for insertion, deletion, modification, and lookup. Insertion, deletion, and modification all include lookup.
 
-关于查找效率，如果一棵树的高度为 $h$，在最坏的情况，查找一个关键字需要对比 $h$ 次，查找时间复杂度（也为平均查找长度 ASL，Average Search Length）不超过 $O(h)$．一棵理想的二叉搜索树所有操作的时间可以缩短到 $O(\log n)$（n 是节点总数）．
+For lookup efficiency, if a tree has height $h$, searching for a key requires at most $h$ comparisons in the worst case. The lookup time complexity, also called average search length (ASL), is at most $O(h)$. In an ideal binary search tree, all operation times can be reduced to $O(\log n)$, where n is the total number of nodes.
 
-然而 $O(\log n)$ 的时间复杂度仅为理想情况．在最坏情况下，搜索树有可能退化为链表．想象一棵每个结点只有右孩子的二叉搜索树，那么它的性质就和链表一样，所有操作（增删改查）的时间是 $O(n)$．
+However, $O(\log n)$ is only the ideal case. In the worst case, a search tree may degenerate into a linked list. For example, if every node of a binary search tree has only a right child, then it behaves like a linked list, and all operations take $O(n)$ time.
 
-可以发现操作的复杂度与树的高度 $h$ 有关．由此引出了平衡树，通过一定操作维持树的高度（平衡性）来降低操作的复杂度．
+Thus operation complexity is related to tree height $h$. This motivates balanced trees, which maintain tree height, or balance, through certain operations to reduce complexity.
 
-### 平衡性的定义
+### Definition Of Balance
 
-关于一棵搜索树是否「**平衡**」，不同的平衡树中对「**平衡**」有着不同的定义．比如以 T 为根节点的二叉搜索树，左子树和右子树的高度相差很大，或者左子树的节点个数远大于右子树的节点个数，这棵树显然不具有平衡性．
+Different balanced trees define **balance** differently. For example, if a binary search tree rooted at T has left and right subtrees with very different heights, or the left subtree has far more nodes than the right subtree, the tree is clearly not balanced.
 
-对于二叉搜索树来说，常见的平衡性的定义是指：以 T 为根节点的树，每一个结点的左子树和右子树高度差最多为 1．
+For binary search trees, a common definition is: for every node in the tree rooted at T, the heights of its left and right subtrees differ by at most 1.
 
--   [Splay 树](splay.md) 中，对于任意节点的访问操作（搜索、插入还是删除），都会将被访问的节点移动到树的根节点位置．
+-   In a [Splay tree](splay.md), every access operation, whether search, insertion, or deletion, moves the accessed node to the root.
+-   In an [AVL tree](avl.md), every node N maintains the height of the tree rooted at N. An AVL tree is balanced iff both subtrees are AVL trees and $|height(T->left) - height(T->right)| \leq 1$.
+-   In a [Size Balanced Tree](sbt.md), every node N maintains the number of nodes `size` in the tree rooted at N. Its balance definition requires the `size` of any node to be no smaller than the `size` of all children of its sibling.
 
--   [AVL 树](avl.md) 每个节点 N 维护以 N 为根节点的树的高度信息．AVL 树对平衡性的定义：如果 T 是一棵 AVL 树，当且仅当左右子树也是 AVL 树，且 $|height(T->left) - height(T->right)| \leq 1$．
+For search trees with the same set of element values, the balanced state may not be unique. Two different search trees may contain the same set of element values and both be balanced.
 
--   [Size Balanced Tree](sbt.md) 每个节点 N 维护以 N 为根节点的树中节点个数 `size`．对平衡性的定义：任意节点的 `size` 不小于其兄弟节点（Sibling）的所有子节点（Nephew）的 `size`．
+### Balance Adjustment Process
 
-此外，对于拥有同样元素值集合的搜索树，平衡状态可能是不唯一的．也就是说，可能两棵不同的搜索树，含有的元素值集合相同，并且都是平衡的．
+Adjusting a search tree that violates the balance condition can restore balance.
 
-### 平衡的调整过程
+For binary balanced trees, adjustment operations include **left rotation (Left Rotate, or zag)** and **right rotation (Right Rotate, or zig)**. Because adjustment must preserve the inorder traversal sequence, both operations keep that sequence unchanged.
 
-对不满足平衡条件的搜索树进行调整操作，可以使不平衡的搜索树重新具有平衡性．
-
-关于二叉平衡树，平衡的调整操作分为包括 **左旋（Left Rotate 或者 zag）** 和 **右旋（Right Rotate 或者 zig）** 两种．由于二叉平衡树在调整时需要保证中序遍历序列不变．这两种操作均不改变中序遍历序列．
-
-在这里先介绍右旋，右旋也称为「右单旋转」或「LL 平衡旋转」．对于结点 $A$ 的右旋操作是指：将 $A$ 的左孩子 $B$ 向右上旋转，代替 $A$ 成为根节点，将 $A$ 结点向右下旋转成为 $B$ 的右子树的根结点，$B$ 的原来的右子树变为 $A$ 的左子树．
+Right rotation, also called single right rotation or LL balance rotation, is introduced first. A right rotation on node $A$ rotates node $A$'s left child $B$ upward to the right to replace $A$ as the root; $A$ rotates downward to become the root of $B$'s right subtree; and $B$'s original right subtree becomes $A$'s left subtree.
 
 ![bst-rotate](images/bst-rotate.svg)
 
-右旋操作只改变了三组结点关联，相当于对三组边进行循环置换一下，因此需要暂存一个结点再进行轮换更新．
+A right rotation changes only three groups of node links, equivalent to cyclically permuting three edges, so one node must be temporarily stored before updating links.
 
-对于右旋操作一般的更新顺序是：暂存 $B$ 结点（新的根节点），让 $A$ 的左孩子指向 $B$ 的右子树 $T2$，再让 $B$ 的右孩子指针指向 $A$，最后让 $A$ 的父结点指向暂存的 $B$．
+The usual update order for a right rotation is: temporarily store node $B$ (the new root), set $A$'s left child to $B$'s right subtree $T2$, set $B$'s right child pointer to $A$, and finally set $A$'s parent to the temporary $B$.
 
-完全同理，有对应的左旋操作，也称为「左单旋转」或「RR 平衡旋转」．左旋操作与右旋操作互为镜像．
+Similarly, there is a corresponding left rotation, also called single left rotation or RR balance rotation. Left rotation and right rotation are mirror operations.
 
-下面给出左旋和右旋的代码．
+The following code gives left and right rotations.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     TreeNode* rotateLeft(TreeNode* root) {
       TreeNode* newRoot = root->right;
       root->right = newRoot->left;
       newRoot->left = root;
-      // 更新相关节点的信息
+      // Update information for related nodes.
       updateHeight(root);
       updateHeight(newRoot);
-      return newRoot;  // 返回新的根节点
+      return newRoot;  // Return the new root.
     }
     
     TreeNode* rotateRight(TreeNode* root) {
@@ -324,32 +316,32 @@ author: 2323122, aofall, AtomAlpaca, Bocity, CoelacanthusHex, countercurrent-tim
     }
     ```
 
-对于这段示例代码，在调用时需要保存 `root` 的父节点 `pre`．方法返回指向新的根节点的指针，只需要将 `pre` 指向新的根节点即可．
+For this sample code, the caller must save `root`'s parent `pre`. The function returns a pointer to the new root; just set `pre` to point to it.
 
-#### 四种平衡性破坏的情况
+#### Four Cases Of Balance Violation
 
-虽然不同的二叉平衡树的定义有所区别，不同二叉平衡树区别只在于节点维护的信息不同，以及旋转调整后节点更新的信息不同．二叉平衡树平衡性被破坏的情况只有以下四种．进行平衡性调整的操作只包括左旋和右旋．以下先介绍四种情况，再对不同的二叉平衡树进行对比．
+Although different binary balanced trees have different definitions, they mainly differ in the information maintained at each node and the information updated after rotations. There are only four kinds of balance violation in binary balanced trees, and adjustment uses only left and right rotations.
 
-LL 型：T 的左孩子的左子树过长导致平衡性破坏．
+LL type: T's left child's left subtree is too long, breaking balance.
 
-调整方式：右旋节点 T．
+Adjustment: right-rotate node T.
 
 ![bst-LL](images/bst-LL.svg)
 
-RR 型：与 LL 型类似，T 的右孩子的右子树过长导致平衡性破坏．
+RR type: similar to LL, T's right child's right subtree is too long.
 
-调整方式：左旋节点 T．
+Adjustment: left-rotate node T.
 
 ![bst-RR](images/bst-RR.svg)
 
-LR 型：T 的左孩子的右子树过长导致平衡性破坏．
+LR type: T's left child's right subtree is too long.
 
-调整方式：先左旋节点 L，成为 LL 型，再右旋节点 T．
+Adjustment: first left-rotate node L to become the LL type, then right-rotate node T.
 
 ![bst-LR](images/bst-LR.svg)
 
-RL 型：与 LR 型类似，T 的右孩子的左子树过长导致平衡性破坏．
+RL type: similar to LR, T's right child's left subtree is too long.
 
-调整方式：先右旋节点 R，成为 RR 型，再左旋节点 T．
+Adjustment: first right-rotate node R to become the RR type, then left-rotate node T.
 
 ![bst-RL](images/bst-RL.svg)

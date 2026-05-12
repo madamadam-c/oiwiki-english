@@ -1,45 +1,45 @@
 author: iamtwz, Chrogeek, Enter-tainer, StudyingFather, aofall, CCXXXI, CoelacanthusHex, frank-xjh, Great-designer, greyqz, guodong2005, henrytbtrue, Ir1d, kZime, lihaoyu1234, Marcythm, MegaOwIer, Menci, nalemy, orzAtalod, ouuan, Persdre, segment-tree, ShaoChenHeng, shuzhouliu, sshwy, Struggler-q, Tiphereth-A, TrisolarisHD, Xeonacid, yuhuoji
 
-## 定义
+## Definition
 
-欧拉函数（Euler's totient function），即 $\varphi(n)$，表示的是小于等于 $n$ 和 $n$ 互质的数的个数．
+Euler's totient function, $\varphi(n)$, represents the number of integers less than or equal to $n$ that are coprime with $n$.
 
-比如说 $\varphi(1) = 1$．
+For example, $\varphi(1) = 1$.
 
-当 $n$ 是质数的时候，显然有 $\varphi(n) = n - 1$．
+When $n$ is prime, obviously $\varphi(n) = n - 1$.
 
-## 性质
+## Properties
 
--   欧拉函数是 [积性函数](./basic.md#积性函数)．
+-   Euler's totient function is a [multiplicative function](./basic.md#multiplicative-function).
 
-    即对任意满足 $\gcd(a, b) = 1$ 的整数 $a,b$，有 $\varphi(ab) = \varphi(a)\varphi(b)$．
+    That is, for any integers $a,b$ satisfying $\gcd(a, b) = 1$, we have $\varphi(ab) = \varphi(a)\varphi(b)$.
 
-    特别地，当 $n$ 是奇数时 $\varphi(2n) = \varphi(n)$．
+    In particular, when $n$ is odd, $\varphi(2n) = \varphi(n)$.
 
-    证明参见 [剩余系的复合](./basic.md#剩余系的复合)．
+    The proof can be found in [Composition of Residue Systems](./basic.md#composition-of-residue-systems).
 
--   $n = \sum_{d \mid n}{\varphi(d)}$．
+-   $n = \sum_{d \mid n}{\varphi(d)}$.
 
-    ???+ note "证明"
-        利用 [莫比乌斯反演](./mobius.md) 相关知识可以得出．
+    ???+ note "Proof"
+        This can be derived using knowledge of [Möbius inversion](./mobius.md).
         
-        也可以这样考虑：如果 $\gcd(k, n) = d$，那么 $\gcd(\dfrac{k}{d},\dfrac{n}{d}) = 1, ( k < n )$．
+        Alternatively, consider: if $\gcd(k, n) = d$, then $\gcd(\dfrac{k}{d},\dfrac{n}{d}) = 1, ( k < n )$.
         
-        如果我们设 $f(x)$ 表示 $\gcd(k, n) = x$ 的数的个数，那么 $n = \sum_{i = 1}^n{f(i)}$．
+        If we let $f(x)$ represent the number of integers where $\gcd(k, n) = x$, then $n = \sum_{i = 1}^n{f(i)}$.
         
-        根据上面的证明，我们发现，$f(x) = \varphi(\dfrac{n}{x})$，从而 $n = \sum_{d \mid n}\varphi(\dfrac{n}{d})$．注意到约数 $d$ 和 $\dfrac{n}{d}$ 具有对称性，所以上式化为 $n = \sum_{d \mid n}\varphi(d)$．
+        From the proof above, we find that $f(x) = \varphi(\dfrac{n}{x})$, thus $n = \sum_{d \mid n}\varphi(\dfrac{n}{d})$. Noting that the divisors $d$ and $\dfrac{n}{d}$ have symmetry, so the formula becomes $n = \sum_{d \mid n}\varphi(d)$.
 
--   若 $n = p^k$，其中 $p$ 是质数，那么 $\varphi(n) = p^k - p^{k - 1}$．
-    （根据定义可知）
+-   If $n = p^k$, where $p$ is prime, then $\varphi(n) = p^k - p^{k - 1}$.
+    (This follows from the definition)
 
--   由唯一分解定理，设 $n = \prod_{i=1}^{s}p_i^{k_i}$，其中 $p_i$ 是质数，有 $\varphi(n) = n \times \prod_{i = 1}^s{\dfrac{p_i - 1}{p_i}}$．
+-   By the unique factorization theorem, if $n = \prod_{i=1}^{s}p_i^{k_i}$, where $p_i$ are primes, then $\varphi(n) = n \times \prod_{i = 1}^s{\dfrac{p_i - 1}{p_i}}$.
 
-    ???+ note "证明"
-        -   引理：设 $p$ 为任意质数，那么 $\varphi(p^k)=p^{k-1}\times(p-1)$．
+    ???+ note "Proof"
+        -   Lemma: Let $p$ be any prime, then $\varphi(p^k)=p^{k-1}\times(p-1)$.
         
-            证明：显然对于从 1 到 $p^k$ 的所有数中，除了 $p^{k-1}$ 个 $p$ 的倍数以外其它数都与 $p^k$ 互素，故 $\varphi(p^k)=p^k-p^{k-1}=p^{k-1}\times(p-1)$，证毕．
+            Proof: Obviously, among all numbers from $1$ to $p^k$, except for $p^{k-1}$ multiples of $p$, all other numbers are coprime with $p^k$. Therefore, $\varphi(p^k)=p^k-p^{k-1}=p^{k-1}\times(p-1)$. QED.
         
-        接下来我们证明 $\varphi(n) = n \times \prod_{i = 1}^s{\dfrac{p_i - 1}{p_i}}$．由唯一分解定理与 $\varphi(x)$ 函数的积性
+        Next, we prove $\varphi(n) = n \times \prod_{i = 1}^s{\dfrac{p_i - 1}{p_i}}$. By the unique factorization theorem and the multiplicativity of the $\varphi(x)$ function:
         
         $$
         \begin{aligned}
@@ -51,15 +51,15 @@ author: iamtwz, Chrogeek, Enter-tainer, StudyingFather, aofall, CCXXXI, Coelacan
         \end{aligned}
         $$
 
--   对任意不全为 $0$ 的整数 $m,n$，$\varphi(mn)\varphi(\gcd(m,n))=\varphi(m)\varphi(n)\gcd(m,n)$．
+-   For any non-zero integers $m,n$, $\varphi(mn)\varphi(\gcd(m,n))=\varphi(m)\varphi(n)\gcd(m,n)$.
 
-    可由上一条直接计算得出．
+    This can be directly derived from the previous property.
 
-## 实现
+## Implementation
 
-如果只要求一个数的欧拉函数值，那么直接根据定义质因数分解的同时求就好了．这个过程可以用 [Pollard Rho](./pollard-rho.md) 算法优化．
+If we only need the Euler's totient function value for a single number, we can directly compute it by prime factorization. This process can be optimized using the [Pollard Rho](./pollard-rho.md) algorithm.
 
-???+ note "参考实现"
+???+ note "Reference Implementation"
     === "C++"
         ```cpp
         #include <cmath>
@@ -93,61 +93,61 @@ author: iamtwz, Chrogeek, Enter-tainer, StudyingFather, aofall, CCXXXI, Coelacan
             return ans
         ```
 
-如果是多个数的欧拉函数值，可以利用后面会提到的线性筛法来求得．
+If we need Euler's totient values for multiple numbers, we can use the linear sieve method to compute them.
 
-详见：[筛法求欧拉函数](./sieve.md#筛法求欧拉函数)
+See: [Sieve Method for Euler's Totient](./sieve.md#sieve-method-for-eulers-totient)
 
-## 应用
+## Applications
 
-欧拉函数常常用于化简一列最大公约数的和．国内有些文章称它为 **欧拉反演**[^1]．
+Euler's totient function is often used to simplify a sum of greatest common divisors. Some domestic articles refer to it as **Euler Inversion**[^1].
 
-在结论
+In the conclusion:
 
 $$
 n=\sum_{d|n}\varphi(d)
 $$
 
-中代入 $n=\gcd(a,b)$，则有
+Substituting $n=\gcd(a,b)$, we have:
 
 $$
 \gcd(a,b) = \sum_{d|\gcd(a,b)}\varphi(d) = \sum_d [d|a][d|b]\varphi(d),
 $$
 
-其中 $[\cdot]$ 为 Iverson 括号．对上式求和，就可以得到
+where $[\cdot]$ is the Iverson bracket. Summing this equation gives:
 
 $$
 \sum_{i=1}^n\gcd(i,n)=\sum_{d}\sum_{i=1}^n[d|i][d|n]\varphi(d)=\sum_d\left\lfloor\frac{n}{d}\right\rfloor[d|n]\varphi(d)=\sum_{d|n}\left\lfloor\frac{n}{d}\right\rfloor\varphi(d).
 $$
 
-这里关键的观察是 $\sum_{i=1}^n[d|i]=\lfloor\frac{n}{d}\rfloor$，即在 $1$ 和 $n$ 之间能够被 $d$ 整除的 $i$ 的个数是 $\lfloor\frac{n}{d}\rfloor$．
+The key observation here is $\sum_{i=1}^n[d|i]=\lfloor\frac{n}{d}\rfloor$, i.e., the number of integers $i$ between $1$ and $n$ that are divisible by $d$ is $\lfloor\frac{n}{d}\rfloor$.
 
-利用这个式子，就可以遍历约数求和了．需要多组查询的时候，可以预处理欧拉函数的前缀和，利用数论分块查询．
+Using this formula, we can iterate over divisors to sum. When multiple queries are needed, we can preprocess the prefix sums of Euler's totient function and use number theoretic division for queries.
 
 ???+ note "[GCD SUM](https://www.luogu.com.cn/problem/P2398)"
-    给定 $n\le 100000$，求
+    Given $n\le 100000$, find:
     
     $$
     \sum_{i=1}^n\sum_{j=1}^n\gcd(i,j).
     $$
     
-    ??? note "思路"
-        仿照上文的推导，可以得出
+    ??? note "Idea"
+        Following the derivation above, we can derive:
         
         $$
         \sum_{i=1}^n\sum_{j=1}^n\gcd(i,j) = \sum_{d=1}^n\left\lfloor\frac{n}{d}\right\rfloor^2\varphi(d).
         $$
         
-        此时需要从 $1$ 遍历到 $n$ 求欧拉函数，用线性筛做就可以 $O(n)$ 得到答案．
+        At this point, we need to iterate from $1$ to $n$ to compute Euler's totient function, which can be done in $O(n)$ using the linear sieve.
 
-## 欧拉定理
+## Euler's Theorem
 
-与欧拉函数紧密相关的一个定理就是欧拉定理．其描述如下：
+A theorem closely related to Euler's totient function is Euler's theorem. Its description is as follows:
 
-若 $\gcd(a, m) = 1$，则 $a^{\varphi(m)} \equiv 1 \pmod{m}$．
+If $\gcd(a, m) = 1$, then $a^{\varphi(m)} \equiv 1 \pmod{m}$.
 
-### 扩展欧拉定理
+### Extended Euler's Theorem
 
-当然也有扩展欧拉定理，用于处理一般的 $a$ 和 $m$ 的情形．
+Of course, there is also the extended Euler's theorem for handling general cases of $a$ and $m$:
 
 $$
 a^b\equiv
@@ -159,19 +159,19 @@ a^{b\bmod\varphi(m)+\varphi(m)},&\gcd(a,\,m)\ne1,\,b\ge\varphi(m)
 \pmod m
 $$
 
-证明和习题详见 [欧拉定理](./fermat.md)．
+The proof and practice problems can be found in [Euler's Theorem](./fermat.md).
 
-## 习题
+## Practice Problems
 
 -   [SPOJ ETF. Euler Totient Function](http://www.spoj.com/problems/ETF/)
 -   [UVa 10179. Irreducible Basic Fractions](http://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1120)
 -   [UVa 10299. Relatives](http://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1240)
 -   [UVa 11327. Enumerating Rational Numbers](http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=2302)
 -   [TIMUS 1673. Admission to Exam](http://acm.timus.ru/problem.aspx?space=1&num=1673)
--   [Luogu P1390 公约数的和](https://www.luogu.com.cn/problem/P1390)
--   [Luogu P2155 \[SDOI2008\] 沙拉公主的困惑](https://www.luogu.com.cn/problem/P2155)
+-   [Luogu P1390 Sum of Divisors](https://www.luogu.com.cn/problem/P1390)
+-   [Luogu P2155 [SDOI2008] Confusion of Princess](https://www.luogu.com.cn/problem/P2155)
 -   [Luogu P2568 GCD](https://www.luogu.com.cn/problem/P2568)
 
-## 参考资料与注释
+## References and Notes
 
-[^1]: 这一说法并未见于学术期刊或国外的论坛中，在使用该说法时应当注意．
+[^1]: This term is not found in academic journals or foreign forums, so it should be noted when using this term.

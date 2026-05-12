@@ -1,22 +1,22 @@
-## 初等矩阵
+## Elementary Matrices
 
-以下三类方阵称为初等矩阵．
+The following three types of square matrices are called elementary matrices.
 
-### 倍乘矩阵
+### Row-Scaling Matrix
 
-倍乘矩阵是一种特殊的对角矩阵．
+A row-scaling matrix is a special diagonal matrix.
 
 $$
 D_i(k)=\operatorname{diag}\{1,\cdots,1,k,1,\cdots,1\}
 $$
 
-表示一个对角阵，主对角线上第 $i$ 个元素为 $k$，并且规定 $k$ 不能为 $0$，其余的元素全部为 $1$．
+It represents a diagonal matrix with $k$ at the $i$-th position on the main diagonal, and $k$ is required to be non-zero; all other elements are $1$.
 
-特别地，当 $k$ 为 $1$ 的时候，$D_i(1)$ 就是单位阵 $I$．
+In particular, when $k$ is $1$, $D_i(1)$ is the identity matrix $I$.
 
-### 对换矩阵
+### Row-Swapping Matrix
 
-对换矩阵是一种特殊的对称矩阵．
+A row-swapping matrix is a special symmetric matrix.
 
 $$
 P_{ij}=\begin{pmatrix}
@@ -28,13 +28,13 @@ I_{i-1} &  &  &  & \\
 \end{pmatrix}
 $$
 
-对换矩阵的元素全是 $1$ 和 $0$，主对角线上其余元素均为 $1$，仅有第 $i$ 个元素和第 $j$ 个元素为 $0$，而在第 $i$ 行第 $j$ 列、第 $j$ 行第 $i$ 列上的两个元素为 $1$．
+The elements of a row-swapping matrix are all $0$ or $1$. All elements on the main diagonal are $1$, except the $i$-th and $j$-th elements are $0$, while the elements at row $i$, column $j$ and row $j$, column $i$ are $1$.
 
-对换矩阵要求 $i$ 与 $j$ 不能相等．
+The row-swapping matrix requires $i$ and $j$ to be unequal.
 
-### 倍加矩阵
+### Row-Adding Matrix
 
-倍加矩阵是在单位阵 $I$ 的基础上，令第 $i$ 行第 $j$ 列为 $k$．
+A row-adding matrix is obtained from the identity matrix $I$ by setting the element at row $i$, column $j$ to $k$.
 
 $$
 T_{ij}(k)=\begin{pmatrix}
@@ -48,13 +48,13 @@ T_{ij}(k)=\begin{pmatrix}
 \end{pmatrix}
 $$
 
-倍加矩阵要求 $i$ 与 $j$ 不能相等．如果 $k$ 为 $0$，则 $T_{ij}(0)$ 退化为单位阵 $I$．
+The row-adding matrix requires $i$ and $j$ to be unequal. If $k$ is $0$, then $T_{ij}(0)$ reduces to the identity matrix $I$.
 
-倍加矩阵是一种上三角矩阵或者下三角矩阵．
+A row-adding matrix is either an upper triangular matrix or a lower triangular matrix.
 
-### 初等矩阵的行列式
+### Determinant of Elementary Matrices
 
-三种初等矩阵具有行列式：
+The three types of elementary matrices have determinants:
 
 $$
 |D_i(k)|=k
@@ -68,125 +68,125 @@ $$
 |T_{ij}(k)|=1
 $$
 
-由于方阵乘法的行列式等于行列式的乘法，借助下文初等变换与矩阵乘法的等价性，初等矩阵的这个性质可以用于行列式的计算．
+Since the determinant of a product of square matrices equals the product of determinants, and using the equivalence of elementary operations and matrix multiplication discussed below, this property of elementary matrices can be used for determinant computation.
 
-## 初等变换
+## Elementary Operations
 
-不仅限于方阵，对于一般的矩阵 $A$，可以进行初等行变换和初等列变换，统称为初等变换．
+Not limited to square matrices, for a general matrix $A$, elementary row operations and elementary column operations can be performed, collectively called elementary operations.
 
-初等行变换与初等列变换一样，都有 3 种：倍乘（multiplication）、对换（switching）、倍加（addition）．这里先介绍初等行变换：
+There are three types of elementary row operations and three types of elementary column operations: scaling (multiplication), swapping (switching), and row-adding (addition). Elementary row operations are introduced first:
 
--   第 $i$ 行乘非零数 $k$：$B\mapsto D_i(k)B$．
--   第 $i$，$j$ 行互换：$B\mapsto P_{ij}B$．
--   第 $j$ 行乘 $k$ 加到第 $i$ 行：$B\mapsto T_{ij}(k)B$．
+-   Multiply row $i$ by non-zero number $k$: $B\mapsto D_i(k)B$.
+-   Swap rows $i$ and $j$: $B\mapsto P_{ij}B$.
+-   Add $k$ times row $j$ to row $i$: $B\mapsto T_{ij}(k)B$.
 
-将上述操作的行改为列，即得到初等列变换．
+Changing rows to columns in the above gives elementary column operations.
 
-在初等变换中，对换可以通过倍乘和倍加实现．显然，倍加不能通过倍乘和对换实现．借助行列式的知识，以及下文的初等变换与矩阵乘法的等价性，也能说明倍乘不能通过倍加和对换实现．
+In elementary operations, swapping can be achieved through scaling and adding. Obviously, adding cannot be achieved through scaling and swapping. Using determinant knowledge, and the equivalence of elementary operations and matrix multiplication discussed below, scaling cannot be achieved through adding and swapping.
 
-因此，相较对换而言，倍乘和倍加是更为本质的操作．对换操作是为了在消元法中，保证消元的有序，而引入的辅助操作．
+Therefore, compared to swapping, scaling and adding are more fundamental operations. The swapping operation is an auxiliary operation introduced to ensure orderly elimination in the elimination method.
 
-## 初等变换与矩阵乘法
+## Elementary Operations and Matrix Multiplication
 
-可以发现，三类初等矩阵都是在单位阵 $I$ 上进行一次相应的变换得到的结果．在后文的线性变换中指出，线性变换与矩阵之间有对应关系，与这里的关系类似．
+We can see that the three types of elementary matrices are obtained by performing the corresponding operation once on the identity matrix $I$. In the linear transformation discussed later, there is a correspondence between linear transformations and matrices, similar to the relationship here.
 
-无论矩阵 $A$ 是否方阵，对矩阵 $A$ 进行初等行变换，等价于对矩阵 $A$ 左乘初等矩阵．对矩阵 $A$ 进行初等列变换，等价于对矩阵 $A$ 右乘初等矩阵．
+Regardless of whether matrix $A$ is square or not, performing elementary row operations on $A$ is equivalent to left-multiplying $A$ by an elementary matrix. Performing elementary column operations on $A$ is equivalent to right-multiplying $A$ by an elementary matrix.
 
-### 倍乘操作
+### Scaling Operation
 
-左乘一个倍乘矩阵 $D_i(k)$，等价于将第 $i$ 行变为 $k$ 倍．右乘一个倍乘矩阵 $D_i(k)$，等价于将第 $i$ 列变为 $k$ 倍．
+Left-multiplying by a scaling matrix $D_i(k)$ is equivalent to scaling row $i$ by $k$. Right-multiplying by a scaling matrix $D_i(k)$ is equivalent to scaling column $i$ by $k$.
 
-对角阵乘对角阵还是对角阵，对于对角阵的乘法，将主对角线上对应的元素相乘．由于单位阵是特殊的倍乘阵，而倍乘阵要求 $k$ 不为 $0$，可以看出，只要对角阵主对角线上的元素均非 $0$，就可以拆分为倍乘阵的乘积．
+The product of diagonal matrices is still a diagonal matrix. For diagonal matrix multiplication, multiply the corresponding elements on the main diagonal. Since the identity matrix is a special scaling matrix, and scaling matrices require $k$ to be non-zero, we can see that any diagonal matrix with all elements on the main diagonal non-zero can be decomposed into a product of scaling matrices.
 
-对于一般的对角阵，无论元素是否为 $0$，也有相应的结论．左乘对角阵，等价于将对应的行变为原来的若干倍，倍数恰为对角阵主对角线上的相应元素．右乘对角阵，是对相应的列进行同样操作．
+For a general diagonal matrix, whether elements are $0$ or not, there is a corresponding conclusion. Left-multiplying by a diagonal matrix is equivalent to scaling the corresponding rows by the respective elements on the main diagonal of the diagonal matrix. Right-multiplying by a diagonal matrix performs the same operation on columns.
 
-由于倍乘矩阵 $D_i(k)$ 的行列式为 $k$，对于方阵的行或列进行倍乘操作之后，方阵对应的行列式变为原来的 $k$ 倍．对角阵的行列式为主对角线元素的乘积．
+Since the determinant of scaling matrix $D_i(k)$ is $k$, after scaling a row or column of a square matrix, the corresponding determinant is multiplied by $k$. The determinant of a diagonal matrix is the product of elements on the main diagonal.
 
-倍乘矩阵的乘法可以交换，对角阵的乘法也可以交换，在乘法只有对角阵时，顺序可以任意排列．
+Scaling matrix multiplication is commutative, and diagonal matrix multiplication is also commutative. When only diagonal matrices are multiplied, the order can be arbitrary.
 
-单位阵对应的倍乘操作为保持矩阵 $A$ 不变，在实际应用中不进行这样的操作．
+The scaling operation corresponding to the identity matrix leaves matrix $A$ unchanged; in practice, such an operation is not performed.
 
-### 对换操作
+### Swapping Operation
 
-左乘一个对换矩阵 $P_{ij}$，等价于将第 $i$ 行与第 $j$ 行交换．右乘一个对换矩阵 $P_{ij}$，等价于将第 $i$ 列与第 $j$ 列交换．
+Left-multiplying by a swapping matrix $P_{ij}$ is equivalent to swapping rows $i$ and $j$. Right-multiplying by a swapping matrix $P_{ij}$ is equivalent to swapping columns $i$ and $j$.
 
-与倍乘阵和对角阵的关系类似，这里引入置换矩阵的概念．置换矩阵是一个方阵，每行每列均恰有一个 $1$，其余位置均为 $0$．单位阵 $I$ 也是特殊的置换矩阵．
+Similar to the relationship between scaling matrices and diagonal matrices, here we introduce the concept of permutation matrices. A permutation matrix is a square matrix with exactly one $1$ in each row and column, and $0$ elsewhere. The identity matrix $I$ is also a special permutation matrix.
 
-置换阵和对于单位阵 $I$ 的行进行置换操作一致，也和对于单位阵 $I$ 的列进行置换操作一致．单位阵 $I$ 本身对应于恒等变换．
+Permutation matrices correspond exactly to permutations: a permutation matrix is consistent with performing permutation operations on rows of the identity matrix $I$, as well as on columns of the identity matrix $I$. The identity matrix $I$ itself corresponds to the identity transformation.
 
-左乘一个置换矩阵等价于对原矩阵的行进行置换，右乘一个置换矩阵等价于对原矩阵的列进行置换，相应置换的方法和对于单位阵 $I$ 的行或列进行置换操作一致．
+Left-multiplying by a permutation matrix is equivalent to permuting rows of the original matrix. Right-multiplying by a permutation matrix is equivalent to permuting columns of the original matrix. The permutation method is consistent with performing permutation operations on rows or columns of the identity matrix $I$.
 
-置换矩阵与置换完全对应，置换矩阵构成的乘法群与置换群同构．由于有定理，在恒等变换视为零个对换的乘积的情形下，任何置换都可以拆为对换的乘积，因此任何置换矩阵也可以拆分为对换矩阵的乘积．
+Permutation matrices and permutations are in one-to-one correspondence. The group of permutation matrices under multiplication is isomorphic to the symmetric group. Since there is a theorem that any permutation can be decomposed into a product of transpositions (in the case where the identity transformation is considered as a product of zero transpositions), any permutation matrix can also be decomposed into a product of swapping matrices.
 
-由于对换矩阵的行列式为 $-1$，对于方阵的行或列进行对换操作之后，方阵对应的行列式变为原来的 $-1$ 倍．
+Since the determinant of a swapping matrix is $-1$, after swapping rows or columns of a square matrix, the corresponding determinant is multiplied by $-1$.
 
-对换阵的乘法不可交换，置换阵的乘法也不可交换．
+Swapping matrices do not commute in multiplication, nor do permutation matrices.
 
-置换矩阵的行列式为 ${(-1)}^p$，其中 $p$ 为置换矩阵对应置换的逆序数，即置换拆分为对换乘积的个数．
+The determinant of a permutation matrix is ${(-1)}^p$, where $p$ is the number of inversions in the permutation corresponding to the permutation matrix, i.e., the number of transpositions in the decomposition of the permutation.
 
-### 倍加操作
+### Row-Adding Operation
 
-左乘倍加矩阵 $T_{ij}(k)$ 等价于把第 $j$ 行的 $k$ 倍加到第 $i$ 行上．右乘倍加矩阵 $T_{ij}(k)$ 等价于把第 $i$ 列的 $k$ 倍加到第 $j$ 列上．
+Left-multiplying by row-adding matrix $T_{ij}(k)$ is equivalent to adding $k$ times row $j$ to row $i$. Right-multiplying by row-adding matrix $T_{ij}(k)$ is equivalent to adding $k$ times column $i$ to column $j$.
 
-如果难以记忆，可以观察倍加阵 $T_{ij}(k)$ 是对单位阵 $I$ 进行了怎样的操作，两者是对应的，左乘是对行的操作，右乘是对列的操作，符合口诀左行右列．
+If it's hard to remember, observe what operation was performed on the identity matrix $I$ to get the row-adding matrix $T_{ij}(k)$. The two correspond: left-multiplying is a row operation, right-multiplying is a column operation, consistent with the mnemonic "left row, right column".
 
-由于倍加矩阵的行列式为 $1$，对于方阵进行倍加操作之后，方阵对应的行列式不变．
+Since the determinant of a row-adding matrix is $1$, after performing a row-adding operation on a square matrix, the corresponding determinant remains unchanged.
 
-倍加矩阵的乘法不可交换．
+Row-adding matrices do not commute in multiplication.
 
-单位阵对应的倍加操作为保持矩阵 $A$ 不变，在实际应用中不进行这样的操作．
+The row-adding operation corresponding to the identity matrix leaves matrix $A$ unchanged; in practice, such an operation is not performed.
 
-#### 上三角矩阵
+#### Upper Triangular Matrix
 
-倍加矩阵是一种上三角矩阵或者下三角矩阵．由于两种矩阵关于主对角线对称，这里讨论上三角矩阵．事实上在这个例子中，只需要进行初等行变换，而不需要列变换．
+A row-adding matrix is either an upper triangular matrix or a lower triangular matrix. Since the two types are symmetric about the main diagonal, we discuss upper triangular matrices. In this example, only elementary row operations are needed, no column operations.
 
-如果一个上三角矩阵的主对角线均为 $1$，则可拆分为一连串倍加矩阵的乘积．拆分的顺序为，先对单位矩阵 $I$ 的第一行进行倍加操作，再对单位矩阵 $I$ 的第二行进行倍加操作，以此类推，直到每一行均被操作完毕为止．
+If the main diagonal of an upper triangular matrix is all $1$, it can be decomposed into a product of a sequence of row-adding matrices. The order of decomposition is: first perform row-adding operations on the first row of the identity matrix $I$, then on the second row, and so on, until every row has been operated on.
 
-由于倍加矩阵的乘法不可交换，上述操作不可调换顺序．
+Since row-adding matrix multiplication does not commute, the order of operations cannot be changed.
 
-如果一个上三角矩阵的主对角线均非 $0$，则可拆分为一连串倍加矩阵和倍乘矩阵的乘积．可以在操作单位矩阵 $I$ 的每一行时，先将该行进行倍乘操作，效果为主对角线元素变为指定非零值．
+If the main diagonal of an upper triangular matrix is all non-zero, it can be decomposed into a product of a sequence of row-adding matrices and scaling matrices. When operating on each row of the identity matrix $I$, first scale that row so that the main diagonal element becomes the specified non-zero value.
 
-如果一个上三角矩阵的主对角线存在 $0$，则不可拆分为一连串初等矩阵的乘积．
+If the main diagonal of an upper triangular matrix contains $0$, it cannot be decomposed into a product of a sequence of elementary matrices.
 
-无论上三角矩阵的主对角线上是否有 $0$，上三角矩阵的行列式等于主对角线元素乘积，与对角阵一致．
+Regardless of whether the main diagonal of an upper triangular matrix has $0$ or not, the determinant of an upper triangular matrix equals the product of elements on the main diagonal, consistent with a diagonal matrix.
 
-#### 倍加操作将方阵转化为对角阵
+#### Converting a Square Matrix to a Diagonal Matrix Using Row-Adding Operations
 
-只使用倍加操作可以使任意一个方阵变为对角阵，这个例子既需要初等行变换也需要初等列变换．
+Only using row-adding operations can convert any square matrix to a diagonal matrix. This example requires both elementary row operations and elementary column operations.
 
-如果方阵的第一行和第一列存在非零元素，则可以通过倍加办法将左上角元素变为非零，进而借助初等行变换和初等列变换，将第一行和第一列除了左上角元素以外，均变为 $0$．
+If the first row and first column of a square matrix have non-zero elements, the top-left element can be made non-zero using the row-adding method. Then, using elementary row operations and elementary column operations, all elements in the first row and first column except the top-left element can be made $0$.
 
-如果方阵的第一行和第一列已经均为 $0$，则直接看第二行和第二列即可．
+If the first row and first column of a square matrix are all $0$, then directly look at the second row and second column.
 
-借助这个办法，甚至可以规定对角阵的非零元素均在左上角．
+Using this method, we can even ensure that the non-zero elements of the diagonal matrix are all in the top-left corner.
 
-如果方阵的第一行和第一列已经均为 $0$，则看剩余的行列是否有非零元素，只要有非零元素，则可以通过倍加操作将第一行和第一列中某个元素变为非 $0$，进而化归为一开始的情况，使得左上角元素非 $0$．
+If the first row and first column of a square matrix are all $0$, look at whether the remaining rows and columns have non-zero elements. As long as there are non-zero elements, the first row and first column can be made to have a non-zero element using row-adding operations, thus reducing to the initial case where the top-left element is non-zero.
 
-仅当剩余的行列也均没有非零元素时，左上角无法变为非零元素，此时剩余的方阵已经为零矩阵．
+Only when the remaining rows and columns also have no non-zero elements can the top-left element not be made non-zero. At this point, the remaining square matrix is already a zero matrix.
 
-#### 标准形矩阵
+#### Standard Form Matrix
 
-借助初等变换可以将任意的矩阵，无论形状，化归为标准形矩阵．
+Using elementary operations, any matrix, regardless of shape, can be reduced to a standard form matrix.
 
-标准形矩阵拥有一个单位阵 $I$ 作为子矩阵位于左上角，其余部分均为 $0$．化归的办法与将方阵转化为对角阵的操作类似，并需要借助倍乘操作使左上角非零元素变为 $1$．
+A standard form matrix has an identity matrix $I$ as a submatrix in the top-left corner, and all other parts are $0$. The reduction method is similar to converting a square matrix to a diagonal matrix, and also requires using scaling operations to make non-zero elements in the top-left corner become $1$.
 
-矩阵转化为标准形矩阵后，含有元素 $1$ 的个数恰好为矩阵的秩．
+After converting a matrix to standard form, the number of elements equal to $1$ is exactly the rank of the matrix.
 
-## 可逆矩阵
+## Invertible Matrices
 
-设 $A$ 是一个 $n$ 阶矩阵．如果存在一个 $n$ 阶矩阵 $B$，使得 $AB=BA=I$，那么 $A$ 叫做一个可逆矩阵或非奇异矩阵，$B$ 叫做 $A$ 的逆矩阵，并记为 $A^{-1}$．
+Let $A$ be an $n \times n$ matrix. If there exists an $n \times n$ matrix $B$ such that $AB=BA=I$, then $A$ is called an invertible matrix or non-singular matrix, and $B$ is called the inverse matrix of $A$, denoted $A^{-1}$.
 
-如果矩阵 $A$ 可逆，那么 $A$ 的逆矩阵由 $A$ 唯一确定．
+If matrix $A$ is invertible, then the inverse of $A$ is uniquely determined by $A$.
 
-可逆矩阵 $A$ 的逆 $A^{-1}$ 也可逆，并且 $A^{-1}$ 的逆就是 $A$．
+The inverse of an invertible matrix $A$ is also invertible, and the inverse of $A^{-1}$ is $A$.
 
-两个可逆矩阵 $A$ 和 $B$ 的乘积 $AB$ 也可逆，并且逆为 $B^{-1}A^{-1}$．
+The product $AB$ of two invertible matrices $A$ and $B$ is also invertible, and its inverse is $B^{-1}A^{-1}$.
 
-可逆矩阵 $A$ 的转置 $A^T$ 也可逆，并且转置的逆等于逆的转置．
+The transpose $A^T$ of an invertible matrix $A$ is also invertible, and the inverse of the transpose equals the transpose of the inverse.
 
-### 初等矩阵的逆
+### Inverses of Elementary Matrices
 
-初等矩阵均可逆，并且逆为同类的初等矩阵：
+All elementary matrices are invertible, and their inverses are elementary matrices of the same type:
 
 $$
 {D_i(k)}^{-1}=D_i\left(\frac{1}{k}\right)
@@ -200,34 +200,34 @@ $$
 T_{ij}(k)^{-1}=T_{ij}(-k)
 $$
 
-显然单位阵 $I$ 可逆，逆矩阵仍为 $I$．
+Clearly, the identity matrix $I$ is invertible, and its inverse is still $I$.
 
-初等变换保持矩阵的可逆性，变换前后矩阵要么同时可逆，要么同时不可逆．
+Elementary operations preserve the invertibility of a matrix. Before and after transformation, a matrix is either both invertible or both non-invertible.
 
-矩阵 $A$ 可逆，当且仅当矩阵 $A$ 可以写成初等矩阵的乘积，即可以通过初等变换变为单位阵 $I$．
+Matrix $A$ is invertible if and only if matrix $A$ can be written as a product of elementary matrices, i.e., can be transformed to the identity matrix $I$ through elementary operations.
 
-等到引入行列式之后可以知道：
+After introducing determinants, we know:
 
-矩阵 $A$ 可逆，当且仅当矩阵 $A$ 的秩为 $n$，当且仅当矩阵 $A$ 的行列式非 $0$．
+Matrix $A$ is invertible if and only if the rank of matrix $A$ is $n$, if and only if the determinant of matrix $A$ is non-zero.
 
-一种简单的记法为：记 $E_{ij}$ 为第 $i$ 行第 $j$ 列的元素为 $1$、其余为零的 $n\times n$ 矩阵，那么
+A simple notation: let $E_{ij}$ be an $n \times n$ matrix with $1$ at row $i$, column $j$ and $0$ elsewhere. Then:
 
 -   $D_i(k)=I_n+(k-1)E_{ii}$
 -   $P_{ij}=I_n-E_{ii}-E_{jj}+E_{ij}+E_{ji}$
 -   $T_{ij}(k)=I_n+kE_{ij}$
 
-这种记法也可以应用于它们的逆矩阵．
+This notation can also be applied to their inverses.
 
-## 应用
+## Applications
 
-### 线性方程组求解
+### Solving Linear Systems
 
-对于一个线性方程组，未知数前的系数构成系数矩阵，如果在系数矩阵右端补上线性方程组的常数项则构成增广矩阵．
+For a linear system, the coefficients before unknowns form the coefficient matrix. If the constants of the linear system are appended to the right of the coefficient matrix, the augmented matrix is formed.
 
-应用初等行变换，可以将线性方程组对应的增广矩阵先转化为行阶梯形矩阵，再转化为行最简形矩阵，进而完成线性方程组的求解．这个方法叫做消元法解线性方程组，后文的 Gauss–Jordan 消元，是按照一定的顺序进行的消元算法．
+Using elementary row operations, the augmented matrix of a linear system can first be transformed to a row echelon form, then to a reduced row echelon form, completing the solution of the linear system. This method is called the elimination method for solving linear systems. The Gauss–Jordan elimination discussed later is an elimination algorithm that proceeds in a certain order.
 
-### 行列式计算
+### Determinant Calculation
 
-由于方阵乘积的行列式等于方阵行列式的乘积，初等矩阵的行列式便于计算，以及初等变换等价于初等矩阵的乘法，在行列式计算中也会使用初等变换．
+Since the determinant of a product of square matrices equals the product of determinants, and the determinants of elementary matrices are easy to compute, and elementary operations are equivalent to multiplication by elementary matrices, elementary operations are also used in determinant calculation.
 
-由于按照一定的顺序进行初等变换更加便于程序书写，行列式计算也可以使用后文的 Gauss–Jordan 消元算法．
+Since performing elementary operations in a certain order makes program writing easier, determinant calculation can also use the Gauss–Jordan elimination algorithm discussed later.

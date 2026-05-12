@@ -1,36 +1,36 @@
-## 简介
+## Introduction
 
-在阅读下列内容之前，请务必了解 [图论相关概念](./concept.md) 部分．
+Before reading the following content, be sure to understand the [Graph Theory Related Concepts](./concept.md) section.
 
-相关阅读：[割点和桥](./cut.md)
+Related reading: [Cut Vertices and Bridges](./cut.md)
 
-## 定义
+## Definition
 
-割点和桥更严谨的定义参见 [图论相关概念](./concept.md)．
+For more rigorous definitions of cut vertices and bridges, see [Graph Theory Related Concepts](./concept.md).
 
-在一张连通的无向图中，对于两个点 $u$ 和 $v$，如果无论删去哪条边（只能删去一条）都不能使它们不连通，我们就说 $u$ 和 $v$  **边双连通**．
+In a connected undirected graph, for two vertices $u$ and $v$, if no matter which edge we remove (only one edge can be removed), they cannot become disconnected, then we say $u$ and $v$ are **edge-biconnected**.
 
-在一张连通的无向图中，对于两个点 $u$ 和 $v$，如果无论删去哪个点（只能删去一个，且不能删 $u$ 和 $v$ 自己）都不能使它们不连通，我们就说 $u$ 和 $v$  **点双连通**．
+In a connected undirected graph, for two vertices $u$ and $v$, if no matter which vertex we remove (only one vertex can be removed, and we cannot remove $u$ and $v$ themselves), they cannot become disconnected, then we say $u$ and $v$ are **vertex-biconnected**.
 
-边双连通具有传递性，即，若 $x,y$ 边双连通，$y,z$ 边双连通，则 $x,z$ 边双连通．
+Edge-biconnectivity is transitive: if $x,y$ are edge-biconnected and $y,z$ are edge-biconnected, then $x,z$ are edge-biconnected.
 
-点双连通 **不** 具有传递性，反例如下图，$A,B$ 点双连通，$B,C$ 点双连通，而 $A,C$  **不** 点双连通．
+Vertex-biconnectivity is **not** transitive. A counterexample is shown in the figure below: $A,B$ are vertex-biconnected, $B,C$ are vertex-biconnected, but $A,C$ are **not** vertex-biconnected.
 
 ![bcc-counterexample.png](./images/bcc-0.svg)
 
-对于一个无向图中的 **极大** 边双连通的子图，我们称这个子图为一个 **边双连通分量**．
+For a **maximal** edge-biconnected subgraph in an undirected graph, we call this subgraph an **edge-biconnected component**.
 
-对于一个无向图中的 **极大** 点双连通的子图，我们称这个子图为一个 **点双连通分量**．
+For a **maximal** vertex-biconnected subgraph in an undirected graph, we call this subgraph a **vertex-biconnected component**.
 
-## DFS 生成树
+## DFS Spanning Tree
 
-对于一张连通的无向图，我们可以从任意一点开始 DFS，得到原图的一棵 DFS 生成树（以开始 DFS 的那个点为根），这棵生成树上的边称作 **树边**，不在生成树上的边称作 **非树边**．
+For a connected undirected graph, we can start DFS from any vertex to obtain a DFS spanning tree of the original graph (with the starting vertex as the root). The edges on this spanning tree are called **tree edges**, and edges not on the spanning tree are called **non-tree edges**.
 
-由于 DFS 的性质，我们可以保证所有非树边连接的两个点在生成树上都满足其中一个是另一个的祖先．
+Due to the nature of DFS, we can guarantee that for any non-tree edge, the two vertices it connects satisfy that one is an ancestor of the other on the spanning tree.
 
-DFS 的代码如下：
+The DFS code is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void DFS(int p) {
@@ -49,119 +49,119 @@ DFS 的代码如下：
                     DFS(to)
         ```
 
-## 边双连通分量
+## Edge-Biconnected Components
 
-???+ note "[例题：洛谷 P8436【模版】边双连通分量](https://www.luogu.com.cn/problem/P8436)"
-    对于一个 $n$ 个节点 $m$ 条无向边的图，请输出其边双连通分量的个数，并且输出每个边双连通分量．
+???+ note "[Problem: Luogu P8436 [Template] Edge-Biconnected Components](https://www.luogu.com.cn/problem/P8436)"
+    For an undirected graph with $n$ vertices and $m$ edges, output the number of edge-biconnected components, and output each edge-biconnected component.
 
-### Tarjan 算法 1
+### Tarjan's Algorithm 1
 
-用 Tarjan 求双连通分量过程与求强连通分量类似，可以先阅读 [强连通分量](./scc.md) 的 Tarjan 算法．
+The process of finding biconnected components using Tarjan is similar to finding strongly connected components. You can first read [Tarjan's Algorithm for Strongly Connected Components](./scc.md).
 
-我们考虑先求出所有的桥，再 DFS 求出边双连通分量．
+We first find all bridges, then use DFS to find edge-biconnected components.
 
-求桥可参见 [割点和桥](./cut.md) 的桥部分．
+Finding bridges can be seen in the bridge section of [Cut Vertices and Bridges](./cut.md).
 
-时间复杂度 $O(n+m)$．
+Time complexity is $O(n+m)$.
 
-??? note "示例代码"
+??? note "Sample Code"
     ```cpp
     --8<-- "docs/graph/code/bcc/bcc_1.cpp"
     ```
 
-### Tarjan 算法 2
+### Tarjan's Algorithm 2
 
-我们先总结出一个重要的性质，在无向图中，DFS 生成树上的边不是树边就只有非树边．
+First, we summarize an important property: in an undirected graph, an edge on the DFS spanning tree is either a tree edge or a non-tree edge.
 
-我们联系一下求强连通分量的方法，在无向图中只要一个分量没有桥，那么在 DFS 生成树上，它的所有点都在同一个强连通分量中．
+Let's recall the method for finding strongly connected components. In an undirected graph, if a component has no bridges, then all its vertices are in the same strongly connected component on the DFS spanning tree.
 
-反过来，在 DFS 生成树上的一个强连通分量，在原无向图中是边双连通分量．
+Conversely, a strongly connected component on the DFS spanning tree is an edge-biconnected component in the original undirected graph.
 
-可以发现，求边双连通分量的过程实际上就是求强连通分量的过程．
+We can find that the process of finding edge-biconnected components is actually the same as finding strongly connected components.
 
-时间复杂度 $O(n+m)$．
+Time complexity is $O(n+m)$.
 
-??? note "示例代码"
+??? note "Sample Code"
     ```cpp
     --8<-- "docs/graph/code/bcc/bcc_2.cpp"
     ```
 
-### 差分算法
+### Difference Algorithm
 
-和 Tarjan 算法 1 类似，我们先求出所有的桥，再差分求出边双连通分量．
+Similar to Tarjan's Algorithm 1, we first find all bridges, then use difference to find edge-biconnected components.
 
-首先，对原图进行 DFS．
+First, perform DFS on the original graph.
 
 ![bcc-1.png](./images/bcc-1.svg)
 
-如上图所示，黑色与绿色边为树边，红色边为非树边．每一条非树边的两个端点都唯一对应了树上的一条由树边构成的简单路径，我们说这条非树边 **覆盖** 了这条简单路径上所有的边．
+As shown in the figure, black and green edges are tree edges, and red edges are non-tree edges. Each non-tree edge uniquely corresponds to a simple path consisting of tree edges on the tree. We say this non-tree edge **covers** all edges on this simple path.
 
-在图中，绿色的树边 **至少** 被一条非树边覆盖，黑色的树边不被 **任何** 非树边覆盖．
+In the figure, green tree edges are covered by at least one non-tree edge, and black tree edges are not covered by **any** non-tree edge.
 
-显然，**非树边** 和 **绿色的树边** 一定不是桥，**黑色的树边** 一定是桥．
+Obviously, **non-tree edges** and **green tree edges** are definitely not bridges, and **black tree edges** are definitely bridges.
 
-首先考虑一个暴力的做法，对于每一条非树边，都逐个地将它覆盖的每一条树边置成绿色，时间复杂度为 $O(nm)$．
+First consider a brute force approach: for each non-tree edge, mark each tree edge it covers as green one by one, with time complexity $O(nm)$.
 
-考虑用差分优化．对于每一条非树边，在其树上深度较小的端点处打上 `-1` 标记，在其树上深度较大的端点处打上 `+1` 标记，然后 $O(n)$ 求出每个点的子树内部的标记和．
+Consider using difference for optimization. For each non-tree edge, mark `-1` at the endpoint with smaller tree depth, and mark `+1` at the endpoint with larger tree depth. Then calculate the sum of marks within each vertex's subtree in $O(n)$ time.
 
-对于一个点 $u$，其子树内部的标记之和等于覆盖了 $u$ 和 $fa_u$ 之间的树边的非树边数量．若这个值等于 $0$，则 $u$ 和 $fa_u$ 之间的树边是 **桥**．
+For a vertex $u$, the sum of marks inside its subtree equals the number of non-tree edges covering the tree edge between $u$ and $fa_u$. If this value equals $0$, then the tree edge between $u$ and $fa_u$ is a **bridge**.
 
-再用 DFS 求出边双连通分量．
+Then use DFS to find edge-biconnected components.
 
-时间复杂度 $O(n+m)$．
+Time complexity is $O(n+m)$.
 
-??? note "示例代码"
+??? note "Sample Code"
     ```cpp
     --8<-- "docs/graph/code/bcc/bcc_4.cpp"
     ```
 
-???+ note "[#2788.「CEOI2015 Day1」管道](https://loj.ac/p/2788)"
-    给出一个 $N$ 点 $M$ 边的无向图，不保证连通．将每个联通块视为子图，请求出每一个子图中的桥．**你只有 16 MB 的内存空间．**
+???+ note "[#2788. "CEOI2015 Day1" Pipes](https://loj.ac/p/2788)"
+    Given an undirected graph with $N$ vertices and $M$ edges, not guaranteed to be connected. Treat each connected component as a subgraph, find the bridges in each subgraph. **You only have 16 MB of memory space.**
 
-??? note "题解"
-    此题最大的特征在于，你存不下所有的边．
+??? note "Solution"
+    The biggest characteristic of this problem is that you cannot store all edges.
     
-    考虑优化存边，若一条非树边被另一条非树边完全覆盖，则这条边无用．
+    Consider optimizing edge storage. If one non-tree edge is completely covered by another non-tree edge, then this edge is useless.
     
-    用并查集维护即可．
+    Use a union-find set to maintain this.
 
-## 点双连通分量
+## Vertex-Biconnected Components
 
-???+ note "[例题：洛谷 P8435【模板】点双连通分量](https://www.luogu.com.cn/problem/P8435)"
-    对于一个 $n$ 个节点 $m$ 条无向边的图，请输出其点双连通分量的个数，并且输出每个点双连通分量．
+???+ note "[Problem: Luogu P8435 [Template] Vertex-Biconnected Components](https://www.luogu.com.cn/problem/P8435)"
+    For an undirected graph with $n$ vertices and $m$ edges, output the number of vertex-biconnected components, and output each vertex-biconnected component.
 
-### Tarjan 算法
+### Tarjan's Algorithm
 
-需要先学习割点，可以先参见 [割点和桥](./cut.md) 的割点部分．
+First, you need to learn about cut vertices. You can see the cut vertex section of [Cut Vertices and Bridges](./cut.md).
 
-先给出两个性质：
+First, give two properties:
 
-1.  两个点双最多只有一个公共点，且一定是割点．
-2.  对于一个点双，它在 DFS 搜索树中 dfn 值最小的点一定是割点或者树根．
+1.  Two vertex-biconnected components share at most one common vertex, which must be a cut vertex.
+2.  For a vertex-biconnected component, the vertex with the smallest dfn value in the DFS search tree is definitely a cut vertex or the tree root.
 
-我们根据第二个性质，分类讨论：
+We discuss according to the second property:
 
-1.  当这个点为割点时，它一定是点双连通分量的根，因为一旦包含它的父节点，他仍然是割点．
-2.  当这个点为树根时：
-    1.  有两个及以上子树，它是一个割点．
-    2.  只有一个子树，它是一个点双连通分量的根．
-    3.  它没有子树，视作一个点双．
+1.  When this vertex is a cut vertex, it must be the root of the vertex-biconnected component, because if it still contains its parent node, it is still a cut vertex.
+2.  When this vertex is the tree root:
+    1.  If it has two or more subtrees, it is a cut vertex.
+    2.  If it has only one subtree, it is the root of a vertex-biconnected component.
+    3.  If it has no subtree, it is considered as a vertex-biconnected component.
 
-??? note "示例代码"
+??? note "Sample Code"
     ```cpp
     --8<-- "docs/graph/code/bcc/bcc_3.cpp"
     ```
 
-### 差分算法
+### Difference Algorithm
 
 ![bcc-2.png](./images/bcc-2.svg)
 
-如上图所示，黑色边为树边，红色边为非树边，每一条非树边的两个端点都唯一对应了树上由树边构成的一条简单路径．
+As shown in the figure, black edges are tree edges, and red edges are non-tree edges. Each non-tree edge uniquely corresponds to a simple path consisting of tree edges on the tree.
 
-考虑一张新图，新图中的每一个点对应原图中的每一条树边（在图中用蓝色点表示）．对于原图中的每一条非树边，将这条非树边对应的树上简单路径中的所有边在新图中对应的蓝点连成一个连通块（在图中用蓝色的边体现出来）．
+Consider a new graph where each vertex in the new graph corresponds to each tree edge in the original graph (shown as blue vertices in the figure). For each non-tree edge in the original graph, connect all the blue vertices corresponding to the tree edges on the simple path that the non-tree edge corresponds to into a connected component (shown as blue edges in the figure).
 
-这样，一个点若 **不是** 割点，当且仅当与其相连的所有边在新图中对应的蓝点都 **属于** 同一个连通块．
+Thus, a vertex is **not** a cut vertex if and only if all the blue vertices corresponding to edges connected to it belong to the **same** connected component.
 
-两个点 **是** 点双连通，当且仅当它们在原图的树上路径中的所有边在新图中对应的蓝点都 **属于** 同一个连通块，即图中的每个蓝点构成的连通块都是一个点双连通分量．
+Two vertices **are** vertex-biconnected if and only if all the blue vertices corresponding to edges on their path in the original tree belong to the **same** connected component. That is, each connected component formed by blue vertices is a vertex-biconnected component.
 
-蓝点间的连通关系可以用与求边双连通时用到的差分类似的方法维护，时间复杂度 $O(n+m)$．
+The connectivity relationship between blue vertices can be maintained using a method similar to the difference algorithm used for finding edge-biconnected components, with time complexity $O(n+m)$.

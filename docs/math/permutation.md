@@ -1,30 +1,30 @@
 author: 2008verser, aofall, CoelacanthusHex, Early0v0, Great-designer, Marcythm, Persdre, shuzhouliu, Tiphereth-A, Enter-tainer, gavinliu266, gi-b716, hjsjhn, Ir1d, MegaOwIer, wjy-yy, c-forrest
 
-置换和排列是各类问题中都很常见的概念．
+Permutations and arrangements are common concepts in various problems.
 
-???+ warning "本文讨论的不是排列数"
-    本文讨论的主题是全排列，而不是排列组合中的排列数．排列数的相关内容应当参考 [排列组合](./combinatorics/combination.md)．
+???+ warning "This article does not discuss permutations (combinatorics)"
+    This article discusses full permutations, not the number of permutations in combinatorics. For related content on permutation numbers, refer to [Combinatorics](./combinatorics/combination.md).
 
-???+ info "约定"
-    本文中如果不加说明，总是讨论有限的集合．
+???+ info "Convention"
+    In this article, if not specified otherwise, we always discuss finite sets.
 
-## 定义
+## Definition
 
-一个集合 $X$ 到自身的双射（即一一对应）$\sigma$ 称为 $X$ 的一个 **置换**（permutation）．如果集合 $X$ 上还具有 [全序](./order-theory.md#二元关系) 关系，则它的一个置换也常称作一个 **（全）排列**．这个全序关系称为集合上的自然顺序．
+A bijection (one-to-one correspondence) from a set $X$ to itself is called a **permutation** of $X$. If the set $X$ also has a [total order](./order-theory.md#二元关系) relation, then a permutation of it is also often called a **(total) arrangement** or **permutation**. This total order relation is called the natural order on the set.
 
-??? info "「置换」与「排列」"
-    在中文语境下，「置换」通常指改变元素顺序，而「排列」通常指将元素排成一列．当元素之间存在自然的顺序时，这两个概念是一回事：「排列」可以看作「置换」的结果；而相较于元素的自然顺序，「排列」中元素的顺序就指定了「置换」．因为本文使用「排列」一词时，总假定集合上存在自然顺序，故而本文中不会特意区分这两个概念．
-    
-    当然，没有自然顺序的元素也可以进行「排列」．这种「排列」常常出现在组合计数问题中．这超出了本文讨论的范畴．
+??? info ""Permutation" vs "Arrangement""
+    In Chinese terminology, the word translated as "permutation" usually refers to changing the order of elements, while the word translated as "arrangement" usually refers to arranging elements in a line. When there is a natural order between elements, these two concepts are the same: "arrangement" can be seen as the result of "permutation"; compared to the natural order of elements, the order in an "arrangement" specifies the "permutation". Since this article always assumes a natural order exists when using the term "arrangement," we will not deliberately distinguish between these two concepts.
 
-设集合 $X$ 的大小是 $n$，那么，$X$ 上的全体置换的数目就是 $n!$．特别地，$0!=1$，即空集合上有且只有一个置换，也就是空置换．
+    Of course, elements without a natural order can also be "arranged." This type of "arrangement" often appears in combinatorial counting problems. This is beyond the scope of this article.
 
-???+ info "记号"
-    置换讨论的是元素间的对应关系，而并不关心元素具体是什么．因而，当讨论大小为 $n$ 的集合时，通常假定讨论的集合就是 $\{1,2,\cdots,n\}$；当集合上需要自然顺序的时候，通常假定使用自然数上的自然顺序．
+If the size of set $X$ is $n$, then the total number of permutations on $X$ is $n!$. In particular, $0! = 1$, meaning there is exactly one permutation on the empty set, namely the empty permutation.
 
-## 表示方法
+???+ info "Notation"
+    Permutations discuss the correspondence between elements, not what the elements specifically are. Therefore, when discussing a set of size $n$, we usually assume the set under discussion is $\{1, 2, \cdots, n\}$; when a natural order is needed on the set, we usually assume the natural order on natural numbers is used.
 
-置换有多种表示方法．这里，以如下置换为例，讨论不同的置换表示方法．
+## Representation Methods
+
+There are multiple ways to represent permutations. Here, using the following permutation as an example, we discuss different representation methods.
 
 $$
 \sigma(1) = 2,\
@@ -35,9 +35,9 @@ $$
 \sigma(6) = 1.
 $$
 
-### 双行记号
+### Two-line notation
 
-集合 $X=\{x_1,x_2,\cdots,x_n\}$ 上的置换可以表示为
+A permutation on set $X = \{x_1, x_2, \cdots, x_n\}$ can be represented as
 
 $$
 \sigma=\begin{pmatrix}x_1&x_2&\cdots&x_n\\
@@ -45,9 +45,9 @@ x_{p_1}&x_{p_2}&\cdots&x_{p_n}
 \end{pmatrix}.
 $$
 
-它表示置换 $\sigma$ 将元素 $x_i$ 映射到 $x_{p_i}$．这里，当然需要 $X=\{x_{p_1},x_{p_2},\cdots,x_{p_n}\}$．置换的双行记号表示中，首行的元素出现顺序并不重要，重要的是两行之间的对应关系．
+This represents that permutation $\sigma$ maps element $x_i$ to $x_{p_i}$. Here, of course, we need $X = \{x_{p_1}, x_{p_2}, \cdots, x_{p_n}\}$. In the two-line notation of a permutation, the order of elements in the first row is not important; what matters is the correspondence between the two rows.
 
-比如说，前文的例子可以按照双行记号写作
+For example, the previous example can be written in two-line notation as
 
 $$
 \sigma=
@@ -57,7 +57,7 @@ $$
 \end{pmatrix},
 $$
 
-当然，也可以写作
+or it can also be written as
 
 $$
 \sigma=
@@ -67,304 +67,304 @@ $$
 \end{pmatrix}.
 $$
 
-### 单行记号
+### One-line notation
 
-很多时候，集合 $X$ 上有自然顺序．如果在双行记号中默认首行按照自然的顺序书写，并省略首行，那么，置换可以表示为
-
-$$
-\sigma=\sigma(1)\sigma(2)\cdots\sigma(n).
-$$
-
-这更像自然语言中排列的概念．所以，有时候排列会用来称呼这个有序组．
-
-前文的例子利用单行记号可以写作
+Often, a set $X$ has a natural order. If in the two-line notation we default to writing the first row in natural order and omit the first row, then the permutation can be expressed as
 
 $$
-\sigma=265431.
+\sigma = \sigma(1)\sigma(2)\cdots\sigma(n).
 $$
 
-这种单行的记号，常用来比较不同排列的大小．
+This is more like the concept of arrangement in natural language. Therefore, sometimes this ordered tuple is called a permutation.
 
-### 轮换表示
-
-置换还有一种更为紧凑的表达方式，称为置换的轮换表示．它将置换表示为一系列不相交的轮换的乘积．下面描述将给定置换写成轮换表示的步骤．
-
-给定一个置换 $\sigma$，可以通过如下步骤写成轮换表示：
-
-1.  如果 $X$ 中还有未曾写下的元素，就写下一个左括号，并写下任意一个这样的元素；
-2.  当前一个写下的元素是 $x$ 时，
-    -   如果 $\sigma(x)$ 已经在前面写下过，就写上右括号，并返回步骤 1；
-    -   如果 $\sigma(x)$ 还没有写下过，就写下 $\sigma(x)$，并继续步骤 2；
-3.  直到 $X$ 的所有元素都已经写下，结束．
-
-每一对括号中，都是一个轮换．括号中的元素个数，称为对应轮换的长度．实践中，常常省略掉长度为一的轮换．
-
-前文的例子利用轮换表示可以写作
+The previous example in one-line notation is
 
 $$
-\sigma=(126)(35)(4)=(126)(35).
+\sigma = 265431.
 $$
 
-恒等变换中所有的轮换长度都是一，常常记作 $(1)$ 而不是全部省略．
+This one-line notation is often used to compare the sizes of different permutations.
 
-## 复合
+### Cycle notation
 
-置换的复合就是映射的复合．置换的复合也常常称作置换的乘法．
+There is a more compact way to express permutations, called cycle notation. It expresses a permutation as a product of disjoint cycles. Below we describe the steps to write a given permutation in cycle notation.
 
-给定两个置换
+Given a permutation $\sigma$, it can be written in cycle notation through the following steps:
+
+1. If there are still unwritten elements in $X$, write a left parenthesis and any such element.
+2. When the last written element is $x$:
+    - If $\sigma(x)$ has already been written before, write a right parenthesis and return to step 1.
+    - If $\sigma(x)$ has not been written yet, write $\sigma(x)$ and continue with step 2.
+3. When all elements of $X$ have been written, end.
+
+Each pair of parentheses is a cycle. The number of elements in parentheses is called the length of the corresponding cycle. In practice, cycles of length one are often omitted.
+
+The previous example in cycle notation is
+
+$$
+\sigma = (126)(35)(4) = (126)(35).
+$$
+
+In the identity transformation, all cycles have length one, which is often written as $(1)$ rather than all being omitted.
+
+## Composition
+
+The composition of permutations is the composition of mappings. The composition of permutations is also often called permutation multiplication.
+
+Given two permutations
 
 $$
 \sigma=\begin{pmatrix}x_1&x_2&\cdots&x_n\\ x_{p_1}&x_{p_2}&\cdots&x_{p_n}\end{pmatrix},\ \pi=\begin{pmatrix}x_{p_1}&x_{p_2}&\cdots&x_{p_n}\\ x_{q_1}&x_{q_2}&\cdots&x_{q_n}\end{pmatrix},
 $$
 
-那么，它们的乘积 $\pi\circ\sigma$ 的值为
+then their product $\pi\circ\sigma$ has the value
 
 $$
 \pi\circ\sigma=\begin{pmatrix}x_1&x_2&\cdots&x_n\\
 x_{q_1}&x_{q_2}&\cdots&x_{q_n}\end{pmatrix}.
 $$
 
-简单来说就是先经过 $\sigma$ 的映射，再经过 $\pi$ 的映射．注意在上面的双行记号中，内层映射 $\sigma$ 的第二行的顺序和外层映射 $\pi$ 的第一行的顺序一致．
+Simply put, it first goes through the mapping $\sigma$, then through the mapping $\pi$. Note that in the two-line notation above, the order of the second row of the inner mapping $\sigma$ is consistent with the first row of the outer mapping $\pi$.
 
-因为置换 $\sigma$ 和 $\pi$ 本质是两个映射，所以 $(\pi\circ\sigma)(x)=\pi(\sigma(x))$．置换的复合的运算顺序是自右向左的．置换的乘法并不满足交换律，所以使用错误的顺序计算可能会导致错误的结果．
+Since permutations $\sigma$ and $\pi$ are essentially two mappings, we have $(\pi\circ\sigma)(x) = \pi(\sigma(x))$. The evaluation order of permutation composition is right-to-left. Permutation multiplication does not satisfy the commutative law, so using the wrong order may lead to incorrect results.
 
-连续多个置换的乘积称作排列的幂，可以使用 [快速幂](./binary-exponentiation.md#多次置换) 加速计算．
+The product of multiple consecutive permutations is called the power of a permutation, which can be accelerated using [binary exponentiation](./binary-exponentiation.md#多次置换).
 
-### 逆置换
+### Inverse permutation
 
-因为置换是双射，所以置换总有相应的逆置换．
+Since a permutation is a bijection, every permutation has a corresponding inverse permutation.
 
-给定置换
+Given a permutation
 
 $$
 \sigma=\begin{pmatrix}x_1&x_2&\cdots&x_n\\ x_{p_1}&x_{p_2}&\cdots&x_{p_n}\end{pmatrix},
 $$
 
-它的逆置换就是
+its inverse permutation is
 
 $$
 \sigma^{-1}=\begin{pmatrix}x_{p_1}&x_{p_2}&\cdots&x_{p_n}\\x_1&x_2&\cdots&x_n\end{pmatrix}.
 $$
 
-在轮换表示中，只要对每个轮换取逆，就能得到原来的置换的逆；而对每个轮换取逆，只要把元素的书写顺序倒过来就可以了．比如说，上文中的例子 $\sigma$ 的逆置换的轮换表示是
+In cycle notation, to get the inverse of a permutation, we just need to invert each cycle; to invert a cycle, we just reverse the order of elements. For example, the inverse permutation of the example above in cycle notation is
 
 $$
 \sigma^{-1} = (621)(53) = (162)(35).
 $$
 
-给定 $1\sim n$ 的一个排列和它的每个元素的排名的序列，就互为逆排列．
+Given a permutation of $1 \sim n$ and the sequence of rankings of each element, they are inverses of each other.
 
-## 轮换
+## Cycles
 
-**轮换**（cycle）本身是特殊的置换．轮换的特性是，从轮换中的任何一点 $x$ 出发，都能通过反复应用置换 $\sigma$ 的方式得到轮换中的另一点 $y$．长度为 $k$ 的轮换也称作 **$k$‑轮换**（$k$-cycle）．反复应用 $k$‑轮换 $k$ 次，将得到恒等变换，即每个元素都回到了最开始的位置．
+A **cycle** itself is a special permutation. The characteristic of a cycle is that starting from any point $x$ in the cycle, you can obtain another point $y$ in the cycle by repeatedly applying the permutation $\sigma$. A cycle of length $k$ is also called a **$k$-cycle**. Applying a $k$-cycle $k$ times yields the identity transformation, i.e., every element returns to its starting position.
 
-置换的轮换表示可以看作将置换写成这些特殊置换（即轮换）的乘积，因而置换的轮换表示也可以看作是置换的 **轮换分解**（cycle decomposition）．对于每个置换，它分解成轮换乘积的方式在不计顺序后都是唯一的．轮换可以看作是构成置换的基本单元．
+The cycle notation of a permutation can be seen as writing the permutation as a product of these special permutations (i.e., cycles). Therefore, the cycle notation of a permutation can also be seen as the **cycle decomposition** of the permutation. For each permutation, the way it decomposes into a product of cycles is unique up to order. Cycles can be seen as the basic building blocks that make up a permutation.
 
-置换的轮换分解有着清晰的几何意义．如果将集合 $S$ 上的置换中的每个有序对 $(x,\sigma(x))$ 都看成以 $S$ 为顶点的有向图的边，那么这些轮换就是这个图上面的环路．如果置换 $\sigma$ 能够分解为 $m$ 个轮换，就意味着对应的有向图中共计有 $m$ 个环路（包括自环）．这些环路自然互不相交．
+The cycle decomposition of a permutation has clear geometric significance. If we view each ordered pair $(x, \sigma(x))$ in a permutation on set $S$ as an edge in a directed graph with $S$ as vertices, then these cycles are the cycles in this directed graph. If permutation $\sigma$ can be decomposed into $m$ cycles, it means the corresponding directed graph has a total of $m$ cycles (including self-loops). These cycles are naturally disjoint.
 
-### 不动点
+### Fixed points
 
-$1$‑轮换就是置换的 **不动点**（fixed point）．对于集合 $X$ 上的置换 $\sigma$，通常用 $X^\sigma$ 表示 $\sigma$ 的不动点集合，即 $X^\sigma=\{x\in X:\sigma(x)=x\}$．
+A $1$-cycle is a **fixed point** of a permutation. For a permutation $\sigma$ on set $X$, we usually use $X^\sigma$ to represent the set of fixed points of $\sigma$, i.e., $X^\sigma = \{x \in X : \sigma(x) = x\}$.
 
-### 对换
+### Transpositions
 
-$2$‑轮换也称作 **对换**（transposition）．也就是说，对换就是只交换了一对元素位置的置换．它的轮换表示是 $(x_ix_j)$，表示它交换了 $x_i$ 和 $x_j$ 的位置．
+A $2$-cycle is also called a **transposition**. That is, a transposition is a permutation that only swaps one pair of elements. Its cycle notation is $(x_i x_j)$, meaning it swaps the positions of $x_i$ and $x_j$.
 
-任何置换都可以写作一系列对换的乘积．这相当于说，任何顺序的排列都可以通过一系列交换两个元素的操作恢复成指定的正序排列．这正是基于交换的排序算法在做的事情．
+Any permutation can be written as a product of a series of transpositions. This is equivalent to saying that any permutation can be restored to a specified normal order through a series of operations that swap two elements. This is exactly what swap-based sorting algorithms do.
 
-更进一步，[冒泡排序算法](../basic/bubble-sort.md) 的正确性其实说明，任何置换都可以写作一系列相邻对换的乘积．这里的 **相邻对换**（adjacent transposition）指的是只交换相邻元素的对换．
+Furthermore, the correctness of [bubble sort](../basic/bubble-sort.md) actually shows that any permutation can be written as a product of a series of adjacent transpositions. Here, an **adjacent transposition** refers to a transposition that only swaps adjacent elements.
 
-## 性质
+## Properties
 
-在应用中，常常需要关注单个置换的性质．
+In applications, we often need to focus on the properties of individual permutations.
 
-### 奇偶性
+### Parity
 
-将轮换分解成对换的方式并不是唯一的．比如，
+The way to decompose a cycle into transpositions is not unique. For example,
 
 $$
-(123)=(13)(12)=(12)(23)=(12)(13)(12)(13).
+(123) = (13)(12) = (12)(23) = (12)(13)(12)(13).
 $$
 
-但是，置换分解成一系列对换时，需要的对换的数目的奇偶性是固定的．一个置换的对换分解的数目的奇偶性也称作置换的 **奇偶性**（parity）．
+However, when decomposing a permutation into a series of transpositions, the parity (odd/even) of the number of transpositions required is fixed. The parity of the number of transpositions in a transposition decomposition is also called the **parity** of the permutation.
 
-能够分解成偶数个对换的乘积的置换叫做偶置换，能够分解成奇数个对换的乘积的置换叫做奇置换．当 $n\ge2$ 时，大小为 $n$ 的奇置换和偶置换的数目相同．
+A permutation that can be decomposed into an even number of transpositions is called an even permutation, and one that can be decomposed into an odd number of transpositions is called an odd permutation. When $n \ge 2$, the number of odd permutations and even permutations of size $n$ is the same.
 
-### 符号
+### Sign
 
-根据置换的奇偶性，还可以定义置换的 **符号**（sign），记作 $\operatorname{sgn}\sigma$．偶置换的符号定义为 $+1$，奇置换的符号定义为 $-1$．
+Based on the parity of a permutation, we can also define the **sign** of a permutation, denoted $\operatorname{sgn}\sigma$. The sign of an even permutation is defined as $+1$, and the sign of an odd permutation is defined as $-1$.
 
-置换的乘积的符号，等于它们的符号的乘积，即
+The sign of the product of permutations equals the product of their signs, i.e.,
 
 $$
 \operatorname{sgn}(\pi\circ\sigma)=\operatorname{sgn}
 \pi\cdot\operatorname{sgn}\sigma.
 $$
 
-也就是说，两个奇偶性相同的置换的复合是偶置换，两个奇偶性不同的置换的复合是奇置换．这一结论，从对换分解的角度看是显然的．
+In other words, the composition of two permutations with the same parity is an even permutation, and the composition of two permutations with different parities is an odd permutation. This conclusion is obvious from the perspective of transposition decomposition.
 
-特别地，单次对换必然改变置换的奇偶性．这也正解释了为什么虽然分解成对换的方式不唯一，但是所需的对换的数目的奇偶性是确定的．
+In particular, a single transposition always changes the parity of a permutation. This also explains why although the way to decompose into transpositions is not unique, the parity of the number of transpositions required is fixed.
 
-置换的符号出现在 [行列式的 Leibniz 展开](../math/linear-algebra/determinant.md#全排列方法定义) 中．
+The sign of a permutation appears in the [Leibniz expansion of determinants](../math/linear-algebra/determinant.md#全排列方法定义).
 
-### 置换的阶
+### Order of a permutation
 
-置换的 **阶**（order）是指满足如下条件的最小正整数 $a$：重复该置换 $a$ 次后，所有元素都回到了原位．即
+The **order** of a permutation is the smallest positive integer $a$ such that after applying the permutation $a$ times, all elements return to their original positions. That is,
 
 $$
-\operatorname{ord}\sigma=\min\{a\in\mathbf N_+:\sigma^a=(1)\}.
+\operatorname{ord}\sigma = \min\{a \in \mathbf N_+ : \sigma^a = (1)\}.
 $$
 
-有限集合上，所有置换的阶都是有限的．这意味着，从起始顺序出发，只要重复按照固定模式打乱给定序列，在有限时间内，总可以将排列恢复原样．
+On a finite set, the order of all permutations is finite. This means that starting from an initial order, as long as we repeatedly shuffle a given sequence according to a fixed pattern, we can always restore the permutation within a finite time.
 
-### 置换的型
+### Cycle type of a permutation
 
-将 $n$ 个元素的置换做轮换分解，置换的 **型**（cycle type）就是分解中轮换长度的可重集合．这些轮换的长度构成了一个置换长度 $n$ 的整数分划．如果得到的分解中长度为 $k$ 的轮换共计 $\alpha_k$ 个，那么置换的型常记作
+When decomposing a permutation of $n$ elements into cycles, the **cycle type** of the permutation is the multiset of cycle lengths in the decomposition. These cycle lengths form an integer partition of $n$, the length of the permutation. If the decomposition contains $\alpha_k$ cycles of length $k$, then the cycle type of the permutation is often denoted as
 
 $$
 1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n},
 $$
 
-且这些系数满足 $\sum_{k=1}^nk\alpha_k=n$．
+and these coefficients satisfy $\sum_{k=1}^n k\alpha_k = n$.
 
-给定置换的型，不同的置换的数目为
+Given the cycle type of a permutation, the number of different permutations is
 
 $$
 \frac{n!}{1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}\alpha_1!\alpha_2!\cdots\alpha_n!}.
 $$
 
-??? note "分析"
-    这是因为，给定任何 $1\sim n$ 的排列，都可以按照置换的型分割成相应的轮换分解．但是，长度相同的轮换之间的顺序并不影响置换，所以总数需要除以 $\prod_k\alpha_k!$．另外，同一轮换内部实际是圆排列，起点的选取也不影响置换，所以需要除以 $\prod_kk^{\alpha_k}$．这就得到上式．
+??? note "Analysis"
+    This is because given any permutation of $1 \sim n$, it can be split into the corresponding cycle decomposition according to the cycle type of the permutation. However, the order of cycles with the same length does not affect the permutation, so the total count needs to be divided by $\prod_k \alpha_k!$. Additionally, within the same cycle, it is actually a circular arrangement; the choice of starting point does not affect the permutation, so it needs to be divided by $\prod_k k^{\alpha_k}$. This gives the formula above.
 
-如果仅仅给定置换分解成的轮换个数 $c(\sigma)$，则不同的置换的数目为 [第一类斯特林数](./combinatorics/stirling.md#第一类斯特林数stirling-number) $\begin{bmatrix}n\\ k\end{bmatrix}$．不同的型的个数为置换长度 $n$ 的 [分拆数](./combinatorics/partition.md)  $p_n$．
+If only the number of cycles $c(\sigma)$ that the permutation decomposes into is given, then the number of different permutations is the [Stirling number of the first kind](./combinatorics/stirling.md#第一类斯特林数stirling-number) $\begin{bmatrix}n\\ k\end{bmatrix}$. The number of different cycle types is the [partition number](./combinatorics/partition.md) $p_n$ of $n$.
 
-从置换的型，可以方便地确定置换的阶和奇偶性等性质．
+From the cycle type of a permutation, we can easily determine properties such as the order and parity of the permutation.
 
-因为 $k$‑轮换的阶是 $k$，不同的轮换又互不相交，所以置换 $\sigma$ 的阶就是
-
-$$
-\operatorname{lcm}\{k:\alpha_k>0\}.
-$$
-
-同样地，因为 $k$‑轮换的奇偶性与 $k$ 的奇偶性相反，所以置换 $\sigma$ 的奇偶性就是
+Since the order of a $k$-cycle is $k$, and different cycles are disjoint, the order of permutation $\sigma$ is
 
 $$
-\sum_k(k-1)\alpha_k=\sum_{k}k\alpha_k-\sum_{k}\alpha_k=n-c(\sigma)
+\operatorname{lcm}\{k : \alpha_k > 0\}.
 $$
 
-的奇偶性．这里，$c(\sigma)$ 是轮换的个数（包括 $1$‑轮换，即不动点）．
+Similarly, since the parity of a $k$-cycle is opposite to the parity of $k$, the parity of permutation $\sigma$ is the parity of
 
-置换的型在 [Pólya 计数](./combinatorics/polya.md) 中有重要作用．
+$$
+\sum_k (k-1)\alpha_k = \sum_k k\alpha_k - \sum_k \alpha_k = n - c(\sigma)
+$$
 
-## 排列相关
+Here, $c(\sigma)$ is the number of cycles (including $1$-cycles, i.e., fixed points).
 
-如果集合 $X$ 本身具有自然顺序，此时置换 $\sigma$ 常称作排列，并用单行记号
+The cycle type of a permutation plays an important role in [Pólya counting](./combinatorics/polya.md).
+
+## Arrangements
+
+If set $X$ itself has a natural order, then a permutation $\sigma$ is often called an arrangement or permutation, expressed in one-line notation as
 
 $$
 \sigma(1)\sigma(2)\cdots\sigma(n)
 $$
 
-表示．注意不要同轮换混淆．
+Note not to confuse this with cycle notation.
 
-### 逆序数
+### Inversion count
 
-在一个排列中，如果某一个较大的数排在某一个较小的数前面，就说这两个数构成一个 **逆序**（inversion）或反序．这里的比较是在自然顺序下进行的．
+In an arrangement, if a larger number appears before a smaller number, these two numbers form an **inversion** or anti-sequence. The comparison here is done under the natural order.
 
-在一个排列里出现的逆序的总个数，叫做这个置换的 **逆序数**．排列的逆序数是它恢复成正序序列所需要做相邻对换的最少次数．因而，排列的逆序数的奇偶性和相应的置换的奇偶性一致．这可以作为置换的奇偶性的等价定义．
+The total number of inversions in an arrangement is called the **inversion count** of the permutation. The inversion count of an arrangement is the minimum number of adjacent transpositions needed to restore it to the normal order. Therefore, the parity of the inversion count of an arrangement is consistent with the parity of the corresponding permutation. This can serve as an equivalent definition of the parity of a permutation.
 
-求解逆序数的算法，可以使用 [归并排序](../basic/merge-sort.md#逆序对) 或 [树状数组](../ds/fenwick.md#全局逆序对全局二维偏序)，时间复杂度均为 $O(n\log n)$．两种算法的解释详见对应章节，这里给出它们的参考实现．
+Algorithms for solving the inversion count can use [merge sort](../basic/merge-sort.md#逆序对) or [Fenwick tree](../ds/fenwick.md#全局逆序对全局二维偏序), both with time complexity $O(n\log n)$. The explanations of both algorithms are in the corresponding sections. Here we provide their reference implementations.
 
-??? example "参考实现"
-    === "归并排序"
+??? example "Reference implementation"
+    === "Merge sort"
         ```cpp
         --8<-- "docs/math/code/permutation/inversion_2.cpp"
         ```
     
-    === "树状数组"
+    === "Fenwick tree"
         ```cpp
         --8<-- "docs/math/code/permutation/inversion_1.cpp"
         ```
 
-### 顺序
+### Ordering
 
-排列之间是可以比较大小的．因为每个单行记号就是一个字符串，排列的顺序就是这个字符串上的 [字典序](../string/basic.md#字典序)．
+Arrangements can be compared in size. Since each one-line notation is a string, the order of arrangements is the [lexicographic order](../string/basic.md#字典序) on this string.
 
-在 C++ 的 STL 库 `<algorithm>` 中可以使用 `prev_permutation` 和 `next_permutation` 分别找到当前排列按照字典序的上一个和下一个排列．
+In C++'s STL library `<algorithm>`, you can use `prev_permutation` and `next_permutation` to find the previous and next arrangements in lexicographic order respectively.
 
-### 排名
+### Ranking
 
-将 $n$ 个元素的排列按照字典序从小到大列举出来，则某一排列在这个序列中的位次就是该排列的排名．它建立了排列和正整数之间的一一对应，常常用于排列相关问题的状态压缩．
+List all $n$-element arrangements in lexicographic order from smallest to largest. The position of a certain arrangement in this sequence is its rank. It establishes a one-to-one correspondence between arrangements and positive integers, often used for state compression in permutation-related problems.
 
-在中文竞赛圈，这个排名常称作排列的「康托展开」，但这种名称并不规范．更为严谨的说法是，一个排列的排名的 **康托展开**（Cantor expansion），对应着该排列的 **Lehmer 码**（Lehmer code）．
+In the Chinese competitive programming community, this rank is often called the "Cantor expansion" of the arrangement, but this name is not standard. A more rigorous statement is that the **Cantor expansion** of a permutation's rank corresponds to its **Lehmer code**.
 
-??? info "关于「康托展开」"
-    正如名字所暗示的那样，康托展开是指一种将自然数展开为数列的方法．它可以看作是一种特殊的进制，也叫做 [阶乘进制](./numeral-sys/base.md#混合基数进制)．这种进制中，不同的数位对应的底数（radix）并不相同．比如，十进制数 $463_{10}$ 可以在阶乘进制中表示为
+??? info "About "Cantor expansion""
+    As the name suggests, Cantor expansion is a method for expanding natural numbers into number sequences. It can be seen as a special base, also called [factorial number system](./numeral-sys/base.md#混合基数进制). In this base, the radix for different digits is not the same. For example, the decimal number $463_{10}$ can be expressed in factorial number system as
     
     $$
-    463_{10}=341010_{!}.
+    463_{10} = 341010_{!}.
     $$
     
-    它表示如下含义
+    It represents the following meaning
     
     $$
-    463=3\times 5!+4\times 4!+1\times 3!+0\times 2!+1\times 1!+0\times 0!.
+    463 = 3 \times 5! + 4 \times 4! + 1 \times 3! + 0 \times 2! + 1 \times 1! + 0 \times 0!.
     $$
     
-    康托对于这类混合底数的进制进行了研究，故而自然数在这种进制下的数码表示也常称作自然数的康托展开．
+    Cantor studied this type of mixed-radix representation, so the digit representation of natural numbers in this base is also often called the Cantor expansion of natural numbers.
 
-??? example "示例"
-    不熟悉排名的计算方法的读者，可以通过这个简单的例子理解下面的算法的基本思路．
+??? example "Example"
+    Readers unfamiliar with the ranking calculation method can understand the basic idea of the following algorithm through this simple example.
     
-    要计算排列 $\sigma=452631$ 的排名，就是要计算有多少排列的字典序小于 $\sigma$，再加一．这里的思想类似于 [数位 DP](../dp/number.md)，都是逐位讨论．
+    To calculate the rank of arrangement $\sigma = 452631$, we need to count how many arrangements have lexicographic order smaller than $\sigma$, plus one. The idea is similar to [digit DP](../dp/number.md), discussing digit by digit.
     
-    -   第 $1$ 位的选取要小于 $\sigma$，只能取自 $\{1,2,3\}$，后面 $5$ 位可以任意选取，共 $3\times 5!$ 个可选的排列；
-    -   如果第 $1$ 位也选择 $4$，那么第 $2$ 位的选取要小于 $\sigma$，只能取自 $\{1,2,3\}$（这里，$4$ 已经选过了），后面的 $4$ 位可以任意选取，共 $3\times 4!$ 个可选的排列；
-    -   类似地，前 $2$ 位的选取和 $\sigma$ 相同时，第 $3$ 位的选取要小于 $\sigma$，只能取自 $\{1\}$，后面的 $3$ 位可以任意选取，共 $1\times 3!$ 个可选的排列；
-    -   前 $3$ 位的选取和 $\sigma$ 相同时，第 $4$ 位的选取要小于 $\sigma$，只能取自 $\{1,3\}$，后面的 $2$ 位可以任意选取，共 $2\times 2!$ 个可选的排列；
-    -   前 $4$ 位的选取和 $\sigma$ 相同时，第 $5$ 位的选取要小于 $\sigma$，只能取自 $\{1\}$，后面的 $1$ 位可以任意选取，共 $1\times 1!$ 个可选的排列；
-    -   前 $5$ 位的选取和 $\sigma$ 相同时，第 $6$ 位的选择无法得到比 $\sigma$ 更小的排列，所以共 $0\times 0!$ 个可选的排列．
+    - The first digit being smaller than $\sigma$ can only be from $\{1, 2, 3\}$, and the remaining 5 positions can be any, giving $3 \times 5!$ possible arrangements.
+    - If the first digit is also $4$, then the second digit being smaller than $\sigma$ can only be from $\{1, 2, 3\}$ (since $4$ has been selected), and the remaining 4 positions can be any, giving $3 \times 4!$ possible arrangements.
+    - Similarly, when the first 2 digits are the same as $\sigma$, the third digit being smaller than $\sigma$ can only be from $\{1\}$, and the remaining 3 positions can be any, giving $1 \times 3!$ possible arrangements.
+    - When the first 3 digits are the same as $\sigma$, the fourth digit being smaller than $\sigma$ can only be from $\{1, 3\}$, and the remaining 2 positions can be any, giving $2 \times 2!$ possible arrangements.
+    - When the first 4 digits are the same as $\sigma$, the fifth digit being smaller than $\sigma$ can only be from $\{1\}$, and the remaining 1 position can be any, giving $1 \times 1!$ possible arrangements.
+    - When the first 5 digits are the same as $\sigma$, the sixth digit cannot yield an arrangement smaller than $\sigma$, so $0 \times 0!$ possible arrangements.
     
-    因此，排列 $\sigma$ 的排名为
+    Therefore, the rank of arrangement $\sigma$ is
     
     $$
-    1+3\times 5!+3\times 4!+1\times 3!+2\times 2!+1\times 1!+0\times 0!=444.
+    1 + 3 \times 5! + 3 \times 4! + 1 \times 3! + 2 \times 2! + 1 \times 1! + 0 \times 0! = 444.
     $$
     
-    对于不同的排列，关键的点在于确定阶乘前面的系数．实际上，这些系数正是排在该位置之后却小于该位置元素的元素数目．
+    For different arrangements, the key point is determining the coefficients before the factorials. These coefficients are actually the number of elements that come after that position but are smaller than that element.
 
-从例子中可以知道，求解给定排列的排名的算法，可以分为两步：
+From the example, the algorithm for solving the rank of a given arrangement can be divided into two steps:
 
-1.  将给定的长度为 $n$ 的排列转化为它的 Lehmer 码，即长度为 $n$ 的序列 $L_\sigma$，其中，第 $i$ 位是
-
+1. Convert the given arrangement of length $n$ into its Lehmer code, which is a sequence $L_\sigma$ of length $n$, where the $i$-th position is
+    
     $$
-    L_\sigma(i)=\#\{j>i:\sigma(j)<\sigma(i)\},
+    L_\sigma(i) = \#\{j > i : \sigma(j) < \sigma(i)\},
+    $$
+    
+    i.e., the number of elements that come after the $i$-th position but are smaller than $\sigma(i)$ in the arrangement. It equals the rank (minus one) of the given element among the unused elements.
+
+2. Treat the Lehmer code as the Cantor expansion of a natural number, find the original natural number, and add one. That is, the final rank equals
+    
+    $$
+    \operatorname{rank}\sigma = 1 + L_\sigma(1)(n-1)! + L_\sigma(2)(n-2)! + \cdots + L_\sigma(n)0!.
     $$
 
-    也就是在排列中，排在第 $i$ 位后面，但是却比 $\sigma(i)$ 小的元素个数．它等于尚未使用的元素中给定元素的排名（减一）．
+To solve the inverse problem, i.e., given a rank to find the corresponding arrangement, simply reverse the above process. In this process, the sum of the digits in the Lehmer code obtained is the inversion count of the arrangement.
 
-2.  将 Lehmar 码看作是自然数的康托展开，求出原来的自然数，并加一．也就是说，最终的排名等于
+In programming, the key is to be able to quickly calculate "the rank of a given element among unused elements" (when computing rank) and "the element with a given rank among unused elements" (when computing arrangement). These can all be maintained using data structures such as [Fenwick tree](../ds/fenwick.md) or [segment tree](../ds/seg.md). The time complexity of both forward and reverse operations is $O(n\log n)$.
 
-    $$
-    \operatorname{rank}\sigma=1+L_\sigma(1)(n-1)!+L_\sigma(2)(n-2)!+\cdots+L_\sigma(n)0!.
-    $$
-
-要求解这一问题的逆问题，即给定排名求解相应的排列，只要将上述过程反过来操作即可．在这一过程中求得的 Lehmer 码中的数字之和，就是排列的逆序数．
-
-编程实现时，关键是要能够快速计算「尚未使用的元素中给定元素的排名」（求排名时）和「尚未使用的元素中给定排名的元素」（求排列时），这些都可以通过 [树状数组](../ds/fenwick.md) 或 [线段树](../ds/seg.md) 等数据结构维护．正反操作的时间复杂度均为 $O(n\log n)$．
-
-??? example "参考实现"
-    === "求给定排列的排名"
+??? example "Reference implementation"
+    === "Computing the rank of a given arrangement"
         ```cpp
         --8<-- "docs/math/code/permutation/perm_rank.cpp"
         ```
     
-    === "求给定排名的排列"
+    === "Computing the arrangement for a given rank"
         ```cpp
         --8<-- "docs/math/code/permutation/rank_perm.cpp"
         ```
 
-## 参考资料与注释
+## References and Notes
 
--   [Permutation - Wikipedia](https://en.wikipedia.org/wiki/Permutation)
--   [Lehmer code - Wikipedia](https://en.wikipedia.org/wiki/Lehmer_code)
--   [Factorial number system - Wikipedia](https://en.wikipedia.org/wiki/Factorial_number_system)
+- [Permutation - Wikipedia](https://en.wikipedia.org/wiki/Permutation)
+- [Lehmer code - Wikipedia](https://en.wikipedia.org/wiki/Lehmer_code)
+- [Factorial number system - Wikipedia](https://en.wikipedia.org/wiki/Factorial_number_system)

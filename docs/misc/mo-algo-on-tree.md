@@ -1,54 +1,54 @@
 author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouuan, Linky
 
-## 括号序树上莫队
+## Mo's Algorithm on Trees with Bracket Order
 
-一般的莫队只能处理线性问题，我们要把树强行压成序列．
+Ordinary Mo's algorithm can only handle linear problems, so we need to force the tree into a sequence.
 
-我们可以将树的括号序跑下来，把括号序分块，在括号序上跑莫队．
+We can obtain the bracket order of the tree, divide the bracket order into blocks, and run Mo's algorithm on this bracket order.
 
-具体怎么做呢？
+How exactly do we do this?
 
-### 过程
+### Procedure
 
-dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点，就直接 `push_back(-x)`，然后我们在挪动指针的时候，
+Run DFS on a tree. When DFS reaches node x, `push_back(x)`; when DFS finishes node x, directly `push_back(-x)`. Then, when moving the pointers:
 
--   新加入的值是 x  --->`add(x)`
--   新加入的值是 - x --->`del(x)`
--   新删除的值是 x  --->`del(x)`
--   新删除的值是 - x --->`add(x)`
+-   The newly added value is x  --->`add(x)`
+-   The newly added value is - x --->`del(x)`
+-   The newly removed value is x  --->`del(x)`
+-   The newly removed value is - x --->`add(x)`
 
-这样的话，我们就把一棵树处理成了序列．
+In this way, we process a tree into a sequence.
 
-### 例题
+### Example
 
-???+ note "例题 [「WC2013」糖果公园](https://uoj.ac/problem/58)"
-    题意：给你一棵树，树上第 $i$ 个点颜色为 $c_i$，每次询问一条路径 $u_i$,$v_i$, 求这条路径上的
+???+ note "Example [WC2013 Candy Park](https://uoj.ac/problem/58)"
+    Statement: given a tree where the color of the $i$-th node is $c_i$, each query asks for a path $u_i$,$v_i$ and asks you to compute, on this path,
     
     $\sum_{c}val_c\sum_{i=1}^{cnt_c}w_i$
     
-    其中：$val$ 表示该颜色的价值，$cnt$ 表示颜色出现的次数，$w$ 表示该颜色出现 $i$ 次后的价值
+    where $val$ denotes the value of a color, $cnt$ denotes the number of occurrences of a color, and $w$ denotes the value after the color has appeared $i$ times.
 
-#### 过程
+#### Procedure
 
-先把树变成序列，然后每次添加/删除一个点，这个点的对答案的贡献是可以在 $O(1)$ 时间内获得的，即 $val_c\times w_{cnt_{c+1}}$
+First turn the tree into a sequence. Then each time a node is added or deleted, this node's contribution to the answer can be obtained in $O(1)$ time, namely $val_c\times w_{cnt_{c+1}}$.
 
-发现因为他会把起点的子树也扫了一遍，产生多余的贡献，怎么办呢？
+Notice that this also scans the subtree of the starting point once, producing extra contributions. What should we do?
 
-因为扫的过程中起点的子树里的点肯定会被扫两次，但贡献为 0．
+During the scan, nodes in the starting point's subtree will definitely be scanned twice, so their contribution is 0.
 
-所以可以开一个 $vis$ 数组，每次扫到点 x，就把 $vis_x$ 异或上 1．
+So we can maintain a $vis$ array. Every time node x is scanned, xor $vis_x$ by 1.
 
-如果 $vis_x=0$，那这个点的贡献就可以不计．
+If $vis_x=0$, the contribution of this node can be ignored.
 
-所以可以用树上莫队来求．
+Therefore, this can be solved with Mo's algorithm on trees.
 
-修改的话，加上一维时间维即可，变成带修改树上莫队．
+For modifications, just add one time dimension, turning it into Mo's algorithm on trees with modifications.
 
-然后因为所包含的区间内可能没有 LCA，对于没有的情况要将多余的贡献删除，然后就完事了．
+Finally, because the included interval may not contain the LCA, in that case the extra contribution should be removed, and then the solution is complete.
 
-#### 实现
+#### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cmath>
@@ -68,7 +68,7 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
       int to, nxt;
     } e[MAXN];
     
-    int cnt1 = 0, cnt2 = 0;  // 时间戳
+    int cnt1 = 0, cnt2 = 0;  // Timestamp
     
     struct query {
       int l, r, t, id;
@@ -93,12 +93,12 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
           dfs(e[i].to);
         }
       }
-      id[g[x] = ++index] = x;  // 括号序
+      id[g[x] = ++index] = x;  // Bracket order
     }
     
     int lca(int x, int y) {
       if (dep[x] < dep[y]) swap(x, y);
-      if (dep[x] != dep[y]) {  // 爬到同一高度
+      if (dep[x] != dep[y]) {  // Climb to the same height
         int dis = dep[x] - dep[y];
         for (int i = 20; i >= 0; i--)
           if (dis >= (1 << i)) dis -= 1 << i, x = fa[x][i];
@@ -118,7 +118,7 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
       vis[x] ^= 1;
     }
     
-    // 在时间维上移动
+    // Move along the time dimension
     void modify(int x, int t) {
       if (vis[x]) {
         add(x);
@@ -145,7 +145,7 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
       dfs(1);
       for (int j = 1; j <= 20; j++)
         for (int i = 1; i <= n; i++)
-          fa[i][j] = fa[fa[i][j - 1]][j - 1];  // 预处理祖先
+              fa[i][j] = fa[fa[i][j - 1]][j - 1];  // Preprocess ancestors
       int block = pow(index, 2.0 / 3);
       for (int i = 1; i <= index; i++) {
         pos[i] = (i - 1) / block;
@@ -163,7 +163,7 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
         }
       }
       sort(a + 1, a + cnt1 + 1);
-      int L, R, T;  // 指针坐标
+      int L, R, T;  // Pointer coordinates
       L = R = 0;
       T = 1;
       for (int i = 1; i <= cnt1; i++) {
@@ -207,67 +207,67 @@ dfs 一棵树，然后如果 dfs 到 x 点，就 `push_back(x)`，dfs 完 x 点�
     }
     ```
 
-## 真·树上莫队
+## True Mo's Algorithm on Trees
 
-上面的树上莫队只是将树转化成了链，下面的才是真正的树上莫队．
+The tree Mo's algorithm above only transforms the tree into a chain. The following is the true Mo's algorithm on trees.
 
-由于莫队相关的问题都是模板题，因此实现部分不做太多解释
+Since problems related to Mo's algorithm are mostly template problems, the implementation part will not be explained in much detail.
 
-### 询问的排序
+### Query ordering
 
-首先我们知道莫队的是基于分块的算法，所以我们需要找到一种树上的分块方法来保证时间复杂度．
+First, we know that Mo's algorithm is based on block decomposition, so we need to find a way to decompose a tree into blocks to guarantee the time complexity.
 
-条件：
+Conditions:
 
--   属于同一块的节点之间的距离不超过给定块的大小
--   每个块中的节点不能太多也不能太少
--   每个节点都要属于一个块
--   编号相邻的块之间的距离不能太大
+-   The distance between nodes belonging to the same block does not exceed the given block size
+-   Each block must contain neither too many nor too few nodes
+-   Every node must belong to a block
+-   The distance between blocks with adjacent numbers must not be too large
 
-了解了这些条件后，我们看到这样一道题 [「SCOI2005」王室联邦](https://loj.ac/problem/2152)．
+After understanding these conditions, consider the problem [SCOI2005 Royal Federation](https://loj.ac/problem/2152).
 
-在这道题的基础上我们只要保证最后一个条件就可以解决分块的问题了．
+Based on this problem, we only need to guarantee the last condition to solve the block decomposition problem.
 
-??? note "思路"
-    令 lim 为希望块的大小，首先，对于整个树 dfs，当子树的大小大于 lim 时，就将它们分在一块，容易想到：对于根，可能会剩下一些点，于是将这些点分在最后一个块里．
+??? note "Idea"
+    Let lim be the desired block size. First, run DFS over the whole tree. When the size of a subtree is greater than lim, put those nodes into one block. It is easy to see that some nodes may remain for the root, so put these nodes into the last block.
 
-做法：用栈维护当前节点作为父节点访问它的子节点，当从栈顶到父节点的距离大于希望块的大小时，弹出这部分元素分为一块，最后剩余的一块单独作为一块．
+    Method: use a stack to maintain the children visited with the current node as their parent. When the distance from the stack top to the parent is greater than the desired block size, pop this part of the elements and make them one block. The final remaining part forms a separate block.
 
-最后的排序方法：若第一维时间戳大于第二维，交换它们，按第一维所属块为第一关键字，第二维时间戳为第二关键字排序．
+    Final sorting method: if the first-dimensional timestamp is greater than the second-dimensional one, swap them. Sort by the block of the first dimension as the first key, and by the second-dimensional timestamp as the second key.
 
-### 指针的移动
+### Pointer movement
 
-#### 过程
+#### Procedure
 
-容易想到，我们可以标记被计入答案的点，让指针直接向目标移动，同时取反路径上的点．
+It is natural to think that we can mark the nodes counted in the answer, move the pointer directly toward the target, and toggle the nodes on the path at the same time.
 
-但是，这样有一个问题，若指针一开始都在 x 上，显然 x 被标记，当两个指针向同一子节点移动（还有许多情况）时，x 应该不被标记，但实际情况是 x 被标记，因为两个指针分别标记了一次，抵消了．
+However, this has a problem. If both pointers initially stand on x, then x is clearly marked. When both pointers move to the same child node (and in many other cases), x should be unmarked, but in reality x remains marked, because the two pointers each mark it once and the operations cancel out.
 
-如何解决呢？
+How can we solve this?
 
-有一个很显然的性质：这些点肯定是某些 LCA，因为 LCA 处才有可能被重复撤销导致撤销失败．
+There is an obvious property: these nodes must be some LCAs, because only at an LCA can repeated cancellation cause cancellation to fail.
 
-所以我们每次不标记 LCA，到需要询问答案时再将 LCA 标记，然后再撤销．
+Therefore, we do not mark the LCA each time. When we need to query the answer, we mark the LCA and then undo it.
 
-#### 实现
+#### Implementation
 
 ```cpp
-// 取反路径上除LCA以外的所有节点
+// Toggle all nodes on the path except the LCA
 void move(int x, int y) {
   if (dp[x] < dp[y]) swap(x, y);
   while (dp[x] > dp[y]) update(x), x = fa[x];
   while (x != y) update(x), update(y), x = fa[x], y = fa[y];
-  // x!=y保证LCA没被取反
+  // x!=y ensures that the LCA is not toggled
 }
 ```
 
-对于求 LCA，我们可以用树剖，然后我们就可以把分块的步骤放到树剖的第一次 dfs 里面，时间戳也可以直接用第二次 dfs 的 dfs 序．
+For computing LCA, we can use heavy-light decomposition. Then we can put the block decomposition step into the first DFS of HLD, and the timestamp can directly use the DFS order from the second DFS.
 
 ```cpp
-int bl[100002], bls = 0;  // 属于的块，块的数量
-unsigned step;            // 块大小
+int bl[100002], bls = 0;  // Block it belongs to, number of blocks
+unsigned step;            // Block size
 int fa[100002], dp[100002], hs[100002] = {0}, sz[100002] = {0};
-// 父节点，深度，重儿子，大小
+// Parent node, depth, heavy child, size
 stack<int> sta;
 
 void dfs1(int x) {
@@ -290,27 +290,27 @@ void dfs1(int x) {
 
 // main
 if (!sta.empty()) {
-  bls++;  // 这一行可写可不写
+  bls++;  // This line is optional
   while (!sta.empty()) bl[sta.top()] = bls, sta.pop();
 }
 ```
 
-### 时间复杂度
+### Time complexity
 
-重点到了，这里关系到块的大小取值．
+Now comes the key point: this concerns the choice of block size.
 
-设块的大小为 $unit$：
+Let the block size be $unit$:
 
--   对于 x 指针，由于每个块中节点的距离在 $unit$ 左右，每个块中 x 指针移动 $unit^2$ 次（$unit\times dis_{\max}$），共计 $n\times unit$ 次（$unit^2 \times (\frac{n}{unit})$）；
--   对于 y 指针，每个块中最多移动 $O(n)$ 次，共计 $\frac{n^2}{unit}$ 次（$n \times (\frac{n}{unit})$）．
+-   For the x pointer, because the distance between nodes in each block is around $unit$, the x pointer moves $unit^2$ times in each block ($unit\times dis_{\max}$), for a total of $n\times unit$ times ($unit^2 \times (\frac{n}{unit})$).
+-   For the y pointer, it moves at most $O(n)$ times in each block, for a total of $\frac{n^2}{unit}$ times ($n \times (\frac{n}{unit})$).
 
-加起来大概在根号处取得最小值（由于树上莫队块的大小不固定，所以不一定要严格按照）．
+The sum is roughly minimized near the square root (because the block sizes in Mo's algorithm on trees are not fixed, this does not have to be followed strictly).
 
-### 例题「WC2013」糖果公园
+### Example: WC2013 Candy Park
 
-由于多了时间维，块的大小取到 $n^{0.6}$ 的样子就差不多了．
+Because there is an extra time dimension, choosing a block size around $n^{0.6}$ is about right.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cmath>

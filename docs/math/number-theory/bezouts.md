@@ -1,24 +1,24 @@
-裴蜀定理揭示了最大公约数与整数线性组合之间的深刻联系，是数论中最基础也最重要的结论之一．基于此，本文进一步讨论了一次不定方程的求解方法．
+Bézout's theorem reveals the profound connection between the greatest common divisor and integer linear combinations, and is one of the most fundamental and important conclusions in number theory. Based on this, this article further discusses the solution methods for linear Diophantine equations.
 
-## 裴蜀定理
+## Bézout's Theorem
 
-**裴蜀定理**（Bézout's lemma），也译作贝祖定理，或称作贝祖等式（Bézout's identity），给出了一个整数能够表示为两个整数的整系数线性组合的充分必要条件．
+**Bézout's theorem** (Bézout's lemma), also translated as Bézout's identity, gives a necessary and sufficient condition for an integer to be representable as an integer linear combination of two integers.
 
-???+ note "裴蜀定理"
-    设 $a,b$ 是不全为零的整数．那么，对于任意整数 $x,y$，都有 $\gcd(a,b)\mid ax+by$ 成立；而且，存在整数 $x,y$，使得 $ax+by=\gcd(a,b)$ 成立．
+???+ note "Bézout's Theorem"
+    Let $a,b$ be integers not both zero. Then, for any integers $x,y$, we have $\gcd(a,b)\mid ax+by$ always holds; moreover, there exist integers $x,y$ such that $ax+by=\gcd(a,b)$ holds.
 
-??? note "证明"
-    记 $d=\gcd(a,b)$．因为 $d\mid a,b$，所以，存在整数 $u,v$ 使得 $a=du,~b=dv$ 成立．因此，总有
+??? note "Proof"
+    Let $d=\gcd(a,b)$. Since $d\mid a,b$, there exist integers $u,v$ such that $a=du,~b=dv$ holds. Therefore, we always have
     
     $$
     ax + by = d(ux+vy).
     $$
     
-    这就说明 $d\mid ax+by$．
+    This shows that $d\mid ax+by$.
     
-    反过来，需要说明存在 $x,y$ 使得等式成立．如果 $a,b$ 之一是 $0$，不妨设 $b=0$，那么它们的最大公约数为 $d=a$，显然有 $(x,y)=(1,0)$ 使得等式成立．接下来，考虑 $a,b$ 均不为零的情形．由于 $\gcd(a,b)=\gcd(-a,b)=\gcd(a,-b)$，所以不妨设 $a,b$ 都是正数．
+    Conversely, we need to show the existence of $x,y$ making the equation hold. If one of $a,b$ is $0$, suppose $b=0$, then their greatest common divisor is $d=a$, and obviously $(x,y)=(1,0)$ makes the equation hold. Next, consider the case where $a,b$ are both non-zero. Since $\gcd(a,b)=\gcd(-a,b)=\gcd(a,-b)$, we can assume $a,b$ are both positive.
     
-    考虑辗转相除法的过程，有
+    Considering the Euclidean algorithm, we have:
     
     $$
     \begin{aligned}
@@ -32,19 +32,19 @@
     \end{aligned}
     $$
     
-    由于最大公约数是 $d$，最后一步辗转相除时，一定有 $r_n=d$．所以，倒数第二个等式可以写作
+    Since the greatest common divisor is $d$, at the last step of the Euclidean algorithm, we must have $r_n=d$. Therefore, the second-to-last equation can be written as:
     
     $$
     d = r_n = r_{n-2} - q_nr_{n-1}.
     $$
     
-    从倒数第三个等式中解出
+    Solving from the third-to-last equation:
     
     $$
     r_{n-1} = r_{n-3} - q_{n-1}r_{n-2}
     $$
     
-    再代入上式，就可以消去 $r_{n-1}$：
+    Substituting into the above equation, we can eliminate $r_{n-1}$:
     
     $$
     \begin{aligned}
@@ -53,134 +53,134 @@
     \end{aligned}
     $$
     
-    类似地，可以逐步地消去所有 $r_{n-2},r_{n-3},\cdots,r_2,r_1$，最终得到
+    Similarly, by gradually eliminating all $r_{n-2},r_{n-3},\cdots,r_2,r_1$, we finally get:
     
     $$
     d = xa + yb.
     $$
     
-    这就证明了存在 $x,y$ 使得 $ax+by=d$ 成立．由前文分析可知，这也证明了原命题．
+    This proves the existence of $x,y$ such that $ax+by=d$ holds. From the previous analysis, this also proves the original proposition.
 
-此处，关于存在性的证明是构造性的，它同时给出了该系数的一种计算方法．这一计算方法就是 [扩展欧几里得算法](./gcd.md#扩展欧几里得算法)．
+Here, the proof of existence is constructive, and it simultaneously gives a method to compute such coefficients. This computation method is the [Extended Euclidean Algorithm](./gcd.md#extended-euclidean-algorithm).
 
-考虑裴蜀定理在 $\gcd(a,b)=1$ 时的特殊情形，可以得到如下推论：
+Considering the special case of Bézout's theorem when $\gcd(a,b)=1$, we get the following corollary:
 
-???+ note "推论"
-    整数 $a,b$ 互素，当且仅当存在整数 $x,y$，使得 $ax+by=1$ 成立．
+???+ note "Corollary"
+    The integers $a,b$ are coprime if and only if there exist integers $x,y$ such that $ax+by=1$ holds.
 
-### 多个整数的情形
+### The Case of Multiple Integers
 
-裴蜀定理可以推广到多个整数的情形．
+Bézout's theorem can be extended to the case of multiple integers.
 
-???+ note "定理"
-    设 $a_1,a_2,\cdots,a_n$ 是不全为零的整数．那么，对于任意整数 $x_1,x_2,\cdots,x_n$，都有 $\gcd(a_1,a_2,\cdots,a_n)\mid a_1x_1+a_2x_2+\cdots+a_nx_n$ 成立；而且，存在整数 $x_1,x_2,\cdots,x_n$，使得 $\gcd(a_1,a_2,\cdots,a_n)=a_1x_1+a_2x_2+\cdots+a_nx_n$ 成立．
+???+ note "Theorem"
+    Let $a_1,a_2,\cdots,a_n$ be integers not all zero. Then, for any integers $x_1,x_2,\cdots,x_n$, we have $\gcd(a_1,a_2,\cdots,a_n)\mid a_1x_1+a_2x_2+\cdots+a_nx_n$ always holds; moreover, there exist integers $x_1,x_2,\cdots,x_n$ such that $\gcd(a_1,a_2,\cdots,a_n)=a_1x_1+a_2x_2+\cdots+a_nx_n$ holds.
 
-??? note "证明"
-    利用 $\gcd(a_1,a_2,\cdots,a_n)=\gcd(\gcd(a_1,a_2,\cdots,a_{n-1}),a_n)$ 这一点，对 $n$ 进行归纳即可．
+??? note "Proof"
+    Using the fact that $\gcd(a_1,a_2,\cdots,a_n)=\gcd(\gcd(a_1,a_2,\cdots,a_{n-1}),a_n)$, we can prove by induction on $n$.
 
-### 例题
+### Example Problems
 
-???+ example "[Codeforces 510 D. Fox And Jumping](https://codeforces.com/problemset/problem/510/D)"
-    给出 $n\le 300$ 张卡片，分别有 $l_i$ 和 $c_i$．在一条无限长的纸带上，你可以选择花 $c_i$ 的钱来购买卡片 $i$，从此以后可以向左或向右跳 $l_i$ 个单位任意次．问你至少花多少元钱才能够跳到纸带上全部位置．若不行，输出 $-1$．
+???+ example "[Codeforces 510 D. Fox And Jumping](https://codeforces.com/problemset/problem/510-D)"
+    Given $n\le 300$ cards, each with $l_i$ and $c_i$. On an infinite strip of paper, you can choose to spend $c_i$ to buy card $i$, after which you can jump $l_i$ units left or right any number of times. Find the minimum amount of money needed to reach all positions on the strip. If impossible, output $-1$.
 
-??? note "解答"
-    分析该问题，发现想要跳到每一个格子上，必须使得所选数 $l_{i_1}, \cdots, l_{i_k}$ 通过数次相加或相减得出的绝对值为 $1$．也就是说，存在整数 $x_1, \cdots, x_k$ 使得 $l_{i_1} x_1 + \cdots + l_{i_k} x_k = 1$．由多个整数的裴蜀定理，这相当于从数组 $l_1, \cdots, l_n$ 中选择若干个数，满足它们的最大公约数为 $1$，同时要求代价和最小．
+??? note "Solution"
+    Analyzing the problem, to reach every position, the chosen numbers $l_{i_1}, \cdots, l_{i_k}$ must be able to obtain an absolute value of $1$ through several additions or subtractions. That is, there exist integers $x_1, \cdots, x_k$ such that $l_{i_1} x_1 + \cdots + l_{i_k} x_k = 1$. By Bézout's theorem for multiple integers, this is equivalent to selecting several numbers from the array $l_1, \cdots, l_n$ such that their greatest common divisor is $1$, while minimizing the total cost.
     
-    **解法 1**：将最小代价和看作是最短路径问题，可以用 Dijkstra 算法求解．图的顶点处存储了当前的最大公约数的取值．图的起点是 $0$，要到达的目标点是 $1$．每走一步，就从当前顶点 $x$ 出发，沿着长度为 $c_i$ 的边走到顶点 $\gcd(x,l_i)$．这一算法的时间复杂度为 $O(n^2\log n)$．
+    **Solution 1**: Treating the minimum total cost as a shortest path problem, Dijkstra's algorithm can be used. The graph's vertices store the current value of the greatest common divisor. The starting point is $0$, and the target is $1$. At each step, from the current vertex $x$, we move along an edge of length $c_i$ to the vertex $\gcd(x,l_i)$. The time complexity of this algorithm is $O(n^2\log n)$.
     
-    **解法 2**：从数组 $l_1, \cdots, l_n$ 选择若干个数，满足它们的最大公因数为 $1$，且代价和最小，由此可以想到 0-1 背包问题．
+    **Solution 2**: From the array $l_1, \cdots, l_n$, selecting several numbers with greatest common divisor $1$ and minimizing the total cost reminds us of the 0-1 knapsack problem.
     
-    设 $f_{i, j}$ 表示考虑前 $i$ 个数且最大公因数为 $j$ 的最小代价，则有转移方程：
+    Let $f_{i, j}$ denote the minimum cost when considering the first $i$ numbers and the greatest common divisor is $j$. The transition equation is:
     
     $$
     f_{i, j} = \min_{\gcd(k, l_i) = j} f_{i - 1, k} + c_i.
     $$
     
-    DP 后最终的总代价即为 $f_{n, 1}$．
+    The final total cost after DP is $f_{n, 1}$.
     
-    如同一般的 0-1 背包问题，可以用滚动数组优化，去掉第一维．而这里 300 个数可以组成的最大公约数 $j$ 是很稀疏的，可以用哈希表储存．
+    Like the general 0-1 knapsack problem, we can use a rolling array to optimize, removing the first dimension. The possible values of the greatest common divisor $j$ that can be formed from 300 numbers are very sparse, so a hash map can be used for storage.
     
-    实际上，这里解法 1 建出的图便是解法 2 中动态规划的状态转移图，解法 2 相当于用动态规划求有向无环图的最短路，因此解法 1 和解法 2 是等价的．但解法 2 无需储存全图，同时 DP 的时间复杂度为 $O(n + m)$，相比 Dijkstra 算法更低，因此解法 2 在时间和空间上更优．
+    Actually, the graph built in Solution 1 is exactly the state transition graph for dynamic programming in Solution 2, and Solution 2 is equivalent to finding the shortest path in a directed acyclic graph. Therefore, Solution 1 and Solution 2 are equivalent. However, Solution 2 does not need to store the full graph, and the DP time complexity is $O(n + m)$, which is lower than Dijkstra's algorithm. Therefore, Solution 2 is better in both time and space.
 
-## 一次不定方程
+## Linear Diophantine Equations
 
-**一次不定方程**（linear Diophantine equation）是形如
+A **linear Diophantine equation** is a Diophantine equation in the form:
 
 $$
 a_1x_1 + a_2x_2 + \cdots + a_nx_n = b
 $$
 
-的不定方程，其中，$a_1,a_2,\cdots,a_n$ 都是整数．本节的目标是寻找它的全体整数解．
+where $a_1,a_2,\cdots,a_n$ are all integers. The goal of this section is to find all integer solutions of this equation.
 
-### 两个变量的情形
+### The Case of Two Variables
 
-首先考虑二元一次不定方程：
+First, consider the binary linear Diophantine equation:
 
 $$
 a_1x_1 + a_2x_2 = b.
 $$
 
-裴蜀定理指出，该方程有解，当且仅当
+Bézout's theorem states that this equation has a solution if and only if:
 
 $$
 d = \gcd(a_1,a_2) \mid b.
 $$
 
-接下来，假设这一条件成立．利用扩展欧几里得算法可以求出方程 $a_1x_1 + a_2x_2 = d$ 的一组整数解 $(x_1^*,x_2^*)$．由此，可以得到原方程的一组特解
+Next, assuming this condition holds. Using the extended Euclidean algorithm, we can find a solution $(x_1^*,x_2^*)$ to the equation $a_1x_1 + a_2x_2 = d$. From this, we can obtain a particular solution to the original equation:
 
 $$
 (x_1^\circ,x_2^\circ) = \left(\frac{b}{d}x_1^*,\frac{b}{d}x_2^*\right).
 $$
 
-要得到全部解，可以考虑将原方程与恒等式 $a_1x_1^\circ+a_2x_2^\circ = b$ 相减，就有
+To obtain all solutions, consider subtracting the original equation from the identity $a_1x_1^\circ+a_2x_2^\circ = b$:
 
 $$
 a_1(x_1 - x_1^\circ) + a_2(x_2 - x_2^\circ) = 0.
 $$
 
-这是一个关于 $(x_1-x_1^\circ,x_2-x_2^\circ)$ 的齐次一次不定方程，它有通解
+This is a homogeneous linear Diophantine equation in $(x_1-x_1^\circ,x_2-x_2^\circ)$, and it has the general solution:
 
 $$
 (x_1-x_1^\circ,x_2-x_2^\circ) = \left(t\dfrac{a_2}{d},-t\dfrac{a_1}{d}\right).\quad(t\in\mathbf Z)
 $$
 
-因此，原方程的通解就是
+Therefore, the general solution to the original equation is:
 
 $$
 (x_1,x_2) = \left(x_1^\circ + t\dfrac{a_2}{d},x_2^\circ - t\dfrac{a_1}{d}\right).\quad(t\in\mathbf Z)
 $$
 
-这是直线 $a_1x_1+a_2x_2 = b$ 上一系列等间隔分布的整点．
+These are a series of equally spaced integer points on the line $a_1x_1+a_2x_2 = b$.
 
-### 多个变量的情形
+### The Case of Multiple Variables
 
-解决了二元的情形，多元的情形也就容易解决了．对于 $n$ 元一次不定方程
+Having solved the binary case, the multivariate case becomes easy to solve. For an $n$-variable linear Diophantine equation:
 
 $$
 a_1x_1 + a_2x_2 + \cdots + a_nx_n = b,\quad (n>3)
 $$
 
-由裴蜀定理可知，方程有解当且仅当
+By Bézout's theorem, the equation has a solution if and only if:
 
 $$
 \gcd(a_1,a_2,\cdots,a_n) \mid b.
 $$
 
-和二元的情形类似，多元一次不定方程的通解同样可以写作
+Similar to the binary case, the general solution to the multivariate linear Diophantine equation can also be written as:
 
 $$
 (x_1^\circ,x_2^\circ,\cdots,x_n^\circ) + \sum_{k=1}^{n-1} t_k(x_1^{(k)},x_2^{(k)},\cdots,x_n^{(k)})
 $$
 
-的形式，其中，$x^\circ$ 为一个特解，$x^{(k)}$ 为相应的齐次方程的 $(n-1)$ 个解．
+where $x^\circ$ is a particular solution, and $x^{(k)}$ are the $n-1$ solutions of the corresponding homogeneous equation.
 
-要求出通解的具体形式，可以通过将 $n$ 元方程转化为 $(n-1)$ 元方程来完成．不妨设 $d_1 = \gcd(a_1,a_2)$，那么，根据裴蜀定理，$a_1x_1+a_2x_2$ 的全体恰为 $d_1$ 的所有倍数．因此，可以首先求解 $(n-1)$ 元一次不定方程：
+To find the explicit form of the general solution, we can convert the $n$-variable equation into an $(n-1)$-variable equation. Let $d_1 = \gcd(a_1,a_2)$. Then, according to Bézout's theorem, the set of all $a_1x_1+a_2x_2$ is exactly all multiples of $d_1$. Therefore, we first solve the $(n-1)$-variable linear Diophantine equation:
 
 $$
 d_1y_1 + a_3x_3 + a_4x_4 + \cdots + a_nx_n = b.
 $$
 
-设得到的它的通解为
+Let its general solution be:
 
 $$
 \begin{aligned}
@@ -189,13 +189,13 @@ x_i &= x_i^\circ + \sum_{k=2}^{n-1}t_kx_i^{(k)},\quad i=3,\cdots,n.
 \end{aligned}
 $$
 
-设 $a_1x_1+a_2x_2=d_1$ 的一组特解为 $(x_1^*,x_2^*)$，那么，根据前一节的讨论可知，关于 $x_1,x_2$ 的二元一次不定方程 $a_1x_1+a_2x_2=d_1y_1$ 的通解就是
+Let $(x_1^*,x_2^*)$ be a particular solution of $a_1x_1+a_2x_2=d_1$. Then, according to the discussion in the previous section, the general solution to the binary linear Diophantine equation $a_1x_1+a_2x_2=d_1y_1$ in $x_1,x_2$ is:
 
 $$
 x_1 = x_1^*y_1 + t_1\dfrac{a_2}{d_1},~x_2 = x_2^*y_1 - t_1\dfrac{a_1}{d_1}.
 $$
 
-代入 $y_1$ 的表达式，就得到原方程的通解
+Substituting the expression for $y_1$, we obtain the general solution to the original equation:
 
 $$
 \begin{aligned}
@@ -205,99 +205,99 @@ x_i &= x_i^\circ + \sum_{k=2}^{n-1}t_kx_i^{(k)},\quad i=3,\cdots,n.
 \end{aligned}
 $$
 
-## Frobenius 硬币问题
+## Frobenius Coin Problem
 
-裴蜀定理给出了一个整数可以由若干个整数线性表出的充分必要条件．与此紧密相关的是 **Frobenius 硬币问题**（Frobenius coin problem）：
+Bézout's theorem gives a necessary and sufficient condition for an integer to be representable as a linear combination of several integers. Closely related to this is the **Frobenius coin problem**:
 
--   如果硬币共有 $a_1,a_2,\cdots,a_n$ 等若干种整数面值，且 $\gcd(a_1,a_2,\cdots,a_n)=1$，那么，不能够由这些硬币组成的最大整数是多少？
+-   If there are several kinds of integer coin denominations $a_1,a_2,\cdots,a_n$, and $\gcd(a_1,a_2,\cdots,a_n)=1$, what is the largest integer that cannot be represented by these coins?
 
-同样是在考察整数 $k$ 什么时候可以表示为 $a_1x_1+a_2x_2+\cdots+a_nx_n$ 的形式，裴蜀定理中 $x_i$ 可以是任意整数，而 Frobenius 硬币问题中 $x_i$ 只能是自然数．
+Also examining when an integer $k$ can be represented in the form $a_1x_1+a_2x_2+\cdots+a_nx_n$, in Bézout's theorem, $x_i$ can be any integer, but in the Frobenius coin problem, $x_i$ can only be natural numbers.
 
-只有一种硬币的情形是平凡的，因为只能有 $a_1=1$，所有自然数都可以由它表示．而 $n>2$ 的情形又太过复杂，所以，本节仅讨论 $n=2$ 的情形．
+The case with only one coin type is trivial because we can only have $a_1=1$, so all natural numbers can be represented by it. The case with $n>2$ is too complex, so this section only discusses the case $n=2$.
 
-### Sylvester 定理
+### Sylvester's Theorem
 
-在 1882 年，Sylvester 完全解决了 $n = 2$ 时的 Frobenius 硬币问题：
+In 1882, Sylvester completely solved the Frobenius coin problem for $n = 2$:
 
-???+ note "定理（Sylvester）"
-    对于互素的正整数 $a_1,a_2$，不能够写作 $a_1x_1+a_2x_2~(x_1,x_2\in\mathbf N)$ 的最大整数是 $C = a_1a_2 - a_1 - a_2$．而且，对于所有 $k\in\mathbf Z$，整数 $k$ 和 $C-k$ 中有且只有一个可以写作该形式．
+???+ note "Theorem (Sylvester)"
+    For coprime positive integers $a_1,a_2$, the largest integer that cannot be written as $a_1x_1+a_2x_2~(x_1,x_2\in\mathbf N)$ is $C = a_1a_2 - a_1 - a_2$. Moreover, for all $k\in\mathbf Z$, exactly one of $k$ and $C-k$ can be written in this form.
 
-为表述方便，称可以写作 $a_1x_1+a_2x_2~(x_1,x_2\in\mathbf N)$ 形式的整数为 **可表示的**．
+For convenience, integers that can be written in the form $a_1x_1+a_2x_2~(x_1,x_2\in\mathbf N)$ are called **representable**.
 
-??? note "证明一"
-    由于 $a_1,a_2$ 互素，对于任意整数 $k$，方程 $a_1x_1+a_2x_2=k$ 一定有解，且通解为
+??? note "Proof One"
+    Since $a_1,a_2$ are coprime, for any integer $k$, the equation $a_1x_1+a_2x_2=k$ always has a solution, and the general solution is:
     
     $$
     (x_1,x_2) = (x_1^\circ + ta_2, x_2^\circ - ta_1).\quad(t\in\mathbf Z)
     $$
     
-    取 $t$ 为 $x_2^\circ$ 对 $a_1$ 作带余除法得到的商，那么，余数 $x_2 = x_2^\circ-ta_1$ 位于 $0$ 和 $a_1-1$ 之间．考察此时得到的一组解 $(x_1,x_2)$．因为 $x_2$ 是它能够取到的最小非负整数值，所以 $n$ 可表示当且仅当 $x_1\ge 0$．
+    Taking $t$ as the quotient from dividing $x_2^\circ$ by $a_1$, then the remainder $x_2 = x_2^\circ-ta_1$ is between $0$ and $a_1-1$. Examining the solution $(x_1,x_2)$ obtained at this time. Since $x_2$ is its smallest non-negative value, $n$ is representable if and only if $x_1\ge 0$.
     
-    **第一步**：证明大于 $C$ 的整数都是可表示的．
+    **Step One**: Prove that all integers greater than $C$ are representable.
     
-    当 $k > C$ 时，有
+    When $k > C$, we have:
     
     $$
     a_1x_1 = k - a_2x_2 > C - a_2(a_1-1) = -a_1.
     $$
     
-    所以，$x_1 > -1$，也就是说，$x_1\ge 0$．这说明，$(x_1,x_2)$ 是一组自然数解．此时，$k$ 可以写作所求形式．
+    So, $x_1 > -1$, that is, $x_1\ge 0$. This shows that $(x_1,x_2)$ is a natural number solution. At this time, $k$ can be written in the required form.
     
-    **第二步**：证明 $C$ 不可表示．进而，$C$ 是最大的不可表示的整数，且 $k$ 和 $C-k$ 并非都可表示的．
+    **Step Two**: Prove that $C$ is not representable. Furthermore, $C$ is the largest unrepresentable integer, and $k$ and $C-k$ are not both representable.
     
-    反证法．假设 $C$ 可以表示，即存在 $x_1,x_2\in\mathbf N$ 使得 $a_1x_1+a_2x_2=C$ 成立．代入 $C$ 的表达式，可知
+    Proof by contradiction. Suppose $C$ can be represented, i.e., there exist $x_1,x_2\in\mathbf N$ such that $a_1x_1+a_2x_2=C$ holds. Substituting the expression for $C$, we know:
     
     $$
     a_1a_2 = a_1(x_1+1) + a_2(x_2+1).
     $$
     
-    因此，$a_2\mid (x_1+1)$ 且 $a_1\mid (x_2+1)$．又因为 $x_1+1,x_2+1$ 都是正数，所以，有
+    Therefore, $a_2\mid (x_1+1)$ and $a_1\mid (x_2+1)$. Since $x_1+1,x_2+1$ are all positive, we have:
     
     $$
     a_1a_2 \ge a_1a_2 + a_2a_1 = 2a_1a_2.
     $$
     
-    矛盾．这就说明 $C$ 不可表示．结合第一步，它也就是不可表示的最大整数．
+    Contradiction. This shows that $C$ is not representable. Combined with step one, it is the largest unrepresentable integer.
     
-    如果 $k$ 和 $C-k$ 都可以表示，那么，将 $k$ 和 $C-k$ 的表示中的系数相加就得到 $C$ 的表示中的系数，这与 $C$ 不可表示矛盾，故而 $k$ 和 $C-k$ 至多只有一个可以表示．
+    If both $k$ and $C-k$ can be represented, then adding the coefficients in the representations of $k$ and $C-k$ gives the coefficients in the representation of $C$, which contradicts that $C$ is not representable. Therefore, at most one of $k$ and $C-k$ can be represented.
     
-    **第三步**：证明如果 $k$ 不可表示，那么 $C-k$ 一定是可表示的．
+    **Step Three**: Prove that if $k$ is not representable, then $C-k$ must be representable.
     
-    设 $(x_1,x_2)$ 是前文所设的方程 $a_1x_1+a_2x_2=k$ 的整数解．那么，前文已经说明 $k$ 不可表示，就等价于 $x_1<0$．因此，有
+    Let $(x_1,x_2)$ be the integer solution to the equation $a_1x_1+a_2x_2=k$ set above. Then as discussed earlier, $k$ not being representable is equivalent to $x_1<0$. Therefore, we have:
     
     $$
     C - k = a_1a_2 - a_1 - a_2 - a_1x_1 - a_2x_2 = a_1(-1-x_1) + a_2(a_1-1-x_2).
     $$
     
-    其中，$-1-x_1$ 和 $a_1-1-x_2$ 都是非负整数，所以，$C-k$ 可以表示．
+    Here, both $-1-x_1$ and $a_1-1-x_2$ are non-negative integers, so $C-k$ can be represented.
 
-??? note "证明二"
-    此处仅证明 $C=a_1a_2-a_1-a_2$ 是最大的不可表示的自然数，其余部分的证明类似证明一．
+??? note "Proof Two"
+    Here we only prove that $C=a_1a_2-a_1-a_2$ is the largest unrepresentable natural number; the rest of the proof is similar to Proof One.
     
-    考虑模 $a_2$ 意义下，每个剩余系中最小的可表示的自然数．因为同一个剩余系中的不同自然数可以通过加减若干个 $a_2$ 互相转化，所以，在讨论最小可表示数时，只需要考虑加减 $a_1$ 的可能性就可以了．由于 $a_1$ 和 $a_2$ 互素，所以，每个剩余系中最小的可表示的自然数恰好就是 $a_1$ 的倍数
+    Consider, modulo $a_2$, the minimum representable natural number in each residue class. Since different natural numbers in the same residue class can be transformed into each other by adding or subtracting several $a_2$, when discussing the minimum representable number, we only need to consider the possibility of adding or subtracting $a_1$. Since $a_1$ and $a_2$ are coprime, the minimum representable natural number in each residue class is exactly a multiple of $a_1$:
     
     $$
     0,~a_1,~2a_1,~\cdots,~(a_2-1)a_1.
     $$
     
-    因此，最大的不可表示数为
+    Therefore, the largest unrepresentable number is:
     
     $$
     \max_{0\le i < a_2} ia_1 - a_2 = (a_2-1)a_1 - a_2 = C.
     $$
 
-### 几何意义
+### Geometric Interpretation
 
-将方程 $a_1x_1 + a_2x_2 = k$ 看作是一条直线．那么，$k$ 可表示，当且仅当这条直线在第一象限（包括坐标轴）内通过一个整点．当 $k < ab$ 时，这条直线在第一象限至多只能通过一个整点．因此，对于 $0\le k < ab$，整数 $k$ 可以表示，当且仅当 $k$ 在第一象限通过恰好一个整点．
+Considering the equation $a_1x_1 + a_2x_2 = k$ as a line. Then $k$ is representable if and only if this line passes through an integer point in the first quadrant (including the coordinate axes). When $k < ab$, this line can pass through at most one integer point in the first quadrant. Therefore, for $0\le k < ab$, the integer $k$ is representable if and only if the line passes through exactly one integer point in the first quadrant.
 
-因此，小于等于 $k < ab$ 且可以表示的自然数的数量，恰好等于第一象限内直线 $a_1x_1 + a_2x_2 = k$ 下的整点个数（包含边界上的点）．这一数量就等于
+Therefore, the number of representable natural numbers less than or equal to $k < ab$ is exactly equal to the number of integer points (including boundary points) under the line $a_1x_1 + a_2x_2 = k$ in the first quadrant. This number equals:
 
 $$
 \sum_{i=0}^{\lfloor k / a_1 \rfloor} \left\lfloor\dfrac{k-ia_1}{a_2}\right\rfloor.
 $$
 
-这是经典的直线下整点问题，可以用 [类欧几里得算法](./euclidean.md#类欧几里得算法) 在 $O(\log\min\{a_1,a_2,k\})$ 时间求解．
+This is a classic problem of counting integer points under a line, which can be solved in $O(\log\min\{a_1,a_2,k\})$ time using the [Euclidean Algorithm](./euclidean.md#euclidean-algorithm).
 
-### 习题
+### Practice Problems
 
--   [Luogu P3951 NOIP2017 提高组 小凯的疑惑/蓝桥杯 2013 省 买不到的数目](https://www.luogu.com.cn/problem/P3951)
+-   [Luogu P3951 NOIP2017 Premium Group - Xiaokai's Confusion/Lanqiao Cup 2013 Province - Unobtainable Numbers](https://www.luogu.com.cn/problem/P3951)

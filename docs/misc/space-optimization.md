@@ -1,74 +1,74 @@
-空间优化相关技巧在算法竞赛中不太常见，但仍有讨论价值．
+Space optimization techniques are not very common in algorithm competitions, but they are still worth discussing.
 
-## 信息熵
+## Information Entropy
 
-信息熵描述了存储数据所占用的空间下限，若实际可用的空间低于这个下限则必然损失信息．
+Information entropy describes the lower bound on the space required to store data. If the actually available space is below this lower bound, information must be lost.
 
-???+ note "定义"
-    对随机变量 $X$，定义信息熵为
+???+ note "Definition"
+    For a random variable $X$, define its information entropy as
     
     $$
     H(X)=-\sum_{x}P(X=x)\log_2 P(X=x).
     $$
 
-定义中对数底数为 $2$ 是因为计算机中存储的信息每位只有 $2$ 种取值：$0$ 和 $1$．
+The logarithm base in the definition is $2$ because each bit of information stored in a computer has only $2$ possible values: $0$ and $1$.
 
-例如设 $X$ 服从 $\{1,2,\dots,n\}$ 上的均匀分布，则其信息熵为
+For example, suppose $X$ follows the uniform distribution on $\{1,2,\dots,n\}$. Its information entropy is
 
 $$
 H(X)=-\sum_{i=1}^n\frac{1}{n}\log_2\frac{1}{n}=\log_2 n,
 $$
 
-所以我们至少需要 $\log_2 n$ 位来存储 $1$ 到 $n$ 的整数．
+so we need at least $\log_2 n$ bits to store an integer from $1$ to $n$.
 
-### 例题
+### Example
 
-???+ note "[\[WC2022\] 猜词](https://www.luogu.com.cn/problem/P8079)"
-    交互题，你需要在有限次数内猜一个 5 个字母的单词．每次猜测都需要猜一个词库中存在的单词．如果猜对了，游戏结束；在每次猜错后，交互库会返回哪些字母的位置是正确的，以及哪些字母在待猜单词中出现了但位置是错误的．
+???+ note "[\[WC2022\] Guess the Word](https://www.luogu.com.cn/problem/P8079)"
+    This is an interactive problem. You need to guess a 5-letter word within a limited number of attempts. Each guess must be a word that exists in the word list. If the guess is correct, the game ends; after each wrong guess, the interaction library returns which letters are in the correct positions and which letters appear in the target word but are in wrong positions.
     
-    ??? note "解法"
-        参见 [用信息论解 Wordle 谜题 - 3Blue1Brown](https://www.bilibili.com/video/BV1zZ4y1k7Jw)．
+    ??? note "Solution"
+        See [Solving Wordle using information theory - 3Blue1Brown](https://www.bilibili.com/video/BV1zZ4y1k7Jw).
         
-        考虑计算信息熵，显然每次猜词时选择信息熵高的词可使得期望猜词次数尽可能小．
+        Consider computing information entropy. Clearly, choosing a word with high information entropy for each guess can minimize the expected number of guesses as much as possible.
         
-        由于本题在猜测之前给出了答案首字母，所以我们可以预处理出每种首字母的最优猜测．
+        Since this problem gives the first letter of the answer before guessing, we can preprocess the optimal guess for each possible first letter.
         
-        另外若剩余的词很少的话，我们可以考虑优先输出可能是答案的词，从而减小次数．
+        Also, if few words remain, we can consider outputting words that may be the answer first, reducing the number of attempts.
 
-## 常见技巧
+## Common Techniques
 
-### 避免存储不必要的数据
+### Avoid Storing Unnecessary Data
 
-例如：
+For example:
 
--   在 [可持久化线段树](../ds/persistent-seg.md) 中，由于单次修改只会产生 $O(\log n)$ 个新结点，所以我们不需要把每个版本的线段树都完整地存储下来，只需要记录新结点即可．
--   考虑 [图的存储](../graph/save.md)，对稀疏图来说，若使用邻接矩阵则会存储大量无用的 $0$，所以一般使用邻接表存稀疏图．
--   `bool` 数组的每个元素均会占用一个字节的空间，必要时可用每个元素只占用一位的 `std::vector<bool>` 或 [bitset](../lang/csl/bitset.md) 代替．
--   在 [背包 DP](../dp/knapsack.md) 中，对 01 背包而言，每次计算 DP 值只会用到上一次计算时的数据，所以我们可以用滚动数组优化空间，只需要记录当前 DP 值即可．
+-   In a [persistent segment tree](../ds/persistent-seg.md), because each modification only creates $O(\log n)$ new nodes, we do not need to store the full segment tree for every version; we only need to record the new nodes.
+-   Consider [graph storage](../graph/save.md). For sparse graphs, using an adjacency matrix stores many useless $0$s, so adjacency lists are usually used for sparse graphs.
+-   Each element of a `bool` array occupies one byte of space. When necessary, it can be replaced with `std::vector<bool>` or [bitset](../lang/csl/bitset.md), where each element occupies only one bit.
+-   In [knapsack DP](../dp/knapsack.md), for 0-1 knapsack, each DP value only uses data from the previous computation, so we can optimize space with a rolling array and only record the current DP values.
 
-### 利用数据特性
+### Use Data Properties
 
-考虑支持路径压缩和启发式合并的 [并查集](../ds/dsu.md)，传统做法需要两个数组，分别记录父结点编号和子树大小．
+Consider a [DSU](../ds/dsu.md) supporting path compression and union by size/rank. The traditional implementation needs two arrays, recording the parent node number and subtree size separately.
 
-注意到：
+Notice that:
 
-1.  在应用了路径压缩后，对于并查集中的一棵树，我们只需要记录根结点对应的子树大小．
-2.  根结点的父亲一定是自己．
+1.  After path compression is applied, for a tree in the DSU, we only need to record the subtree size corresponding to the root node.
+2.  The parent of a root node is always itself.
 
-我们可以利用有符号整数的特性，用负数表示根结点，正数表示非根结点，所以我们只需一个数组即可实现支持路径压缩和启发式合并的并查集．
+We can use the properties of signed integers: negative numbers represent root nodes, and positive numbers represent non-root nodes. Therefore, a DSU supporting path compression and heuristic merging can be implemented with only one array.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     --8<-- "docs/misc/code/space-optimization/space-optimization_1.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [QOJ 6669 Mapa](https://qoj.ac/problem/6669)
--   [\[SDOI/SXOI2022\] 无处存储](https://www.luogu.com.cn/problem/P8353)
+-   [\[SDOI/SXOI2022\] Nowhere to Store](https://www.luogu.com.cn/problem/P8353)
 
-## 参考资料与拓展阅读
+## References and Further Reading
 
-1.  陈知轩．《浅谈信息学竞赛中的空间优化问题》．2022 国家集训队论文
+1.  Chen Zhixuan. *A Brief Discussion on Space Optimization Problems in Informatics Competitions*. 2022 National Training Team Paper
 2.  [Information theory - Wikipedia](https://en.wikipedia.org/wiki/Information_theory)
-3.  [浅谈信息论 - 洛谷专栏](https://www.luogu.com.cn/article/i65ca8i5)
+3.  [A Brief Discussion on Information Theory - Luogu Column](https://www.luogu.com.cn/article/i65ca8i5)

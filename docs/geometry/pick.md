@@ -1,31 +1,31 @@
-## Pick 定理
+## Pick's Theorem
 
-Pick 定理：给定顶点均为整点的简单多边形，皮克定理说明了其面积 ${\displaystyle A}$ 和内部格点数目 ${\displaystyle i}$、边上格点数目 ${\displaystyle b}$ 的关系：${\displaystyle A=i+{\frac {b}{2}}-1}$．
+Pick's theorem: given a simple polygon whose vertices are all lattice points, Pick's theorem describes the relationship between its area ${\displaystyle A}$, the number of interior lattice points ${\displaystyle i}$, and the number of lattice points on its boundary ${\displaystyle b}$: ${\displaystyle A=i+{\frac {b}{2}}-1}$.
 
-具体证明：[Pick's theorem](https://en.wikipedia.org/wiki/Pick%27s_theorem)
+For the proof, see [Pick's theorem](https://en.wikipedia.org/wiki/Pick%27s_theorem).
 
-它有以下推广：
+It has the following generalizations:
 
--   取格点的组成图形的面积为一单位．在平行四边形格点，皮克定理依然成立．套用于任意三角形格点，皮克定理则是 ${\displaystyle A=2 \times i+b-2}$．
--   对于非简单的多边形 ${\displaystyle P}$，皮克定理 ${\displaystyle A=i+{\frac {b}{2}}-\chi (P)}$，其中 ${\displaystyle \chi (P)}$ 表示 ${\displaystyle P}$ 的 **欧拉特征数**．
--   高维推广：Ehrhart 多项式
--   皮克定理和 **欧拉公式**（${\displaystyle V-E+F=2}$）等价．
+-   Take the area of the fundamental lattice cell as one unit. Pick's theorem still holds on a parallelogram lattice. On an arbitrary triangular lattice, Pick's theorem becomes ${\displaystyle A=2 \times i+b-2}$.
+-   For a non-simple polygon ${\displaystyle P}$, Pick's theorem is ${\displaystyle A=i+{\frac {b}{2}}-\chi (P)}$, where ${\displaystyle \chi (P)}$ denotes the **Euler characteristic** of ${\displaystyle P}$.
+-   Higher-dimensional generalization: Ehrhart polynomial.
+-   Pick's theorem is equivalent to **Euler's formula** (${\displaystyle V-E+F=2}$).
 
-## 一道例题 ([POJ 1265](http://poj.org/problem?id=1265))
+## Example ([POJ 1265](http://poj.org/problem?id=1265))
 
-### 题目大意
+### Problem Summary
 
-在直角坐标系中，一个机器人从任意点出发进行 $\textit{n}$ 次移动，每次向右移动 $\textit{dx}$，向上移动 $\textit{dy}$，最后会形成一个平面上的封闭简单多边形，求边上的点的数量，多边形内的点的数量，多边形面积．
+In a Cartesian coordinate system, a robot starts from an arbitrary point and makes $\textit{n}$ moves. Each move goes $\textit{dx}$ to the right and $\textit{dy}$ upward. The path eventually forms a closed simple polygon on the plane. Find the number of points on the boundary, the number of points inside the polygon, and the area of the polygon.
 
-### 题解
+### Solution
 
-这道题目其实用了以下三个知识：
+This problem uses the following three facts:
 
--   以整点为顶点的线段，如果边 $\textit{dx}$ 和 $\textit{dy}$ 都不为 $0$，经过的格点数是 $\gcd(\textit{dx}, \textit{dy}) + 1$，当然，如果要算一整个图形的，多加的点会被上一条边计算，也就不需要加了．那么一条边覆盖的点的个数为 $\gcd(\textit{dx},\textit{dy})$，其中，$\textit{dx},\textit{dy}$ 分别为线段横向占的点数和纵向占的点数．如果 $\textit{dx}$ 或 $\textit{dy}$ 为 $0$，则覆盖的点数为 $\textit{dy}$ **或** $\textit{dx}$．
--   Pick 定理：平面上以整点为顶点的简单多边形的面积 = 边上的点数/2 + 内部的点数 - 1．
--   任意一个多边形的面积等于按顺序求相邻两个点与原点组成的向量的叉积之和的一半（这个也可以通过顺时针定积分求得）．
+-   For a segment whose endpoints are lattice points, if both $\textit{dx}$ and $\textit{dy}$ are not $0$, the number of lattice points it passes through is $\gcd(\textit{dx}, \textit{dy}) + 1$. Of course, when counting an entire polygon, the extra endpoint will be counted by the previous edge, so it should not be added again. Therefore, the number of points covered by one edge is $\gcd(\textit{dx},\textit{dy})$, where $\textit{dx},\textit{dy}$ are the horizontal and vertical spans of the segment respectively. If $\textit{dx}$ or $\textit{dy}$ is $0$, the number of covered points is $\textit{dy}$ **or** $\textit{dx}$.
+-   Pick's theorem: the area of a simple polygon on the plane whose vertices are lattice points = number of boundary points / 2 + number of interior points - 1.
+-   The area of any polygon equals half the sum, in order, of the cross products of the vectors formed by each pair of adjacent vertices and the origin. This can also be derived by clockwise line integration.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/geometry/code/pick/pick_1.cpp"
     ```

@@ -1,17 +1,17 @@
-STL 提供了大约 100 个实现算法的模版函数，基本都包含在 `<algorithm>` 之中，还有一部分包含在 `<numeric>` 和 `<functional>`．完备的函数列表请 [参见参考手册](https://zh.cppreference.com/w/cpp/algorithm)，排序相关的可以参考 [排序内容的对应页面](../../basic/stl-sort.md)．
+STL provides about 100 template functions that implement algorithms. Most are in `<algorithm>`, and some are in `<numeric>` and `<functional>`. For a complete list of functions, [see the reference manual](https://en.cppreference.com/w/cpp/algorithm). For sorting-related content, see the [corresponding sorting page](../../basic/stl-sort.md).
 
--   `find`：顺序查找．`find(v.begin(), v.end(), value)`，其中 `value` 为需要查找的值．
+-   `find`: sequential search. `find(v.begin(), v.end(), value)`, where `value` is the value to find.
 
--   `reverse`：翻转数组、字符串．`reverse(v.begin(), v.end())` 或 `reverse(a + begin, a + end)`．
+-   `reverse`: reverses an array or string. `reverse(v.begin(), v.end())` or `reverse(a + begin, a + end)`.
 
--   `unique`：去除容器中相邻的重复元素．`unique(ForwardIterator first, ForwardIterator last)`，返回值为指向 **去重后** 容器结尾的迭代器，原容器大小不变．与 `sort` 结合使用可以实现完整容器去重．
+-   `unique`: removes adjacent duplicate elements in a container. `unique(ForwardIterator first, ForwardIterator last)` returns an iterator pointing to the end of the container **after deduplication**; the original container size remains unchanged. Used with `sort`, it can deduplicate the whole container.
 
--   `random_shuffle`：随机地打乱数组．`random_shuffle(v.begin(), v.end())` 或 `random_shuffle(v + begin, v + end)`．
+-   `random_shuffle`: randomly shuffles an array. `random_shuffle(v.begin(), v.end())` or `random_shuffle(v + begin, v + end)`.
 
-    ???+ warning "`random_shuffle` 函数在最新 C++ 标准中已被移除"
-        `random_shuffle` 自 C++14 起被弃用，C++17 起被移除．
+    ???+ warning "The `random_shuffle` function has been removed from the latest C++ standards"
+        `random_shuffle` has been deprecated since C++14 and removed since C++17.
         
-        在 C++11 以及更新的标准中，您可以使用 `shuffle` 函数代替原来的 `random_shuffle`．使用方法为 `shuffle(v.begin(), v.end(), rng)`（最后一个参数传入的是使用的随机数生成器，一般情况使用以真随机数生成器 [`random_device`](https://zh.cppreference.com/w/cpp/numeric/random/random_device) 播种的梅森旋转伪随机数生成器 [`mt19937`](https://zh.cppreference.com/w/cpp/numeric/random/mersenne_twister_engine)）．
+        In C++11 and later standards, you can use `shuffle` instead of the original `random_shuffle`. Use it as `shuffle(v.begin(), v.end(), rng)`, where the last argument is the random number generator. Usually, use a Mersenne Twister pseudo-random number generator [`mt19937`](https://en.cppreference.com/w/cpp/numeric/random/mersenne_twister_engine) seeded by a true random number generator [`random_device`](https://en.cppreference.com/w/cpp/numeric/random/random_device).
         
         ```cpp
         // #include <random>
@@ -19,38 +19,38 @@ STL 提供了大约 100 个实现算法的模版函数，基本都包含在 `<al
         std::shuffle(v.begin(), v.end(), rng);
         ```
 
--   `sort`：排序．`sort(v.begin(), v.end(), cmp)` 或 `sort(a + begin, a + end, cmp)`，其中 `end` 是排序的数组最后一个元素的后一位，`cmp` 为自定义的比较函数．
+-   `sort`: sorts. `sort(v.begin(), v.end(), cmp)` or `sort(a + begin, a + end, cmp)`, where `end` is one past the last element of the range to sort, and `cmp` is a custom comparison function.
 
--   `stable_sort`：稳定排序，用法同 `sort()`．
+-   `stable_sort`: stable sort, used the same way as `sort()`.
 
--   `nth_element`：按指定范围进行分类，即找出序列中第 $n$ 大的元素，使其左边均为小于它的数，右边均为大于它的数．`nth_element(v.begin(), v.begin() + n, v.end(), cmp)` 或 `nth_element(a + begin, a + begin + n, a + end, cmp)`．
+-   `nth_element`: partitions a specified range, that is, finds the $n$-th largest element in the sequence so that elements on its left are less than it and elements on its right are greater than it. `nth_element(v.begin(), v.begin() + n, v.end(), cmp)` or `nth_element(a + begin, a + begin + n, a + end, cmp)`.
 
--   `binary_search`：二分查找．`binary_search(v.begin(), v.end(), value)`，其中 `value` 为需要查找的值．
+-   `binary_search`: binary search. `binary_search(v.begin(), v.end(), value)`, where `value` is the value to find.
 
--   `merge`：将两个（已排序的）序列 **有序合并** 到第三个序列的 **插入迭代器** 上．`merge(v1.begin(), v1.end(), v2.begin(), v2.end() ,back_inserter(v3))`．
+-   `merge`: **merges two sorted sequences in order** into an **insert iterator** of a third sequence. `merge(v1.begin(), v1.end(), v2.begin(), v2.end() ,back_inserter(v3))`.
 
--   `inplace_merge`：将两个（已按小于运算符排序的）：`[first,middle), [middle,last)` 范围 **原地合并为一个有序序列**．`inplace_merge(v.begin(), v.begin() + middle, v.end())`．
+-   `inplace_merge`: **merges in place into one sorted sequence** two ranges `[first,middle), [middle,last)` that have already been sorted by the less-than operator. `inplace_merge(v.begin(), v.begin() + middle, v.end())`.
 
--   `lower_bound`：在一个有序序列中进行二分查找，返回指向第一个 **大于等于**  $x$ 的元素的位置的迭代器．如果不存在这样的元素，则返回尾迭代器．`lower_bound(v.begin(),v.end(),x)`．
+-   `lower_bound`: performs binary search in a sorted sequence and returns an iterator pointing to the first element **greater than or equal to** $x$. If no such element exists, it returns the end iterator. `lower_bound(v.begin(),v.end(),x)`.
 
--   `upper_bound`：在一个有序序列中进行二分查找，返回指向第一个 **大于**  $x$ 的元素的位置的迭代器．如果不存在这样的元素，则返回尾迭代器．`upper_bound(v.begin(),v.end(),x)`．
+-   `upper_bound`: performs binary search in a sorted sequence and returns an iterator pointing to the first element **greater than** $x$. If no such element exists, it returns the end iterator. `upper_bound(v.begin(),v.end(),x)`.
 
-    ???+ warning "`lower_bound` 和 `upper_bound` 的时间复杂度"
-        在一般的数组里，这两个函数的时间复杂度均为 $O(\log n)$，但在 `set` 等关联式容器中，直接调用 `lower_bound(s.begin(),s.end(),val)` 的时间复杂度是 $O(n)$ 的．
+    ???+ warning "Time complexity of `lower_bound` and `upper_bound`"
+        In ordinary arrays, both functions have time complexity $O(\log n)$. However, for associative containers such as `set`, directly calling `lower_bound(s.begin(),s.end(),val)` has time complexity $O(n)$.
         
-        `set` 等关联式容器中已经封装了 `lower_bound` 等函数（像 `s.lower_bound(val)` 这样），这样调用的时间复杂度是 $O(\log n)$ 的．
+        Associative containers such as `set` already provide member functions such as `lower_bound`, for example `s.lower_bound(val)`, and calling them this way has time complexity $O(\log n)$.
 
--   `next_permutation`：将当前排列更改为 **全排列中的下一个排列**．如果当前排列已经是 **全排列中的最后一个排列**（元素完全从大到小排列），函数返回 `false` 并将排列更改为 **全排列中的第一个排列**（元素完全从小到大排列）；否则，函数返回 `true`．`next_permutation(v.begin(), v.end())` 或 `next_permutation(v + begin, v + end)`．
+-   `next_permutation`: changes the current permutation to the **next permutation in lexicographical order**. If the current permutation is already the **last permutation** (elements fully descending), the function returns `false` and changes it to the **first permutation** (elements fully ascending); otherwise it returns `true`. `next_permutation(v.begin(), v.end())` or `next_permutation(v + begin, v + end)`.
 
--   `prev_permutation`：将当前排列更改为 **全排列中的上一个排列**．用法同 `next_permutation`．
+-   `prev_permutation`: changes the current permutation to the **previous permutation in lexicographical order**. Used the same way as `next_permutation`.
 
--   `partial_sum`：求前缀和．设源容器为 $x$，目标容器为 $y$，则令 $y[i]=x[0]+x[1]+\dots+x[i]$．`partial_sum(src.begin(), src.end(), back_inserter(dst))`．
+-   `partial_sum`: computes prefix sums. Let the source container be $x$ and the target container be $y$; then $y[i]=x[0]+x[1]+\dots+x[i]$. `partial_sum(src.begin(), src.end(), back_inserter(dst))`.
 
-### 使用样例
+### Examples
 
--   使用 `next_permutation` 生成 $1$ 到 $9$ 的全排列．例题：[Luogu P1706 全排列问题](https://www.luogu.com.cn/problem/P1706)
+-   Use `next_permutation` to generate all permutations of $1$ to $9$. Example problem: [Luogu P1706 全排列问题](https://www.luogu.com.cn/problem/P1706)
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```cpp
         int N = 9, a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         do {
@@ -58,50 +58,53 @@ STL 提供了大约 100 个实现算法的模版函数，基本都包含在 `<al
           cout << endl;
         } while (next_permutation(a, a + N));
         ```
--   使用 `lower_bound` 与 `upper_bound` 查找有序数组 $a$ 中小于 $x$，等于 $x$，大于 $x$ 元素的分界线．
+-   Use `lower_bound` and `upper_bound` to find the boundaries between elements less than $x$, equal to $x$, and greater than $x$ in a sorted array $a$.
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```cpp
         int N = 10, a[] = {1, 1, 2, 4, 5, 5, 7, 7, 9, 9}, x = 5;
         int i = lower_bound(a, a + N, x) - a, j = upper_bound(a, a + N, x) - a;
-        // a[0] ~ a[i - 1] 为小于x的元素， a[i] ~ a[j - 1] 为等于x的元素，
-        // a[j] ~ a[N - 1] 为大于x的元素
+        // a[0] ~ a[i - 1] are elements less than x, a[i] ~ a[j - 1] are elements equal to x,
+        // a[j] ~ a[N - 1] are elements greater than x
         cout << i << " " << j << endl;
         ```
--   使用 `partial_sum` 求解 $src$ 中元素的前缀和，并存储于 $dst$ 中．
+-   Use `partial_sum` to compute prefix sums of elements in $src$ and store them in $dst$.
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```cpp
         vector<int> src = {1, 2, 3, 4, 5}, dst;
-        // 求解src中元素的前缀和，dst[i] = src[0] + ... + src[i]
-        // back_inserter 函数作用在 dst 容器上，提供一个迭代器
+        // Computes prefix sums of elements in src, dst[i] = src[0] + ... + src[i]
+        // The back_inserter function acts on dst and provides an iterator
         partial_sum(src.begin(), src.end(), back_inserter(dst));
         for (unsigned int i = 0; i < dst.size(); i++) cout << dst[i] << " ";
         ```
--   使用 `lower_bound` 查找有序数组 $a$ 中最接近 $x$ 的元素．例题：[UVa10487 Closest Sums](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=16&page=show_problem&problem=1428)
+-   Use `lower_bound` to find the element closest to $x$ in a sorted array $a$. Example problem: [UVa10487 Closest Sums](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=16&page=show_problem&problem=1428)
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```cpp
         int N = 10, a[] = {1, 1, 2, 4, 5, 5, 8, 8, 9, 9}, x = 6;
-        // lower_bound将返回a中第一个大于等于x的元素的地址，计算出的i为其下标
+        // lower_bound returns the address of the first element in a greater than or equal to x;
+        // the computed i is its index
         int i = lower_bound(a, a + N, x) - a;
-        // 在以下两种情况下，a[i] (a中第一个大于等于x的元素) 即为答案：
-        // 1. a中最小的元素都大于等于x；
-        // 2. a中存在大于等于x的元素，且第一个大于等于x的元素 (a[i])
-        // 相比于第一个小于x的元素 (a[i - 1]) 更接近x；
-        // 否则，a[i - 1] (a中第一个小于x的元素) 即为答案
+        // In the following two cases, a[i], the first element in a greater than or equal to x,
+        // is the answer:
+        // 1. the smallest element in a is greater than or equal to x;
+        // 2. an element greater than or equal to x exists in a, and the first such element (a[i])
+        // is closer to x than the first element less than x (a[i - 1]);
+        // otherwise, a[i - 1], the first element in a less than x, is the answer
         if (i == 0 || (i < N && a[i] - x < x - a[i - 1]))
           cout << a[i];
         else
           cout << a[i - 1];
         ```
--   使用 `sort` 与 `unique` 查找数组 $a$ 中 **第 $k$ 小的值**（注意：重复出现的值仅算一次，因此本题不是求解第 $k$ 小的元素）．例题：[Luogu P1138 第 k 小整数](https://www.luogu.com.cn/problem/P1138)
+-   Use `sort` and `unique` to find the **$k$-th smallest distinct value** in array $a$. Note that repeated values are counted only once, so this is not asking for the $k$-th smallest element. Example problem: [Luogu P1138 第 k 小整数](https://www.luogu.com.cn/problem/P1138)
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```cpp
         int N = 10, a[] = {1, 3, 3, 7, 2, 5, 1, 2, 4, 6}, k = 3;
         sort(a, a + N);
-        // unique将返回去重之后数组最后一个元素之后的地址，计算出的cnt为去重后数组的长度
+        // unique returns the address after the last element of the deduplicated array;
+        // the computed cnt is the length after deduplication
         int cnt = unique(a, a + N) - a;
         cout << a[k - 1];
         ```

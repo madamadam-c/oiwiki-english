@@ -1,119 +1,119 @@
-author: accelsao, thallium, Chrogeek, Enter-tainer, ksyx, StudyingFather, H-J-Granger, Henry-ZHR, countercurrent-time, william-song-shy, 5ab-juruo, XiaoQuQuSD, hhc0001, GCVillager
+author: accelsao, thallium, Chrogeek, Enter-tainer, ksyx, StudyingFather, H-J-Granger, countercurrent-time, william-song-shy, 5ab-juruo, XiaoQuQuSD, hhc0001, GCVillager
 
-前置知识：[二分图](../bi-graph.md)、[图匹配](./graph-match.md)
+Prerequisites: [Bipartite Graph](../bi-graph.md), [Graph Matching](./graph-match.md)
 
-## 引入
+## Introduction
 
-本文讨论二分图 $G=(X,Y,E)$ 的最大匹配问题．
+This article discusses the maximum matching problem for bipartite graph $G=(X,Y,E)$.
 
-生活中一个典型的二分图匹配的例子是男女配对．设有若干男生（$X$）和女生（$Y$），每个人只能配对一次，且允许配对的组合已由某个列表（$E$）限定．此时，二分图最大匹配算法的任务就是在这些限制下，找到最多的配对对数，使尽可能多的人成功配对．
+A typical example of bipartite matching in real life is male-female pairing. Suppose there are several boys ($X$) and girls ($Y$), each person can be paired only once, and the possible pairings are given by a list ($E$). The task of the bipartite maximum matching algorithm is to find the maximum number of pairs under these constraints, so that as many people as possible are successfully paired.
 
-???+ info "提示"
-    本文假设已知二分图顶点集 $V$ 的一种划分（染色）方式：$V=X\cup Y$．如果事先不清楚二分图的顶点集 $V$ 的划分方法，可以通过 [二分图的染色算法](../bi-graph.md#判定) 在 $O(|V|+|E|)$ 时间内求出这样一个划分．
+???+ info "Note"
+    This article assumes that a partition (coloring) of the bipartite graph vertex set $V$ is known: $V = X \cup Y$. If the partition of the bipartite graph vertex set $V$ is not known in advance, such a partition can be found in $O(|V| + |E|)$ time using the [bipartite graph coloring algorithm](../bi-graph.md#determination).
 
-## Kuhn 算法
+## Kuhn's Algorithm
 
-Kuhn 算法是 [Berge 引理](./graph-match.md#berge-引理) 的直接应用．它也是 [匈牙利算法](./bigraph-weight-match.md#hungarian-algorithmkuhnmunkres-algorithm) 的一部分．
+Kuhn's Algorithm is a direct application of [Berge's Lemma](./graph-match.md#berge-lemma). It is also part of the [Hungarian Algorithm](./bigraph-weight-match.md#hungarian-algorithmkuhnmunkres-algorithm).
 
-### 过程
+### Process
 
-为了求出最大匹配，算法依次枚举所有顶点，求出从它出发的一条增广路，并进行增广．因为增广路的长度总是奇数，所以在二分图中，它的端点必然分别位于左右两个部分．这说明，只需要考虑从左部出发的增广路即可．
+To find the maximum matching, the algorithm iterates through all vertices, finds an augmenting path starting from each vertex, and performs augmentation. Since the length of an augmenting path is always odd, in a bipartite graph, its endpoints must lie in the two different parts. This shows that we only need to consider augmenting paths starting from the left part.
 
-为了寻找增广路，可以依据当前的匹配 $M$ 给二分图定向．从左部的未匹配点出发的增广路（或者任何一条交错路）中，只能沿着非匹配边从左部点到达右部点，再沿着匹配边从右部点到达左部点．因此，可以规定所有非匹配边都指向右部点，而所有匹配边都指向左部点．寻找增广路的问题就转换为从某个未匹配的左部点出发，在有向图中寻找一条简单路径通向某个未匹配点．这一问题很容易通过 [DFS](../dfs.md) 或 [BFS](../bfs.md) 在 $O(|E|)$ 时间内解决．
+To find augmenting paths, we can orient the bipartite graph according to the current matching $M$. In an augmenting path (or any alternating path) starting from an unmatched vertex in the left part, we can only traverse from a left vertex to a right vertex via a non-matching edge, and from a right vertex to a left vertex via a matching edge. Therefore, we can orient all non-matching edges toward the right vertices and all matching edges toward the left vertices. The problem of finding augmenting paths becomes finding a simple path from some unmatched left vertex to some unmatched vertex in the directed graph. This can be easily solved by [DFS](../dfs.md) or [BFS](../bfs.md) in $O(|E|)$ time.
 
 ![](images/bigraph-match-1.svg)
 
-（图中，深色点为匹配点，浅色点为未匹配点，红边为匹配边，黑边为非匹配边，箭头表示当前匹配对应的定向．由图可知，路径 $1\rightarrow 8\rightarrow 3\rightarrow 11\rightarrow 6\rightarrow 12$ 是相对于当前匹配的一条增广路．）
+(In the figure, dark vertices are matched vertices, light vertices are unmatched vertices, red edges are matching edges, black edges are non-matching edges, and arrows show the orientation corresponding to the current matching. As can be seen from the figure, path $1 \rightarrow 8 \rightarrow 3 \rightarrow 11 \rightarrow 6 \rightarrow 12$ is an augmenting path with respect to the current matching.)
 
-算法开始时，所有边都指向右部点．每次寻找到增广路后，都需要沿着增广路将经过的所有边都反向，以表示它们的匹配状态已经反转．算法结束时，所有指向左部点的边就是匹配边．
+At the beginning of the algorithm, all edges are oriented toward the right vertices. After each augmenting path is found, all traversed edges are reversed to indicate their matching status has changed. At the end of the algorithm, all edges oriented toward the left vertices are matching edges.
 
-因为至多只需要枚举 $O(|V|)$ 个左部点 [各一次](./graph-match.md#berge-引理)，所以，算法总的时间复杂度为 $O(|V||E|)$．
+Since at most $O(|V|)$ left vertices need to be enumerated [once each](./graph-match.md#berge-lemma), the total time complexity of the algorithm is $O(|V||E|)$.
 
-### 优化
+### Optimizations
 
-有一些简单的技巧，可以优化 Kuhn 算法的常数：
+There are some simple techniques to optimize the constant factor of Kuhn's Algorithm:
 
-1.  Kuhn 算法基于 Berge 引理，而后者并不要求事先给出二分图的左右部分．因此，即使在左右两部分未明确划分的情况下，Kuhn 算法也能正确运行，只要图本身是二分图．但是，先将二分图染色，确定好它的左部和右部，往往效率更高．
-2.  因为上文描述的 Kuhn 算法的时间复杂度实际上是 $O(|X||E|)$ 的，所以，可以选取二分图的两个部分中较小的那个作为左部 $X$．
-3.  在寻找增广路时，用于避免重复查找的标记无需每次 DFS 都清空．可以在清空标记前，尝试为所有未匹配的左部点都寻找增广路．在一轮这样的查找中，所有边至多访问一次，复杂度仍然是 $O(|E|)$ 的；但是，在一轮查找中，可能找到多条增广路，因此总的轮数 $k$ 不会超过 $|M|+1$，其中，$M$ 为最大匹配．相应地，算法整体复杂度降低到了 $O(k|E|)$．
-4.  寻找增广路时，优先考虑未匹配的右部点，因为这意味着更短的增广路．
-5.  因为 Berge 引理并不要求初始匹配为空，所以，Kuhn 算法开始时，可以随机地选取一些互不相交的边作为初始匹配，以减少后续搜索的次数．如果已经应用优化 3，本优化可以忽略．
+1.  Kuhn's Algorithm is based on Berge's Lemma, which does not require the left and right parts to be given in advance. Therefore, Kuhn's Algorithm can still work correctly even when the two parts are not clearly divided, as long as the graph itself is bipartite. However, coloring the bipartite graph first to determine the left and right parts is often more efficient.
+2.  Since the time complexity described above is actually $O(|X||E|)$, we can choose the smaller of the two parts as the left part $X$.
+3.  When finding augmenting paths, the marking used to avoid duplicate searches does not need to be cleared for each DFS. Instead, we can try to find augmenting paths for all unmatched left vertices before clearing the marking. In one round of such search, all edges are visited at most once; however, in one round, multiple augmenting paths may be found. Therefore, the total number of rounds $k$ will not exceed $|M| + 1$, where $M$ is the maximum matching. Accordingly, the overall complexity is reduced to $O(k|E|)$.
+4.  When finding augmenting paths, prioritize unmatched right vertices, as this means shorter augmenting paths.
+5.  Since Berge's Lemma does not require the initial matching to be empty, at the beginning of Kuhn's Algorithm, we can randomly select some disjoint edges as the initial matching to reduce the number of subsequent searches. If optimization 3 has been applied, this optimization can be ignored.
 
-虽然最差复杂度仍然是 $O(|V||E|)$，但是，充分优化的 Kuhn 算法效率并不差．但是为了避免个别数据将它卡到最差复杂度，在匹配前需要首先随机打乱边或顶点的顺序．
+Although the worst-case complexity is still $O(|V||E|)$, a fully optimized Kuhn's Algorithm is quite efficient. However, to avoid some specific cases reaching the worst-case complexity, the order of edges or vertices needs to be randomly shuffled before matching.
 
-### 参考实现
+### Reference Implementation
 
-实现时，不需要真正维护定向，只需要为每个顶点都维护与它相匹配的顶点即可．
+When implementing, we don't actually need to maintain orientation; we only need to store for each vertex the vertex it is matched with.
 
-??? example "模板题 [Library Checker - Matching on Bipartite Graph](https://judge.yosupo.jp/problem/bipartitematching)"
+??? example "Template Problem [Library Checker - Matching on Bipartite Graph](https://judge.yosupo.jp/problem/bipartitematching)"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_1.cpp"
     ```
 
-## Hopcroft–Karp 算法
+## Hopcroft–Karp Algorithm
 
-Hopcroft–Karp 算法进一步优化了 Kuhn 算法查找增广路的过程，将总的轮数降低到了 $O(|V|^{1/2})$，从而获得了 $O(|V|^{1/2}|E|)$ 的时间复杂度．这一算法实际上是 [Dinic 算法](../flow/max-flow.md#dinic-算法) 的一种特殊情形．
+The Hopcroft–Karp Algorithm further optimizes the process of finding augmenting paths in Kuhn's Algorithm, reducing the total number of rounds to $O(|V|^{1/2})$, thereby achieving a time complexity of $O(|V|^{1/2}|E|)$. This algorithm is actually a special case of the [Dinic Algorithm](../flow/max-flow.md#dinic-algorithm).
 
-### 过程
+### Process
 
-算法依然是在寻找增广路，但是为了在更少的轮次内完成匹配，算法在每一轮中都采取了如下策略：
+The algorithm still searches for augmenting paths, but to complete matching in fewer rounds, it adopts the following strategy in each round:
 
-1.  将匹配边定向为指向左部点，非匹配边定向为指向右部点．
-2.  从所有未匹配的左部点出发，在有向图上进行 BFS，记录每个访问到的顶点所在的层数 $d(v)$，直到某一层出现未匹配的右部点为止．若 BFS 结束仍未找到未匹配的右部点，说明当前匹配已是最大匹配．
-3.  依次从每个未匹配的左部点出发进行 DFS，寻找增广路并进行增广．DFS 时沿着满足层数连续且严格递增（即 $d(v') = d(v) + 1$）的边向前扩展，且只访问尚未在本轮 DFS 中访问过的顶点．特别地，DFS 中不会访问到前一步 BFS 中尚未访问到的顶点．
+1.  Orient matching edges toward left vertices and non-matching edges toward right vertices.
+2.  Perform BFS from all unmatched left vertices in the directed graph, recording the layer number $d(v)$ of each visited vertex, until an unmatched right vertex is reached in some layer. If the BFS ends without finding an unmatched right vertex, the current matching is already maximum.
+3.  Starting from each unmatched left vertex, perform DFS to find augmenting paths and perform augmentation. During DFS, expand along edges that satisfy the layer number being consecutive and strictly increasing (i.e., $d(v') = d(v) + 1$), and only visit vertices not yet visited in the current DFS round. In particular, DFS will not visit vertices not yet visited in the previous BFS step.
 
-用网络流的术语说，步骤 2 是构造了一个层次图，而步骤 3 则是找到了层次图上的阻塞流．所谓层次图，是指它的每条边都必然从这一层指向下一层；而所谓阻塞流，在当前语境下，就是指一组极大的、两两之间没有公共顶点的增广路．步骤 3 得到的这一组增广路必然是极大的：假设不然，存在一条新的增广路，那么在当初枚举到它的起点时，就应当已经找到这样一条路．
+In network flow terminology, step 2 constructs a level graph, and step 3 finds a blocking flow on the level graph. The level graph refers to a graph where each edge must go from one layer to the next. In the current context, a blocking flow refers to a maximal set of augmenting paths that are pairwise vertex-disjoint. The set of augmenting paths obtained in step 3 is necessarily maximal: suppose not, there exists a new augmenting path; then when enumerating its starting point, such a path should have been found.
 
-比起前文的 Kuhn 算法，Hopcroft–Karp 算法最关键的改变就是在求阻塞流之前，添加了求层次图这一步骤．基于层次图进行 DFS，相当于限制了算法总是沿着最短路径到达各个顶点．这样做的好处是，在算法的不同轮次间，算法找到的增广路的长度是严格递增的．而且，可以证明的是，直到求出最大匹配为止，增广路的长度至多增加 $3|M|^{1/2}$ 次，其中，$|M|$ 为最大匹配的大小．所以，这就将总的增广的轮次控制在 $O(|M|^{1/2})$，进而得到 $O(|M|^{1/2}|E|)$ 的时间复杂度．由于 $2|M|\le |V|$，所以，时间复杂度也可以写成更宽松的上界 $O(|V|^{1/2}|E|)$．
+The key improvement of the Hopcroft–Karp Algorithm over the previous Kuhn's Algorithm is adding the level graph construction step before finding the blocking flow. Performing DFS based on the level graph effectively limits the algorithm to always reach vertices along the shortest paths. The benefit of this is that between different rounds of the algorithm, the lengths of augmenting paths strictly increase. Moreover, it can be proven that until the maximum matching is found, the augmenting path length increases at most $3|M|^{1/2}$ times, where $|M|$ is the size of the maximum matching. Therefore, the total number of augmentation rounds is controlled to $O(|M|^{1/2})$, giving a time complexity of $O(|M|^{1/2}|E|)$. Since $2|M| \le |V|$, the time complexity can also be written as the looser bound $O(|V|^{1/2}|E|)$.
 
-??? note "证明"
-    首先说明，在算法的不同轮次之间，算法找到的增广路的长度是严格递增的．
+??? note "Proof"
+    First, we prove that between different rounds of the algorithm, the lengths of augmenting paths strictly increase.
     
-    假设当前轮次的 BFS 中，顶点向前延伸了 $\ell$ 层，那么，因为 BFS 中找到的未匹配的右部点都位于同一层，所以本轮 DFS 能够找到的所有增广路的长度就都是 $\ell$．需要证明的是，沿着本轮找到的这组增广路 $\{P_i\}$ 增广结束后，重新定向得到的有向图中，将不再存在长度不超过 $\ell$ 的增广路．
+    Suppose in the current round's BFS, vertices are extended forward by $\ell$ layers. Since all unmatched right vertices found in BFS are in the same layer, all augmenting paths found in this round's DFS have length $\ell$. We need to prove that after augmenting along the set of augmenting paths $\{P_i\}$ found in this round, there will be no augmenting path of length no more than $\ell$ in the reoriented directed graph.
     
-    实际上，如果 $P$ 是相对于 $M$ 的最短的增广路，而 $P'$ 是相对于 $M\oplus P$ 的增广路，都有 $|P'|\ge |P| + 2|P\cap P'|$ 成立．这是因为 $N=(M\oplus P)\oplus P'$ 相对于 $M$ 增广了两次，故而类似 [Berge 引理的证明](./graph-match.md#berge-引理)，可以说明对称差 $M\oplus N=P\oplus P'$ 中至少包含两条相对于 $M$ 的不交的增广路 $P_1$ 和 $P_2$．由于 $P$ 的最短性，有
+    Actually, if $P$ is the shortest augmenting path with respect to $M$, and $P'$ is an augmenting path with respect to $M \oplus P$, we have $|P'| \ge |P| + 2|P \cap P'|$. This is because $N = (M \oplus P) \oplus P'$ augments $M$ twice. Similar to the [proof of Berge's Lemma](./graph-match.md#berge-lemma), we can show that the symmetric difference $M \oplus N = P \oplus P'$ contains at least two vertex-disjoint augmenting paths $P_1$ and $P_2$ with respect to $M$. Due to the minimality of $P$,
     
     $$
-    2|P|\le |P_1|+|P_2|\le |P\oplus P'| = |P| + |P'| - 2|P\cap P'|.
+    2|P| \le |P_1| + |P_2| \le |P \oplus P'| = |P| + |P'| - 2|P \cap P'|.
     $$
     
-    这就说明 $|P'|\ge |P| + 2|P\cap P'|$．因此，如果添加完增广路 $\{P_i\}$ 之后，新的增广路 $P'$ 仍然和它们一样长，就必然与它两两不交，这与 $\{P_i\}$ 的极大性相矛盾．这一矛盾说明，增广完阻塞流后，新的增广路一定严格更长．
+    This shows $|P'| \ge |P| + 2|P \cap P'|$. Therefore, if after adding augmenting paths $\{P_i\}$, a new augmenting path $P'$ is still the same length, it must be pairwise disjoint with them, which contradicts the maximality of $\{P_i\}$. This contradiction shows that after augmenting the blocking flow, new augmenting paths must be strictly longer.
     
-    最后，需要说明，增广路的长度至多增加 $3|M|^{1/2}$ 次．
+    Finally, we prove that the augmenting path length increases at most $3|M|^{1/2}$ times.
     
-    记 $p=\lfloor|M|^{1/2}\rfloor$．在前 $p$ 个轮次结束后，剩下的增广路的长度至少是 $|M|^{1/2}$．设当前匹配为 $M_p$，那么，与前文情形类似，可以说明图 $(V,M\oplus M_p)$ 中有 $|M|-|M_p|$ 条两两之间没有公共顶点的相对于 $M_p$ 的增广路．每条增广路至少用到 $|M|^{1/2}/2$ 条 $M$ 中的匹配边，因此，这些增广路的总数不会超过 $2|M|^{1/2}$，也就是说，$|M|-|M_p|\le 2|M|^{1/2}$．这说明从 $M_p$ 开始，至多只能再增广 $2|M|^{1/2}$ 次，这同样意味着算法至多再进行 $2|M|^{1/2}$ 轮增广．所以，增广路的长度总共至多增加 $3|M|^{1/2}$ 次．
+    Let $p = \lfloor |M|^{1/2} \rfloor$. After the first $p$ rounds, the remaining augmenting paths have length at least $|M|^{1/2}$. Let the current matching be $M_p$. Similar to the previous case, we can show that in the graph $(V, M \oplus M_p)$, there are $|M| - |M_p|$ vertex-disjoint augmenting paths with respect to $M_p$. Each augmenting path uses at least $|M|^{1/2}/2$ matching edges from $M$. Therefore, the total number of such augmenting paths does not exceed $2|M|^{1/2}$, i.e., $|M| - |M_p| \le 2|M|^{1/2}$. This shows that starting from $M_p$, at most $2|M|^{1/2}$ more augmentations can be performed, which also means the algorithm performs at most $2|M|^{1/2}$ more augmentation rounds. Therefore, the augmenting path length increases at most $3|M|^{1/2}$ times in total.
 
-这仅仅是对 Hopcroft–Karp 算法的最差复杂度的估计．实际上，在随机图中，Hopcroft–Karp 算法的时间复杂度有很大概率是 $O(|E|\log |V|)$ 的[^hk-comp-ref]．
+This is only an estimate of the worst-case complexity of the Hopcroft–Karp Algorithm. In practice, the time complexity of Hopcroft–Karp Algorithm in random graphs is very likely $O(|E| \log |V|)$[^hk-comp-ref].
 
-### 优化
+### Optimization
 
-在建立层次图时，和一般的 Dinic 算法一样，Hopcroft–Karp 算法在到达未匹配的右部点时就终止．但是，仅仅就二分图匹配问题来说，这样做是没有必要的．而且，因为 BFS 过早终止，限制了后续 DFS 的范围，会导致每轮找到的增广路数目有限，从而拖慢整体匹配效率．在有些图上，它的效率甚至不如经过优化的 Kuhn 算法．所以，一个简单的改进是，不提前终止 BFS，而是为所有可以到达的顶点建立层次图．
+When constructing the level graph, as in the general Dinic Algorithm, the Hopcroft–Karp Algorithm terminates when reaching an unmatched right vertex. However, for the bipartite matching problem specifically, this is unnecessary. Furthermore, because the BFS terminates too early, it limits the scope of subsequent DFS, which reduces the number of augmenting paths found in each round and thus slows down the overall matching efficiency. On some graphs, its efficiency is even worse than the optimized Kuhn's Algorithm. A simple improvement is to not terminate BFS early, but to construct the level graph for all reachable vertices.
 
-??? note "正确性证明"
-    在优化后的算法中，阻塞流中增广路的长度将不再相同，因此，前文中关于复杂度的证明也不再成立．但是，可以说明的是，通过为算法的每个轮次建立辅助图，同样可以建立最短增广路长度严格递增的结论，进而保证最差复杂度依然是正确的．
+??? note "Correctness Proof"
+    In the optimized algorithm, the lengths of augmenting paths in the blocking flow are no longer the same, so the previous proof of complexity no longer holds. However, it can be shown that by constructing an auxiliary graph for each round of the algorithm, the conclusion that the shortest augmenting path length strictly increases can still be established, thereby ensuring the worst-case complexity is still correct.
     
-    设二分图为 $G=(X,Y,E)$，当前的匹配为 $M$．设通过 BFS 可以访问到的未匹配的右部点的集合为 $W\subseteq Y$，且到达 $y\in W$ 的最短的增广路的长度为 $d(y)$．记 $d_\text{max} = \max_{y\in W}d(y)$，那么，对于每个 $y\in W$，都可以新建一条从 $y$ 开始且长度为 $d_\text{max} - d(y)$ 的链，并将新建的顶点依次标记为左部点和右部点，将新建的边依次标记为匹配边和非匹配边．设这样得到的图为 $G'=(X',Y',E')$，匹配为 $M'$，最短增广路的长度为 $d_\text{max}$．那么，图 $G$ 中沿着层次图能够找到的相对于 $M$ 的增广路——也就是那些到达相应顶点的最短的增广路——与图 $G'$ 中相对于 $M'$ 的全局最短的增广路之间存在双射．因此，在图 $G$ 的层次图中找到阻塞流并进行增广，就相当于在图 $G'$ 的层次图中找到阻塞流并进行增广．按照前文的证明，增广后，图 $G'$ 中将不再存在长度为 $d_\text{max}$ 的增广路．所以，图 $G$ 中也不再存在长度为 $d_\text{min}=\min_{y\in W} d(y)$ 的增广路：因为这样的增广路通过新延长的交错路，必然对应着一条图 $G'$ 中长度为 $d_\text{max}$ 的增广路．这样就再次得到了算法的不同轮次间，最短增广路的长度严格递增的结论．因此，整体复杂度也仍然是 $O(|M|^{1/2}|E|)$ 的．
+    Let the bipartite graph be $G = (X, Y, E)$, and let the current matching be $M$. Let $W \subseteq Y$ be the set of unmatched right vertices reachable by BFS, and let the shortest augmenting path length to $y \in W$ be $d(y)$. Let $d_\text{max} = \max_{y \in W} d(y)$. Then for each $y \in W$, we can construct a new chain starting from $y$ with length $d_\text{max} - d(y)$, and mark the new vertices as alternating left and right vertices, and mark the new edges as matching and non-matching edges. Let the resulting graph be $G' = (X', Y', E')$, the matching be $M'$, and the shortest augmenting path length be $d_\text{max}$. Then there is a bijection between the augmenting paths found along the level graph in graph $G$ with respect to $M$ — that is, the shortest augmenting paths to the corresponding vertices — and the globally shortest augmenting paths in graph $G'$ with respect to $M'$. Therefore, finding the blocking flow in the level graph of $G$ and performing augmentation is equivalent to finding the blocking flow in the level graph of $G'$ and performing augmentation. According to the previous proof, after augmentation, there will be no augmenting path of length $d_\text{max}$ in $G'$. Therefore, there will also be no augmenting path of length $d_\text{min} = \min_{y \in W} d(y)$ in $G$: because such an augmenting path, when extended along the new alternating path, must correspond to an augmenting path of length $d_\text{max}$ in $G'$. This again establishes the conclusion that the shortest augmenting path length strictly increases between different rounds of the algorithm. Therefore, the overall complexity is still $O(|M|^{1/2}|E|)$.
 
-### 参考实现
+### Reference Implementation
 
-??? example "模板题 [Library Checker - Matching on Bipartite Graph](https://judge.yosupo.jp/problem/bipartitematching)"
+??? example "Template Problem [Library Checker - Matching on Bipartite Graph](https://judge.yosupo.jp/problem/bipartitematching)"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_2.cpp"
     ```
 
-## 归约为最大流问题
+## Reduction to Maximum Flow Problem
 
-二分图最大匹配问题可以归约为最大流问题．
+The bipartite maximum matching problem can be reduced to the maximum flow problem.
 
 ![](images/bigraph-match-2.svg)
 
-如图所示，添加两个顶点分别作为源点和汇点．从源点出发，向每个左部点连接一条边；从每个右部点出发，向汇点连接一条边；并为二分图中的每条无向边，都连接一条从左部点指向右部点的边．所有边的容量都是 $1$．这样得到的有向图中的每个网络流，都和二分图中的一组匹配一一对应，且网络流的容量就是相应的匹配的大小．因此，求解二分图最大匹配，就相当于求解相应的有向图中的最大流．
+As shown in the figure, add two vertices as the source and sink respectively. From the source, connect an edge to each left vertex; from each right vertex, connect an edge to the sink; and for each undirected edge in the bipartite graph, add a directed edge from the left vertex to the right vertex. All edges have capacity 1. Every network flow in this directed graph corresponds one-to-one to a matching in the bipartite graph, and the capacity of the flow equals the size of the corresponding matching. Therefore, solving the bipartite maximum matching is equivalent to solving the maximum flow in the corresponding directed graph.
 
-任何可以解决最大流问题的算法都可以用于解决二分图最大匹配问题．容易发现，Kuhn 算法和 Hopcroft–Karp 算法都是最大流问题中相应算法的特例．同样地，[预流推进算法](../flow/max-flow.md#push-relabel-预流推进算法) 等同样可以用于解决二分图最大匹配问题．但是，应当注意的是，任何最大流算法，在应用于二分图最大匹配问题时，都需要有针对性地进行相应的优化，以避免过大的常数．
+Any algorithm that can solve the maximum flow problem can be used to solve the bipartite maximum matching problem. It is easy to see that Kuhn's Algorithm and Hopcroft–Karp Algorithm are both special cases of their corresponding algorithms in the maximum flow problem. Similarly, [preflow-push algorithms](../flow/max-flow.md#push-relabel-预流推进算法) can also solve the bipartite maximum matching problem. However, it should be noted that any maximum flow algorithm, when applied to the bipartite maximum matching problem, needs to be optimized accordingly to avoid excessive constants.
 
-### 线性规划形式
+### Linear Programming Form
 
-和其他最大流问题一样，二分图 $G=(V,E)$ 的最大匹配问题可以写作线性规划问题．如果用 $x_e\in\{0,1\}$ 表示边 $e$ 是否属于匹配，那么，可以得到如下的线性规划问题：
+Like other maximum flow problems, the maximum matching problem for bipartite graph $G = (V, E)$ can be written as a linear programming problem. If we use $x_e \in \{0, 1\}$ to denote whether edge $e$ belongs to the matching, we obtain the following linear programming problem:
 
 $$
 \begin{aligned}
@@ -123,11 +123,11 @@ $$
 \end{aligned}
 $$
 
-其中，$e\sim v$ 表示关联关系，即顶点 $v$ 是边 $e$ 的端点之一．除了非负限制之外，问题的约束还要求每个顶点 $v\in V$ 处至多与一条边关联，这正是匹配的定义．因此，所有的匹配都对应于该线性规划可行域中的某些整点．
+Where $e \sim v$ denotes the incidence relation, i.e., vertex $v$ is one of the endpoints of edge $e$. Except for the non-negativity constraint, the constraint also requires that at each vertex $v \in V$, at most one edge is incident. This is precisely the definition of a matching. Therefore, all matchings correspond to some integer points in the feasible region of this linear program.
 
-反过来却不然．在可行解中，$x_e$ 可能是小数，这并不代表任何实际的匹配．尽管如此，对于二分图 $G$，上述线性规划的所有极点解都是整点．这意味着，目标函数的最优值总能在整点处取得，而无需考虑非整数的情形．这一性质对一般图并不成立，因此，上述线性规划在一般图中并不等价于最大匹配问题．
+The converse is not true. In feasible solutions, $x_e$ may be fractional, which does not represent any actual matching. Nevertheless, for bipartite graph $G$, all extreme point solutions of this linear program are integer points. This means the optimal value of the objective function is always attained at an integer point, without considering non-integer cases. This property does not hold for general graphs, so the above linear program is not equivalent to the maximum matching problem in general graphs.
 
-这一线性规划问题的对偶问题可以写作如下形式：
+The dual problem of this linear programming problem can be written as:
 
 $$
 \begin{aligned}
@@ -137,225 +137,225 @@ $$
 \end{aligned}
 $$
 
-随后就会看到，这正是二分图的最小点覆盖问题．
+As we will see, this is precisely the minimum vertex cover problem in bipartite graphs.
 
-## Dulmage–Mendelsohn 分解
+## Dulmage–Mendelsohn Decomposition
 
-利用二分图的最大匹配，可以将顶点划分为若干互不相交的子集，从而完整刻画该二分图所有最大匹配的分布及结构特征．这就是 Dulmage–Mendelsohn 分解．算法竞赛中，利用这一分解，可以识别最大匹配中的关键点和关键边，进而判断最大匹配的唯一性或求解二分图博弈等问题．
+Using the maximum matching of a bipartite graph, vertices can be divided into several disjoint subsets, which fully characterizes the distribution and structural characteristics of all maximum matchings in the bipartite graph. This is the Dulmage–Mendelsohn Decomposition. In competitive programming, this decomposition can be used to identify critical vertices and edges in the maximum matching, and to determine the uniqueness of the maximum matching or to solve bipartite graph games, among other problems.
 
-### 构造方法
+### Construction Method
 
-设二分图 $G=(X,Y,E)$ 的一个最大匹配为 $M$．
+Let $M$ be a maximum matching of bipartite graph $G = (X, Y, E)$.
 
 ![](images/bigraph-match-4.svg)
 
-如图所示，可以为所有顶点 $V=X\cup Y$ 定义如下三个子集：
+As shown in the figure, for all vertices $V = X \cup Y$, we can define the following three subsets:
 
--   偶可达点 $\mathcal E$，即所有可以从一个未匹配点出发，沿着偶数长度的交错路可以到达的顶点集合；
--   奇可达点 $\mathcal O$，即所有可以从一个未匹配点出发，沿着奇数长度的交错路可以到达的顶点集合；
--   不可达点 $\mathcal U$，即所有无法从一个未匹配点出发，沿着交错路到达的顶点集合．
+-   Even-reachable vertices $\mathcal E$: the set of all vertices that can be reached from an unmatched vertex via an alternating path of even length.
+-   Odd-reachable vertices $\mathcal O$: the set of all vertices that can be reached from an unmatched vertex via an alternating path of odd length.
+-   Unreachable vertices $\mathcal U$: the set of all vertices that cannot be reached from an unmatched vertex via an alternating path.
 
-可以证明，这样得到的三个顶点集合 $\mathcal E,\mathcal O,\mathcal U$ 有如下性质：
+It can be proven that the three vertex sets $\mathcal E, \mathcal O, \mathcal U$ obtained have the following properties:
 
-???+ note "性质"
-    1.  集合 $\mathcal E,\mathcal O,\mathcal U$ 构成顶点集合的一个划分，且这一划分和最大匹配 $M$ 的选取无关．
-    2.  图 $G$ 的任一最大匹配都包含 $\mathcal U$ 的顶点之间的一个完美匹配，且将 $\mathcal O$ 中的每一个顶点都匹配到 $\mathcal E$ 中的一个顶点．也就是说，图 $G$ 的最大匹配的大小等于 $|\mathcal O|+|\mathcal U|/2$．
-    3.  图 $G$ 中不包含连接 $\mathcal E$ 中顶点和 $\mathcal E\cup\mathcal U$ 中顶点的边．
+???+ note "Properties"
+    1.  The sets $\mathcal E, \mathcal O, \mathcal U$ form a partition of the vertex set, and this partition is independent of the choice of maximum matching $M$.
+    2.  Every maximum matching of graph $G$ contains a perfect matching between the vertices of $\mathcal U$, and matches each vertex in $\mathcal O$ to a vertex in $\mathcal E$. That is, the size of the maximum matching of graph $G$ equals $|\mathcal O| + |\mathcal U|/2$.
+    3.  Graph $G$ does not contain edges connecting vertices in $\mathcal E$ to vertices in $\mathcal E \cup \mathcal U$.
 
-??? note "证明"
-    1.  按照定义，$\mathcal U$ 和 $\mathcal E\cup\mathcal O$ 不交．只需要证明 $\mathcal E$ 和 $\mathcal O$ 不交．假若不然，对于顶点 $v\in\mathcal E\cap\mathcal O$，存在一条从未匹配点 $a$ 到 $v$ 的长度为偶数的交错路，也存在一条从未匹配点 $b$ 到 $v$ 的长度为奇数的交错路．由于图 $G$ 是二分图，$a\neq b$，且两条路径到达 $v$ 时的边分别是匹配边和非匹配边．因此，将两条路连接起来，就得到一条从 $a$ 经 $v$ 到 $b$ 的交错路．这是一条增广路．这与 $M$ 是最大匹配这一点相矛盾．因此，$\mathcal E\cap\mathcal O=\varnothing$．
+??? note "Proof"
+    1.  By definition, $\mathcal U$ is disjoint from $\mathcal E \cup \mathcal O$. We only need to prove that $\mathcal E$ and $\mathcal O$ are disjoint. Suppose otherwise, for vertex $v \in \mathcal E \cap \mathcal O$, there exists an alternating path of even length from an unmatched vertex $a$ to $v$, as well as an alternating path of odd length from an unmatched vertex $b$ to $v$. Since graph $G$ is bipartite, $a \neq b$, and when the two paths reach $v$, the edges are respectively matching and non-matching edges. Therefore, connecting the two paths gives an alternating path from $a$ via $v$ to $b$. This is an augmenting path. This contradicts that $M$ is a maximum matching. Therefore, $\mathcal E \cap \mathcal O = \varnothing$.
     
-        设 $M'$ 是一个与 $M$ 不同的最大匹配．重复 [Berge 引理的证明](./graph-match.md#berge-引理) 可以说明，$M'\oplus M$ 仅由偶数长度的路径和偶环组成．从最大匹配 $M$ 出发，可以逐个将这些连通块（路径和环）中的边翻转（匹配边和非匹配边交换），就能得到最大匹配 $M'$．翻转偶环时，未匹配点仍然是未匹配点，从它出发的交错路的长度奇偶性也不会改变；翻转偶数长度路径时，路径两个端点的匹配状态互换，但是从它们出发到达路径中的任何一个点的路径长度的奇偶性也是一致的．因此，在翻转过程中，集合 $\mathcal E,\mathcal O,\mathcal U$ 均始终保持不变．这就说明这一分解与最大匹配 $M$ 的选取无关．
-    2.  如果一条匹配边出现在某条从未匹配点 $v$ 出发的交错路中，那么它的两个端点与点 $v$ 的距离的奇偶性必然不同，因而分别属于集合 $\mathcal E$ 和 $\mathcal O$；否则，它的两个端点必然都在 $\mathcal U$ 中．这说明，最大匹配中的匹配边必然是 $\mathcal E\mathcal O$ 边或 $\mathcal U\mathcal U$ 边．反过来说，未匹配点可以沿着从它自身出发、长度为零的交错路到达，所以只会出现在集合 $\mathcal E$ 中，这说明，集合 $\mathcal O$ 和 $\mathcal U$ 中都是匹配点．简单计数可知，最大匹配的大小就是 $|\mathcal O|+|\mathcal U|/2$．
-    3.  按照定义，$\mathcal E$ 中的任一顶点 $a$ 可以从未匹配点 $v$ 出发沿偶数长度交错路到达，也就是说，$\mathcal E$ 中的顶点要么是未匹配点，要么到达该点的交错路 $P$ 以匹配边结束．如果图 $G$ 中存在连接 $a$ 和 $\mathcal E\cup\mathcal U$ 中某个顶点 $b$ 的一条边，那么根据上一段的讨论，这条边必然是非匹配边，可以沿着它延长交错路 $P$．这说明顶点 $b$ 也属于集合 $\mathcal O$，这就与第一条性质矛盾．因此，图 $G$ 中不存在连接 $\mathcal E$ 中顶点和 $\mathcal E\cup\mathcal U$ 中顶点的边．
+        Let $M'$ be a maximum matching different from $M$. Repeating the [proof of Berge's Lemma](./graph-match.md#berge-lemma) shows that $M' \oplus M$ consists only of paths of even length and even cycles. Starting from maximum matching $M$, we can flip the edges in each connected block (paths and cycles) one by one (swapping matching and non-matching edges) to obtain maximum matching $M'$. When flipping even cycles, unmatched vertices remain unmatched, and the parity of alternating path lengths starting from them does not change. When flipping even-length paths, the matching status of the two endpoints of the path is swapped, but the parity of the path lengths from them to any vertex in the path is also consistent. Therefore, during the flipping process, the sets $\mathcal E, \mathcal O, \mathcal U$ remain unchanged. This shows that this decomposition is independent of the choice of maximum matching $M$.
+    2.  If a matching edge appears in some alternating path starting from an unmatched vertex, then the parity of the distances from its two endpoints to that unmatched vertex must be different, so they respectively belong to sets $\mathcal E$ and $\mathcal O$. Otherwise, both its endpoints must be in $\mathcal U$. This shows that matching edges in the maximum matching must be either $\mathcal E \mathcal O$ edges or $\mathcal U \mathcal U$ edges. Conversely, unmatched vertices can reach themselves via an alternating path of length zero, so they only appear in set $\mathcal E$. This shows that sets $\mathcal O$ and $\mathcal U$ both contain matched vertices. Simple counting shows that the size of the maximum matching is $|\mathcal O| + |\mathcal U|/2$.
+    3.  By definition, any vertex $a \in \mathcal E$ can be reached from an unmatched vertex $v$ via an alternating path of even length. That is, vertices in $\mathcal E$ are either unmatched vertices, or the alternating path $P$ to that vertex ends with a matching edge. If there exists an edge in graph $G$ connecting $a$ to some vertex $b \in \mathcal E \cup \mathcal U$, then according to the discussion in the previous paragraph, this edge must be a non-matching edge, and we can extend the alternating path $P$ along it. This shows that vertex $b$ also belongs to set $\mathcal O$, which contradicts the first property. Therefore, graph $G$ does not contain edges connecting vertices in $\mathcal E$ to vertices in $\mathcal E \cup \mathcal U$.
 
-由此得到的顶点集合的分解 $V=\mathcal E\cup\mathcal O\cup\mathcal U$ 就称为 **Dulmage–Mendelsohn 分解**．在利用前文所述算法求得最大匹配之后，可以通过 BFS 在 $O(|V|+|E|)$ 的时间内求出 Dulmage–Mendelsohn 分解．
+The resulting decomposition of the vertex set $V = \mathcal E \cup \mathcal O \cup \mathcal U$ is called the **Dulmage–Mendelsohn Decomposition**. After obtaining the maximum matching using the algorithm described above, the Dulmage–Mendelsohn Decomposition can be found in $O(|V| + |E|)$ time via BFS.
 
-### 最大匹配关键点
+### Maximum Matching Critical Vertices
 
-如果一个顶点 $v$ 在二分图 $G$ 的每一个最大匹配中都是匹配点，那么它就称为最大匹配的关键点．下面的结论说明：一个顶点是关键点，当且仅当在一个最大匹配中，不存在从未匹配点出发到达该顶点的偶数长度的交错路．
+If a vertex $v$ is a matched vertex in every maximum matching of the bipartite graph $G$, then it is called a maximum matching critical vertex. The following conclusion shows that a vertex is critical if and only if in a maximum matching, there is no alternating path of even length from an unmatched vertex to that vertex.
 
-???+ note "定理"
-    设二分图 $G=(X,Y,E)$ 的 Dulmage–Mendelsohn 分解为 $V=\mathcal E\cup\mathcal O\cup\mathcal U$．那么，顶点 $v\in V$ 是关键点，当且仅当 $v\in\mathcal O\cup \mathcal U$．
+???+ note "Theorem"
+    Let the Dulmage–Mendelsohn decomposition of bipartite graph $G = (X, Y, E)$ be $V = \mathcal E \cup \mathcal O \cup \mathcal U$. Then vertex $v \in V$ is critical if and only if $v \in \mathcal O \cup \mathcal U$.
 
-??? note "证明"
-    根据 Dulmage–Mendelsohn 分解的性质可知，在图 $G$ 的任一最大匹配中，$\mathcal O$ 和 $\mathcal U$ 中的顶点都必然是匹配点．因此，$\mathcal O\cup \mathcal U$ 中的顶点必然是关键点．然后，需要说明集合 $\mathcal E$ 中一定没有关键点．如果在最大匹配 $M$ 中，顶点 $a\in\mathcal E$ 是关键点，那么存在一条偶数长度的交错路 $P$ 连接顶点 $a$ 和某个未匹配点 $b\in\mathcal E$．将这条路上的所有边翻转，得到的最大匹配 $M\oplus P$ 中，顶点 $a$ 就变成未匹配点．因此，集合 $\mathcal E$ 中没有关键点．
+??? note "Proof"
+    According to the properties of the Dulmage–Mendelsohn decomposition, in any maximum matching of graph $G$, vertices in $\mathcal O$ and $\mathcal U$ must be matched vertices. Therefore, vertices in $\mathcal O \cup \mathcal U$ are necessarily critical vertices. Then we need to show that set $\mathcal E$ definitely contains no critical vertices. If in maximum matching $M$, vertex $a \in \mathcal E$ is critical, then there exists an alternating path $P$ of even length connecting vertex $a$ to some unmatched vertex $b \in \mathcal E$. Flipping all edges on this path, in the resulting maximum matching $M \oplus P$, vertex $a$ becomes unmatched. Therefore, set $\mathcal E$ contains no critical vertices.
 
-因此，要求出最大匹配的关键点，只需要求出 Dulmage–Mendelsohn 分解即可．
+Therefore, to find maximum matching critical vertices, we only need to find the Dulmage–Mendelsohn decomposition.
 
-### 最大匹配关键边
+### Maximum Matching Critical Edges
 
-类似地，如果一条边 $e$ 在二分图 $G$ 的每一个最大匹配中都是匹配边，那么它就称为最大匹配的关键边．二分图的最大匹配是唯一的，当且仅当它的一个最大匹配中，所有匹配边都是关键边．
+Similarly, if an edge $e$ is a matching edge in every maximum matching of the bipartite graph $G$, then it is called a maximum matching critical edge. The maximum matching of a bipartite graph is unique if and only if all matching edges in a maximum matching are critical edges.
 
-???+ note "定理"
-    设二分图 $G=(X,Y,E)$ 的 Dulmage–Mendelsohn 分解为 $V=\mathcal E\cup\mathcal O\cup\mathcal U$，且 $M$ 是它的一个最大匹配．那么，边 $e\in E$ 是关键边，当且仅当 $e$ 的端点都在 $\mathcal U$ 中，边 $e$ 是 $M$ 中匹配边，且相对于 $M$ 不存在一个包含边 $e$ 的交错环．
+???+ note "Theorem"
+    Let the Dulmage–Mendelsohn decomposition of bipartite graph $G = (X, Y, E)$ be $V = \mathcal E \cup \mathcal O \cup \mathcal U$, and let $M$ be one of its maximum matchings. Then edge $e \in E$ is a critical edge if and only if both endpoints of $e$ are in $\mathcal U$, $e$ is a matching edge in $M$, and there is no alternating cycle containing edge $e$ with respect to $M$.
 
-??? note "证明"
-    关键边的端点必须是关键点．根据 Dulmage–Mendelsohn 分解的性质，最大匹配的边只能是 $\mathcal E\mathcal O$ 边或 $\mathcal U\mathcal U$ 边．但是，$\mathcal E$ 中没有关键点，所以，关键边只能是 $\mathcal U\mathcal U$ 边．当然，关键边也必须是 $M$ 中的匹配边．设 $e\in M$ 是一条 $\mathcal U\mathcal U$ 边．它不是关键边，当且仅当存在另一个最大匹配 $M'\neq M$ 使得 $e\in M\oplus M'$．重复 [Berge 引理的证明](./graph-match.md#berge-引理) 可以说明，$M'\oplus M$ 仅由偶数长度的路径和偶环组成．这些路径的端点之一是相对于 $M$ 的未匹配点，所以路径中的顶点都不是 $\mathcal U$ 中的点，这与边 $e$ 的选取矛盾．因此，边 $e$ 只能出现在偶环中．因此，一条 $\mathcal U\mathcal U$ 边 $e\in M$ 不是关键边，当且仅当相对于 $M$ 存在一个包含边 $e$ 的交错环．这就是所要求证的．
+??? note "Proof"
+    The endpoints of a critical edge must be critical vertices. According to the properties of the Dulmage–Mendelsohn decomposition, edges in the maximum matching can only be $\mathcal E \mathcal O$ edges or $\mathcal U \mathcal U$ edges. However, since there are no critical vertices in $\mathcal E$, critical edges can only be $\mathcal U \mathcal U$ edges. Of course, critical edges must also be matching edges in $M$. Let $e \in M$ be a $\mathcal U \mathcal U$ edge. It is not a critical edge if and only if there exists another maximum matching $M' \neq M$ such that $e \in M \oplus M'$. Repeating the [proof of Berge's Lemma](./graph-match.md#berge-lemma) shows that $M' \oplus M$ consists only of paths of even length and even cycles. One of the endpoints of these paths is an unmatched vertex with respect to $M$, so vertices in the paths are not in $\mathcal U$, which contradicts the choice of edge $e$. Therefore, edge $e$ can only appear in even cycles. Therefore, a $\mathcal U \mathcal U$ edge $e \in M$ is not a critical edge if and only if there exists an alternating cycle containing edge $e$ with respect to $M$. This is what we needed to prove.
 
-因此，要求出最大匹配的关键边，需要按照如下步骤进行：
+Therefore, to find maximum matching critical edges, proceed as follows:
 
-1.  求出图 $G$ 的最大匹配 $M$；
-2.  按照 $M$ 将图 $G$ 的边定向，得到有向图 $G_M$；
-3.  进行 BFS 求出 Dulmage–Mendelsohn 分解中的集合 $\mathcal U$，即无法通过未匹配点沿着交错路到达的顶点集合；
-4.  利用 [Tarjan 算法](../scc.md#tarjan-算法) 求出有向图 $G_M$ 的全部强连通分量；
-5.  遍历匹配 $M$ 中的边，如果它的端点都在 $\mathcal U$ 中，但是不在同一个强连通分量中，它就是一条关键边．
+1.  Find the maximum matching $M$ of graph $G$.
+2.  Orient the edges of graph $G$ according to $M$ to get the directed graph $G_M$.
+3.  Perform BFS to find the set $\mathcal U$ in the Dulmage–Mendelsohn decomposition, i.e., the set of vertices that cannot be reached from unmatched vertices via alternating paths.
+4.  Use [Tarjan Algorithm](../scc.md#tarjan-algorithm) to find all strongly connected components of the directed graph $G_M$.
+5.  Iterate through edges in matching $M$. If both of its endpoints are in $\mathcal U$ but not in the same strongly connected component, it is a critical edge.
 
-得到最大匹配后，后续步骤的时间复杂度为 $O(|V|+|E|)$．
+After obtaining the maximum matching, the time complexity of the subsequent steps is $O(|V| + |E|)$.
 
-## 相关问题
+## Related Problems
 
-利用二分图最大匹配的算法，可以解决其它组合优化问题．
+Using bipartite maximum matching algorithms, other combinatorial optimization problems can be solved.
 
-### 二分图最小点覆盖
+### Bipartite Minimum Vertex Cover
 
-最小点覆盖问题是指，在一张无向图中选择最少的顶点，满足每条边至少有一个端点被选．
+The minimum vertex cover problem is to select the minimum number of vertices in an undirected graph such that every edge has at least one endpoint selected.
 
-一般图的最小点覆盖问题是 NP 困难的，但是对于二分图，Kőnig 定理说明它可以归约为最大匹配问题，从而高效求解．定理的证明同时也给出了最小点覆盖的构造．
+The minimum vertex cover problem is NP-hard for general graphs. However, for bipartite graphs, Kőnig's Theorem shows that it can be reduced to the maximum matching problem, thus allowing efficient solution. The proof of the theorem also gives the construction of the minimum vertex cover.
 
-???+ note "Kőnig 定理"
-    二分图中，最小点覆盖中的顶点数量等于最大匹配中的边数量．
+???+ note "Kőnig's Theorem"
+    In a bipartite graph, the number of vertices in the minimum vertex cover equals the number of edges in the maximum matching.
 
-??? note "证明"
-    设二分图 $G=(X,Y,E)$ 的一个最大匹配为 $M$．设图 $G$ 中可以由未匹配的左部点 $U$ 出发，沿着某条交错路到达的顶点集合为 $Z$．于是，顶点集合 $C=(X\setminus Z)\cup(Y\cap Z)$ 就是所求的最小点覆盖．
+??? note "Proof"
+    Let $M$ be a maximum matching of bipartite graph $G = (X, Y, E)$. Let $Z$ be the set of vertices that can be reached from an unmatched left vertex $U$ via some alternating path in graph $G$. Then the vertex set $C = (X \setminus Z) \cup (Y \cap Z)$ is the minimum vertex cover.
     
     ![](images/bigraph-match-3.svg)
     
-    首先，集合 $C$ 是点覆盖．假设不然，存在边 $(u,v)\in E$ 使得 $u\in X\cap Z$ 且 $v\in Y\setminus Z$．设 $P_u$ 是到达 $u$ 的一条交错路．如果边 $(u,v)$ 是匹配边，那么，路径 $P_u$ 中的最后一条边就是 $(v,u)$，这与 $v\notin Z$ 矛盾；如果边 $(u,v)$ 不是匹配边，那么，可以沿着边 $(u,v)$ 延长 $P_u$ 得到一条到达 $v$ 的交错路，同样与 $v\notin Z$ 矛盾．这些矛盾说明所有边都至少包含一个 $C$ 中的端点，所以 $C$ 是点覆盖．
+    First, set $C$ is a vertex cover. Suppose not, there exists an edge $(u, v) \in E$ such that $u \in X \cap Z$ and $v \in Y \setminus Z$. Let $P_u$ be an alternating path reaching $u$. If edge $(u, v)$ is a matching edge, then the last edge in path $P_u$ is $(v, u)$, which contradicts $v \notin Z$. If edge $(u, v)$ is not a matching edge, then we can extend $P_u$ along edge $(u, v)$ to get an alternating path reaching $v$, also contradicting $v \notin Z$. These contradictions show that all edges contain at least one endpoint in $C$, so $C$ is a vertex cover.
     
-    然后，需要说明 $C$ 是最小点覆盖．为了覆盖最大匹配 $M$ 的所有边，任何点覆盖都至少需要 $|M|$ 个顶点．因此，只需要证明 $|C|=|M|$，它就一定是最小点覆盖．这等价于证明，除了包含每条匹配边各一个端点之外，$C$ 再不包含其它顶点；也就是说，$C$ 不包含未匹配点．假设不然，存在未匹配点 $v\in C$．如果 $v\in X$，就一定有 $v\in U\subseteq Z$，这与 $C$ 的构造矛盾；如果 $v\in Y$，那么，到达 $v$ 的一条交错路是相对于 $M$ 的一条增广路，由 Berge 引理，这与 $M$ 是最大匹配矛盾．这些矛盾说明不存在这样的未匹配点，进而 $C$ 是最小点覆盖．
+    Then we need to show that $C$ is a minimum vertex cover. To cover all edges of the maximum matching $M$, any vertex cover requires at least $|M|$ vertices. Therefore, if we can prove $|C| = |M|$, it must be a minimum vertex cover. This is equivalent to proving that apart from containing one endpoint of each matching edge, $C$ contains no other vertices; that is, $C$ does not contain unmatched vertices. Suppose not, there exists an unmatched vertex $v \in C$. If $v \in X$, then $v \in U \subseteq Z$, which contradicts the construction of $C$. If $v \in Y$, then an alternating path reaching $v$ is an augmenting path with respect to $M$. By Berge's Lemma, this contradicts that $M$ is a maximum matching. These contradictions show that no such unmatched vertex exists, and thus $C$ is a minimum vertex cover.
 
-从网络流的角度看，最小点覆盖问题就是最小割问题：选择左部点，相当于切割它与源点的连边；选择右部点，相当于切割它与汇点的连边．从线性规划的角度看，最小点覆盖问题就是最大匹配问题的对偶问题．因此，König 定理可以看作是 [最大流最小割定理](../flow/max-flow.md#最大流最小割定理) 的特殊情形，或者更一般地，线性规划的强对偶定理的特殊情形．
+From the perspective of network flows, the minimum vertex cover problem is the minimum cut problem: selecting a left vertex corresponds to cutting its edge to the source; selecting a right vertex corresponds to cutting its edge to the sink. From the perspective of linear programming, the minimum vertex cover problem is the dual problem of the maximum matching problem. Therefore, Kőnig's Theorem can be seen as a special case of the [Max-Flow Min-Cut Theorem](../flow/max-flow.md#最大流最小割定理), or more generally, the strong duality theorem of linear programming.
 
-### 二分图最大独立集
+### Maximum Independent Set in Bipartite Graphs
 
-最大独立集问题是指，在一张无向图中选择最多的顶点，满足两两之间互不相邻．
+The maximum independent set problem is to select the maximum number of vertices in an undirected graph such that no two are adjacent.
 
-对于一般图，成立如下定理：
+For general graphs, the following theorem holds:
 
-???+ note "定理"
-    图 $G=(V,E)$ 中，点集 $C\subseteq V$ 是点覆盖，当且仅当它的补集 $V\setminus C$ 是独立集．
+???+ note "Theorem"
+    In graph $G = (V, E)$, a vertex set $C \subseteq V$ is a vertex cover if and only if its complement $V \setminus C$ is an independent set.
 
-??? note "证明"
-    点集 $C$ 是点覆盖，当且仅当 $E$ 中任何一条边 $e$ 的两个端点至少有一个出现在集合 $C$ 中，当且仅当 $E$ 中没有一条边的两个端点都出现在集合 $V\setminus C$ 中，当且仅当，$V\setminus C$ 是独立集．
+??? note "Proof"
+    A vertex set $C$ is a vertex cover if and only if for any edge $e \in E$, at least one of its two endpoints appears in set $C$. This is equivalent to saying that for any edge in $E$, both endpoints do not appear in set $V \setminus C$, which is equivalent to $V \setminus C$ being an independent set.
 
-???+ note "推论"
-    图 $G=(V,E)$ 中，最小点覆盖与最大独立集的大小之和等于顶点数目．
+???+ note "Corollary"
+    In graph $G = (V, E)$, the size of the minimum vertex cover plus the size of the maximum independent set equals the number of vertices.
 
-因此，与最小点覆盖问题一样，最大独立集问题对于一般图是 NP 困难的，但是对于二分图它可以归约为最大匹配问题，从而高效求解．
+Therefore, like the minimum vertex cover problem, the maximum independent set problem is NP-hard for general graphs, but for bipartite graphs it can be reduced to the maximum matching problem, thus allowing efficient solution.
 
-### 有向无环图最小路径覆盖
+### Minimum Path Cover in DAG
 
-最小路径覆盖问题是指，在一张有向图中，选择最少数量的简单路径，使得所有顶点都恰好出现在一条路径中．
+The minimum path cover problem is to select the minimum number of simple paths in a directed graph such that every vertex appears in exactly one path.
 
-一般的有向图上的最小路径覆盖问题是 NP 困难的，但是对于有向无环图，该问题可以归约为二分图最大匹配问题．对于有向无环图 $G=(V,E)$，可以二分图 $G'=(V^\text{in},V^\text{out},E')$ 如下：
+The minimum path cover problem on general directed graphs is NP-hard. However, for directed acyclic graphs, the problem can be reduced to the bipartite maximum matching problem. For a directed acyclic graph $G = (V, E)$, we can construct a bipartite graph $G' = (V^\text{in}, V^\text{out}, E')$ as follows:
 
--   为每个顶点 $v\in V$，分别建立一个入点 $v^\text{in}$ 和一个出点 $v^\text{out}$．设全体入点和出点的集合分别为 $V^\text{in}$ 和 $V^\text{out}$．它们分别成为新图的左部和右部．
--   为每条有向边 $(u,v)\in E$，建立无向边 $(u^\text{out},v^\text{in})$．全体无向边的集合就是 $E'$．
+-   For each vertex $v \in V$, create an input vertex $v^\text{in}$ and an output vertex $v^\text{out}$ respectively. Let the sets of all input vertices and output vertices be $V^\text{in}$ and $V^\text{out}$ respectively. They become the left and right parts of the new graph respectively.
+-   For each directed edge $(u, v) \in E$, create an undirected edge $(u^\text{out}, v^\text{in})$. The set of all undirected edges is $E'$.
 
-为此，有如下结论：
+For this, we have the following theorem:
 
-???+ note "定理"
-    有向无环图 $G=(V,E)$ 的最小路径覆盖与相应的二分图 $G'=(V^\text{in},V^\text{out},E')$ 的最大匹配的大小之和等于顶点数量．
+???+ note "Theorem"
+    In a directed acyclic graph $G = (V, E)$, the minimum path cover plus the size of the maximum matching in the corresponding bipartite graph $G' = (V^\text{in}, V^\text{out}, E')$ equals the number of vertices.
 
-??? note "证明"
-    二分图 $G'$ 的每个匹配 $M'$，都对应着图 $G$ 的一张子图 $F$，且子图 $F$ 中每个顶点的入度和出度都至多为一，也就是说，子图 $F$ 实际上是有向图 $G$ 中若干互不相交的路径或环的集合．但是，已经假设 $G$ 中不存在环路，所以 $F$ 只包含若干不交的路径．反过来，对于每个这样的子图 $F$，都能构造出相应的匹配．因为匹配 $M$ 的大小，就是顶点数量与 $F$ 中路径数量的差值，所以，图 $G$ 的最小路径覆盖问题，就对应着图 $G'$ 的最大匹配问题．
+??? note "Proof"
+    Each matching $M'$ in bipartite graph $G'$ corresponds to a subgraph $F$ of graph $G$, and in subgraph $F$, each vertex has indegree and outdegree at most one. That is, subgraph $F$ is actually a collection of disjoint paths or cycles in directed graph $G$. However, since we have assumed that $G$ contains no cycles, $F$ only contains disjoint paths. Conversely, for each such subgraph $F$, a corresponding matching can be constructed. Since the size of matching $M$ is the difference between the number of vertices and the number of paths in $F$, the minimum path cover problem in graph $G$ corresponds to the maximum matching problem in graph $G'$.
 
-证明是构造性的，因此，很容易根据得到的最大匹配构造出相应的最小路径覆盖．而且，这个构造说明，对于一般的有向图，这个归约不再成立，正是因为二分图中的匹配可能对应着有向图中的环．
+The proof is constructive, so it is easy to construct the corresponding minimum path cover from the obtained maximum matching. Furthermore, this construction shows that for general directed graphs, this reduction no longer holds, precisely because a matching in a bipartite graph may correspond to cycles in a directed graph.
 
-特别地，对于集合 $X$ 和它上面的偏序关系 $P$，可以建立有向无环图 $G=(X,P)$．此时，根据 [Dilworth 定理](../../math/order-theory.md#dilworth-定理与-mirsky-定理)，图 $G$ 的最小路径覆盖的大小，就等于它的最长反链的长度，也就是偏序集 $(X,P)$ 的宽度．因此，本节实际上给出了任意偏序集的宽度的高效计算方法．
+In particular, for a set $X$ and a partial order relation $P$ on it, we can construct a directed acyclic graph $G = (X, P)$. In this case, according to [Dilworth's Theorem](../../math/order-theory.md#dilworth-定理与-mirsky-定理), the size of the minimum path cover of graph $G$ equals the length of its longest antichain, which is the width of the partial order set $(X, P)$. Therefore, this section actually provides an efficient method to compute the width of any partial order set.
 
-## 例题
+## Examples
 
-应用二分图匹配的难点在于建图，本节通过一些例题展示建图的技巧．
+The difficulty in applying bipartite matching is in constructing the graph. This section demonstrates graph construction techniques through some examples.
 
-???+ example "[Luogu P1129 矩阵游戏](https://www.luogu.com.cn/problem/P1129)"
-    有一个 01 方阵，每一次可以交换两行或两列，问是否可以交换使得主对角线（左上到右下）全都是 1．
+???+ example "[Luogu P1129 Matrix Game](https://www.luogu.com.cn/problem/P1129)"
+    There is a 01 matrix. Each time you can swap two rows or two columns. Ask whether it is possible to swap so that the main diagonal (top-left to bottom-right) is all 1s.
 
-??? note "解法"
-    注意到，当存在 $n$ 个 $1$，使得这些 $1$ 不在同一行、同一列，那么必然有解，否则必然无解．问题转化成了能否找到这 $n$ 个 $1$．
+??? note "Solution"
+    Notice that if there exist $n$ 1s such that these 1s are not in the same row or the same column, then there must be a solution; otherwise, there must be no solution. The problem reduces to whether these $n$ 1s can be found.
     
-    考虑对于一个 $1$ 而言，最终的方案中选了这个 $1$ 代表这个 $1$ 的行、列被占用．于是可以建出一个 $n$ 个左部点、$n$ 个右部点的二分图，其中对于某个为 $1$ 的元素，我们建一条连接它的行的左部点和它的列的右部点．于是就可以二分图匹配了．
+    Considering a 1, the final solution selecting this 1 means that its row and column are occupied. Then we can construct a bipartite graph with $n$ left vertices and $n$ right vertices. For each element that is 1, we create an edge connecting the left vertex of its row to the right vertex of its column. Then we can perform bipartite graph matching.
 
-??? note "代码"
+??? note "Code"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_3.cpp"
     ```
 
 ???+ example "[Gym 104427B Lawyers](https://codeforces.com/gym/104427/problem/B)"
-    有 $n$ 个律师，都被指控有欺诈罪．于是，他们需要互相辩护，确保每一名律师都被释放．这 $n$ 个律师有 $m$ 对信任关系，一个信任关系 $(a, b)$ 表示 $a$ 可以为 $b$ 辩护．任何一个受到辩护的律师都会被无罪释放，除了一个例外：如果 $a$ 和 $b$ 互相辩护，他们都会被判有罪．
+    There are $n$ lawyers, all accused of fraud. They need to defend each other to ensure that every lawyer is released. These $n$ lawyers have $m$ trust relationships. A trust relationship $(a, b)$ means $a$ can defend $b$. Any lawyer who receives a defense will be released without guilt, with one exception: if $a$ and $b$ defend each other, they will both be found guilty.
     
-    求是否可以使得每一名律师都被释放．
+    Ask whether it is possible to have every lawyer released.
 
-??? note "解法"
-    对于每一个 **无序对** $(a, b)$，当 $a$ 可以辩护 $b$，连这个无序对向 $b$ 的边，反之亦然．
+??? note "Solution"
+    For each **unordered pair** $(a, b)$, if $a$ can defend $b$, connect this unordered pair to $b$'s edge, and vice versa.
     
-    只保存有边相连的 $(a, b)$，问题被转化成了一个 $m$ 个左部点、$n$ 个右部点的二分图最大匹配．
+    Only keep $(a, b)$ where there is an edge. The problem becomes a bipartite maximum matching with $m$ left vertices and $n$ right vertices.
 
-??? note "代码"
+??? note "Code"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_4.cpp"
     ```
 
 ???+ example "[Codeforces 1404E Bricks](https://codeforces.com/problemset/problem/1404/E)"
-    用一些 $1 \times x$ 的砖精确覆盖一个 $n \times m$ 的网格，砖可以旋转，其中有一些格子不能覆盖．
+    Use some $1 \times x$ bricks to precisely cover an $n \times m$ grid. Bricks can be rotated. Some cells cannot be covered.
 
-??? note "解法"
-    考虑最终的方案是如何构成的：
+??? note "Solution"
+    Consider how the final solution is composed:
     
-    先在所有能覆盖的网格上全部铺上 $1 \times 1$ 的砖．对于一个 $1 \times x$ 的砖，可以由同一行的 $x$ 个连续的 $1 \times 1$ 砖依次「行合并」形成．同理，对于一个 $x \times 1$ 的砖．可以由同一列的 $x$ 个连续的 $1 \times 1$ 砖依次「列合并」形成．
+    First, cover all coverable cells with $1 \times 1$ bricks. For a $1 \times x$ brick, it can be formed by $x$ consecutive $1 \times 1$ bricks in the same row by "row merging" sequentially. Similarly, for an $x \times 1$ brick. It can be formed by $x$ consecutive $1 \times 1$ bricks in the same column by "column merging" sequentially.
     
-    显然，一次行合并和一次列合并不能干涉到同一个砖，而且合并的次数越多，砖块数量越少．于是，可以以行合并作为左部点，列合并作为右部点，以前面的冲突作为边，建出一个二分图．随即原问题变成了一个二分图最大独立集问题．
+    Obviously, one row merge and one column merge cannot interfere with the same brick, and the more merges, the fewer bricks there are. Therefore, we can take row merges as left vertices, column merges as right vertices, and use the previous conflicts as edges to construct a bipartite graph. The original problem then becomes a bipartite maximum independent set problem.
 
-??? note "代码"
+??? note "Code"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_5.cpp"
     ```
 
 ???+ example "[Codeforces 1139E - Maximize Mex](https://codeforces.com/problemset/problem/1139/E)"
-    有 $m$ 个共有 $n$ 个元素的可重集，每一次从某一个可重集里面删除一个元素，然后查询「在每一个可重集里面选至多一个元素，可以达到的最大 $\operatorname{mex}$」．
+    There are $m$ multisets, each containing $n$ elements. Each time, delete one element from a certain multiset, then query "the maximum mex that can be achieved by selecting at most one element from each multiset".
 
-??? note "解法"
-    先考虑如果没有删除元素时怎么做．
+??? note "Solution"
+    First, consider how to do it without deleting elements.
     
-    对于每一个多重集，开一个新点；对于每一个可能的答案，开一个新点．然后，对于某一个对应点 $l_i$ 的多重集的一个元素 $a$，连一条 $l_i$ 至 $r_a$ 的边．此时这个弱化版本变成了一个二分图最大匹配．
+    For each multiset, create a new node. For each possible answer, create a new node. Then for each element $a$ of a multiset corresponding to node $l_i$, connect an edge from $l_i$ to $r_a$. At this point, this weakened version becomes a bipartite maximum matching.
     
-    现在加回来删除元素的操作，发现根本搞不了：删了一条边可能引起匹配的巨变，复杂度无法接受．于是，不如反过来，我们每一次加一条边，然后顺过去重新增广．所以本题只能使用 Kuhn 算法．
+    Now, adding back the operation of deleting elements: we find that it's fundamentally unmanageable: deleting an edge may cause huge changes in the matching, and the complexity is unacceptable. So instead, we add an edge each time and then re-augment. Therefore, only Kuhn's Algorithm can be used for this problem.
 
-??? note "代码"
+??? note "Code"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_6.cpp"
     ```
 
-???+ example "[Luogu P3355 - 骑士共存问题](https://www.luogu.com.cn/problem/P3355)"
-    有一个 $n \times n$ 的国际象棋棋盘，其中一些位置不能放棋子，问最多可以放多少个马使得这些马不会互相攻击．
+???+ example "[Luogu P3355 - Knight Coexistence Problem](https://www.luogu.com.cn/problem/P3355)"
+    There is an $n \times n$ chessboard. Some positions cannot place pieces. Ask how many knights can be placed at most such that they do not attack each other.
 
-??? note "解法"
-    可以发现，如果对整个棋盘染色使得所有黑格、白格均不相邻，那么马只能够攻击到与其异色的格子．
+??? note "Solution"
+    It can be observed that if we color the entire board such that all black squares and white squares are not adjacent, then knights can only attack squares of the opposite color.
     
-    然后就可以直接二分图最大独立集了．
+    Then we can directly proceed with bipartite maximum independent set.
 
-??? note "代码"
+??? note "Code"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/bigraph-match/bigraph-match_7.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [Codeforces 1765A - Access Levels](https://codeforces.com/problemset/problem/1765/A)
 -   [AtCoder abc274G - Security Camera 3](https://atcoder.jp/contests/abc274/tasks/abc274_g)
 -   [Codeforces 1773D - Dominoes](https://codeforces.com/problemset/problem/1773/D)
--   [Luogu P5030 - 长脖子鹿放置](https://www.luogu.com.cn/problem/P5030)
--   [Luogu P2071 - 座位安排](https://www.luogu.com.cn/problem/P2071)
--   [LibreOJ 6002 - 最小路径覆盖](https://loj.ac/p/6002)
+-   [Luogu P5030 - Long Necked Deer Placement](https://www.luogu.com.cn/problem/P5030)
+-   [Luogu P2071 - Seat Arrangement](https://www.luogu.com.cn/problem/P2071)
+-   [LibreOJ 6002 - Minimum Path Cover](https://loj.ac/p/6002)
 
-## 参考资料
+## References
 
 -   [Kuhn's Algorithm - Maximum Bipartite Matching](https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html)
--   [二分图最大匹配的 König 定理及其证明](https://matrix67.com/blog/archives/116)
+-   [Kőnig's Theorem for Bipartite Maximum Matching and Its Proof](https://matrix67.com/blog/archives/116)
 -   [Implementing Dinitz on bipartite graphs by adamant - Codeforces blogs](https://codeforces.com/blog/entry/118098)
 -   Bondy, John Adrian, and Uppaluri Siva Ramachandra Murty. Graph theory with applications. Vol. 290. London: Macmillan, 1976.
--   陈胤伯．浅谈图的匹配算法及其应用．2015 年信息学奥林匹克中国国家队候选队员论文集．
+-   Chen Yinbo. A Discussion on Graph Matching Algorithms and Their Applications. 2015 Chinese National Informatics Olympiad Team Candidate Paper Collection.
 -   [Dulmage–Mendelsohn decomposition - Wikipedia](https://en.wikipedia.org/wiki/Dulmage%E2%80%93Mendelsohn_decomposition)
 -   [Notes on Dulmage–Mendelsohn decomposition](https://www.cse.iitm.ac.in/~meghana/matchings/bip-decomp.pdf)
 

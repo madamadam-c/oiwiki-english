@@ -1,12 +1,12 @@
-## 概述
+## Overview
 
-C++ 的 **命名空间** 机制可以用来解决复杂项目中名字冲突的问题．
+C++'s **namespace** mechanism can be used to solve name conflicts in complex projects.
 
-举个例子：C++ 标准库的所有内容均定义在 `std` 命名空间中，如果你定义了一个叫 `cin` 的变量，则可以通过 `cin` 来访问你定义的 `cin` 变量，通过 `std::cin` 访问标准库的 `cin` 对象，而不用担心产生冲突．
+For example, everything in the C++ standard library is defined in the `std` namespace. If you define a variable named `cin`, you can access your own `cin` variable with `cin` and the standard library's `cin` object with `std::cin`, without worrying about conflicts.
 
-## 声明
+## Declaration
 
-下面的代码声明了一个名字叫 `A` 的命名空间：
+The following code declares a namespace named `A`:
 
 ```cpp
 namespace A {
@@ -16,9 +16,9 @@ void f(int x) { cnt = x; }
 }  // namespace A
 ```
 
-声明之后，在这个命名空间外部，你可以通过 `A::f(x)` 来访问命名空间 `A` 内部的 `f` 函数，也可以通过 `A::cnt` 来访问命名空间 `A` 内部的 `cnt` 变量．
+After the declaration, outside this namespace, you can access the function `f` inside namespace `A` with `A::f(x)`, and the variable `cnt` inside namespace `A` with `A::cnt`.
 
-命名空间的声明是可以嵌套的，因此下面这段代码也是允许的：
+Namespace declarations can be nested, so the following code is also allowed:
 
 ```cpp
 namespace A {
@@ -27,38 +27,38 @@ void f() { ... }
 }  // namespace B
 
 void f() {
-  B::f();  // 实际访问的是 A::B::f()，由于当前位于命名空间 A
-           // 内，所以可以省略前面的 A::
+  B::f();  // This actually accesses A::B::f(). Since the current code is
+           // inside namespace A, the preceding A:: can be omitted
 }
 }  // namespace A
 
-void f()  // 这里定义的是全局命名空间的 f 函数，与 A::f 和 A::B::f
-          // 都不会产生冲突
+void f()  // This defines function f in the global namespace, and it does
+          // not conflict with A::f or A::B::f
 {
   A::f();
   A::B::f();
 }
 ```
 
-## `using` 指令
+## The `using` Directive
 
-声明了命名空间之后，如果在命名空间外部访问命名空间内部的成员，需要在成员名前面加上 `命名空间::`．
+After declaring a namespace, to access members inside the namespace from outside it, you need to add `namespace::` before the member name.
 
-有没有什么比较方便的方法能让我们直接通过成员名访问命名空间内的成员呢？答案是肯定的．我们可以使用 `using` 指令．
+Is there a more convenient way to access members inside a namespace directly by member name? Yes. We can use the `using` directive.
 
-`using` 指令有如下两种形式：
+The `using` directive has the following two forms:
 
-1.  `using 命名空间::成员名;`：这条指令可以让我们省略某个成员名前的命名空间，直接通过成员名访问成员，相当于将这个成员导入了当前的作用域．
-2.  `using namespace 命名空间;`：这条指令可以直接通过成员名访问命名空间中的 **任何** 成员，相当于将这个命名空间的所有成员导入了当前的作用域．
+1.  `using namespace_name::member_name;`: this directive lets us omit the namespace before a specific member name and access the member directly by name, equivalent to importing that member into the current scope.
+2.  `using namespace namespace_name;`: this directive lets us access **any** member in the namespace directly by member name, equivalent to importing all members of that namespace into the current scope.
 
-因此，如果执行了 `using namespace std;`，就会在当前作用域将 `std` 中的所有名字引入到全局命名空间当中．这样，我们就可以用 `cin` 代替 `std::cin`，用 `cout` 代替 `std::cout`．
+Therefore, if `using namespace std;` is executed, all names in `std` are introduced into the current scope. This lets us use `cin` instead of `std::cin`, and `cout` instead of `std::cout`.
 
-??? warning "`using` 指令可能会导致命名冲突！"
-    由于 `using namespace std;` 会将 `std` 中的 **所有名字** 引入，因此如果声明了与 `std` 重名的变量或函数，就可能会因为命名冲突而导致编译错误．
+??? warning "The `using` directive may cause name conflicts!"
+    Since `using namespace std;` introduces **all names** in `std`, declaring a variable or function with the same name as one in `std` may cause a compile error due to a name conflict.
     
-    因此在工程中，并不推荐使用 `using namespace 命名空间;` 的指令．
+    Therefore, in projects, using directives of the form `using namespace namespace_name;` are not recommended.
 
-有了 `using` 指令，[C++ 语法基础](./basic.md#cin-与-cout) 中的代码可以有这两种等价写法：
+With the `using` directive, the code in [C++ Syntax Basics](./basic.md#cin-and-cout) can be written in either of these two equivalent ways:
 
 ```cpp
 #include <iostream>
@@ -88,21 +88,21 @@ int main() {
 }
 ```
 
-## 无名命名空间
+## Unnamed Namespaces
 
-当我们在一个作用域里只定义了一个用于防止名字冲突的命名空间时，其定义和使用将可以变得非常简洁．我们可以使用无名命名空间．
+When we define only one namespace in a scope to prevent name conflicts, its definition and use can be made very concise. We can use an unnamed namespace.
 
-形如 `namespace { /* something ... */ } `（省略命名空间的名字）定义的命名空间被称为无名命名空间．一个文件里的无名命名空间会被视为拥有独有的名字，和其他命名空间都不同，但同一个作用域内多个无名命名空间被视为相同的命名空间．在无名命名空间定义后，其中的名字在其外的作用域内可以在使用时被查找到，如同在无名命名空间定义后加入了一条 `using namespace` 指令．
+A namespace defined in the form `namespace { /* something ... */ } `, with the namespace name omitted, is called an unnamed namespace. An unnamed namespace in a file is treated as having a unique name different from all other namespaces, but multiple unnamed namespaces in the same scope are treated as the same namespace. After an unnamed namespace is defined, the names inside it can be found from the surrounding scope when used, as if a `using namespace` directive had been added after the unnamed namespace definition.
 
-## 应用
+## Applications
 
-### 防止子任务间名字冲突
+### Preventing Name Conflicts Between Subtasks
 
-在一些具有多个子任务的问题中，我们可以对每个子任务各定义一个命名空间，在其中定义我们解决该子任务所需要的变量与函数，这样即使两个子任务的实现中即使声明了相同名字也不会冲突，从而使各个子任务间互不干扰，会在一定程度上方便调试，也会改善程序的可读性．
+In some problems with multiple subtasks, we can define a namespace for each subtask and define the variables and functions needed to solve that subtask inside it. This way, even if two subtask implementations declare the same names, they do not conflict. This keeps the subtasks from interfering with each other, helps debugging to some extent, and improves readability.
 
-### 防止与标准库以及环境引入的名字冲突
+### Preventing Conflicts with Names from the Standard Library and Environment
 
-同时，使用命名空间也可以防止一些算法竞赛中常用的名字与标准冲突，如下例：
+Namespaces can also prevent conflicts between names commonly used in algorithm competitions and standard or environment-provided names, as in the following example:
 
 ```cpp
 #include <math.h>
@@ -112,24 +112,26 @@ int main() {
 using namespace std;
 
 namespace Sol {
-int end;  // std::end 被 using namespace std; 引入
+int end;  // std::end is introduced by using namespace std;
 
-int y1;  // y1 是 POSIX 定义的第二类 Bessel 函数
+int y1;  // y1 is a Bessel function of the second kind defined by POSIX
 
-// 因此通常情况下，在 Linux 下会有冲突而在 Windows 下没有
+// Therefore, conflicts usually occur on Linux but not on Windows
 
 void solve() {
-  // 在 Sol::solve() 里无限定（不用 ::）地使用我们声明的 end 以及 y1
-  // 并不会导致名字冲突； 而若以上代码在全局命名空间中，将会导致冲突： 其中 end
-  // 只会在名字查找（即编译使用它的代码）时与 std::end 冲突，而 y1
-  // 在声明时就会冲突； 并且 y1 的冲突因为与环境有关甚至在 Windows
-  // 下不会被发现，却会在 Linux 的评测环境下造成编译错误．
+  // Using our declared end and y1 without qualification (without ::) inside
+  // Sol::solve() does not cause name conflicts. If the code above were in the
+  // global namespace, it would cause conflicts: end would conflict with std::end
+  // only during name lookup (that is, when compiling code that uses it), while y1
+  // would conflict at declaration. Also, because the y1 conflict depends on the
+  // environment, it might not be found on Windows but would cause a compile error
+  // in the Linux judging environment.
 }
 }  // namespace Sol
 
 int main() { Sol::solve(); }
 ```
 
-## 参考
+## References
 
 -   [Namespaces - cppreference.com](https://en.cppreference.com/w/cpp/language/namespace)

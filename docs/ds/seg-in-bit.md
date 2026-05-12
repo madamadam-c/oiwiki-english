@@ -1,37 +1,37 @@
 author: Ir1d, sshwy, Enter-tainer, H-J-Granger, ouuan, GavinZhengOI, hsfzLZH1, xyf007
 
-[静态区间 k 小值（POJ 2104 K-th Number）](http://poj.org/problem?id=2104) 的问题可以用 [权值线段树](./persistent-seg.md) 在 $O(n\log n)$ 的时间复杂度内解决．
+The problem of [static range k-th smallest value (POJ 2104 K-th Number)](http://poj.org/problem?id=2104) can be solved with a [value segment tree](./persistent-seg.md) in $O(n\log n)$ time.
 
-如果区间变成动态的呢？即，如果还要求支持一种操作：单点修改某一位上的值，又该怎么办呢？
+What if the range becomes dynamic? That is, what should we do if we also need to support an operation that modifies the value at a single position?
 
-??? note "例题 [二逼平衡树（树套树）](https://loj.ac/problem/106)"
-    维护一个有序数列，其中需要提供以下操作：
+??? note "Example Problem [Advanced Balanced Tree (Tree of Trees)](https://loj.ac/problem/106)"
+    Maintain an ordered sequence that needs to support the following operations:
+
+    -   Query the rank of $x$ in an interval;
+    -   Query the value with rank $k$ in an interval;
+    -   Modify the value at a position;
+    -   Query the predecessor of $x$ in an interval (the predecessor is defined as the greatest number smaller than $x$);
+    -   Query the successor of $x$ in an interval (the successor is defined as the smallest number greater than $x$).
+
+??? note "Example Problem [Luogu P2617 Dynamic Rankings](https://www.luogu.com.cn/problem/P2617)"
+    Given $n$ numbers forming a sequence $a_1,a_2 \dots a_n$, support two operations:
     
-    -   查询 $x$ 在区间内的排名；
-    -   查询区间内排名为 $k$ 的值；
-    -   修改某一位置上的数值；
-    -   查询 $x$ 在区间内的前驱（前驱定义为小于 $x$，且最大的数）；
-    -   查询 $x$ 在区间内的后继（后继定义为大于 $x$，且最小的数）．
+    -   `Q l r k` means to query, among indices in the interval $[l,r]$, the $k$-th smallest number
+    -   `C x y` means to change $a_x$ to $y$
 
-??? note "例题 [洛谷 P2617 Dynamic Rankings](https://www.luogu.com.cn/problem/P2617)"
-    给定一个含有 $n$ 个数的序列 $a_1,a_2 \dots a_n$，需要支持两种操作：
-    
-    -   `Q l r k` 表示查询下标在区间 $[l,r]$ 中的第 $k$ 小的数
-    -   `C x y` 表示将 $a_x$ 改为 $y$
+If we use the method discussed in [segment tree of balanced trees](./balanced-in-seg.md), that is, a segment tree where each node maintains a balanced tree for the interval represented by that node, and then binary search for the $k$-th smallest value, each query operation has to cover multiple intervals, that is, multiple nodes. However, balanced trees cannot search multiple values together, so the time complexity is $O(n\log^3 n)$, which is not optimal.
 
-如果用 [线段树套平衡树](./balanced-in-seg.md) 中所论述的，用线段树套平衡树，即对于线段树的每一个节点，对于其所表示的区间维护一个平衡树，然后用二分来查找 $k$ 小值．由于每次查询操作都要覆盖多个区间，即有多个节点，但是平衡树并不能多个值一起查找，所以时间复杂度是 $O(n\log^3 n)$，并不是最优的．
+The optimization idea is to combine binary searching the answer with querying the number of values smaller than a given value, using a **segment tree of dynamically allocated value segment trees**. Since all segment trees have the same structure, we can perform segment-tree binary search on multiple trees simultaneously.
 
-优化的思路是把二分答案的操作和查询小于一个值的数的数量两种操作结合起来，使用 **线段树套动态开点权值线段树**，由于所有线段树的结构是相同的，可以在多棵树上同时进行线段树上二分．
+During a modification, first move from top to bottom on the segment tree to the point being modified. For every visited node, delete the old value from the dynamically allocated value segment tree it points to, and then insert the new value. This visits $O(\log n)$ nodes on the segment tree, and one modification on a dynamically allocated value segment tree costs $O(\log n)$, so the time complexity of a modification is $O(\log^2 n)$.
 
-在修改操作进行时，先在线段树上从上往下跳到被修改的点，删除所经过的点所指向的动态开点权值线段树上的原来的值，然后插入新的值，要经过 $O(\log n)$ 个线段树上的节点，在动态开点权值线段树上一次修改操作是 $O(\log n)$ 的，所以修改操作的时间复杂度为 $O(\log^2 n)$．
+When querying the answer, first extract all nodes on the segment tree that cover the interval, and then use a method similar to the static range $k$-th smallest problem: move all these nodes to their left children or right children together. If the number of values stored in the left children of all these nodes is at least $k$, move left; otherwise move right. Since at most $O(\log n)$ nodes can be covered, at most that many nodes move downward each time, and the time complexity is $O(\log^2 n)$.
 
-在查询答案时，先取出该区间覆盖在线段树上的所有点，然后用类似于静态区间 $k$ 小值的方法，将这些点一起向左儿子或向右儿子跳．如果所有这些点左儿子存储的值大于等于 $k$，则往左跳，否则往右跳．由于最多只能覆盖 $O(\log n)$ 个节点，所以最多一次只有这么多个节点向下跳，时间复杂度为 $O(\log^2 n)$．
+Because segment trees have a relatively large constant factor, implementations often use a **Fenwick tree**, which has a smaller constant factor and is more convenient for handling prefix sums. In addition, the space complexity is $O(n\log^2 n)$, so **pay attention to memory limits** when using this approach.
 
-由于线段树的常数较大，在实现中往往使用常数更小且更方便处理前缀和的 **树状数组** 实现．另外空间复杂度是 $O(n\log^2 n)$ 的，使用时 **注意空间限制**．
+One implementation is given below:
 
-给出一种代码实现：
-
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -48,7 +48,7 @@ author: Ir1d, sshwy, Enter-tainer, H-J-Granger, ouuan, GavinZhengOI, hsfzLZH1, x
     set<int> ST;
     map<int, int> mp;
     
-    struct segment_tree  // 封装的动态开点权值线段树
+    struct segment_tree  // wrapped dynamically allocated value segment tree
     {
       int cur, rt[MAXN * 4], sum[MAXN * 60], lc[MAXN * 60], rc[MAXN * 60];
     
@@ -74,7 +74,7 @@ author: Ir1d, sshwy, Enter-tainer, H-J-Granger, ouuan, GavinZhengOI, hsfzLZH1, x
       }
     } st;
     
-    // 树状数组实现
+    // Fenwick tree implementation
     namepace fenwick_impl {
       int lowbit(int o) { return (o & (-o)); }
     
@@ -106,7 +106,7 @@ author: Ir1d, sshwy, Enter-tainer, H-J-Granger, ouuan, GavinZhengOI, hsfzLZH1, x
     }
     using namespace fenwick_impl;
     
-    // 线段树实现
+    // Segment tree implementation
     namespace segtree_impl {
     void build(int o, int l, int r) {
       st.build(st.rt[o]);

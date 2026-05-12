@@ -1,284 +1,284 @@
-本页面将简要介绍希尔排序．
+This page briefly introduces Shellsort.
 
-## 定义
+## Definition
 
-希尔排序（英语：Shell sort），也称为缩小增量排序法，是 [插入排序](./insertion-sort.md) 的一种改进版本．希尔排序以它的发明者希尔（英语：Donald Shell）命名．
+Shellsort (English: Shell sort), also known as the diminishing increment sort, is an improved version of [insertion sort](./insertion-sort.md). Shellsort is named after its inventor, Donald Shell.
 
-## 过程
+## Process
 
-排序对不相邻的记录进行比较和移动：
+Sorting involves comparing and moving records that are not adjacent to each other:
 
-1.  将待排序序列分为若干子序列（每个子序列的元素在原始数组中间距相同）；
-2.  对这些子序列进行插入排序；
-3.  减小每个子序列中元素之间的间距，重复上述过程直至间距减少为 $1$．
+1.  Divide the sequence to be sorted into several subsequences (where each subsequence's elements have the same spacing in the original array);
+2.  Perform insertion sort on these subsequences;
+3.  Reduce the spacing between elements in each subsequence, and repeat the above process until the spacing is reduced to $1$.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-希尔排序是一种不稳定的排序算法．
+Shellsort is an unstable sorting algorithm.
 
-### 时间复杂度
+### Time Complexity
 
-希尔排序的最优时间复杂度为 $O(n)$．
+The optimal time complexity of Shellsort is $O(n)$.
 
-希尔排序的平均时间复杂度和最坏时间复杂度与间距序列的选取有关．设间距序列为 $H$，下面给出 $H$ 的两种经典选取方式，这两种选取方式均使得排序算法的复杂度降为 $o(n^2)$ 级别．
+The average and worst-case time complexity of Shellsort depends on the choice of gap sequence. Let the gap sequence be $H$. Two classic choices for $H$ are given below, both of which reduce the sorting algorithm's complexity to $o(n^2)$.
 
-???+ note "命题 1"
-    若间距序列为 $H= \{ 2^k-1\mid k=1,2,\ldots,\lfloor\log_2 n\rfloor \}$（从大到小），则希尔排序算法的时间复杂度为 $O(n^{3/2})$．
+???+ note "Proposition 1"
+    If the gap sequence is $H = \{ 2^k - 1 \mid k = 1, 2, \ldots, \lfloor \log_2 n \rfloor \}$ (in decreasing order), then the time complexity of Shellsort is $O(n^{3/2})$.
 
-???+ note "命题 2"
-    若间距序列为 $H= \{ k=2^p\cdot 3^q\mid p,q\in \mathbb N,k\le n \}$（从大到小），则希尔排序算法的时间复杂度为 $O(n\log^2 n)$．
+???+ note "Proposition 2"
+    If the gap sequence is $H = \{ k = 2^p \cdot 3^q \mid p, q \in \mathbb{N}, k \le n \}$ (in decreasing order), then the time complexity of Shellsort is $O(n \log^2 n)$.
 
-为证明这两个命题，我们先给出一个重要的定理并证明它，这个定理反应了希尔排序的最主要特征．
+To prove these two propositions, we first present and prove an important theorem, which reflects the main characteristic of Shellsort.
 
-???+ note "定理 1"
-    只要程序执行了一次 $\text{InsertionSort}(h)$，不管之后怎样调用 $\text{InsertionSort}$ 函数，$A$ 数组怎样变换，下列性质均会被一直保持：
+???+ note "Theorem 1"
+    Once the program has executed $\text{InsertionSort}(h)$, regardless of how subsequent calls to $\text{InsertionSort}$ proceed and how array $A$ changes, the following property is always maintained:
     
     $$
     \begin{array}{c}
-    A_1,A_{1+h},A_{1+2h},\ldots \\
-    A_2,A_{2+h},A_{2+2h},\ldots \\
+    A_1, A_{1+h}, A_{1+2h}, \ldots \\
+    A_2, A_{2+h}, A_{2+2h}, \ldots \\
     \vdots \\
-    A_h,A_{h+h},A_{h+2h},\ldots
+    A_h, A_{h+h}, A_{h+2h}, \ldots
     \end{array}
     $$
 
-接下来我们证明定理 1．
+Now we prove Theorem 1.
 
-我们先证明引理 1．
+We first prove Lemma 1.
 
-???+ note "引理 1"
-    对于整数 $n,m$、正整数 $l$ 与两个数组 $X(x_1,x_2,\ldots,x_{n+l}),Y(y_1,y_2,\ldots,y_{m+l})$，满足如下要求：
+???+ note "Lemma 1"
+    For integers $n, m$, positive integer $l$, and two arrays $X(x_1, x_2, \ldots, x_{n+l}), Y(y_1, y_2, \ldots, y_{m+l})$, satisfying the following requirement:
     
     $$
-    y_1 \le x_{n+1},y_2 \le x_{n+2},\ldots,y_l \le x_{n+l}
+    y_1 \le x_{n+1}, y_2 \le x_{n+2}, \ldots, y_l \le x_{n+l}
     $$
     
-    则我们将两个数组分别升序排序后，上述要求依然成立．
+    Then after sorting both arrays in ascending order, the above requirement still holds.
 
-??? note "引理 1 证明"
-    设数组 $X$ 排序完为数组 $X'(x'_1,\ldots,x'_{n+l})$，数组 $Y$ 排序完为数组 $Y'(y'_1,\ldots,y'_{m+l})$．
+??? note "Proof of Lemma 1"
+    Let the sorted $X$ be $X'(x'_1, \ldots, x'_{n+l})$, and the sorted $Y$ be $Y'(y'_1, \ldots, y'_{m+l})$.
     
-    对于任何 $1\le i\le l$，$x'_{n+i}$ 小等于数组 $X'$ 中的 $l-i$ 个元素，也小等于数组 $X$ 中的 $l-i$ 个元素（这是因为 $X$ 与 $X'$ 的元素可重集合是相同的）．
+    For any $1 \le i \le l$, $x'_{n+i}$ is less than or equal to $l-i$ elements in array $X'$, and also less than or equal to $l-i$ elements in array $X$ (this is because $X$ and $X'$ have the same multiset of elements).
     
-    那么在可重集合 $\{x_{n+1},\ldots,x_{n+l} \} \subset X$ 中，大等于 $x'_{n+i}$ 的元素个数不超过 $l-i$ 个．
+    Therefore, in the multiset $\{ x_{n+1}, \ldots, x_{n+l} \} \subset X$, the number of elements greater than or equal to $x'_{n+i}$ is at most $l-i$.
     
-    进而小于 $x'_{n+i}$ 的元素个数至少有 $i$ 个，取出其中的 $i$ 个，设它们为 $x_{n+k_1},x_{n+k_2},\ldots,x_{n+k_i}$．于是有：
+    Consequently, the number of elements less than $x'_{n+i}$ is at least $i$. Take $i$ of them, and denote them as $x_{n+k_1}, x_{n+k_2}, \ldots, x_{n+k_i}$. Then we have:
     
     $$
-    y_{k_1}\le x_{n+k_1}\le x'_{n+i},y_{k_2}\le x_{n+k_2}\le x'_{n+i},\ldots,y_{k_i}\le x_{n+k_i}\le x'_{n+i}
+    y_{k_1} \le x_{n+k_1} \le x'_{n+i}, y_{k_2} \le x_{n+k_2} \le x'_{n+i}, \ldots, y_{k_i} \le x_{n+k_i} \le x'_{n+i}
     $$
     
-    所以 $x'_{n+i}$ 至少大于等于 $Y$ 也即 $Y'$ 中的 $i$ 个元素，那么自然有 $y'_i\le x'_{n+i}\,(1\le i\le l)$．
+    So $x'_{n+i}$ is at least greater than or equal to $i$ elements in $Y$, which is also $Y'$. Then naturally we have $y'_i \le x'_{n+i}\,(1 \le i \le l)$.
 
-再回到原命题的证明：
+Returning to the proof of the original proposition:
 
-我们实际上只需要证明调用完 $\text{InsertionSort}(h)$ 的紧接着下一次调用 $\text{InsertionSort}(k)$ 后，$h$ 个子列仍有序即可，之后容易用归纳法得出．下面只考虑下一个调用：
+We actually only need to prove that after the next call to $\text{InsertionSort}(k)$ following $\text{InsertionSort}(h)$, the $h$ subsequences remain sorted. The rest follows easily by induction. Below we consider only the next call:
 
-执行完 $\text{InsertionSort}(h)$ 后，如下组已经完成排序：
+After executing $\text{InsertionSort}(h)$, the following groups have been sorted:
 
 $$
 \begin{array}{c}
-A_1,A_{1+h},A_{1+2h},\ldots \\
-A_2,A_{2+h},A_{2+2h},\ldots \\
+A_1, A_{1+h}, A_{1+2h}, \ldots \\
+A_2, A_{2+h}, A_{2+2h}, \ldots \\
 \vdots \\
-A_h,A_{h+h},A_{h+2h},\ldots
+A_h, A_{h+h}, A_{h+2h}, \ldots
 \end{array}
 $$
 
-而之后执行 $\text{InsertionSort}(k)$，则会将如下组排序：
+Then executing $\text{InsertionSort}(k)$ will sort the following groups:
 
 $$
 \begin{array}{c}
-A_1,A_{1+k},A_{1+2k},\ldots \\
-A_2,A_{2+k},A_{2+2k}, \ldots \\
+A_1, A_{1+k}, A_{1+2k}, \ldots \\
+A_2, A_{2+k}, A_{2+2k}, \ldots \\
 \vdots \\
-A_k,A_{k+k},A_{k+2k},\ldots
+A_k, A_{k+k}, A_{k+2k}, \ldots
 \end{array}
 $$
 
-对于每个 $i$ $(1\le i\le \min(h,k))$，考虑如下两个组：
+For each $i$ $(1 \le i \le \min(h, k))$, consider the following two groups:
 
 $$
 \begin{array}{c}
-A_i,A_{i+k},A_{i+2k},\ldots \\
-\ldots,A_{i+h},A_{i+h+k},A_{i+h+2k},\ldots
+A_i, A_{i+k}, A_{i+2k}, \ldots \\
+\ldots, A_{i+h}, A_{i+h+k}, A_{i+h+2k}, \ldots
 \end{array}
 $$
 
-第二个组前面也加上「$\ldots$」的原因是可能 $i+h\ge k$ 从而前面也有元素．
+The reason we also add "$\ldots$" at the front of the second group is that it is possible that $i + h \ge k$, so there are also elements before.
 
-则第二个组就是引理 $1$ 中的 $X$ 数组，第一个组就是 $Y$ 数组，$l$ 就是第二个组从 $i+h$ 之后顶到末尾的长度，$n$ 是第二个组中前面那个「$\ldots$」的长度，$m$ 是第一个组去掉前 $l$ 个后剩下的个数．
+Then the second group is the $X$ array from Lemma 1, the first group is the $Y$ array, $l$ is the length of the second group from $i+h$ to the end, $n$ is the length of "$\ldots$" before the second group, and $m$ is the number of elements remaining in the first group after removing the first $l$.
 
-又因为有：
+Since we have:
 
 $$
-A_i\le A_{i+h},A_{i+k}\le A_{i+h+k},\ldots
+A_i \le A_{i+h}, A_{i+k} \le A_{i+h+k}, \ldots
 $$
 
-所以由引理 $1$ 可得执行 $\text{InsertionSort}(k)$ 将两个组分别排序后，这个关系依然满足，即依然有 $A_i\le A_{i+h}\,(1\le i\le \min(h,k))$．
+by Lemma 1, after $\text{InsertionSort}(k)$ sorts both groups separately, this relationship is still maintained, that is, we still have $A_i \le A_{i+h}\,(1 \le i \le \min(h, k))$.
 
-若有 $i>\min(h,k)$，容易发现取正整数 $w$ $(1\le w\le \min(h,k))$ 再加上若干个 $k$ 即可得到 $i$，则之前的情况已经蕴含了此情况的证明．
+If $i > \min(h, k)$, it is easy to find that taking a positive integer $w$ $(1 \le w \le \min(h, k))$ plus some multiples of $k$ yields $i$, so the previous case already encompasses the proof for this case.
 
-综合以上论述便有：执行完 $\text{InsertionSort}(k)$ 依然有 $A_i\le A_{i+h}\,(1\le i\le n-h)$．
+Summing up the above arguments, we have: after executing $\text{InsertionSort}(k)$, we still have $A_i \le A_{i+h}\,(1 \le i \le n-h)$.
 
-因此定理 1 得证．
+Thus Theorem 1 is proven.
 
-这个定理揭示了希尔排序在特定集合 $H$ 下可以优化复杂度的关键，因为在整个过程中，它可以一致保持前面的成果不被摧毁（即 $h$ 个子列分别有序），从而使后面的调用中，指针 $i$ 的移动次数大大减少．
+This theorem reveals the key to Shellsort achieving optimized complexity with specific gap sets $H$, because throughout the process, it can consistently maintain the progress already made (i.e., the $h$ subsequences are respectively sorted), thereby greatly reducing the number of moves of pointer $i$ in subsequent calls.
 
-接下来我们单拎出来一个数论引理进行证明．这个定理在 OI 界因 [小凯的疑惑](https://www.luogu.com.cn/problem/P3951) 一题而大为出名．而在希尔排序复杂度的证明中，它也使得定理 $1$ 得到了很大的扩展．
+Next, we separately prove a number theory lemma. This lemma is well-known in the OI community due to the problem [Little Kai's Confusion](https://www.luogu.com.cn/problem/P3951). And in the proof of Shellsort complexity, it greatly extends Theorem 1.
 
-???+ note "引理 2"
-    若 $a,b$ 均为正整数且互素，则不在集合 $\{ax+by\mid x,y\in \mathbb N \}$ 中的最大正整数为 $ab-a-b$．
+???+ note "Lemma 2"
+    If $a, b$ are both positive integers and are coprime, then the largest positive integer not belonging to the set $\{ ax + by \mid x, y \in \mathbb{N} \}$ is $ab - a - b$.
 
-??? note "引理 2 证明"
-    分两步证明：
+??? note "Proof of Lemma 2"
+    We prove in two steps:
     
-    -   先证明方程 $ax+by=ab-a-b$ 没有 $x,y$ 均为非负整数的解：
+    -   First, prove that the equation $ax + by = ab - a - b$ has no solution with both $x, y$ as nonnegative integers:
     
-        若无非负整数的限制，容易得到两组解 $(b-1,-1),(-1,a-1)$．
+        If there were no restriction to nonnegative integers, we could easily obtain two solutions: $(b-1, -1), (-1, a-1)$.
     
-        通过其通解形式 $x=x_0+tb,y=y_0-ta$，容易得到上面两组解是「相邻」的（因为 $b-1-b=-1$）．
+        Through the general solution form $x = x_0 + tb, y = y_0 - ta$, it is easy to see that these two solutions are "adjacent" (because $b-1-b = -1$).
     
-        当 $t$ 递增时，$x$ 递增，$y$ 递减，所以如果方程有非负整数解，必然会夹在这两组解中间，但这两组解「相邻」，中间没有别的解．
+        When $t$ increases, $x$ increases and $y$ decreases. Therefore, if the equation has nonnegative integer solutions, they must be sandwiched between these two solutions. But since these two solutions are "adjacent", there are no other solutions between them.
     
-        故不可能有非负整数解．
-    -   再证明对任意整数 $c > ab-a-b$，方程 $ax+by=c$ 有非负整数解：
+        Hence, nonnegative integer solutions are impossible.
+    -   Second, prove that for any integer $c > ab - a - b$, the equation $ax + by = c$ has nonnegative integer solutions:
     
-        我们找一组解 $(x_0,y_0)$ 满足 $0\le x_0 < b$（由通解的表达式，这可以做到）．
+        We find a solution $(x_0, y_0)$ satisfying $0 \le x_0 < b$ (from the general solution expression, this is possible).
     
-        则有：
+        Then:
     
         $$
-        by_0=c-ax_0\ge c-a(b-1)>ab-a-b-ab+a=-b
+        by_0 = c - ax_0 \ge c - a(b-1) > ab - a - b - ab + a = -b
         $$
     
-        所以 $b(y_0+1) > 0$，又因为 $b>0$，所以 $y_0+1>0$，所以 $y_0\ge 0$．
+        So $b(y_0 + 1) > 0$, and since $b > 0$, we have $y_0 + 1 > 0$, so $y_0 \ge 0$.
     
-        所以 $(x_0,y_0)$ 为一组非负整数解．
+        Therefore, $(x_0, y_0)$ is a nonnegative integer solution.
     
-    综上得证．
+    The proof is complete.
 
-而下面这个定理则揭示了引理 $2$ 是如何扩展定理 $1$ 的．
+The following theorem reveals how Lemma 2 extends Theorem 1.
 
-???+ note "定理 2"
-    如果 $\gcd(h_{t+1},h_t)=1$，则程序先执行完 $\text{InsertionSort}(h_{t+1})$ 与 $\text{InsertionSort}(h_t)$ 后，执行 $\text{InsertionSort}(h_{t-1})$ 的时间复杂度为 $O\left(\dfrac{nh_{t+1}h_t}{h_{t-1}} \right)$，且对于每个 $j$，其 $i$ 的移动次数是 $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}} \right)$ 级别的．
+???+ note "Theorem 2"
+    If $\gcd(h_{t+1}, h_t) = 1$, then after the program finishes executing $\text{InsertionSort}(h_{t+1})$ and $\text{InsertionSort}(h_t)$, the time complexity of executing $\text{InsertionSort}(h_{t-1})$ is $O\left(\dfrac{nh_{t+1}h_t}{h_{t-1}}\right)$, and for each $j$, the number of moves of $i$ is $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}}\right)$.
 
-??? note "定理 2 证明"
-    对于 $j\le h_{t+1}h_t$ 的部分，$i$ 的移动次数显然是是 $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}} \right)$ 级别的．
+??? note "Proof of Theorem 2"
+    For the part where $j \le h_{t+1}h_t$, the number of moves of $i$ is obviously $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}}\right)$.
     
-    故以下假设 $j>h_{t+1}h_t$．
+    Therefore, assume $j > h_{t+1}h_t$.
     
-    对于任意的正整数 $k$ 满足 $1\le k\le j-h_{t+1}h_t$，注意到：$h_{t+1}h_t-h_{t+1}-h_t<h_{t+1}h_t\le j-k\le j-1$
+    For any positive integer $k$ satisfying $1 \le k \le j - h_{t+1}h_t$, note that: $h_{t+1}h_t - h_{t+1} - h_t < h_{t+1}h_t \le j - k \le j - 1$
     
-    又因为 $\gcd(h_{t+1},h_t)=1$，故由引理 $2$，得存在非负整数 $a,b$，使得：$ah_{t+1}+bh_t=j-k$．
+    Also, since $\gcd(h_{t+1}, h_t) = 1$, by Lemma 2, there exist nonnegative integers $a, b$ such that: $ah_{t+1} + bh_t = j - k$.
     
-    即得：
+    That is:
     
     $$
-    k=j-ah_{t+1}-bh_t
+    k = j - ah_{t+1} - bh_t
     $$
     
-    由定理 $1$，得：
+    By Theorem 1:
     
     $$
-    A_{j-bh_t}\le A_{j-(b-1)h_t}\le \ldots\le A_{j-h_t}\le A_j
+    A_{j-bh_t} \le A_{j-(b-1)h_t} \le \ldots \le A_{j-h_t} \le A_j
     $$
     
-    与
+    and
     
     $$
-    A_{j-bh_t-ah_{t+1}}\le A_{j-bh_t-(a-1)h_{t+1}}\le \ldots\le A_{j-bh_t-h_{t+1}}\le A_{j-bh_t}
+    A_{j-bh_t-ah_{t+1}} \le A_{j-bh_t-(a-1)h_{t+1}} \le \ldots \le A_{j-bh_t-h_{t+1}} \le A_{j-bh_t}
     $$
     
-    综合以上既有：$A_k=A_{j-ah_{t+1}-bh_t}\le A_j$．
+    Combining these: $A_k = A_{j-ah_{t+1}-bh_t} \le A_j$.
     
-    所以对于任何 $1\le k\le j-h_{t+1}h_t$，有 $A_k\le A_j$．
+    So for any $1 \le k \le j - h_{t+1}h_t$, we have $A_k \le A_j$.
     
-    在 Shell-Sort 伪代码中 $i$ 指针每次减 $h_{t-1}$，减 $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}} \right)$ 次，即可使得 $i\le j-h_{t+1}h_t$，进而有 $A_i\le A_j$，不满足 while 循环的条件退出．
+    In the Shellsort pseudocode, pointer $i$ decreases by $h_{t-1}$ each time. After decreasing $O\left(\dfrac{h_{t+1}h_t}{h_{t-1}}\right)$ times, we can make $i \le j - h_{t+1}h_t$, and then $A_i \le A_j$, so the while loop condition is not satisfied and it exits.
     
-    证明完对于每个 $j$ 的移动复杂度后，即可得到总的时间复杂度：
+    After proving the move complexity for each $j$, the total time complexity can be obtained:
     
     $$
-    \sum_{j=h_{t-1}+1}^n{O\left(\frac{h_{t+1}h_t}{h_{t-1}} \right)}=O\left(\frac{nh_{t+1}h_t}{h_{t-1}}\right)
+    \sum_{j=h_{t-1}+1}^n O\left(\frac{h_{t+1}h_t}{h_{t-1}}\right) = O\left(\frac{nh_{t+1}h_t}{h_{t-1}}\right)
     $$
     
-    得证．
+    QED.
 
-认真观察定理 $2$ 的证明过程，可以发现：定理 1 可以进行「线性组合」，即 $A$ 以 $h$ 为间隔有序，以 $k$ 为间隔亦有序，则以 $h$ 和 $k$ 的非负系数线性组合仍是有序的．而这种「线性性」即是由引理 $2$ 保证的．
+Careful observation of the proof process of Theorem 2 reveals that Theorem 1 can be "linearly combined": if $A$ is sorted with spacing $h$, and also sorted with spacing $k$, then it is still sorted with any nonnegative linear combination of $h$ and $k$. This "linearity" is guaranteed by Lemma 2.
 
-有了这两个定理，我们可以证明命题 $1$ 与 $2$．
+With these two theorems, we can prove Propositions 1 and 2.
 
-??? note "命题 1 证明"
-    将 $H$ 写为序列的形式：
+??? note "Proof of Proposition 1"
+    Write $H$ in sequence form:
     
     $$
-    H(h_1=1,h_2=3,h_3=7,\ldots,h_{\lfloor \log_2 n\rfloor}=2^{\lfloor \log_2 n\rfloor}-1)
+    H(h_1 = 1, h_2 = 3, h_3 = 7, \ldots, h_{\lfloor \log_2 n \rfloor} = 2^{\lfloor \log_2 n \rfloor} - 1)
     $$
     
-    Shell-Sort 执行顺序为：$\text{InsertionSort}(h_{\lfloor \log_2 n\rfloor}),\text{InsertionSort}(h_{\lfloor \log_2 n\rfloor-1}),\ldots,\text{InsertionSort}(h_2),\text{InsertionSort}(h_1)$.
+    Shellsort executes in the order: $\text{InsertionSort}(h_{\lfloor \log_2 n \rfloor}), \text{InsertionSort}(h_{\lfloor \log_2 n \rfloor-1}), \ldots, \text{InsertionSort}(h_2), \text{InsertionSort}(h_1)$.
     
-    分两部分去分析复杂度：
+    We analyze complexity in two parts:
     
-    -   对于前面的若干个满足 $h_t\ge \sqrt{n}$ 的 $h_t$，显然有 $\text{InsertionSort}(h_t)$ 的时间复杂度为 $O\left(\dfrac{n^2}{h_t} \right)$．
+    -   For the first several $h_t$ satisfying $h_t \ge \sqrt{n}$, the time complexity of $\text{InsertionSort}(h_t)$ is obviously $O\left(\dfrac{n^2}{h_t}\right)$.
     
-        考虑对最接近 $\sqrt{n}$ 的项 $h_k$，有：
-    
-        $$
-        O\left(\frac{n^2}{h_t} \right)=O(n^{3/2})
-        $$
-    
-        而对于 $i> k$ 的 $h_i$，因为有 $2h_i< h_{i+1}$，所以可得：
+        Consider the term $h_k$ closest to $\sqrt{n}$:
     
         $$
-        O\left(\frac{n^2}{h_i} \right)=O(n^{3/2}/2^{i-k})\,(i>k)
+        O\left(\frac{n^2}{h_t}\right) = O(n^{3/2})
         $$
     
-        所以大等于 $\sqrt n$ 部分的总时间复杂度为：
+        For $h_i$ where $i > k$, since $2h_i < h_{i+1}$, we have:
     
         $$
-        \sum_{i=k}^{\lfloor \log_2 n\rfloor}{O(n^{3/2}/2^{i-k})}=O(n^{3/2})
-        $$
-    -   对于后面剩下的满足 $h_t< \sqrt{n}$ 的项，前两项的复杂度还是 $O(n^{3/2})$，而对于后面的项 $h_t$，有定理 $2$ 可得时间复杂度为：
-    
-        $$
-        O\left(\frac{nh_{t+2}h_{t+1}}{h_t} \right)=O\left(\frac{nh_{t+2}\cdot h_{t+2}/2}{h_{t+2}/4} \right)=O(nh_{t+2})
+        O\left(\frac{n^2}{h_i}\right) = O(n^{3/2}/2^{i-k})\,(i>k)
         $$
     
-        再次利用 $2h_i < h_{i+1}$ 性质可得此部分总时间复杂度为（下式中 $k$ 沿用了上一种情况中的含义）：
+        Therefore, the total time complexity for the part greater than or equal to $\sqrt{n}$ is:
     
         $$
-        2O(n^{3/2})+\sum_{i=1}^{k-3}{O(nh_{i+1})}=O(n^{3/2})+\sum_{i=1}^{k-3}{O(nh_{k-1}/2^{k-i-3})}=O(n^{3/2})+O(nh_{k-1})=O(n^{3/2})
+        \sum_{i=k}^{\lfloor \log_2 n \rfloor} O(n^{3/2}/2^{i-k}) = O(n^{3/2})
+        $$
+    -   For the remaining part satisfying $h_t < \sqrt{n}$, the complexity of the first two terms is still $O(n^{3/2})$. For the subsequent terms $h_t$, by Theorem 2, the time complexity is:
+    
+        $$
+        O\left(\frac{nh_{t+2}h_{t+1}}{h_t}\right) = O\left(\frac{nh_{t+2} \cdot h_{t+2}/2}{h_{t+2}/4}\right) = O(nh_{t+2})
         $$
     
-    综上可得总时间复杂度即为 $O(n^{3/2})$．
+        Using the property $2h_i < h_{i+1}$ again, the total time complexity of this part is (where $k$ has the same meaning as in the previous case):
+    
+        $$
+        2O(n^{3/2}) + \sum_{i=1}^{k-3} O(nh_{i+1}) = O(n^{3/2}) + \sum_{i=1}^{k-3} O(nh_{k-1}/2^{k-i-3}) = O(n^{3/2}) + O(nh_{k-1}) = O(n^{3/2})
+        $$
+    
+    Summing up, the total time complexity is $O(n^{3/2})$.
 
-??? note "命题 2 证明"
-    注意到一个事实：如果已经执行过了 $\text{InsertionSort}(2)$ 与 $\text{InsertionSort}(3)$，那么因为 $2\cdot 3-2-3=1$，所以由定理 $2$，每个元素只有与它相邻的前一个元素可能大于它，之前的元素全部都小于它．于是 $i$ 指针只需要最多两次就可以退出 while 循环．也就是说，此时再执行 $\text{InsertionSort}(1)$，复杂度降为 $O(n)$．
+??? note "Proof of Proposition 2"
+    Note a fact: if $\text{InsertionSort}(2)$ and $\text{InsertionSort}(3)$ have already been executed, then because $2 \cdot 3 - 2 - 3 = 1$, by Theorem 2, each element only needs to be compared with its immediate predecessor, and all previous elements are smaller than it. Therefore, pointer $i$ needs at most two moves to exit the while loop. That is, at this point, executing $\text{InsertionSort}(1)$ has complexity $O(n)$.
     
-    更进一步：如果已经执行过了 $\text{InsertionSort}(4)$ 与 $\text{InsertionSort}(6)$，我们考虑所有的下标为奇数的元素组成的子列与下标为偶数的元素组成的子列．则这相当于把这两个子列分别执行 $\text{InsertionSort}(2)$ 与 $\text{InsertionSort}(3)$．那么也是一样，这时候再执行 $\text{InsertionSort}(2)$，相当于对两个子列分别执行 $\text{InsertionSort}(1)$，也只需要两个序列和的级别，即 $O(n)$ 的复杂度就可以将数组变为 $2$ 间隔有序．
+    Going further: if $\text{InsertionSort}(4)$ and $\text{InsertionSort}(6)$ have already been executed, we consider all elements with odd indices and all elements with even indices as two separate subsequences. This is equivalent to executing $\text{InsertionSort}(2)$ and $\text{InsertionSort}(3)$ on these two subsequences separately. Then, executing $\text{InsertionSort}(2)$ is equivalent to executing $\text{InsertionSort}(1)$ on each of the two subsequences, which also requires only $O(n)$ complexity to make the array 2-spacing sorted.
     
-    不断归纳，就可以得到：如果已经执行过了 $\text{InsertionSort}(2h)$ 与 $\text{InsertionSort}(3h)$，则执行 $\text{InsertionSort}(h)$ 的复杂度也只有 $O(n)$．
+    By continuous induction: if $\text{InsertionSort}(2h)$ and $\text{InsertionSort}(3h)$ have already been executed, then the complexity of executing $\text{InsertionSort}(h)$ is also only $O(n)$.
     
-    接下来分为两部分分析复杂度：
+    Next, we analyze complexity in two parts:
     
-    -   对于 $h_t>n/3$ 的部分，则执行每个 $\text{InsertionSort}(h_t)$ 的复杂度为 $O(n^2/h_t)$．
+    -   For the part where $h_t > n/3$, the complexity of executing each $\text{InsertionSort}(h_t)$ is $O(n^2/h_t)$.
     
-        而 $n^2/h_t<3n$，所以单词插入排序复杂度为 $O(n)$．
+        And $n^2/h_t < 3n$, so the single insertion sort complexity is $O(n)$.
     
-        而这一部分元素个数是 $O(\log^2 n)$ 级别的，所以这一部分时间复杂度为 $O(n\log^2 n)$．
-    -   对于 $h_t\le n/3$ 的部分，因为 $3h_t\le n$，所以这之前已经执行了 $\text{InsertionSort}(2h_t)$ 与 $\text{InsertionSort}(3h_t)$，于是执行 $\text{InsertionSort}(h_t)$ 的时间复杂度是 $O(n)$．
+        The number of elements in this part is $O(\log^2 n)$, so the total time complexity of this part is $O(n \log^2 n)$.
+    -   For the part where $h_t \le n/3$, since $3h_t \le n$, $\text{InsertionSort}(2h_t)$ and $\text{InsertionSort}(3h_t)$ have already been executed before. Therefore, the time complexity of executing $\text{InsertionSort}(h_t)$ is $O(n)$.
     
-        还是一样的，这一部分元素个数也是 $O(\log^2 n)$ 级别的，所以这一部分时间复杂度为 $O(n\log^2 n)$．
+        Similarly, the number of elements in this part is also $O(\log^2 n)$, so the total time complexity of this part is $O(n \log^2 n)$.
     
-    综上可得总时间复杂度即为 $O(n\log^2 n)$．
+    Summing up, the total time complexity is $O(n \log^2 n)$.
 
-### 空间复杂度
+### Space Complexity
 
-希尔排序的空间复杂度为 $O(1)$．
+The space complexity of Shellsort is $O(1)$.
 
-## 实现
+## Implementation
 
 === "C++[^ref1]"
     ```cpp
@@ -314,6 +314,6 @@ $$
             h = int(h / 3)
     ```
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: [希尔排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F)
+[^ref1]: [Shellsort - Wikipedia, the Free Encyclopedia](https://en.wikipedia.org/wiki/Shellsort)

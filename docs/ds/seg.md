@@ -1,46 +1,46 @@
 author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enhe, ChungZH, Chrogeek, hsfzLZH1, billchenchina, orzAtalod, luoguojie, Early0v0, wy-luke
 
-## 引入
+## introduce
 
-线段树是算法竞赛中常用的用来维护 **区间信息** 的数据结构．
+Line segment tree is a data structure commonly used in algorithm competitions to maintain **interval information**.
 
-线段树可以在 $O(\log N)$ 的时间复杂度内实现单点修改、区间修改、区间查询（区间求和，求区间最大值，求区间最小值）等操作．
+The line segment tree can implement single point modification, interval modification, interval query (interval summation, interval maximum value, interval minimum value) and other operations within the time complexity of $O(\log N)$.
 
-## 线段树的基本结构与建树
+## The basic structure and construction of line segment trees
 
-### 过程
+### process
 
-线段树将每个长度不为 $1$ 的区间划分成左右两个区间递归求解，把整个线段划分为一个树形结构，通过合并左右两区间信息来求得该区间的信息．这种数据结构可以方便的进行大部分的区间操作．
+The line segment tree divides each interval whose length is not $1$ into two left and right intervals for recursive solution, divides the entire line segment into a tree structure, and obtains the information of the interval by merging the information of the left and right intervals. This data structure can easily perform most interval operations.
 
-有个大小为 $5$ 的数组 $a=\{10,11,12,13,14\}$，要将其转化为线段树，有以下做法：设线段树的根节点编号为 $1$，用数组 $d$ 来保存我们的线段树，$d_i$ 用来保存线段树上编号为 $i$ 的节点的值（这里每个节点所维护的值就是这个节点所表示的区间总和）．
+There is a size-$5$ array $a=\{10,11,12,13,14\}$. To convert it into a line segment tree, there is the following method: set the root node number of the line segment tree to $1$, use array $d$ to save our line segment tree, and $d_i$ to save the value of the node numbered $i$ on the line segment tree (the value maintained by each node here is the sum of the intervals represented by this node).
 
-我们先给出这棵线段树的形态，如图所示：
+We first give the shape of this line segment tree, as shown in the figure:
 
 ![](./images/segt1.svg)
 
-图中每个节点中用红色字体标明的区间，表示该节点管辖的 $a$ 数组上的位置区间．如 $d_1$ 所管辖的区间就是 $[1,5]$（$a_1,a_2, \cdots ,a_5$），即 $d_1$ 所保存的值是 $a_1+a_2+ \cdots +a_5$，$d_1=60$ 表示的是 $a_1+a_2+ \cdots +a_5=60$．
+The interval marked in red font in each node in the figure represents the position interval on the $a$ array governed by the node. For example, the interval governed by $d_1$ is $[1,5]$ ($a_1,a_2, \cdots ,a_5$), that is, the value stored in $d_1$ is $a_1+a_2+ \cdots +a_5$, and $d_1=60$ represents $a_1+a_2+ \cdots +a_5=60$.
 
-通过观察不难发现，$d_i$ 的左儿子节点就是 $d_{2\times i}$，$d_i$ 的右儿子节点就是 $d_{2\times i+1}$．如果 $d_i$ 表示的是区间 $[s,t]$（即 $d_i=a_s+a_{s+1}+ \cdots +a_t$）的话，那么 $d_i$ 的左儿子节点表示的是区间 $[ s, \frac{s+t}{2} ]$，$d_i$ 的右儿子表示的是区间 $[ \frac{s+t}{2} +1,t ]$．
+It is not difficult to find through observation that the left child node of $d_i$ is $d_{2\times i}$, and the right child node of $d_i$ is $d_{2\times i+1}$. If $d_i$ represents the interval $[s,t]$ (that is, $d_i=a_s+a_{s+1}+ \cdots +a_t$), then the left child node of $d_i$ represents the interval $[ s, \frac{s+t}{2} ]$, and the right child node of $d_i$ represents the interval $[ \frac{s+t}{2} +1,t ]$.
 
-在实现时，我们考虑递归建树．设当前的根节点为 $p$，如果根节点管辖的区间长度已经是 $1$，则可以直接根据 $a$ 数组上相应位置的值初始化该节点．否则我们将该区间从中点处分割为两个子区间，分别进入左右子节点递归建树，最后合并两个子节点的信息．
+During implementation, we consider recursive tree building. Assume that the current root node is $p$. If the length of the interval governed by the root node is already $1$, the node can be initialized directly according to the value of the corresponding position in the $a$ array. Otherwise, we divide the interval into two sub-intervals from the midpoint, enter the left and right sub-nodes to recursively build trees, and finally merge the information of the two sub-nodes.
 
-### 实现
+### accomplish
 
-此处给出代码实现，可参考注释理解：
+The code implementation is given here, you can refer to the comments for understanding:
 
 === "C++"
     ```cpp
     void build(int s, int t, int p) {
-      // 对 [s,t] 区间建立线段树,当前根的编号为 p
+      // Create a line segment tree for the interval [s,t], the current root number is p
       if (s == t) {
         d[p] = a[s];
         return;
       }
       int m = s + ((t - s) >> 1);
-      // 移位运算符的优先级小于加减法，所以加上括号
-      // 如果写成 (s + t) >> 1 可能会超出 int 范围
+      // The shift operator has lower precedence than addition and subtraction, so parentheses are added
+      // If written as (s + t) >> 1 it may exceed the range of int
       build(s, m, p * 2), build(m + 1, t, p * 2 + 1);
-      // 递归对左右区间建树
+      // Recursively build trees for the left and right intervals
       d[p] = d[p * 2] + d[(p * 2) + 1];
     }
     ```
@@ -48,56 +48,56 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
 === "Python"
     ```python
     def build(s, t, p):
-        # 对 [s,t] 区间建立线段树,当前根的编号为 p
+        # Create a line segment tree for the interval [s,t], the current root number is p
         if s == t:
             d[p] = a[s]
             return
         m = s + ((t - s) >> 1)
-        # 移位运算符的优先级小于加减法，所以加上括号
-        # 如果写成 (s + t) >> 1 可能会超出 int 范围
+        # The shift operator has lower precedence than addition and subtraction, so parentheses are added
+        # If written as (s + t) >> 1 it may exceed the range of int
         build(s, m, p * 2)
         build(m + 1, t, p * 2 + 1)
-        # 递归对左右区间建树
+        # Recursively build trees for the left and right intervals
         d[p] = d[p * 2] + d[(p * 2) + 1]
     ```
 
-关于线段树的空间：如果采用堆式存储（$2p$ 是 $p$ 的左儿子，$2p+1$ 是 $p$ 的右儿子），若有 $n$ 个叶子结点，则 d 数组的范围最大为 $2^{\left\lceil\log{n}\right\rceil+1}$．
+Regarding the space of the line segment tree: If heap storage is used ($2p$ is the left son of $p$, $2p+1$ is the right son of $p$), if there are $n$ leaf nodes, the maximum range of the d array is $2^{\left\lceil\log{n}\right\rceil+1}$.
 
-分析：容易知道线段树的深度是 $\left\lceil\log{n}\right\rceil$ 的，则在堆式储存情况下叶子节点（包括无用的叶子节点）数量为 $2^{\left\lceil\log{n}\right\rceil}$ 个，又由于其为一棵完全二叉树，则其总节点个数 $2^{\left\lceil\log{n}\right\rceil+1}-1$．当然如果你懒得计算的话可以直接把数组长度设为 $4n$，因为 $\frac{2^{\left\lceil\log{n}\right\rceil+1}-1}{n}$ 的最大值在 $n=2^{x}+1(x\in N_{+})$ 时取到，此时节点数为 $2^{\left\lceil\log{n}\right\rceil+1}-1=2^{x+2}-1=4n-5$．
+Analysis: It is easy to know that the depth of the line segment tree is $\left\lceil\log{n}\right\rceil$, so in the case of heap storage, the number of leaf nodes (including useless leaf nodes) is $2^{\left\lceil\log{n}\right\rceil}$, and since it is a complete binary tree, its total number of nodes is $2^{\left\lceil\log{n}\right\rceil+1}-1$. Of course, if you are too lazy to calculate, you can directly set the array length to $4n$, because the maximum value of $\frac{2^{\left\lceil\log{n}\right\rceil+1}-1}{n}$ is obtained at $n=2^{x}+1(x\in N_{+})$, and the number of nodes at this time is $2^{\left\lceil\log{n}\right\rceil+1}-1=2^{x+2}-1=4n-5$.
 
-而堆式存储存在无用的叶子节点，可以考虑使用内存池管理线段树节点，每当需要新建节点时从池中获取．自底向上考虑，必有每两个底层节点合并为一个上层节点，因此可以类似哈夫曼树地证明，如果有 $n$ 个叶子节点，这样的线段树总共有 $2n-1$ 个节点．其空间效率优于堆式存储，并且是可能的最优情况．
+However, there are useless leaf nodes in heap storage. You can consider using a memory pool to manage line segment tree nodes and obtain them from the pool whenever a new node is needed. Considering bottom-up, every two bottom-level nodes must be merged into an upper-level node. Therefore, it can be proved similar to the Huffman tree. If there are $n$ leaf nodes, such a line segment tree has a total of $2n-1$ nodes. Its space efficiency is better than heap storage and is the best possible situation.
 
-这样的线段树可以自底向上维护，参考「[统计的力量 - 张昆玮](https://github.com/hzwer/shareOI/blob/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BB%9F%E8%AE%A1%E7%9A%84%E5%8A%9B%E9%87%8F%E2%80%94%E2%80%94%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%85%A8%E6%8E%A5%E8%A7%A6_%E5%BC%A0%E6%98%86%E7%8E%AE.pptx)」．
+Such a segment tree can be maintained bottom-up; see "[The Power of Statistics - Zhang Kunwei](https://github.com/hzwer/shareOI/blob/master/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BB%9F%E8%AE%A1%E7%9A%84%E5%8A%9B%E9%87%8F%E2%80%94%E2%80%94%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%85%A8%E6%8E%A5%E8%A7%A6_%E5%BC%A0%E6%98%86%E7%8E%AE.pptx)".
 
-## 线段树的区间查询
+## Interval query of line segment tree
 
-### 过程
+### process
 
-区间查询，比如求区间 $[l,r]$ 的总和（即 $a_l+a_{l+1}+ \cdots +a_r$）、求区间最大值/最小值等操作．
+Interval query, such as finding the sum of the interval $[l,r]$ (that is, $a_l+a_{l+1}+ \cdots +a_r$), finding the maximum/minimum value of the interval, etc.
 
 ![](./images/segt1.svg)
 
-仍然以最开始的图为例，如果要查询区间 $[1,5]$ 的和，那直接获取 $d_1$ 的值（$60$）即可．
+Still taking the first picture as an example, if you want to query the sum of the interval $[1,5]$, just get the value of $d_1$ ($60$) directly.
 
-如果要查询的区间为 $[3,5]$，此时就不能直接获取区间的值，但是 $[3,5]$ 可以拆成 $[3,3]$ 和 $[4,5]$，可以通过合并这两个区间的答案来求得这个区间的答案．
+If the interval to be queried is $[3,5]$, the value of the interval cannot be obtained directly at this time, but $[3,5]$ can be split into $[3,3]$ and $[4,5]$, and the answer to this interval can be obtained by merging the answers of these two intervals.
 
-一般地，如果要查询的区间是 $[l,r]$，则可以将其拆成最多为 $O(\log n)$ 个 **极大** 的区间，合并这些区间即可求出 $[l,r]$ 的答案．
+Generally, if the interval to be queried is $[l,r]$, it can be split into up to $O(\log n)$ **maximum** intervals, and the answer to $[l,r]$ can be obtained by merging these intervals.
 
-### 实现
+### accomplish
 
-此处给出代码实现，可参考注释理解：
+The code implementation is given here, you can refer to the comments for understanding:
 
 === "C++"
     ```cpp
     int getsum(int l, int r, int s, int t, int p) {
-      // [l, r] 为查询区间, [s, t] 为当前节点包含的区间, p 为当前节点的编号
+      // [l, r] is the query interval, [s, t] is the interval included by the current node, p is the number of the current node
       if (l <= s && t <= r)
-        return d[p];  // 当前区间为询问区间的子集时直接返回当前区间的和
+        return d[p];  // When the current interval is a subset of the query interval, the sum of the current interval is directly returned.
       int m = s + ((t - s) >> 1), sum = 0;
       if (l <= m) sum += getsum(l, r, s, m, p * 2);
-      // 如果左儿子代表的区间 [s, m] 与询问区间有交集, 则递归查询左儿子
+      // If the interval [s, m] represented by the left son intersects with the query interval, then the left son is recursively queried
       if (r > m) sum += getsum(l, r, m + 1, t, p * 2 + 1);
-      // 如果右儿子代表的区间 [m + 1, t] 与询问区间有交集, 则递归查询右儿子
+      // If the interval [m + 1, t] represented by the right son intersects with the query interval, then the right son is recursively queried
       return sum;
     }
     ```
@@ -105,72 +105,72 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
 === "Python"
     ```python
     def getsum(l, r, s, t, p):
-        # [l, r] 为查询区间, [s, t] 为当前节点包含的区间, p 为当前节点的编号
+        # [l, r] is the query interval, [s, t] is the interval included by the current node, p is the number of the current node
         if l <= s and t <= r:
-            return d[p]  # 当前区间为询问区间的子集时直接返回当前区间的和
+            return d[p]  # Directly return the current interval sum when it is a subset of the query interval.
         m = s + ((t - s) >> 1)
         sum = 0
         if l <= m:
             sum = sum + getsum(l, r, s, m, p * 2)
-        # 如果左儿子代表的区间 [s, m] 与询问区间有交集, 则递归查询左儿子
+        # If the interval [s, m] represented by the left son intersects with the query interval, then the left son is recursively queried
         if r > m:
             sum = sum + getsum(l, r, m + 1, t, p * 2 + 1)
-        # 如果右儿子代表的区间 [m + 1, t] 与询问区间有交集, 则递归查询右儿子
+        # If the interval [m + 1, t] represented by the right son intersects with the query interval, then the right son is recursively queried
         return sum
     ```
 
-## 线段树的区间修改与懒惰标记
+## Interval modification and lazy marking of line segment trees
 
-### 过程
+### process
 
-如果要求修改区间 $[l,r]$，把所有包含在区间 $[l,r]$ 中的节点都遍历一次、修改一次，时间复杂度无法承受．我们这里要引入一个叫做 **「懒惰标记」** 的东西．
+If it is required to modify the interval $[l,r]$, all nodes contained in the interval $[l,r]$ must be traversed and modified once, and the time complexity is unbearable. We are going to introduce something called **"lazy mark"** here.
 
-懒惰标记，简单来说，就是通过延迟对节点信息的更改，从而减少可能不必要的操作次数．每次执行修改时，我们通过打标记的方法表明该节点对应的区间在某一次操作中被更改，但不更新该节点的子节点的信息．实质性的修改则在下一次访问带有标记的节点时才进行．
+Lazy marking, simply put, delays changes to node information, thereby reducing the number of potentially unnecessary operations. Each time a modification is performed, we use a marking method to indicate that the interval corresponding to the node has been changed in a certain operation, but the information of the node's child nodes is not updated. Substantial modifications will be made only the next time the marked node is accessed.
 
-仍然以最开始的图为例，我们将执行若干次给区间内的数加上一个值的操作．我们现在给每个节点增加一个 $t_i$，表示该节点带的标记值．
+Still taking the original picture as an example, we will perform several operations of adding a value to the number in the interval. We now add a $t_i$ to each node, indicating the tag value of the node.
 
-最开始时的情况是这样的（为了节省空间，这里不再展示每个节点管辖的区间）：
+The situation at the beginning was like this (to save space, the intervals governed by each node are no longer shown here):
 
 ![](./images/segt2.svg)
 
-现在我们准备给 $[3,5]$ 上的每个数都加上 $5$．根据前面区间查询的经验，我们很快找到了两个极大区间 $[3,3]$ 和 $[4,5]$（分别对应线段树上的 $5$ 号点和 $3$ 号点）．
+Now we are going to add to every number on $[3,5]$ the value $5$. Based on the previous experience of interval query, we quickly found two maximum intervals $[3,3]$ and $[4,5]$ (corresponding to points $5$ and $3$ on the line segment tree respectively).
 
-我们直接在这两个节点上进行修改，并给它们打上标记：
+We make modifications directly on these two nodes and mark them:
 
 ![](./images/segt3.svg)
 
-我们发现，$3$ 号节点的信息虽然被修改了（因为该区间管辖两个数，所以 $d_3$ 加上的数是 $5 \times 2=10$），但它的两个子节点却还没更新，仍然保留着修改之前的信息．不过不用担心，虽然修改目前还没进行，但当我们要查询这两个子节点的信息时，我们会利用标记修改这两个子节点的信息，使查询的结果依旧准确．
+We found that although the information of node No. $3$ has been modified (because this interval governs two numbers, the number added to $d_3$ is $5 \times 2=10$), its two child nodes have not been updated and still retain the information before the modification. But don't worry, although the modification has not been carried out yet, when we want to query the information of these two sub-nodes, we will use the mark to modify the information of these two sub-nodes so that the query results are still accurate.
 
-接下来我们查询一下 $[4,4]$ 区间上各数字的和．
+Next, we query the sum of the numbers in the $[4,4]$ interval.
 
-我们通过递归找到 $[4,5]$ 区间，发现该区间并非我们的目标区间，且该区间上还存在标记．这时候就到标记下放的时间了．我们将该区间的两个子区间的信息更新，并清除该区间上的标记．
+We found the $[4,5]$ interval through recursion, and found that this interval is not our target interval, and there is a mark on this interval. At this point it’s time to mark the decentralization. We update the information of the two sub-intervals of this interval and clear the marks on this interval.
 
 ![](./images/segt4.svg)
 
-现在 $6$、$7$ 两个节点的值变成了最新的值，查询的结果也是准确的．
+Now the values ​​of the two nodes $6$ and $7$ have become the latest values, and the query results are also accurate.
 
-### 实现
+### accomplish
 
-接下来给出在存在标记的情况下，区间修改和查询操作的参考实现．
+Next, the reference implementation of interval modification and query operations in the presence of markers is given.
 
-区间修改（区间加上某个值）：
+Interval modification (interval plus a certain value):
 
 === "C++"
     ```cpp
-    // [l, r] 为修改区间, c 为被修改的元素的变化量, [s, t] 为当前节点包含的区间, p
-    // 为当前节点的编号
+    // [l, r] is the modification interval, c is the change amount of the modified element, [s, t] is the interval included by the current node, p
+    // is the number of the current node
     void update(int l, int r, int c, int s, int t, int p) {
-      // 当前区间为修改区间的子集时直接修改当前节点的值,然后打标记,结束修改
+      // When the current interval is a subset of the modified interval, directly modify the value of the current node, then mark it and end the modification.
       if (l <= s && t <= r) {
         d[p] += (t - s + 1) * c, b[p] += c;
         return;
       }
       int m = s + ((t - s) >> 1);
       if (b[p] && s != t) {
-        // 如果当前节点的懒标记非空,则更新当前节点两个子节点的值和懒标记值
+        // If the lazy tag of the current node is not empty, update the values ​​​​of the two child nodes of the current node and the lazy tag value.
         d[p * 2] += b[p] * (m - s + 1), d[p * 2 + 1] += b[p] * (t - m);
-        b[p * 2] += b[p], b[p * 2 + 1] += b[p];  // 将标记下传给子节点
-        b[p] = 0;                                // 清空当前节点的标记
+        b[p * 2] += b[p], b[p * 2 + 1] += b[p];  // Pass tags down to child nodes
+        b[p] = 0;                                // Clear the mark of the current node
       }
       if (l <= m) update(l, r, c, s, m, p * 2);
       if (r > m) update(l, r, c, m + 1, t, p * 2 + 1);
@@ -181,22 +181,22 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
 === "Python"
     ```python
     def update(l, r, c, s, t, p):
-        # [l, r] 为修改区间, c 为被修改的元素的变化量, [s, t] 为当前节点包含的区间, p
-        # 为当前节点的编号
+        # [l, r] is the modification interval, c is the change amount of the modified element, [s, t] is the interval included by the current node, p
+        # is the number of the current node
         if l <= s and t <= r:
             d[p] = d[p] + (t - s + 1) * c
             b[p] = b[p] + c
             return
-        # 当前区间为修改区间的子集时直接修改当前节点的值, 然后打标记, 结束修改
+        # When the current interval is a subset of the modified interval, directly modify the value of the current node, then mark it and end the modification.
         m = s + ((t - s) >> 1)
         if b[p] and s != t:
-            # 如果当前节点的懒标记非空, 则更新当前节点两个子节点的值和懒标记值
+            # If the lazy tag of the current node is not empty, update the values ​​​​of the two child nodes of the current node and the lazy tag value.
             d[p * 2] = d[p * 2] + b[p] * (m - s + 1)
             d[p * 2 + 1] = d[p * 2 + 1] + b[p] * (t - m)
-            # 将标记下传给子节点
+            # Pass tags down to child nodes
             b[p * 2] = b[p * 2] + b[p]
             b[p * 2 + 1] = b[p * 2 + 1] + b[p]
-            # 清空当前节点的标记
+            # Clear the mark of the current node
             b[p] = 0
         if l <= m:
             update(l, r, c, s, m, p * 2)
@@ -205,20 +205,20 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
         d[p] = d[p * 2] + d[p * 2 + 1]
     ```
 
-区间查询（区间求和）：
+Interval query (interval summation):
 
 === "C++"
     ```cpp
     int getsum(int l, int r, int s, int t, int p) {
-      // [l, r] 为查询区间, [s, t] 为当前节点包含的区间, p 为当前节点的编号
+      // [l, r] is the query interval, [s, t] is the interval included by the current node, p is the number of the current node
       if (l <= s && t <= r) return d[p];
-      // 当前区间为询问区间的子集时直接返回当前区间的和
+      // When the current interval is a subset of the query interval, the sum of the current interval is directly returned.
       int m = s + ((t - s) >> 1);
       if (b[p]) {
-        // 如果当前节点的懒标记非空,则更新当前节点两个子节点的值和懒标记值
+        // If the lazy tag of the current node is not empty, update the values ​​​​of the two child nodes of the current node and the lazy tag value.
         d[p * 2] += b[p] * (m - s + 1), d[p * 2 + 1] += b[p] * (t - m);
-        b[p * 2] += b[p], b[p * 2 + 1] += b[p];  // 将标记下传给子节点
-        b[p] = 0;                                // 清空当前节点的标记
+        b[p * 2] += b[p], b[p * 2 + 1] += b[p];  // Pass tags down to child nodes
+        b[p] = 0;                                // Clear the mark of the current node
       }
       int sum = 0;
       if (l <= m) sum = getsum(l, r, s, m, p * 2);
@@ -230,19 +230,19 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
 === "Python"
     ```python
     def getsum(l, r, s, t, p):
-        # [l, r] 为查询区间, [s, t] 为当前节点包含的区间, p为当前节点的编号
+        # [l, r] is the query interval, [s, t] is the interval included by the current node, and p is the number of the current node.
         if l <= s and t <= r:
             return d[p]
-        # 当前区间为询问区间的子集时直接返回当前区间的和
+        # When the current interval is a subset of the query interval, the sum of the current interval is directly returned.
         m = s + ((t - s) >> 1)
         if b[p]:
-            # 如果当前节点的懒标记非空, 则更新当前节点两个子节点的值和懒标记值
+            # If the lazy tag of the current node is not empty, update the values ​​​​of the two child nodes of the current node and the lazy tag value.
             d[p * 2] = d[p * 2] + b[p] * (m - s + 1)
             d[p * 2 + 1] = d[p * 2 + 1] + b[p] * (t - m)
-            # 将标记下传给子节点
+            # Pass tags down to child nodes
             b[p * 2] = b[p * 2] + b[p]
             b[p * 2 + 1] = b[p * 2 + 1] + b[p]
-            # 清空当前节点的标记
+            # Clear the mark of the current node
             b[p] = 0
         sum = 0
         if l <= m:
@@ -252,7 +252,7 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
         return sum
     ```
 
-如果你是要实现区间修改为某一个值而不是加上某一个值的话，代码如下：
+If you want to modify the interval to a certain value instead of adding a certain value, the code is as follows:
 
 === "C++"
     ```cpp
@@ -262,7 +262,7 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
         return;
       }
       int m = s + ((t - s) >> 1);
-      // 额外数组储存是否修改值
+      // Additional array storage whether to modify the value
       if (v[p]) {
         d[p * 2] = b[p] * (m - s + 1), d[p * 2 + 1] = b[p] * (t - m);
         b[p * 2] = b[p * 2 + 1] = b[p];
@@ -330,22 +330,22 @@ author: Marcythm, Ir1d, Ycrpro, Xeonacid, konnyakuxzy, CJSoft, HeRaNO, ethan-enh
         return sum
     ```
 
-## 动态开点线段树
+## Dynamic open point segment tree
 
-前面讲到堆式储存的情况下，需要给线段树开 $4n$ 大小的数组．为了节省空间，我们可以不一次性建好树，而是在最初只建立一个根结点代表整个区间．当我们需要访问某个子区间时，才建立代表这个区间的子结点．这样我们不再使用 $2p$ 和 $2p+1$ 代表 $p$ 结点的儿子，而是用 $\text{ls}$ 和 $\text{rs}$ 记录儿子的编号．总之，动态开点线段树的核心思想就是：**结点只有在有需要的时候才被创建**．
+As mentioned earlier, in the case of heap storage, an array of size $4n$ needs to be opened for the line segment tree. In order to save space, we can not build the tree all at once, but initially only create one root node to represent the entire interval. When we need to access a certain sub-range, we create a child node representing this range. In this way, we no longer use $2p$ and $2p+1$ to represent the sons of the $p$ node, but use $\text{ls}$ and $\text{rs}$ to record the number of the son. In short, the core idea of ​​the dynamic open-point line segment tree is: **nodes are only created when needed**.
 
-单次操作的时间复杂度是不变的，为 $O(\log n)$．由于每次操作都有可能创建并访问全新的一系列结点，因此 $m$ 次单点操作后结点的数量规模是 $O(m\log n)$．最多也只需要 $2n-1$ 个结点，没有浪费．
+The time complexity of a single operation is constant, $O(\log n)$. Since each operation may create and access a new series of nodes, the number of nodes after $m$ single-point operations is $O(m\log n)$. At most, only $2n-1$ nodes are needed, so there is no waste.
 
-单点修改：
+Single point modification:
 
 ```cpp
-// root 表示整棵线段树的根结点；cnt 表示当前结点个数
+// root represents the root node of the entire line segment tree; cnt represents the current number of nodes
 int n, cnt, root;
 int sum[n * 2], ls[n * 2], rs[n * 2];
 
-// 用法：update(root, 1, n, x, f); 其中 x 为待修改节点的编号
-void update(int& p, int s, int t, int x, int f) {  // 引用传参
-  if (!p) p = ++cnt;  // 当结点为空时，创建一个新的结点
+// Usage: update(root, 1, n, x, f); where x is the number of the node to be modified
+void update(int& p, int s, int t, int x, int f) {  // Passing parameters by reference
+  if (!p) p = ++cnt;  // When the node is empty, create a new node
   if (s == t) {
     sum[p] += f;
     return;
@@ -359,12 +359,12 @@ void update(int& p, int s, int t, int x, int f) {  // 引用传参
 }
 ```
 
-区间询问：
+Interval query:
 
 ```cpp
-// 用法：query(root, 1, n, l, r);
+// Usage: query(root, 1, n, l, r);
 int query(int p, int s, int t, int l, int r) {
-  if (!p) return 0;  // 如果结点为空，返回 0
+  if (!p) return 0;  // If the node is empty, return 0
   if (s >= l && t <= r) return sum[p];
   int m = s + ((t - s) >> 1), ans = 0;
   if (l <= m) ans += query(ls[p], s, m, l, r);
@@ -373,123 +373,123 @@ int query(int p, int s, int t, int l, int r) {
 }
 ```
 
-区间修改也是一样的，不过下放标记时要注意如果缺少孩子，就直接创建一个新的孩子．或者使用标记永久化技巧．
+The interval modification is the same, but when delegating the mark, be careful to create a new child directly if there is a lack of children. Or use the mark-permanence technique.
 
-## 一些优化
+## some optimizations
 
-这里总结几个线段树的优化：
+Here is a summary of several line segment tree optimizations:
 
--   在叶子节点处无需下放懒惰标记，所以懒惰标记可以不下传到叶子节点．
+-   There is no need to send lazy marks to leaf nodes, so lazy marks do not need to be sent to leaf nodes.
 
--   下放懒惰标记可以写一个专门的函数 `pushdown`，从儿子节点更新当前节点也可以写一个专门的函数 `maintain`（或者对称地用 `pushup`），降低代码编写难度．
+-   To delegate the lazy mark, you can write a special function `pushdown`. To update the current node from the child node, you can also write a special function `maintain` (or use `pushup` symmetrically) to reduce the difficulty of writing code.
 
--   标记永久化：如果确定懒惰标记不会在中途被加到溢出（即超过了该类型数据所能表示的最大范围），那么就可以将标记永久化．标记永久化可以避免下传懒惰标记，只需在进行询问时把标记的影响加到答案当中，从而降低程序常数．具体如何处理与题目特性相关，需结合题目来写．这也是树套树和可持久化数据结构中会用到的一种技巧．
+-   Marking is permanent: If it is determined that the lazy mark will not be added to the overflow midway (that is, it exceeds the maximum range that can be represented by this type of data), then the mark can be made permanent. Permanent marking can avoid downloading lazy markings, and only needs to add the influence of markings to the answers when asking, thereby reducing program constants. The specific method of handling is related to the characteristics of the topic and needs to be written in conjunction with the topic. This is also a technique used in trees within trees and persistent data structures.
 
-## C++ 模板
+## C++ template
 
-??? note "SegTreeLazyRangeAdd 可以区间加/求和的线段树模板"
+??? note "SegTreeLazyRangeAdd is a line segment tree template that can add/sum the interval"
     ```cpp
     --8<-- "docs/ds/code/seg/seg_4.hpp"
     ```
 
-??? note "SegTreeLazyRangeSet 可以区间修改/求和的线段树模板"
+??? note "SegTreeLazyRangeSet is a segment tree template that can be modified/summed in intervals"
     ```cpp
     --8<-- "docs/ds/code/seg/seg_5.hpp"
     ```
 
-## 例题
+## example
 
-???+ note "[luogu P3372【模板】线段树 1](https://www.luogu.com.cn/problem/P3372)"
-    已知一个数列，你需要进行下面两种操作：
+???+ note "[luogu P3372【Template】Line Segment Tree 1](https://www.luogu.com.cn/problem/P3372)"
+Given a sequence, you need to perform the following two operations:
     
-    -   将某区间每一个数加上 $k$．
+    -   Add $k$ to each number in a certain range.
     
-    -   求出某区间每一个数的和．
+    -   Find the sum of every number in a certain interval.
     
-    ??? note "参考代码"
+??? note "reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg_1.cpp"
         ```
 
-???+ note "[luogu P3373【模板】线段树 2](https://www.luogu.com.cn/problem/P3373)"
-    已知一个数列，你需要进行下面三种操作：
+???+ note "[luogu P3373【Template】Line Segment Tree 2](https://www.luogu.com.cn/problem/P3373)"
+Given a sequence, you need to perform the following three operations:
     
-    -   将某区间每一个数乘上 $x$．
+    -   Multiply each number in a range by $x$.
     
-    -   将某区间每一个数加上 $x$．
+    -   Add $x$ to each number in a certain range.
     
-    -   求出某区间每一个数的和．
+    -   Find the sum of every number in a certain interval.
     
-    ??? note "参考代码"
+??? note "reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg_2.cpp"
         ```
 
-???+ note "[HihoCoder 1078 线段树的区间修改](https://vjudge.net/problem/HihoCoder-1078)"
-    假设货架上从左到右摆放了 $N$ 种商品，并且依次标号为 $1$ 到 $N$，其中标号为 $i$ 的商品的价格为 $Pi$．小 Hi 的每次操作分为两种可能，第一种是修改价格：小 Hi 给出一段区间 $[L, R]$ 和一个新的价格 $\textit{NewP}$，所有标号在这段区间中的商品的价格都变成 $\textit{NewP}$．第二种操作是询问：小 Hi 给出一段区间 $[L, R]$，而小 Ho 要做的便是计算出所有标号在这段区间中的商品的总价格，然后告诉小 Hi．
+???+ note "[HihoCoder 1078 Interval modification of segment tree](https://vjudge.net/problem/HihoCoder-1078)"
+Assume that there are $N$ products on the shelf from left to right, and they are numbered $1$ to $N$. The price of the product numbered $i$ is $Pi$. Each operation of Little Hi is divided into two possibilities. The first is to modify the price: Little Hi gives a range $[L, R]$ and a new price $\textit{NewP}$, and the prices of all commodities marked in this range become $\textit{NewP}$. The second operation is to ask: Little Hi gives a range $[L, R]$, and what Little Ho has to do is to calculate the total price of all goods labeled in this range, and then tell Little Hi.
     
-    ??? note "参考代码"
+??? note "reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg_3.cpp"
         ```
 
 ???+ note "[2018 Multi-University Training Contest 5 Problem G. Glad You Came](https://acm.hdu.edu.cn/showproblem.php?pid=6356)"
-    ??? note "解题思路"
-        维护一下每个区间的永久标记就可以了，最后在线段树上跑一边 DFS 统计结果即可．注意打标记的时候加个剪枝优化，否则会 TLE．
+??? note "Problem-solving ideas"
+Just maintain the permanent mark of each interval, and finally run the DFS statistical results on the line segment tree. Pay attention to adding pruning optimization when marking, otherwise TLE will occur.
 
-## 拓展
+## expand
 
-线段树应用十分广泛，常见的拓展和变体如下：
+Line segment trees are widely used. Common extensions and variations are as follows:
 
--   [可持久化线段树](./persistent-seg.md)
--   各类树套树：
-    -   [线段树套线段树](./seg-in-seg.md)
-    -   [树状数组套线段树](./seg-in-bit.md)
-    -   [线段树套平衡树](./balanced-in-seg.md)
-    -   [平衡树套树状数组](./seg-in-balanced.md)
--   [李超线段树](./li-chao-tree.md)
--   [猫树](./cat-tree.md)
--   [吉司机线段树](./seg-beats.md)
+-   [Persistible Segment Tree](./persistent-seg.md)
+-   Various types of trees within trees:
+    -   [Line segment tree within line segment tree](./seg-in-seg.md)
+    -   [Tree Array Set Line Segment Tree](./seg-in-bit.md)
+    -   [Balanced tree within line segment tree](./balanced-in-seg.md)
+    -   [Balanced tree set tree array](./seg-in-balanced.md)
+-   [Li Chao Line Segment Tree](./li-chao-tree.md)
+-   [Cat Tree](./cat-tree.md)
+-   [Ji driver line segment tree](./seg-beats.md)
 
-详细内容请参阅相关页面．
+Please refer to the relevant pages for details.
 
-## 应用：线段树优化建图
+## Application: Line segment tree optimization mapping
 
-在建图连边的过程中，我们有时会碰到这种题目，一个点向一段连续的区间中的点连边或者一个连续的区间向一个点连边，如果我们真的一条一条连过去，那一旦点的数量多了复杂度就爆炸了，这里就需要用线段树的区间性质来优化我们的建图了．
+In the process of connecting edges in a graph, we sometimes encounter this problem. A point connects an edge to a point in a continuous interval or a continuous interval connects an edge to a point. If we really connect them one by one, the complexity will explode once the number of points increases. Here we need to use the interval properties of the line segment tree to optimize our graph construction.
 
-下面是一个线段树．
+Below is a line segment tree.
 
 ![](./images/segt5.svg)
 
-每个节点都代表了一个区间，假设我们要向区间 $[2, 4]$ 连边．
+Each node represents an interval. Suppose we want to connect edges to the interval $[2, 4]$.
 
 ![](./images/segt6.svg)
 
-在一些题目中，还会出现一个区间连向一个点的情况，则我们将上面第一张图的有向边全部反过来即可，上面的树叫做入树，下面这个叫做出树．
+In some questions, there will be a situation where an interval is connected to a point, so we can reverse all the directed edges of the first picture above. The tree above is called the entry tree, and the one below is called the exit tree.
 
 ![](./images/segt7.svg)
 
 ???+ note "[Legacy](https://codeforces.com/problemset/problem/786/B)"
-    题目大意：有 $n$ 个点、$q$ 次操作．每一种操作为以下三种类型中的一种：
+The general idea of ​​the question: There are $n$ points and $q$ operations. Each operation is one of the following three types:
     
-    -   操作一：连一条 $u \rightarrow v$ 的有向边，权值为 $w$．
-    -   操作二：对于所有 $i \in [l,r]$ 连一条 $u \rightarrow i$ 的有向边，权值为 $w$．
-    -   操作三：对于所有 $i \in [l,r]$ 连一条 $i \rightarrow u$ 的有向边，权值为 $w$．
+    -   Operation 1: Connect a directed edge of $u \rightarrow v$ with a weight of $w$.
+    -   Operation 2: For all directed edges from $i \in [l,r]$ to $u \rightarrow i$, the weight is $w$.
+    -   Operation 3: For all directed edges from $i \in [l,r]$ to $i \rightarrow u$, the weight is $w$.
     
-    求从点 $s$ 到其他点的最短路．
+Find the shortest path from point $s$ to other points.
     
     $1 \le n,q \le 10^5, 1 \le w \le 10^9$．
     
-    ??? note "参考代码"
+??? note "reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg_8.cpp"
         ```
 
-## 练习题目
+## Practice questions
 
--   [luogu P3372【模板】线段树 1](https://www.luogu.com.cn/problem/P3372)
--   [luogu P13825 线段树 1.5【动态开点线段树】](https://www.luogu.com.cn/problem/P13825)
--   [luogu P3373【模板】线段树 2](https://www.luogu.com.cn/problem/P3373)
--   [luogu P4588【TJOI2018】数学计算](https://www.luogu.com.cn/problem/P4588)
--   [luogu P5490【模板】扫描线 & 矩形面积并](https://www.luogu.com.cn/problem/P5490)
--   [luogu P1471 方差](https://www.luogu.com.cn/problem/P1471)
+-   [luogu P3372【Template】Line Segment Tree 1](https://www.luogu.com.cn/problem/P3372)
+-   [luogu P13825 Line Segment Tree 1.5 [Dynamic Open Point Line Segment Tree]](https://www.luogu.com.cn/problem/P13825)
+-   [luogu P3373【Template】Line Segment Tree 2](https://www.luogu.com.cn/problem/P3373)
+-   [luogu P4588【TJOI2018】Mathematical calculation](https://www.luogu.com.cn/problem/P4588)
+-   [luogu P5490【Template】Scan line & rectangular area union](https://www.luogu.com.cn/problem/P5490)
+-   [luogu P1471 variance](https://www.luogu.com.cn/problem/P1471)

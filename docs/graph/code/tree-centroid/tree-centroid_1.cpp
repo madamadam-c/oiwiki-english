@@ -4,12 +4,12 @@ using namespace std;
 
 constexpr int N = 3e5 + 5;
 
-int n, q;  // 点数，询问数
+int n, q;  // Number of vertices and queries
 int fa[N];
 vector<int> son[N];
-int siz[N],     // 子树大小
-    ans[N],     // 以节点 u 为根的子树重心是 ans[u]
-    weight[N];  // 节点重量（不包括向上的子树）
+int siz[N],     // Subtree size
+    ans[N],     // The centroid of the subtree rooted at node u is ans[u]
+    weight[N];  // Node weight, excluding the parent-side subtree
 
 void dfs(int u) {
   siz[u] = 1, ans[u] = u;

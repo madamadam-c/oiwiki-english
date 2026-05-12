@@ -1,25 +1,25 @@
 author: H-J-Granger, Chrogeek, countercurrent-time, Enter-tainer, Great-designer, iamtwz, Ir1d, ksyx, mao1t, Menci, NachtgeistW, Nanarikom, ShaoChenHeng, StudyingFather, SukkaW, Tiphereth-A, zyj-111
 
-## 定积分的定义
+## Definition of Definite Integral
 
-简单来说，函数 $f(x)$ 在区间 $[l,r]$ 上的定积分 $\int_{l}^{r}f(x)\mathrm{d}x$ 指的是 $f(x)$ 在区间 $[l,r]$ 中与 $x$ 轴围成的区域的面积（其中 $x$ 轴上方的部分为正值，$x$ 轴下方的部分为负值）．
+Simply put, the definite integral $\int_{l}^{r}f(x)\mathrm{d}x$ of a function $f(x)$ over the interval $[l,r]$ refers to the area between the curve $f(x)$ and the x-axis over the interval $[l,r]$ (where the part above the x-axis is positive and the part below is negative).
 
-很多情况下，我们需要高效，准确地求出一个积分的近似值．下面介绍的 **辛普森法**，就是这样一种求数值积分的方法．
+In many cases, we need to efficiently and accurately compute an approximate value of an integral. **Simpson's method**, introduced below, is such a method for numerical integration.
 
-## 辛普森法
+## Simpson's Method
 
-这个方法的思想是将被积区间分为若干小段，每段套用二次函数的积分公式进行计算．
+The idea of this method is to divide the integration interval into several small segments, applying the quadratic function's integral formula to each segment.
 
-??? note "二次函数积分公式（辛普森公式）"
-    对于一个二次函数 $f(x)=ax^2+bx+c$，有：
+??? note "Quadratic Function Integral Formula (Simpson's Formula)"
+    For a quadratic function $f(x)=ax^2+bx+c$, we have:
     
     $$
     \int_l^r f(x) {\mathrm d}x = \frac{(r-l)(f(l)+f(r)+4 f(\frac{l+r}{2}))}{6}
     $$
     
-    推导过程：
-    对于一个二次函数 $f(x)=ax^2+bx+c$；
-    求积分可得 $F(x)=\int_0^x f(x) {\mathrm d}x = \frac{a}{3}x^3+\frac{b}{2}x^2+cx+D$ 在这里 D 是一个常数，那么
+    Derivation:
+    For a quadratic function $f(x)=ax^2+bx+c$;
+    Integrating gives $F(x)=\int_0^x f(x) {\mathrm d}x = \frac{a}{3}x^3+\frac{b}{2}x^2+cx+D$, where D is a constant. Then
     
     $$
     \begin{aligned}
@@ -32,39 +32,39 @@ author: H-J-Granger, Chrogeek, countercurrent-time, Enter-tainer, Great-designer
     \end{aligned}
     $$
 
-根据这个辛普森公式，我们先介绍一种普通的辛普森积分法．
+Based on this Simpson's formula, we first introduce a standard Simpson integration method.
 
-### 普通辛普森法
+### Standard Simpson's Method
 
-1743 年，这种方法发表于托马斯·辛普森的一篇论文中．
+In 1743, this method was published in a paper by Thomas Simpson.
 
-#### 描述
+#### Description
 
-给定一个自然数 $n$，将区间 $[l, r]$ 分成 $2n$ 个等长的区间 $x$．
+Given a natural number $n$, divide the interval $[l, r]$ into $2n$ equal subintervals $x$.
 
 $x_i = l + i h, ~~ i = 0 \ldots 2n,$ $h = \frac {r-l} {2n}.$
 
-我们就可以计算每个小区间 $[x_ {2i-2}, x_ {2i}]$，$i = 1\ldots n$ 的积分值，将所有区间的积分值相加即为总积分．
+We can compute the integral value for each small interval $[x_{2i-2}, x_{2i}]$, $i = 1\ldots n$, and summing the integral values of all intervals gives the total integral.
 
-对于 $[x_ {2i-2}, x_ {2i}]$，$i = 1\ldots n$ 的一个区间，选其中的三个点 $(x_ {2i-2}, x_ {2i-1}, x_ {2i})$ 就可以构成一条抛物线从而得到一个函数 $P(x)$，这个函数存在且唯一．计算原函数在该区间的积分值就变成了计算新的二次函数 $P(x)$ 在该段区间的积分值．这样我们就可以利用辛普森公式来近似计算它．
+For an interval $[x_{2i-2}, x_{2i}]$, $i = 1\ldots n$, selecting the three points $(x_{2i-2}, x_{2i-1}, x_{2i})$ can form a parabola, yielding a function $P(x)$, which exists and is unique. Computing the integral of the original function over this interval becomes computing the integral of the new quadratic function $P(x)$ over this segment. Thus we can use Simpson's formula to approximate the calculation.
 
 $\int_{x_ {2i-2}} ^ {x_ {2i}} f (x) ~dx \approx \int_{x_ {2i-2}} ^ {x_ {2i}} P (x) ~dx = \left(f(x_{2i-2}) + 4f(x_{2i-1})+(f(x_{2i})\right)\frac {h} {3}$
 
-将其分段求和即可得到如下结论：
+Summing over all segments yields:
 
 $\int_l ^ r f (x) dx \approx \left(f (x_0) + 4 f (x_1) + 2 f (x_2) + 4f(x_3) + 2 f(x_4) + \ldots + 4 f(x_{2N-1}) + f(x_{2N}) \right)\frac {h} {3}$
 
-#### 误差
+#### Error
 
-我们直接给出结论，普通辛普森法的误差为：
+We directly give the conclusion: the error of standard Simpson's method is:
 
 $$
 -\tfrac{1}{90} \left(\tfrac{r-l}{2}\right)^5 f^{(4)}(\xi)
 $$
 
-其中 $\xi$ 是位于区间 $[l,r]$ 的某个值．
+where $\xi$ is some value in the interval $[l,r]$.
 
-#### 实现
+#### Implementation
 
 === "C++"
     ```cpp
@@ -100,38 +100,38 @@ $$
         return s
     ```
 
-### 自适应辛普森法
+### Adaptive Simpson's Method
 
-普通的方法为保证精度在时间方面无疑会受到 $n$ 的限制，我们应该找一种更加合适的方法．
+The standard method, to ensure accuracy, is inevitably limited by $n$ in terms of time. We should find a more suitable method.
 
-现在唯一的问题就是如何进行分段．如果段数少了计算误差就大，段数多了时间效率又会低．我们需要找到一个准确度和效率的平衡点．
+The only remaining problem is how to segment. If the number of segments is too few, the calculation error is large; if too many, the time efficiency is low. We need to find a balance between accuracy and efficiency.
 
-我们这样考虑：假如有一段图像已经很接近二次函数的话，直接带入公式求积分，得到的值精度就很高了，不需要再继续分割这一段了．
+Consider this: if a segment is already very close to a quadratic function, directly applying the formula to compute the integral yields high precision, and there is no need to further divide this segment.
 
-于是我们有了这样一种分割方法：每次判断当前段和二次函数的相似程度，如果足够相似的话就直接代入公式计算，否则将当前段分割成左右两段递归求解．
+Thus we have such a segmentation method: each time we check the similarity between the current segment and a quadratic function. If it is similar enough, we directly apply the formula to compute; otherwise, we recursively solve by dividing the current segment into left and right halves.
 
-现在就剩下一个问题了：如果判断每一段和二次函数是否相似？
+Now there is one remaining problem: how to determine if each segment is similar to a quadratic function?
 
-我们把当前段直接代入公式求积分，再将当前段从中点分割成两段，把这两段再直接代入公式求积分．如果当前段的积分和分割成两段后的积分之和相差很小的话，就可以认为当前段和二次函数很相似了，不用再递归分割了．
+We compute the integral of the current segment directly using the formula, then divide the current segment at its midpoint into two segments and compute their integrals using the formula. If the integral of the current segment and the sum of the integrals of the two divided segments differ only slightly, we can consider the current segment to be similar to a quadratic function and stop recursive segmentation.
 
-上面就是自适应辛普森法的思想．在分治判断的时候，除了判断精度是否正确，一般还要强制执行最少的迭代次数．
+The above is the idea of the adaptive Simpson's method. In the divide-and-conquer check, besides checking if the accuracy is correct, we generally also enforce a minimum number of iterations.
 
-参考代码如下：
+Reference code is as follows:
 
 === "C++"
     ```cpp
     double simpson(double l, double r) {
       double mid = (l + r) / 2;
-      return (r - l) * (f(l) + 4 * f(mid) + f(r)) / 6;  // 辛普森公式
+      return (r - l) * (f(l) + 4 * f(mid) + f(r)) / 6;  // Simpson's formula
     }
     
     double asr(double l, double r, double eps, double ans, int step) {
       double mid = (l + r) / 2;
       double fl = simpson(l, mid), fr = simpson(mid, r);
       if (abs(fl + fr - ans) <= 15 * eps && step < 0)
-        return fl + fr + (fl + fr - ans) / 15;  // 足够相似的话就直接返回
+        return fl + fr + (fl + fr - ans) / 15;  // similar enough, return directly
       return asr(l, mid, eps / 2, fl, step - 1) +
-             asr(mid, r, eps / 2, fr, step - 1);  // 否则分割成两段递归求解
+             asr(mid, r, eps / 2, fr, step - 1);  // otherwise divide and recurse
     }
     
     double calc(double l, double r, double eps) {
@@ -143,7 +143,7 @@ $$
     ```python
     def simpson(l, r):
         mid = (l + r) / 2
-        return (r - l) * (f(l) + 4 * f(mid) + f(r)) / 6  # 辛普森公式
+        return (r - l) * (f(l) + 4 * f(mid) + f(r)) / 6  # Simpson's formula
     
     
     def asr(l, r, eps, ans, step):
@@ -151,22 +151,22 @@ $$
         fl = simpson(l, mid)
         fr = simpson(mid, r)
         if abs(fl + fr - ans) <= 15 * eps and step < 0:
-            return fl + fr + (fl + fr - ans) / 15  # 足够相似的话就直接返回
+            return fl + fr + (fl + fr - ans) / 15  # similar enough, return directly
         return asr(l, mid, eps / 2, fl, step - 1) + asr(
             mid, r, eps / 2, fr, step - 1
-        )  # 否则分割成两段递归求解
+        )  # otherwise divide and recurse
     
     
     def calc(l, r, eps):
         return asr(l, r, eps, simpson(l, r), 12)
     ```
 
-## 习题
+## Exercises
 
--   [Luogu4525【模板】自适应辛普森法 1](https://www.luogu.com.cn/problem/P4525)
+-   [Luogu4525 【Template】 Adaptive Simpson's Method 1](https://www.luogu.com.cn/problem/P4525)
 -   [HDU1724 Ellipse](https://acm.hdu.edu.cn/showproblem.php?pid=1724)
--   [NOI2005 月下柠檬树](https://www.luogu.com.cn/problem/P4207)
+-   [NOI2005 Lemon Tree Under the Moon](https://www.luogu.com.cn/problem/P4207)
 
-## 参考资料
+## References
 
-<https://doi.org/10.1145/321526.321537>：该文章讨论了自适应 Simpson 法的改进方案，其中详细论述了上文代码中的常数 `15` 的由来与优势．
+<https://doi.org/10.1145/321526.321537>: This article discusses improvements to the adaptive Simpson's method, detailing the origin and advantages of the constant `15` used in the code above.

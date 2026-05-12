@@ -1,62 +1,62 @@
 author: Ir1d, ShadowsEpic, Fomalhauthmj, siger-young, MingqiHuang, Xeonacid, hsfzLZH1, orzAtalod, NachtgeistW
 
-本页面将简要介绍倍增法．
+This page gives a brief introduction to binary lifting.
 
-## 定义
+## Definition
 
-倍增法（英语：binary lifting），顾名思义就是「成倍增长」．我们在进行递推时，如果状态空间很大，通常的线性递推无法满足时间与空间复杂度的要求，那么我们可以通过成倍增长的方式，只递推状态空间中在 $k$ 的整数次幂位置上的值作为代表．当需要其他位置上的值时，我们通过「任意整数可以表示成若干个 $k$ 的次幂项的和」这一性质，使用之前求出的代表值拼成所需的值．所以使用倍增算法也要求我们递推的问题的状态空间关于 $k$ 的次幂具有可划分性．通常情况下 $k$ 取 $2$．[^ref1]
+Binary lifting, as the name suggests, means "doubling". When performing recurrence, if the state space is very large, the usual linear recurrence cannot meet the time and space complexity requirements. We can use the doubling method to only compute the values at positions that are integer powers of $k$ in the state space as representatives. When we need values at other positions, we use the property that "any integer can be represented as the sum of several powers of $k$" to combine the previously computed representative values to obtain the desired value. Therefore, using the binary lifting algorithm also requires that the state space of the problem has divisibility with respect to powers of $k$. Typically, $k$ is taken as $2$.[^ref1]
 
-这个方法在很多算法中均有应用，其中最常用的是 RMQ 问题和求 [LCA（最近公共祖先）](../graph/lca.md)．
+This method is applied in many algorithms, among which the most common are the RMQ problem and finding [LCA (Lowest Common Ancestor)](../graph/lca.md).
 
-## 应用
+## Applications
 
-### RMQ 问题
+### RMQ Problem
 
-参见：[RMQ 专题](../topic/rmq.md)
+See also: [RMQ Topic](../topic/rmq.md)
 
-RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）值．使用倍增思想解决 RMQ 问题的方法是 [ST 表](../ds/sparse-table.md)．
+RMQ stands for Range Maximum/Minimum Query, representing the maximum (minimum) value in a range. The method using binary lifting to solve RMQ problems is [Sparse Table](../ds/sparse-table.md).
 
-### 树上倍增求 LCA
+### Binary Lifting on Trees for LCA
 
-参见：[最近公共祖先](../graph/lca.md)
+See also: [Lowest Common Ancestor](../graph/lca.md)
 
-## 例题
+## Example Problems
 
-### 题 1
+### Problem 1
 
-???+ note "例题"
-    如何用尽可能少的砝码称量出 $[0,31]$ 之间的所有重量？（只能在天平的一端放砝码）
+???+ note "Example Problem"
+    How can we weigh all weights in the range $[0,31]$ using as few weights as possible? (Weights can only be placed on one side of the balance)
 
-??? note "解题思路"
-    答案是使用 1 2 4 8 16 这五个砝码，可以称量出 $[0,31]$ 之间的所有重量．同样，如果要称量 $[0,127]$ 之间的所有重量，可以使用 1 2 4 8 16 32 64 这七个砝码．每次我们都选择 2 的整次幂作砝码的重量，就可以使用极少的砝码个数量出任意我们所需要的重量．
-    
-    为什么说是极少呢？因为如果我们要量出 $[0,1023]$ 之间的所有重量，只需要 10 个砝码，需要量出 $[0,1048575]$ 之间的所有重量，只需要 20 个．如果我们的目标重量翻倍，砝码个数只需要增加 1．这叫「对数级」的增长速度，因为砝码的所需个数与目标重量的范围的对数成正比．
+??? note "Solution Approach"
+    The answer is to use the five weights 1, 2, 4, 8, 16, which can weigh all weights in the range $[0,31]$. Similarly, to weigh all weights in the range $[0,127]$, we can use the seven weights 1, 2, 4, 8, 16, 32, 64. Each time we choose a weight that is a power of 2, we can weigh any desired weight with very few weights.
 
-### 题 2
+    Why is it "very few"? Because to weigh all weights in the range $[0,1023]$, we only need 10 weights; to weigh all weights in the range $[0,1048575]$, we only need 20 weights. If our target weight range doubles, we only need to add 1 weight. This is called "logarithmic" growth rate, because the required number of weights is proportional to the logarithm of the target weight range.
 
-???+ note "例题"
-    给出一个长度为 $n$ 的环和一个常数 $k$，每次会从第 $i$ 个点跳到第 $(i+k)\bmod n+1$ 个点，总共跳了 $m$ 次．每个点都有一个权值，记为 $a_i$，求 $m$ 次跳跃的起点的权值之和对 $10^9+7$ 取模的结果．
-    
-    数据范围：$1\leq n\leq 10^6$，$1\leq m\leq 10^{18}$，$1\leq k\leq n$，$0\le a_i\le 10^9$．
+### Problem 2
 
-??? note "解题思路"
-    这里显然不能暴力模拟跳 $m$ 次．因为 $m$ 最大可到 $10^{18}$ 级别，如果暴力模拟的话，时间承受不住．
-    
-    所以就需要进行一些预处理，提前整合一些信息，以便于在查询的时候更快得出结果．如果记录下来每一个可能的跳跃次数的结果的话，不论是时间还是空间都难以承受．
-    
-    那么应该如何预处理呢？看看第一道例题．有思路了吗？
-    
-    回到本题．我们要预处理一些信息，然后用预处理的信息尽量快的整合出答案．同时预处理的信息也不能太多．所以可以预处理出以 2 的整次幂为单位的信息，这样的话在预处理的时候只需要处理少量信息，在整合的时候也不需要大费周章．
-    
-    在这题上，就是我们预处理出从每个点开始跳 1、2、4、8 等等步之后的结果（所处点和点权和），然后如果要跳 13 步，只需要跳 1+4+8 步就好了．也就是说先在起始点跳 1 步，然后再在跳了之后的终点跳 4 步，再接着跳 8 步，同时统计一下预先处理好的点权和，就可以知道跳 13 步的点权和了．
-    
-    对于每一个点开始的 $2^i$ 步，记录一个 `go[i][x]` 表示第 $x$ 个点跳 $2^i$ 步之后的终点，而 `sum[i][x]` 表示第 $x$ 个点跳 $2^i$ 步之后能获得的点权和．预处理的时候，开两重循环，对于跳 $2^i$ 步的信息，我们可以看作是先跳了 $2^{i-1}$ 步，再跳 $2^{i-1}$ 步，因为显然有 $2^{i-1}+2^{i-1}=2^i$．即我们有 `sum[i][x] = sum[i-1][x]+sum[i-1][go[i-1][x]]`，且 `go[i][x] = go[i-1][go[i-1][x]]`．
-    
-    当然还有一些实现细节需要注意．为了保证统计的时候不重不漏，我们一般预处理出「左闭右开」的点权和．亦即，对于跳 1 步的情况，我们只记录该点的点权和；对于跳 2 步的情况，我们只记录该点及其下一个点的点权和．相当于总是不将终点的点权和计入 sum．这样在预处理的时候，只需要将两部分的点权和直接相加就可以了，不需要担心第一段的终点和第二段的起点会被重复计算．
-    
-    这题的 $m\leq 10^{18}$，虽然看似恐怖，但是实际上只需要预处理出 $65$ 以内的 $i$，就可以轻松解决，比起暴力枚举快了很多．用行话讲，这个做法的 [时间复杂度](./complexity.md) 是预处理 $\Theta(n\log m)$，查询每次 $\Theta(\log m)$．
+???+ note "Example Problem"
+    Given a ring of length $n$ and a constant $k$, each step jumps from the $i$-th node to the $(i+k)\bmod n+1$-th node, for a total of $m$ jumps. Each node has a value denoted as $a_i$. Find the sum of the values at the starting nodes of the $m$ jumps, modulo $10^9+7$.
 
-??? note "参考代码"
+    Data range: $1\leq n\leq 10^6$, $1\leq m\leq 10^{18}$, $1\leq k\leq n$, $0\le a_i\le 10^9$.
+
+??? note "Solution Approach"
+    Obviously, we cannot simulate $m$ jumps by brute force here. Since $m$ can be as large as $10^{18}$, brute-force simulation would be too time-consuming.
+
+    Therefore, we need to do some preprocessing to integrate information in advance, so that we can get results quickly during queries. Recording the results for every possible jump count would be impractical in terms of both time and space.
+
+    So how should we preprocess? Let's look at the first example problem. Do you have any ideas now?
+
+    Back to this problem. We need to preprocess some information, and then use this preprocessed information to quickly compute the answer. At the same time, the preprocessed information cannot be too much. So we can preprocess information in units of powers of 2, which means during preprocessing we only need to handle a small amount of information, and during integration we don't need much effort either.
+
+    For this problem, we preprocess the results (ending node and node value sum) after jumping 1, 2, 4, 8, etc. steps from each starting node. Then, if we need to jump 13 steps, we just need to jump 1+4+8 steps. That is, first jump 1 step from the starting node, then jump 4 steps from the resulting node, and then jump 8 steps, while accumulating the preprocessed node value sums, so we can know the node value sum after jumping 13 steps.
+
+    For $2^i$ steps starting from each node, we record `go[i][x]` to denote the ending node after node $x$ jumps $2^i$ steps, and `sum[i][x]` to denote the accumulated node value sum after node $x$ jumps $2^i$ steps. During preprocessing, with two nested loops, for the information of jumping $2^i$ steps, we can think of it as first jumping $2^{i-1}$ steps, then jumping $2^{i-1}$ steps again, because clearly $2^{i-1}+2^{i-1}=2^i$. That is, we have `sum[i][x] = sum[i-1][x]+sum[i-1][go[i-1][x]]`, and `go[i][x] = go[i-1][go[i-1][x]]`.
+
+    Of course, there are some implementation details to pay attention to. To ensure completeness and no duplication in the accumulation, we generally preprocess the node value sums in a "left-closed, right-open" manner. That is, for jumping 1 step, we only record the node value sum of that node; for jumping 2 steps, we only record the node value sums of that node and its next node. In essence, we never include the ending node's value in the sum. This way, during preprocessing, we only need to directly add the two parts of the node value sums together, without worrying about the ending node of the first segment and the starting node of the second segment being counted twice.
+
+    For this problem, $m\leq 10^{18}$, although it seems terrifying, we only need to preprocess $i$ up to 65 to solve it easily, which is much faster than brute-force enumeration. In technical terms, the [time complexity](./complexity.md) of this approach is $\Theta(n\log m)$ for preprocessing and $\Theta(\log m)$ per query.
+
+??? note "Reference Code"
     ```cpp
     #include <cstdio>
     using namespace std;
@@ -64,13 +64,13 @@ RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）�
     constexpr int mod = 1000000007;
     
     int modadd(int a, int b) {
-      if (a + b >= mod) return a + b - mod;  // 减法代替取模，加快运算
+      if (a + b >= mod) return a + b - mod;  // Subtraction instead of modulo to speed up
       return a + b;
     }
     
     int vi[1000005];
     
-    int go[75][1000005];  // 将数组稍微开大以避免越界，小的一维尽量定义在前面
+    int go[75][1000005];  // Make the array slightly larger to avoid overflow, smaller dimension first
     int sum[75][1000005];
     
     int main() {
@@ -85,7 +85,7 @@ RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）�
         sum[0][i] = vi[i];
       }
     
-      int logn = 31 - __builtin_clz(n);  // 一个快捷的取对数的方法
+      int logn = 31 - __builtin_clz(n);  // A quick way to get the logarithm
       for (int i = 1; i <= logn; ++i) {
         for (int j = 1; j <= n; ++j) {
           go[i][j] = go[i - 1][go[i - 1][j]];
@@ -99,10 +99,10 @@ RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）�
       int ans = 0;
       int curx = 1;
       for (int i = 0; m; ++i) {
-        if (m & (1ll << i)) {  // 参见位运算的相关内容，意为 m 的第 i 位是否为 1
+        if (m & (1ll << i)) {  // See bitwise operations, checks if the i-th bit of m is 1
           ans = modadd(ans, sum[i][curx]);
           curx = go[i][curx];
-          m ^= 1ll << i;  // 将第 i 位置零
+          m ^= 1ll << i;  // Set the i-th bit to 0
         }
       }
     
@@ -110,4 +110,4 @@ RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）�
     }
     ```
 
-[^ref1]: 引用自李煜东《算法竞赛进阶指南》0x06. 倍增一节
+[^ref1]: Quoted from Li Yudong's "Algorithm Competition Advanced Guide" 0x06. Binary Lifting section

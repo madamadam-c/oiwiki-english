@@ -1,36 +1,36 @@
-## 定义
+## Definition
 
-边有向，无环．
+Edges are directed, with no cycles.
 
-英文名叫 Directed Acyclic Graph，缩写是 DAG．
+The English name is Directed Acyclic Graph, abbreviated as DAG.
 
-## 性质
+## Properties
 
--   能 [拓扑排序](./topo.md) 的图，一定是有向无环图；
+-   A graph that can be [topologically sorted](./topo.md) must be a directed acyclic graph;
 
-    如果有环，那么环上的任意两个节点在任意序列中都不满足条件了．
+    If there is a cycle, then any two nodes on the cycle cannot satisfy the condition in any ordering.
 
--   有向无环图，一定能拓扑排序；
+-   A directed acyclic graph can always be topologically sorted;
 
-    （归纳法）假设节点数不超过 $k$ 的 有向无环图都能拓扑排序，那么对于节点数等于 $k$ 的，考虑执行拓扑排序第一步之后的情形即可．
+    (Induction) Assume that all directed acyclic graphs with at most $k$ nodes can be topologically sorted. Then for a graph with exactly $k$ nodes, consider the situation after performing the first step of topological sorting.
 
-## 判定
+## Detection
 
-如何判定一个图是否是有向无环图呢？
+How to determine whether a graph is a directed acyclic graph?
 
-检验它是否可以进行 [拓扑排序](./topo.md) 即可．
+Simply check if it can be [topologically sorted](./topo.md).
 
-当然也有另外的方法，可以对图进行一遍 [DFS](../search/dfs.md)，在得到的 DFS 树上看看有没有连向祖先的非树边（返祖边）．如果有的话，那就有环了．
+Alternatively, perform a [DFS](../search/dfs.md) on the graph and check if there are any non-tree edges (back edges) connecting to ancestors in the DFS tree. If there are, then there is a cycle.
 
-## 应用
+## Applications
 
-### DP 求最长（短）路
+### DP for Longest/Shortest Path
 
-在一般图上，求单源最长（短）路径的最优时间复杂度为 $O(nm)$（[Bellman–Ford 算法](./shortest-path.md#bellmanford-算法)，适用于有负权图）或 $O(m \log m)$（[Dijkstra 算法](./shortest-path.md#dijkstra-算法)，适用于无负权图）．
+On general graphs, the optimal time complexity for finding the single-source longest/shortest path is $O(nm)$ ([Bellman-Ford algorithm](./shortest-path.md#bellmanford-algorithm), applicable to graphs with negative weights) or $O(m \log m)$ ([Dijkstra algorithm](./shortest-path.md#dijkstra-algorithm), applicable to graphs without negative weights).
 
-但在 DAG 上，我们可以使用 DP 求最长（短）路，使时间复杂度优化到 $O(n+m)$．状态转移方程为 $dis_v = min(dis_v, dis_u + w_{u,v})$ 或 $dis_v = max(dis_v, dis_u + w_{u,v})$．
+However, on DAGs, we can use DP to find the longest/shortest path, optimizing the time complexity to $O(n + m)$. The state transition is $dis_v = \min(dis_v, dis_u + w_{u,v})$ or $dis_v = \max(dis_v, dis_u + w_{u,v})$.
 
-拓扑排序后，按照拓扑序遍历每个节点，用当前节点来更新之后的节点．
+After topological sorting, traverse each node in topological order and use the current node to update subsequent nodes.
 
 ```cpp
 struct edge {
@@ -39,10 +39,10 @@ struct edge {
 
 int n, m;
 vector<edge> e[MAXN];
-vector<int> L;                               // 存储拓扑排序结果
-int max_dis[MAXN], min_dis[MAXN], in[MAXN];  // in 存储每个节点的入度
+vector<int> L;                               // Stores the topological sort result
+int max_dis[MAXN], min_dis[MAXN], in[MAXN];  // in stores the in-degree of each node
 
-void toposort() {  // 拓扑排序
+void toposort() {  // Topological sort
   queue<int> S;
   memset(in, 0, sizeof(in));
   for (int i = 1; i <= n; i++) {
@@ -64,8 +64,8 @@ void toposort() {  // 拓扑排序
   }
 }
 
-void dp(int s) {  // 以 s 为起点求单源最长（短）路
-  toposort();     // 先进行拓扑排序
+void dp(int s) {  // Find single-source longest/shortest path starting from s
+  toposort();     // Perform topological sort first
   memset(min_dis, 0x3f, sizeof(min_dis));
   memset(max_dis, 0, sizeof(max_dis));
   min_dis[s] = 0;
@@ -79,4 +79,4 @@ void dp(int s) {  // 以 s 为起点求单源最长（短）路
 }
 ```
 
-参见：[DAG 上的 DP](../dp/dag.md)．
+See also: [DP on DAG](../dp/dag.md).

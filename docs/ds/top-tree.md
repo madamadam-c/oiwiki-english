@@ -2,194 +2,194 @@ author:F7487
 
 ## Self-Adjusting Top Tree
 
-### 简介
+### Introduction
 
-Self-Adjusting Top Tree，是 2005 年 Tarjan 和 Werneck 在他们的论文 Self-Adjusting Top Trees 中提出的一种基于 Top Tree 理论的维护完全动态森林的数据结构，简称为 SATT．
+Self-Adjusting Top Tree is a data structure based on Top Tree theory that maintains a completely dynamic forest proposed by Tarjan and Werneck in their paper Self-Adjusting Top Trees in 2005, referred to as SATT.
 
-Self-Adjusting Top Tree 可以实现森林中任一棵树的链修改/查询、子树修改/查询以及非局部搜索等操作．
+Self-Adjusting Top Tree can implement operations such as chain modification/query, subtree modification/query, and non-local search of any tree in the forest.
 
-Splay Tree 是 SATT 的基础，但是 SATT 用的 Splay Tree 和普通的 Splay 在细节处不太一样（进行了一些扩展）．
+Splay Tree is the basis of SATT, but the Splay Tree used by SATT is different from ordinary Splay in details (some extensions have been made).
 
-### 问题引入
+### Problem introduction
 
-维护一个森林，支持如下操作：
+Maintain a forest and support the following operations:
 
--   删除，添加一条边，保证操作前后仍是一个森林．
+-   Delete and add an edge to ensure that there is still a forest before and after the operation.
 
--   修改某棵树上某条简单路径的权值．
+-   Modify the weight of a simple path on a tree.
 
--   修改以某个点为根的子树权值．
+-   Modify the weight of the subtree rooted at a certain point.
 
--   查询某棵树上的某条简单路径权值和．
+-   Query the weight sum of a simple path on a certain tree.
 
--   查询以某个点为根的子树权值和．
+-   Query the weight sum of the subtree rooted at a certain point.
 
-### 树收缩
+### tree shrink
 
-对于任意一棵树，我们都可以运用 **树收缩** 理论来将它收缩为一条边．
+For any tree, we can use the **tree shrinkage** theory to shrink it into an edge.
 
-具体地，树收缩有两个基本操作：**Compress** 和 **Rake**，Compress 操作指定一个度数为 $2$ 的点 $x$，与点 $x$ 相邻的那两个点记为 $y$、$z$，我们连一条新边 $yz$；将点 $x$、边 $xz$、边 $xy$ 的信息放到 $yz$ 中储存，并删去它们．如图所示．
+Specifically, there are two basic operations for tree shrinkage: **Compress** and **Rake**. The Compress operation specifies a degree-$2$ point $x$. The two points adjacent to point $x$ are recorded as $y$ and $z$. We connect a new edge $yz$; connect the point $x$, edge $xz$, and edge The information of $xy$ is stored in $yz$ and deleted. As shown in the picture.
 
 ![](./images/top-tree1.svg)
 
-Rake 操作指定一个度为 $1$ 的点 $x$，而且与点 $x$ 相邻的点 $y$ 的度数需大于 $1$，设点 $y$ 的另一个邻点为 $z$，我们将点 $x$、边 $xy$ 的信息放入边 $yz$ 中储存，并删去它们．如图所示．
+The Rake operation specifies a degree-$1$ point $x$, and point $x$'s adjacent point $y$ must have degree greater than $1$. Let another neighbor of point $y$ be $z$. We put the information of point $x$ and edge $xy$ into edge $yz$ Save them in and delete them. As shown in the picture.
 
 ![](./images/top-tree2.svg)
 
-不难证明，任何一棵树都可以只用 Compress 操作和 Rake 操作来将它收缩为一条边，如图所示．
+It is not difficult to prove that any tree can be contracted to one edge using only the Compress operation and the Rake operation, as shown in the figure.
 
 ![](./images/top-tree3.svg)
 
-### 簇
+### cluster
 
-为了表达方便，我们记在进行任何操作之前的原树为 $T$．在对 $T$ 进行某些树收缩操作（可以不做任何操作）之后的树记为 $T_x$．
+For convenience of expression, we record the original tree before any operation as $T$. The tree after performing some tree shrinking operations on $T$ (no operations are required) is recorded as $T_x$.
 
-我们研究某个 $T_x$ 中某一条边所包含的信息情况．
+We study the information contained in an edge in a certain $T_x$.
 
-这条边除了带有它本身的信息（当然，如果这条边在 $T$ 中不存在，这条边就没有本身的信息）之外，还可能包含其它通过 Compress/Rake 操作合并到它上面的点、边的信息．我们不妨先从下图中的树收缩过程中选取一条边，看看它所包含的信息在 $T$ 中代表哪些点、边．
+In addition to carrying its own information (of course, if this edge does not exist in $T$, this edge has no information of its own), it may also contain information about other points and edges merged to it through Compress/Rake operations. We might as well select an edge from the tree shrinkage process in the figure below to see which points and edges the information it contains represents in $T$.
 
 ![](./images/top-tree4.svg)
 
-如图，选取的边和对应的图已用红线圈出．
+As shown in the figure, the selected edge and the corresponding graph are circled in red.
 
-可以看出，这条边所包含的信息在 $T$ 中代表的点、边是连通的．我们可以推及，对于任一 $T_x$ 中的任一条边储存的信息在 $T$ 中总体现为一个连通子图．我们将这样的连通子图称为 **簇（Cluster）**．
+It can be seen that the information contained in this edge is connected to the points and edges represented in $T$. We can infer that the information stored on any edge in any $T_x$ is generally represented as a connected subgraph in $T$. We call such a connected subgraph a cluster.
 
-然而，簇是 **不完整的子图**，它包含的某些边的端点不被簇它自己包含．于是我们将这些端点称作簇的 **端点（Endpoint）**，将它包含的那些连通子图的点称作 **内点（Internal Node）**，连通子图的边称作 **内边（Internal Edge）**．
+However, a cluster is an **incomplete subgraph** that contains edge vertices that are not contained by the cluster itself. So we call these endpoints the **Endpoint** of the cluster, the points it contains that connect the subgraph are called **Internal Node**, and the edges that connect the subgraph are called **Internal Edge**.
 
-对于任意一个簇，都有以下性质：
+For any cluster, it has the following properties:
 
-1.  簇只存储和维护内点和内边的信息．
+1.  Clusters only store and maintain information about interior points and interior edges.
 
-2.  簇有两个端点．这两个端点即为 $T_x$ 中代表那个簇的边相连的那两个点．两个端点之间的路径我们称之为 **簇路径（Cluster Path）**；记一个簇的两个端点分别为 $x$、$y$，我们下面用 $C(x,y)$ 来表示这个簇．
+2.  A cluster has two endpoints. These two endpoints are the two points in $T_x$ connected by the edges representing that cluster. The path between the two endpoints is called **Cluster Path**; remember the two endpoints of a cluster as $x$ and $y$. We will use $C(x,y)$ below to represent this cluster.
 
-3.  内点仅与端点或内点相连．
+3.  Interior points are only connected to endpoints or interior points.
 
-特别地，对于 $T$ 中的每条边，都各自独立为一个簇（仅包含边自己的信息），这种簇我们称之为 **基簇（Base Cluster）**．对于由 $T$ 收缩到只有一条边的最终的 $T_x$，那条边代表的簇包含除了两个端点之外的整棵 $T$ 的信息，这个簇我们称之为 **根簇（Root Cluster）**．
+In particular, for each edge in $T$, it is an independent cluster (containing only the edge's own information). We call this cluster **Base Cluster**. For the final result obtained by shrinking $T$ to only one edge, namely $T_x$, the cluster represented by that edge contains the information of the entire tree $T$ except for the two endpoints. This cluster is called **Root Cluster**.
 
 ![](./images/top-tree5.svg)
 
-如图，上文提到的基簇已用红线标出．
+As shown in the figure, the base cluster mentioned above has been marked with a red line.
 
-从簇的视角来看 Compress/Rake 操作，我们发现这两个操作会将两个簇「合二为一」，剩下一个新簇，所以树收缩的过程也是所有的基簇合并为一个簇的过程．
+Looking at the Compress/Rake operation from a cluster perspective, we find that these two operations will "merge two clusters into one", leaving a new cluster. Therefore, the process of tree shrinkage is also the process of merging all base clusters into one cluster.
 
-所以我们也可以得到下图，是对一系列树收缩操作的另一表示．
+So we can also get the following figure, which is another representation of a series of tree shrink operations.
 
 ![](./images/top-tree6.svg)
 
 ### Top Tree
 
-我们现在想表示某一棵树进行树收缩的全过程．
+We now want to represent the entire process of tree shrinkage for a certain tree.
 
-我们可以用上文的两种方法来表示这一过程，但这样十分麻烦，如果树收缩进行了 $n$ 步，我们就要用 $n$ 棵树来表示整个树收缩．
+We can use the above two methods to represent this process, but this is very troublesome. If the tree shrinkage proceeds $n$ steps, we have to use $n$ tree to represent the entire tree shrinkage.
 
-考虑一个对某棵树进行某一树收缩的更简便表示，我们引入 **Top Tree**．
+To consider a simpler representation of performing a certain tree shrinkage on a certain tree, we introduce **Top Tree**.
 
 ![](./images/top-tree7.jpg)
 
-如图，是以上文的收缩方法和原树为基础的一棵 Top Tree．
+As shown in the figure, it is a Top Tree based on the shrinkage method above and the original tree.
 
-Top Tree 有以下性质；
+Top Tree has the following properties;
 
-1.  一棵 Top Tree 对应一棵原树和一种对其进行树收缩的方法，Top Tree 的每个节点都表示在某个 $T_x$ 中的某一条边，也就是树收缩过程中形成的某一个簇．图中的形如 $N_x$ 的点表示 `compress(x)` 这一操作形成的簇．
+1.  A Top Tree corresponds to an original tree and a method for tree shrinkage. Each node of the Top Tree represents a certain edge in a certain $T_x$, that is, a certain cluster formed during the tree shrinkage process. The points in the shape of $N_x$ in the figure represent the clusters formed by the operation `compress(x)`.
 
-2.  Top Tree 中的一个节点有两个儿子（都分别代表一个簇），这个节点代表的簇是这两个簇通过 Compress 或 Rake 操作合并得到的新簇．
+2.  A node in the Top Tree has two sons (each representing a cluster). The cluster represented by this node is a new cluster obtained by merging the two clusters through the Compress or Rake operation.
 
-3.  Top Tree 的叶子节点是基簇，其根节点是根簇．因此我们按一棵 Top Tree 的拓扑序分层，它的每一层就代表了一棵 $T_x$．
+3.  The leaf nodes of Top Tree are base clusters, and their root nodes are root clusters. Therefore, we layer according to the topological order of a Top Tree, and each layer of it represents a $T_x$.
 
-### 用三度化 Self-Adjusting Top Tree 实现信息维护
+### Implement information maintenance using three-dimensional Self-Adjusting Top Tree
 
-#### 原理
+#### principle
 
-Top Tree 对树收缩过程的极大简化，使我们看到通过维护树收缩过程来维护树上信息的可能性，SATT 即是通过这一原理来维护树上信息的．
+Top Tree greatly simplifies the tree shrinkage process, allowing us to see the possibility of maintaining the information on the tree by maintaining the tree shrinkage process. SATT maintains the information on the tree through this principle.
 
-注意到树收缩的过程也是树上信息不断加入的过程，我们执行一次 `compress(x)`，$x$ 点的信息从此刻起就开始在某个簇中出现，影响着我们的统计结果．
+Note that the process of tree shrinkage is also a process of continuous addition of information on the tree. We execute `compress(x)` once, and the information at $x$ point begins to appear in a certain cluster from this moment on, affecting our statistical results.
 
-假如我们现在用 Top Tree 来维护某棵树 $T$，树上的每个点，边都有权值，我们要维护的是 $T$ 的权值和．
+If we now use Top Tree to maintain a certain tree $T$, each point and edge on the tree has a weight, and what we want to maintain is the weight sum of $T$.
 
-现在我们在维护时要对 $T$ 中某个点 $x$ 的权值进行修改，很明显，我们就需要更改 Top Tree 中所有簇信息包含 $x$ 的节点信息，这样做单次时间复杂度会是 $O(n)$ 级别的．
+Now, during maintenance, we need to modify the weight of a certain point in $T$, point $x$. Obviously, we need to change the node information of all cluster information in Top Tree including $x$. In this way, the single time complexity will be $O(n)$ level.
 
-然而，如果我们选的点它在 Top Tree 中簇信息包含 $x$ 的节点个数很少，也就是说使它的信息尽可能晚地加入簇中，我们单次操作的时间复杂度就会有一个很大的提升．如图．
+However, if we select a point with a very small number of nodes whose cluster information contains $x$ in the Top Tree, that is to say, add its information to the cluster as late as possible, the time complexity of our single operation will be greatly improved. As shown in the picture.
 
 ![](./images/top-tree8.jpg)
 
-SATT 就是通过修改 **某个点/某条路径** 在树收缩过程中信息被加入簇中的先后顺序（以降低其在被修改时的单次时间复杂度）来维护树上信息的．
+SATT maintains the information on the tree by modifying the order in which **a certain point/a certain path** is added to the cluster during the tree shrinkage process (to reduce its single time complexity when it is modified).
 
-### 实际结构
+### actual structure
 
-我们先将一棵原树 $T$ 分层定根，然后我们考虑对某种树收缩顺序的 Top Tree 的根簇，它有两个端点，我们令这其中一个端点就是原树的根，另一个端点任选．
+We first root an original tree $T$ hierarchically, and then we consider the root cluster of the Top Tree in a certain tree shrinkage order. It has two endpoints. We make one of the endpoints the root of the original tree, and the other endpoint is optional.
 
 ![](./images/top-tree9.jpg)
 
-如图，给根簇选出一组端点，这里标注簇时将端点也圈进去了．
+As shown in the figure, a set of endpoints is selected for the root cluster. The endpoints are also circled when labeling the cluster.
 
-由树收缩的基本操作可知，簇路径上的点、边 $(j,h,c,jh,hc)$ 的信息最后是通过 Compress 操作才加入 $C(k,g)$ 的，而的非簇路径点 $(a,b,i,f,g,e,ig,\cdots)$ 是通过 Rake 操作才加入 $C(k,g)$ 的．
+It can be seen from the basic operation of tree shrinkage that the information of the points and edges $(j,h,c,jh,hc)$ on the cluster path is finally added to $C(k,g)$ through the Compress operation, while the non-cluster path point $(a,b,i,f,g,e,ig,\cdots)$ is added to $C(k,g)$ through the Rake operation.
 
-我们将簇路径单独拿出来，这是一条形态特殊（为链）的树，我们为这棵树建出一棵 top tree（其代表的树收缩顺序任意）．
+We separate the cluster path, which is a tree with a special shape (a chain), and we build a top tree for this tree (the tree it represents shrinks in any order).
 
 ![](./images/top-tree10.jpg)
 
-我们将这一结构称之为 **Compress Tree**，因为在这棵 Top Tree 中任一个点的两个儿子之间是通过 Compress 操作来合并成它们的父亲．
+We call this structure **Compress Tree**, because the two sons of any point in this Top Tree are merged into their father through the Compress operation.
 
-Compress Tree 里的节点称为 **Compress Node**．只考虑当前这条簇路径，一个非叶子的 Compress Node 就代表一次 compress 过程，表示将左儿子和右儿子信息合并起来，再将这个 `compress(x)` 本身存储的点 $x$ 信息加入．这棵 Compress Tree 就维护了 $C(k,g)$ 簇路径的信息．
+The nodes in the Compress Tree are called **Compress Node**. Only considering the current cluster path, a non-leaf Compress Node represents a compress process, which means merging the left son and right son information, and then adding the point $x$ information stored in `compress(x)` itself. This Compress Tree maintains the $C(k,g)$ cluster path information.
 
-另外，在 Compress Tree 中，我们实际上还对使用的 Top Tree 做了一些限制．注意到 Compress Tree 维护的是一个 $T$ 中点的深度两两不同的链，我们规定在 Compress Tree 中基簇的中序遍历顺序与对应的 $T$ 中边的深度是一致的，且中序遍历越小深度越浅．同样，对于每个点 $x$ 对应的 `compress(x)` 的关系也是如此．
+In addition, in Compress Tree, we actually put some restrictions on the Top Tree used. Note that Compress Tree maintains a chain with two different depths of midpoints in $T$. We stipulate that the in-order traversal order of the base clusters in Compress Tree is consistent with the depth of the corresponding edges in $T$, and the smaller the in-order traversal, the shallower the depth. Similarly, the same is true for the relationship between `compress(x)` corresponding to each point $x$.
 
-现在来维护那些非簇路径的信息，我们假设这些非簇路径上的点、边已经形成了一个个极大簇，而这些极大簇是由这些用蓝线圈出的更小簇之间互相 Rake 形成的，对由一些更小簇合并形成一个极大簇的过程，我们用一个三叉树来表示，类似地，我们称这一结构为 **Rake Tree**，对应地 Rake Tree 里的点就是 **Rake Node**．每个 Rake Node 都代表一个簇，是由其左儿子和右儿子 Rake 到其中儿子代表的更小簇上形成的．具体可见下图，可知 Rake Tree 中的每个点都代表了 $T$ 中具有相同端点的更小簇．
+Now to maintain the information of those non-cluster paths, we assume that the points and edges on these non-cluster paths have formed maximal clusters, and these maximal clusters are formed by rake each other among the smaller clusters circled in blue. For the process of merging some smaller clusters to form a maximal cluster, we use a ternary tree to represent it. Similarly, we call this structure **Rake Tree**, and correspondingly the points in the Rake Tree are **Rake Node**. Each Rake Node represents a cluster, which is formed by rake its left son and right son to the smaller cluster represented by its son. Specifically, you can see the figure below. It can be seen that each point in Rake Tree represents a smaller cluster with the same endpoint in $T$.
 
 ![](./images/top-tree11.jpg)
 
-如图，蓝线圈出的是一个个极大簇，黄线圈出的是一个个更小簇．
+As shown in the figure, the blue circles show large clusters, and the yellow circles show smaller clusters.
 
-对于那些更小簇，我们对它们进行相同处理，给它们选择簇路径、建出 Compress Tree、……如此递归下去，就建出了许多表示树收缩过程的 Compress Tree，Rake Tree．
+For those smaller clusters, we perform the same processing on them, select cluster paths for them, build Compress Tree,... By recursing in this way, we build many Compress Trees and Rake Trees that represent the tree shrinkage process.
 
 ![](./images/top-tree12.jpg)
 
-上图为原树的 Rake-Compress Tree（因为每个 Rake Node 都连着一棵 Compress Tree，所以表现为一棵 Rake Tree 连着许多 Compress Tree 的形态）和代表根簇路径的 Compress Tree．
+The picture above shows the Rake-Compress Tree of the original tree (because each Rake Node is connected to a Compress Tree, it appears as a Rake Tree connected to many Compress Trees) and the Compress Tree representing the root cluster path.
 
-考虑将这些树以某种方式拼接在一起，使它们形成一个有序的整体．记一个 Rake Tree 代表的最小簇的集合的公共端点是点 $x$．我们给这些 Rake Node 的中儿子（一个 Compress Tree 集合）都加入非 $x$ 的另一端点，但仍保持其中序遍历和 Top Tree 的基本性质，如图．
+Consider splicing these trees together in some way so that they form an ordered whole. Remember that the common endpoint of the set of minimal clusters represented by a Rake Tree is the point $x$. We add the other endpoint of non-$x$ to the middle son of these Rake Node (a Compress Tree collection), but still maintain the basic properties of middle-order traversal and Top Tree, as shown in the figure.
 
 ![](./images/top-tree13.jpg)
 
-这一步相当于是让 Rake 操作加入某个 $T$ 中点的操作直接发生在 Compress Tree 中，这不仅使我们能正确维护 Rake Node 的信息（只需将三个儿子信息合并即可），还使我们 Compress Tree 的结构更完整．下一步，我们将 Compress Tree 改为三叉树，若某个 Rake Tree 的公共端点是点 $x$，我们就将 Rake Tree 挂在 `compress(x)` 的中儿子处，如图．
+This step is equivalent to allowing the Rake operation to add a certain $T$ midpoint to occur directly in the Compress Tree. This not only allows us to correctly maintain the information of the Rake Node (just merge the three son information), but also makes the structure of our Compress Tree more complete. Next, we change the Compress Tree to a ternary tree. If the public endpoint of a Rake Tree is the point $x$, we will hang the Rake Tree at the middle son of `compress(x)`, as shown in the figure.
 
 ![](./images/top-tree14.jpg)
 
-此时经过三叉化的 `compress(x)` 点，它的意义就变成先将其中儿子 Rake 到簇路径上，再统计左右儿子和点 $x$ 的信息．
+At this time, the meaning of the trifurcated `compress(x)` point is to first rake its son to the cluster path, and then count the information of the left and right sons and point $x$.
 
-最后，我们再处理一下根簇路径的那棵 Compress Tree：与其它所有 Compress Tree 一致地，按中序遍历加入它的两个端点，使得它的根储存整棵 $T$ 的信息．
+Finally, we deal with the Compress Tree of the root cluster path: consistent with all other Compress Trees, we add its two endpoints in in-order traversal, so that its root stores the entire $T$ information.
 
-于是我们就实现了用三度化 Self-Adjusting Top Tree 实现一棵树的信息维护．
+So we implemented the information maintenance of a tree using three-dimensional Self-Adjusting Top Tree.
 
 ![](./images/top-tree15.jpg)
 
-总结一下，SATT 有以下性质：
+To summarize, SATT has the following properties:
 
-1.  SATT 由 Compress Tree 和 Rake Tree 组成，Compress Tree 是一棵特殊的 Top Tree；Rake Tree 是一个三叉树，它们都对应一棵树进行树收缩的过程．
+1.  SATT consists of Compress Tree and Rake Tree. Compress Tree is a special Top Tree; Rake Tree is a ternary tree. They both correspond to the process of tree shrinkage of a tree.
 
-2.  Compress Tree 里的点最多有三个儿子．Compress Tree 可以做类似于 Splay 树的旋转操作（只需保证其中序遍历不变即可，旋转一个点时保持其中儿子不动）．
+2.  A point in the Compress Tree has at most three sons. Compress Tree can perform rotation operations similar to Splay Tree (just ensure that the order traversal remains unchanged, and keep the children unchanged when rotating a point).
 
-3.  Rake Tree 里的点一定有一个中儿子．Rake Tree 可以做类似于 Splay 树的旋转操作（只需保证其中序遍历不变即可，旋转一个点时保持其中儿子不动）．
+3.  The points in the Rake Tree must have a middle son. Rake Tree can perform rotation operations similar to Splay Tree (just ensure that the order traversal remains unchanged, and keep the children unchanged when rotating a point).
 
-4.  SATT 的拓扑序反映了原树 $T$ 的树收缩顺序．
+4.  The topological order of SATT reflects the tree shrinkage order of the original tree $T$.
 
-我们在上文中提到的「修改某个点/某条路径在树收缩过程中信息被加入簇中的先后顺序」SATT 是否能实现呢，答案是肯定的．
+What we mentioned above is "modify the order in which information is added to the cluster at a certain point/path during the tree shrinkage process." Can SATT be implemented? The answer is yes.
 
-在 SATT 中，有一个 `access(x)` 的操作，它的作用是使某点 $x$ 成为根簇的非根端点，同时在 SATT 中使 `compress(x)` 成为 SATT 的根．
+In SATT, there is an operation `access(x)`, its function is to make a certain point $x$ become a non-root endpoint of the root cluster, and at the same time make `compress(x)` become the root of SATT.
 
-我们可以通过 `access(x)` 操作以均摊 $O(\log n)$ 的复杂度使 SATT 中代表 `compress(x)` 的点旋到整棵 SATT 的树根，根据 SATT 的第四个性质，我们改变了 `compress(x)` 的操作顺序，使得它最晚执行，$x$ 点的信息也就被最晚加入；这样当我们要修改 $x$ 点的信息时，就只需要更新 `compress(x)`．
+We can use the `access(x)` operation to evenly distribute the complexity of $O(\log n)$ so that the point representing `compress(x)` in SATT is rotated to the root of the entire SATT tree. According to the fourth property of SATT, we change the order of operations of `compress(x)` so that it is executed at the latest, and the information of point $x$ is also added last; in this way, when we want to modify the information of point $x$, we only need to update `compress(x)`.
 
-### 代码实现
+### Code implementation
 
-#### Push 类函数
+#### Push class function
 
-首先考虑上传信息，即 `Pushup(x)` 函数．在考虑对 SATT 的某个节点维护信息时，首先分这个点在 Compress Tree 还是在 Rake Tree 进行讨论，原因可见上文，不再赘述，下面以维护某个点的子树大小为例
+First consider uploading information, that is, the `Pushup(x)` function. When considering maintaining information for a certain node in SATT, first discuss whether this point is in the Compress Tree or the Rake Tree. The reasons can be seen above and will not be repeated. The following is an example of maintaining the subtree size of a certain point.
 
 ```cpp
-// ls(x) x的左儿子
-// rs(x) x的右儿子
-// ms(x) x的中儿子
-// type==0 是 Compress Node
-// type==1 是 Rake Node
+// ls(x) left son of x
+// rs(x) right son of x
+// ms(x) middle son of x
+// type==0 is Compress Node
+// type==1 is Rake Node
 void pushup(int x, int type) {
   if (type == 0)
     size[x] = size[rs(x)] + size[ms(x)] + 1;
@@ -199,22 +199,22 @@ void pushup(int x, int type) {
 }
 ```
 
-查询点 $x$ 的子树大小，就将其 Access 到 SATT 根，答案是其中儿子的 size $+1$；因为根据上文，在 Access 之后，其中儿子才是它的真子树．
+Query the size of the subtree of point $x$ and access it to the SATT root. The answer is the size of its son $+1$; because according to the above, after Access, the son is its true subtree.
 
-然后考虑下传信息，即 `Pushdown(x)` 函数．我们如果要对原树中的某个子树做整体修改，一个很自然的想法是：将这个节点直接 Access 到 SATT 根节点，给它的中儿子打上一个标记即可．同理，查询子树就直接 Access 后查询中儿子．
+Then consider transmitting information, that is, the `Pushdown(x)` function. If we want to make overall modifications to a certain subtree in the original tree, a natural idea is to directly access this node to the SATT root node and put a mark on its middle son. In the same way, when querying a subtree, directly Access and then query the middle child.
 
-我们如果要对原树中的某条路径做整体修改，我们就 expose 路径的两个端点，其中 `expose(x, y)` 是指使点 $x$ 成为 $T$ 的根节点，使点 $y$ 成为根簇的另一个端点．对应在 SATT 上，此时根簇的 Compress Tree 就是 $x$ 到 $y$ 的路径．于是直接给根簇的 Compress Tree 打上一个标记即可．同理查询链 expose 后查询根节点即可．
+If we want to make overall modifications to a certain path in the original tree, we expose the two endpoints of the path, where `expose(x, y)` means point $x$ becomes the root node of $T$, and point $y$ becomes the other endpoint of the root cluster. Correspondingly on the SATT, the Compress Tree of the root cluster is exactly the path from $x$ to $y$. So just put a mark on the Compress Tree of the root cluster. Similarly, to query a chain, expose it and then query the root node.
 
-于是我们就知道问题引入的问题怎么做了．
+So we know how to solve the problem introduced by the problem.
 
 ```cpp
 void pushdown(int x, int type) {
   if (type == 0) {
-    // 处理链
+    // processing chain
     chain[ls(x)] += chain[x] chain[rs(x)] += chain[x];
     val[ls(x)] += chain[x];
     val[rs(x)] += chain[x];
-    // 处理子树
+    // Processing subtrees
     subtree[ls(x)] += subtree[x];
     subtree[rs(x)] += subtree[x];
     subtree[ms(x)] += subtree[x];
@@ -234,7 +234,7 @@ void pushdown(int x, int type) {
   return;
 }
 
-// 下传标记
+// Download tag
 void pushall(int x, int type) {
   if (!isroot(x)) pushall(father[x], type);
   pushdown(x, type);
@@ -242,17 +242,17 @@ void pushall(int x, int type) {
 }
 ```
 
-#### Splay 类函数
+#### Splay class function
 
-我们知道 SATT 中的 Rake Tree 和 Compress Tree 都是可以旋转的，也就是说它们可以用 Splay 来维护．因此我们可以写出以下代码：
+We know that both Rake Tree and Compress Tree in SATT can be rotated, which means they can be maintained using Splay. So we can write the following code:
 
 ```cpp
-// 是一个节点的中儿子或无父亲
-// ls 一个SATT节点的左儿子
-// rs 一个SATT节点的右儿子
-// ms 一个SATT节点的中儿子
-// type==1 在 Rake Tree中
-// type==0 在 Compress Tree中
+// Is the middle son of a node or has no father
+// ls the left son of a SATT node
+// rs the right son of a SATT node
+// ms is the middle son of a SATT node
+// type==1 in Rake Tree
+// type==0 in Compress Tree
 bool isroot(int x) { return rs(father[x]) != x && ls(father[x]) != x; }
 
 bool direction(int x) { return rs(father[x]) == x; }
@@ -271,7 +271,7 @@ void rotate(int x, int type) {
 }
 
 void splay(int x, int type, int goal = 0) {
-  pushall(x, ty);  // 下传标记
+  pushall(x, ty);  // Download tag
   for (int y; y = father[x], (!isroot(x)) && y != goal; rotate(x, ty)) {
     if (father[y] != goal && (!isroot(y))) {
       rotate(direction(x) ^ diretion(y) ? x : y, type);
@@ -281,13 +281,13 @@ void splay(int x, int type, int goal = 0) {
 }
 ```
 
-值得注意的是，函数 `direction` 和 `isroot` 与普通 Splay 的不同．因为无论这个点怎么转，这个点的中儿子是不会变的．
+It is worth noting that the functions `direction` and `isroot` are different from ordinary Splay. Because no matter how this point turns, the middle son of this point will not change.
 
-#### Access 类函数
+#### Access class functions
 
-`access(x)` 的意义是：将点 $x$ 旋转到整个 SATT 的根处，使点 $x$ 成为根簇的两个端点之一（另一端点即为 $T$ 的根节点），同时不能改变原树的结构和原树的根．
+The meaning of `access(x)` is: rotate point $x$ to the root of the entire SATT, so that point $x$ becomes one of the two endpoints of the root cluster (the other endpoint is the root node of $T$). At the same time, the structure of the original tree and the root of the original tree cannot be changed.
 
-为了实现 `access(x)`，我们先将其旋转到其所在 Compress Tree 的树根，再把点 $x$ 的右儿子去掉，使点 $x$ 成为其所在 Compress Tree 对应簇的端点．
+In order to realize `access(x)`, we first rotate it to the root of the Compress Tree where it is located, and then remove the right son of point $x$, so that point $x$ becomes the endpoint of the corresponding cluster of the Compress Tree where it is located.
 
 ```cpp
 if (rs(x)) {
@@ -301,37 +301,37 @@ if (rs(x)) {
 }
 ```
 
-如果这时点 $x$ 已经到了根部，则退出；若没有，则执行以下步骤，以让它跨过它上面的 Rake Tree：
+If $x$ has reached the root at this point, exit; if not, perform the following steps to let it cross the Rake Tree above it:
 
-1.  将其父亲节点（一定是一个 Rake Node），splay 到其 Rake Tree 的树根；
+1.  Spread its parent node (must be a Rake Node) to the root of its Rake Tree;
 
-2.  将 $x$ 的爷节点（一定是一个 Compress Node）splay 到其 Compress Tree 根部．
+2.  Spread the parent node of $x$ (must be a Compress Node) to its Compress Tree root.
 
-3.  若 $x$ 的爷节点有一个右儿子，则将点 x 和爷节点的右儿子互换，更新信息，然后退出．
+3.  If the parent node of $x$ has a right son, exchange point x with the right child of the parent node, update the information, and then exit.
 
-4.  若爷节点没有右儿子，则先让点 $x$ 成为爷节点的右儿子，此时点 $x$ 原来的父节点没有中儿子，根据上文 Rake Node 的性质，它不能存在．于是调用 `Delete` 函数，将其删除，然后退出．
+4.  If the parent node has no right son, then let point $x$ become the right son of the parent node first. At this time, the original parent node of point $x$ has no middle son. According to the properties of Rake Node above, it cannot exist. So call the `Delete` function, delete it, and then exit.
 
-1，2 两个步骤合称为 **Local Splay**．3，4 两个步骤合称为 **Splice**．但我们方便起见，将它们都写在 `Splice(x)` 函数里．
+The two steps 1 and 2 are collectively called **Local Splay**. The two steps 3 and 4 are collectively called **Splice**. But for our convenience, we write them all in the `Splice(x)` function.
 
-上文提到的 `Delete(x)` 函数是这样的：
+The `Delete(x)` function mentioned above looks like this:
 
-1.  检视将要删除的点 $x$ 有没有左儿子，若有，则将左儿子的子树后继续旋转到点 $x$ 下方（成为新的左儿子），然后将右儿子（若有）变成左儿子的右儿子，此时点 $x$ 的左儿子就代替了点 $x$．这相当于 Splay 的合并操作．
+1.  Check whether the point $x$ to be deleted has a left son. If so, continue to rotate the subtree of the left son to below the point $x$ (become the new left son), and then change the right son (if any) into the right son of the left son. At this time, the left son of point $x$ replaces the point $x$. This is equivalent to Splay's merge operation.
 
-2.  若没有左儿子，则直接让其右儿子代替点 $x$．
+2.  If there is no left son, directly let its right son replace $x$.
 
-不难发现，`Splice(x)` 改变了原树的一些簇的端点选取．一次 splice 完了之后，我们将点 $x$ 的父亲节点当作新的点 $x$，进行下一次 splice．
+It is not difficult to find that `Splice(x)` changes the endpoint selection of some clusters in the original tree. After one splice is completed, we regard the parent node of point $x$ as the new point $x$ and perform the next splice.
 
-最终我们会发现，我们最开始要操作的点 $x$ 一定在根簇的 Compress Tree 最右端．我们只需最后做一次 **Global Splay**，将其旋至 SATT 根部即可．
+In the end, we will find that the point $x$ we want to operate at the beginning must be at the right end of the Compress Tree of the root cluster. We only need to do the **Global Splay** one last time and twist it to the root of the SATT.
 
 ```cpp
-// ls 一个SATT节点的左儿子
-// rs 一个SATT节点的右儿子
-// ms 一个SATT节点的中儿子
+// ls the left son of a SATT node
+// rs the right son of a SATT node
+// ms is the middle son of a SATT node
 // son[x][0] ls
 // son[x][1] rs
 // son[x][2] ms
-// type==1 在 Rake Tree中
-// type==0 在 Compress Tree中
+// type==1 in Rake Tree
+// type==0 in Compress Tree
 int new_node() {
   if (top) {
     top--;
@@ -397,7 +397,7 @@ void access(int x) {
 }
 ```
 
-若要让一个点成为原树的根，那么我们就将点 $x$ Access 到 SATT 的根节点，可知此时点 $x$ 已经是最终状态的簇一个端点．由 Compress Tree 的中序遍历性质可知，将点 $x$ 所在的 Compress Tree 左右颠倒（所有点的左右儿子互换），就使点 $x$ 成为原树的根．在具体实现中，我们通过给点 $x$ 打上一个翻转标记，之后下传来进行这一过程．
+If we want a point to become the root of the original tree, then we will access the point $x$ to the root node of SATT. It can be seen that at this time, the point $x$ is already an endpoint of the cluster in the final state. It can be seen from the in-order traversal properties of Compress Tree that if the Compress Tree where point $x$ is located is reversed (the left and right sons of all points are swapped), the point $x$ will become the root of the original tree. In the specific implementation, we mark the point $x$ with a flip mark and then pass it down to perform this process.
 
 ```cpp
 void makeroot(int x) {
@@ -406,7 +406,7 @@ void makeroot(int x) {
 }
 ```
 
-于是 `expose(x, y)` 就呼之欲出：
+So `expose(x, y)` is ready to come out:
 
 ```cpp
 void expose(int x, int y) {
@@ -417,11 +417,11 @@ void expose(int x, int y) {
 
 ### Link & Cut
 
-现在我们要将原树中两个不连通的点之间连一条边，我们先让其中的一个点 $x$ 成为原树的根，再将另一个点 $y$ 旋转到根处，可知此时应该使点 $y$ 成为点 $x$ 的右儿子．然后在点 $y$ 的右儿子上挂上这一条边（在只需维护点的 SATT 中，这一步可省）．
+Now we want to connect an edge between two disconnected points in the original tree. We first let one of the points $x$ become the root of the original tree, and then rotate the other point $y$ to the root. It can be seen that at this time, the point $y$ should become the right son of the point $x$. Then hang this edge on the right son of point $y$ (in SATT, which only needs to maintain the point, this step can be omitted).
 
 ```cpp
 void Link(int x, int y, int z) {
-  // z代表连接 x, y的边
+  // z represents the edge connecting x, y
   access(x);
   makeroot(y);
   setfather(y, x, 1);
@@ -431,47 +431,47 @@ void Link(int x, int y, int z) {
 }
 ```
 
-`Cut` 跟 `Link` 原理差不多
+`Cut` has similar principles to `Link`
 
 ```cpp
 void cut(int x, int y) {
   expose(x, y);
-  clear(rs(x));  // 删掉 xy 这一基簇
+  clear(rs(x));  // Delete the base cluster xy
   father[x] = ls(y) = rs(x);
   pushup(y, 0);
 }
 ```
 
-### 完整代码
+### Complete code
 
-??? note "[Luogu P3690【模板】动态树](https://www.luogu.com.cn/problem/P3690)"
+??? note "[Luogu P3690[Template]Dynamic Tree](https://www.luogu.com.cn/problem/P3690)"
     ```cpp
     --8<-- "docs/ds/code/top-tree/top-tree_1.cpp"
     ```
 
-### SATT 的时间复杂度证明
+### Time complexity proof of SATT
 
-设在一棵 SATT（点数为 $n$）中，其当前状态 $x$ 的势能函数为
+Suppose in a SATT (the number of points is $n$), the potential energy function of its current state $x$ is
 
 $$
 \varphi(x)= \sum_{i=1}^{n} r(i)
 $$
 
-其中 $r(i) = \lceil \log_2 \text{siz}(i) \rceil$．$\text{siz}(i)$ 为以 $i$ 为根的子树大小．
+Among them $r(i) = \lceil \log_2 \text{siz}(i) \rceil$ . $\text{siz}(i)$ is the size of the subtree rooted at $i$.
 
-则 SATT 的 splay 的均摊复杂度显然仍是 $3n\log n + 1$，即使 SATT 是一个三叉树．
+Then the amortized complexity of SATT's splay is obviously still $3n\log n + 1$, even if SATT is a ternary tree.
 
-因此对于 SATT，我们只要证得 Access 函数复杂度正确，就能证得 SATT 的时间复杂度．
+Therefore, for SATT, as long as we prove that the Access function complexity is correct, we can prove the time complexity of SATT.
 
-我们逐步分析 Accese 的均摊复杂度．
+Let’s analyze the amortized complexity of Accese step by step.
 
-我们先要将点 $x$ 旋至其所在 Compress Tree 的根，则这一步的均摊复杂度
+We first need to rotate the point $x$ to the root of the Compress Tree where it is located, then the amortized complexity of this step
 
 $$
 a \leq  3\log n +1
 $$
 
-接着我们要使点 $x$ 无右儿子，则这一步的均摊复杂度
+Then we need to make point $x$ have no right son, then the amortized complexity of this step
 
 $$
 a = 1 + r'(\gamma)- 0 \leq \log n +1
@@ -479,9 +479,9 @@ $$
 
 ![](./images/top-tree16.jpg)
 
-如图，为去掉点 $x$ 的右儿子过程．
+As shown in the figure, it is the right son process of removing point $x$.
 
-然后是 Local Splay，Splice 交替进行的过程，经过若干次 Splice，点 $x$ 被旋至 SATT 的根．我们对其中一组 Local Splay，Splice 进行分析：
+Then comes the process of Local Splay and Splice alternating. After several Splices, point $x$ is rotated to the root of SATT. We analyze one of the groups of Local Splay and Splice:
 
 ![](./images/top-tree17.jpg)
 
@@ -489,31 +489,31 @@ $$
 
 ![](./images/top-tree19.jpg)
 
-如图，体现了对点 $x$ 做一次 Splice 的过程，不包括最后左旋点 $x$ 的部分．
+As shown in the figure, it reflects the process of doing a Splice on the point $x$, excluding the last left-handed point $x$.
 
-为表达方便，设 $r_x(i)$ 为点 $i$ 在状态 $x$ 时的 $r$ 值．
+For convenience of expression, let $r_x(i)$ be point $i$'s value in state $x$ of $r$.
 
-由图，易知由状态 1 到状态 2 的操作（将点 $x$ 的父亲旋至其 Rake Tree 的根部的 Local Splay 操作）的均摊复杂度
+From the figure, it is easy to know the amortized complexity of the operation from state 1 to state 2 (the Local Splay operation that rotates the parent of point $x$ to the root of its Rake Tree)
 
 $$
 a \leq  3(r_2(\gamma)- r_1(\gamma))+1
 $$
 
-由图，易知由状态 2 到状态 3 的操作（将点 $x$ 的爷节点旋至其 Compress Tree 的根部的 Local Splay 操作）的均摊复杂度
+From the figure, it is easy to know the amortized complexity of the operation from state 2 to state 3 (the Local Splay operation of rotating the parent node of point $x$ to the root of its Compress Tree)
 
 $$
 a \leq  3(r_3(B)- r_2(B))+1
 $$
 
-重点分析由状态 3 到状态 4 的操作（Splice）
+Focus on analyzing the operations from state 3 to state 4 (Splice)
 
 $$
 a = r_4(\gamma) -r_3(\gamma) +1
 $$
 
-不难发现 $r_4(\gamma) \leq r_3(B)$
+Not hard to find $r_4(\gamma) \leq r_3(B)$
 
-故这一次操作的均摊复杂度为
+Therefore, the amortized complexity of this operation is
 
 $$
 \begin{aligned}
@@ -522,29 +522,29 @@ a &\leq r_3(B)- r_3(\gamma)+1\\
 \end{aligned}
 $$
 
-综合上述过程，一次 Splice 的复杂度为
+Based on the above process, the complexity of one Splice is
 
 $$
 a\leq 3r_3(B)+3r_3(B)+3r_2(\gamma)-3r_3(\gamma)-3r_2(B)-3r_1(\gamma)+3
 $$
 
-记下一次 Splice 的点 $X$（即状态 4 中的点 $B$）的 $r$ 值为 $r'(X)$，并注意到 $r_3(\gamma),r_1(\gamma) \ge r_1(X)$，$r_3(B),r_2(\gamma) \leq r'(X)$ 且 $r_3(B)=r_2(B)$，所以
+Note that once Splice 's point $X$ (that is, point $B$ in state 4) has a $r$ value of $r'(X)$ , and note that $r_3(\gamma),r_1(\gamma) \ge r_1(X)$ , $r_3(B),r_2(\gamma) \leq r'(X)$ and $r_3(B)=r_2(B)$ , so
 
 $$
 a\leq  9(r'(X)-r(X))+3
 $$
 
-除了上面这个复杂度以外，在 Splice 中可能还会有因 `delete(x)` 产生的额外均摊复杂度，记这一部分为 $a' \leq 3\log n +1$．
+In addition to the above complexity, there may be additional amortized complexity caused by `delete(x)` in Splice. This part is recorded as $a' \leq 3\log n +1$.
 
-先不管 $a'$ 部分，每次 Splice 的 $r'(X)$ 等于下一次的 $r(X)$，且第一次 Splice 的 $r(X)$ 等于我们一开始旋转点 $x$ 到其 Compress Tree 树根时的 $r(X)$，则对于不计 `delete(x)` 的一次 `access(x)` 复杂度，我们有：
+Regardless of the $a'$ part, the $r'(X)$ of each Splice is equal to the next $r(X)$, and the $r(X)$ of the first Splice is equal to when we first rotate point $x$ to the root of its Compress Tree, the $r(X)$ then. Then for the complexity of one `access(x)` excluding `delete(x)`, we have:
 
 $$
 a \leq 9(r'(x)-r(x))+ 3k + 1
 $$
 
-其中 $k$ 为 Splice 次数．
+Among them, $k$ is the number of Splice.
 
-看样子 $a$ 会带一个 $3k+1$ 导致均摊复杂度无法分析，但我们有办法来对付它，注意到 zig-zig/zig-zag 的旋转可以这么均摊
+It seems that $a$ will bring a $3k+1$, which makes the amortized complexity impossible to analyze, but we have a way to deal with it. Note that the rotation of zig-zig/zig-zag can be amortized in this way.
 
 $$
 \begin{aligned}
@@ -553,9 +553,9 @@ a &\leq 3(r'(X)-r(X)) + q\\
 \end{aligned}
 $$
 
-如果我们能找到足够多的 zig-zig，zig-zag 操作，我们就可以将这 $3k+1$ 平摊到这些操作上去，从而消掉这个 $3k+1$．
+If we can find enough zig-zig, zig-zag operations, we can spread this $3k+1$ evenly among these operations, thereby eliminating this $3k+1$.
 
-我们发现 Globel Splay 里面就有这么多的 zig-zig，zag-zig 来给我们使用，因为 Globel Splay 里面点的个数一定大于 $k$，而从点 $x$ 到 Globel Splay 根部路径的点数一定不少于 $k$，也就是说一次 `access(x)` 中一定会至少有 $\dfrac k2$ 个 zig-zag 操作，算上 Globel Splay 的均摊复杂度 $a \leq 3\log n +1$，一次 `access(x)` 不记 `delete(x)` 的均摊复杂度为
+We found that there are so many zig-zig in Globel Splay, zag-zig is for us to use, because the number of points in Globel Splay must be greater than $k$, and the number of points from point $x$ to the root path of Globel Splay must be no less than $k$, that is to say, there must be at least $\dfrac k2$ zig-zag operations in one `access(x)`, including Globel Splay The amortized complexity of $a \leq 3\log n +1$ , and the amortized complexity of `access(x)` without remembering `delete(x)` is
 
 $$
 \begin{aligned}
@@ -565,13 +565,13 @@ a&\leq 21(r''(X)-r(X)) +3
 \end{aligned}
 $$
 
-现在算上 $a'$，列出进行 $m$ 次 `access(x)` 操作的总式子．
+Now counting $a'$, list the total formula for performing $m$ operations on `access(x)`.
 
 $$
 \sum_{i=1}^m a_i' + \sum_{i=1}^m a_i = \sum_{i=1}^m c_i + \varphi(x_n) -\varphi(x_0)
 $$
 
-我们要求的是实际复杂度
+What we require is the actual complexity
 
 $$
 \begin{aligned}
@@ -580,29 +580,29 @@ $$
 \end{aligned}
 $$
 
-注意到 `delete(x)` 操作的本质是删掉一个 Rake Node，但我们在 $m$ 次操作中最多只会添加 $m$ 个 Rake Node，由 Rake Node 的定义，我们初始时最多有 $n$ 个 Rake Node，也就是说我们总共只会做 $m+n$ 次 `delete(x)` 操作，由 $a' \leq 3\log n +1$ 可知
+Note that the essence of the `delete(x)` operation is to delete a Rake Node, but we will only add up to $m$ Rake Nodes in $m$ operations. According to the definition of Rake Node, we initially have at most $n$ Rake Nodes, which means that we will only do a total of $m+n$ times `delete(x)` operations, which can be seen from $a' \leq 3\log n +1$
 
 $$
 \sum_{i=1}^m c_i \leq 3(m+n)\log n + 21m\log n +n\log n +4m +n
 $$
 
-所以我们就证明了 Access 的复杂度，而其他函数要么基于 Access 要么单次时间复杂度为常数，所以我们就证明了 SATT 的复杂度．
+So we have proved the complexity of Access, and other functions are either based on Access or have a single time complexity of constant, so we have proved the complexity of SATT.
 
-顺便一提，如果像 LCT 一样省略 Global Splay 的过程，改为在每次 Splice 时直接将要 Access 的点旋转一下，这样做时间复杂度也是对的（实测省略 Global Splay 的版本要快很多，能与 LCT 在 Luogu P3690 跑得不分上下）．
+By the way, if you omit the Global Splay process like LCT, and instead directly rotate the point to be accessed every time Splice, the time complexity of this is also correct (actually measured, the version that omits Global Splay is much faster, and can run as fast as LCT on Luogu P3690).
 
-### 例题
+### example
 
-#### 例题 1
+#### Example 1
 
 ???+ note "[CEOI 2019 Dynamic Diameter](https://loj.ac/p/3163)"
-    给定一棵 $n$ 个节点的树，每条边有边权，有 $q$ 次更新，每次修改一条边的边权，并询问树的直径．强制在线．
+    Given a tree with $n$ nodes, each edge has an edge weight, there are $q$ updates, each time the edge weight of an edge is modified, and the diameter of the tree is asked. Forced online.
 
-维护动态直径，建出 SATT 后，我们只需要在 `Pushup(x)` 里面维护每个点的答案，最后查询根节点的答案（即整棵树的直径）就可以了．
+Maintain dynamic diameter. After building SATT, we only need to maintain the answer of each point in `Pushup(x)`, and finally query the answer of the root node (that is, the diameter of the entire tree).
 
 ```cpp
 void pushup(int x, int op) {
   if (op == 0) {
-    // 是 Compress Node
+    // Is Compress Node
     len[x] = len[ls(x)] + len[rs(x)];
     diam[x] = maxs[ls(x)][1] + maxs[rs(x)][0];
     diam[x] =
@@ -613,7 +613,7 @@ void pushup(int x, int op) {
     maxs[x][1] =
         max(maxs[rs(x)][1], len[rs(x)] + max(maxs[ms(x)][0], maxs[ls(x)][1]));
   } else {
-    // 是 Rake Node
+    // Is Rake Node
     diam[x] = maxs[ls(x)][0] + maxs[rs(x)][0];
     diam[x] =
         max(diam[x], maxs[ms(x)][0] + max(maxs[ls(x)][0], maxs[rs(x)][0]));
@@ -624,9 +624,9 @@ void pushup(int x, int op) {
 }
 ```
 
-其中 $diam$ 是当前点的答案（这个点代表的簇的直径）．$len$ 表示当前 Compress Node 所在簇路径的长度，$maxs_{0/1}$ 表示 Compress Node 到簇内点和端点的不选簇路径儿子/不选父亲的最大距离（如果是 Rake Node 则只存储选取当前簇的上端点到簇内点和端点的最大距离 $maxs_0$）．每次查询 SATT 根节点的 diam 即可，正确性显然．
+Where $diam$ is the answer to the current point (the diameter of the cluster represented by this point). $len$ represents the length of the cluster path where the current Compress Node is located, $maxs_{0/1}$ represents the maximum distance from the Compress Node to the unselected cluster path son/unselected father of the points and endpoints in the cluster (if it is a Rake Node, only the maximum distance $maxs_0$ from the selected upper endpoint of the current cluster to the points and endpoints in the cluster is stored). Just query the diam of the SATT root node every time, and the correctness is obvious.
 
-注意对 `Pushrev(x)` 做一些改动．
+Note some changes to `Pushrev(x)`.
 
 ```cpp
 void pushrev(int x) {
@@ -637,34 +637,34 @@ void pushrev(int x) {
 }
 ```
 
-#### 例题 2
+#### Example 2
 
-???+ note "[「CSP-S 2019」树的重心](https://loj.ac/p/3213)"
-    给定一棵树，求出单独删去树的每条边后，分裂出的两个子树的重心编号和之和．
+???+ note "[The center of gravity of the "CSP-S 2019" tree](https://loj.ac/p/3213)"
+    Given a tree, find the sum of the centroid numbers of the two subtrees split after deleting each edge of the tree individually.
 
-假如我们能动态 $O(\log n)$ 维护树的重心，我们就做出这个题了．
+If we can dynamically maintain the center of gravity of the tree with $O(\log n)$, we can solve this problem.
 
-SATT 支持动态 $O(\log n)$ 维护树的重心，做到这需要 **非局部搜索（Non-local Search）**．
+SATT supports dynamic $O(\log n)$ maintenance of the center of gravity of the tree, which requires **Non-local Search**.
 
-对于一种树上的性质，如果一个点/一条边在整棵树中有这种性质，且在所有包含它的子树中都包含此种性质，我们就称这个性质是 **局部的（Local）**，否则称它是 **非局部的（Non-local）**．局部信息一般可以通过 `pushup(x)` 来维护
+For a property on a tree, if a point/edge has this property in the entire tree and contains this property in all subtrees containing it, we call this property **local (Local)**, otherwise we call it **non-local (Non-local)**. Local information can generally be maintained through `pushup(x)`
 
-例如，权值最小值是局部的，因为一个点/一条边如果在整棵树中权值最小，那么在所有包含它的子树中它也是权值最小的，而权值第二小显然就是非局部的．
+For example, the minimum weight is local, because if a point/edge has the smallest weight in the entire tree, then it will also have the smallest weight in all subtrees containing it, and the second smallest weight is obviously non-local.
 
-我们上文维护的 $diam$ 也是局部信息．
+The $diam$ we maintained above is also partial information.
 
-回到正题，重心显然是一个非局部信息，无法通过简单的 `pushup(x)` 来维护．我们考虑在 SATT 上搜索：
+Back to the topic, the center of gravity is obviously a non-local information and cannot be maintained by simple `pushup(x)`. Let's consider searching on SATT:
 
-我们的搜索从 SATT 的根节点，即根簇开始．注意到重心有很好的性质：假如有一条边的一侧点的个数大于等于另一侧点的个数，那么边的这一侧一定至少有一个重心（重心可能有两个）．
+Our search starts from the root node of SATT, that is, the root cluster. Note that the center of gravity has a very good property: if the number of points on one side of an edge is greater than or equal to the number of points on the other side, then there must be at least one center of gravity on this side of the edge (there may be two centers of gravity).
 
-记 $sum$ 表示某一个簇的点个数，$maxs$ 为一棵 Rake Tree 的所有 Rake Node 中儿子的 $sum$ 最大值．
+Note that $sum$ represents the number of points in a certain cluster, and $maxs$ is the maximum value of $sum$ among the sons of all Rake Nodes in a Rake Tree.
 
 ```cpp
 void pushup(int x, int op) {
   if (op == 0) {
-    // 是 Compress Node
+    // Is Compress Node
     sum[x] = sum[ls(x)] + sum[rs(x)] + sum[ms(x)] + 1;
   } else {
-    // 是 Rake Node
+    // Is Rake Node
     maxs[x] = max(maxs[ls(x)], max(maxs[rs(x)], sum[ms(x)]));
     sum[x] = sum[ls(x)] + sum[rs(x)] + sum[ms(x)];
   }
@@ -673,25 +673,25 @@ void pushup(int x, int op) {
 
 ![](./images/top-tree20.jpg)
 
-如图，为在进行 Non-local Search 时的 SATT 和对应的原树 $T$．
+As shown in the figure, it is the SATT and the corresponding original tree $T$ when performing Non-local Search.
 
-我们做如下比较：
+We make the following comparison:
 
-1.  比较簇 $compress(Y)$ 的 $sum$ 值与簇 $compress(Z)$、簇 $A$ 和点 $X$ 的并（我们暂称为簇 $\alpha$）的 $sum$ 值．若 $compress(Y)$ 的 $sum$ 值大于等于后者，说明至少有一个重心在 $compress(Y)$ 的子树中，我们递归到 $compress(Y)$ 搜索．（如果此处取等，点 $X$ 也是一个重心，需要记录）
+1.  Compare cluster $compress(Y)$'s $sum$ value with the union of cluster $compress(Z)$, cluster $A$ and point $X$ (we temporarily call it cluster $\alpha$)'s $sum$ value. If $compress(Y)$'s $sum$ value is greater than or equal to the latter, it means that at least one center of gravity is in the subtree of $compress(Y)$, and we recurse to $compress(Y)$ to search. (If equal is taken here, point $X$ is also a center of gravity and needs to be recorded)
 
-2.  比较簇 $compress(Z)$ 的 $sum$ 值与簇 $compress(Y)$、簇 $A$ 和点 $X$ 的并（我们暂称为簇 $\beta$）的 $sum$ 值．若 $compress(Z)$ 的 $sum$ 值大于等于后者，说明至少有一个重心在 $compress(Z)$ 的子树中，我们递归到 $compress(Z)$ 搜索．（如果此处取等，点 $X$ 也是一个重心，需要记录）
+2.  Compare cluster $compress(Z)$'s $sum$ value with the union of cluster $compress(Y)$, cluster $A$ and point $X$ (we temporarily call it cluster $\beta$)'s $sum$ value. If $compress(Z)$'s $sum$ value is greater than or equal to the latter, it means that at least one center of gravity is in the subtree of $compress(Z)$, and we recurse to $compress(Z)$ to search. (If equal is taken here, point $X$ is also a center of gravity and needs to be recorded)
 
-3.  比较点 $x$ 中儿子 Rake tree 之中 $sum$ 最大的更小簇的 $sum$ 值与簇 $compress(Y)$、簇 $A$、点 $X$ 及其它更小簇的并（我们暂称为簇 $Y$）的 $sum$ 值，若那个更小簇的 $sum$ 值大于等于后者，说明至少有一个重心在那个更小簇的子树中，我们递归到它搜索．如果此处取等，点 $X$ 也是一个重心，需要记录．
+3.  Compare, in point $x$'s Rake tree, the smaller cluster with the largest $sum$'s $sum$ value with the union of cluster $compress(Y)$ , cluster $A$ , point $X$ and other smaller clusters (we temporarily call it cluster $Y$ )'s $sum$ value; if that smaller cluster's $sum$ value is greater than or equal to the latter, indicating that there is at least one center of gravity in the subtree of that smaller cluster, and we recursively search for it. If equal is taken here, point $X$ is also a center of gravity and needs to be recorded.
 
-4.  若以上比较都不递归，则点 $X$ 一定是一个重心，记录并退出．
+4.  If none of the above comparisons are recursive, then point $X$ must be a center of gravity, record and exit.
 
-第一步的搜索显然正确，之后应该怎么搜呢？
+The search in the first step is obviously correct. How should we search next?
 
-假如我们递归到 $Y$，则现在 $Y$ 储存信息的并不完整，因为 $compress(Y)$ 里面只存储了它自己这个簇的信息，而我们要求的是整棵树的重心．解决方法是，将之前簇的信息记录下来，在点 $Y$ 上比较计算时将上一个簇的信息与点 $Y$ 自己的信息合并处理．具体实现如下：
+If we recurse to $Y$, the information stored in $Y$ is incomplete because $compress(Y)$ only stores the information of its own cluster, and what we require is the center of gravity of the entire tree. The solution is to record the information of the previous cluster, and merge the information of the previous cluster with the own information of point $Y$ when comparing and calculating at point $Y$. The specific implementation is as follows:
 
 ```cpp
 void non_local_search(int x, int lv, int rv, int op) {
-  // lv 和 rv 都是搜索的上一个簇的信息
+  // lv and rv are the information of the previous cluster searched
   if (!x) return;
   psd(x, 0);
   if (op == 0) {
@@ -749,7 +749,7 @@ void non_local_search(int x, int lv, int rv, int op) {
 }
 ```
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/ds/code/top-tree/top-tree_2.cpp"
     ```
@@ -758,4 +758,4 @@ void non_local_search(int x, int lv, int rv, int op) {
 
 1.  Robert E. Tarjan and Renato F. Werneck. 2005. Self-adjusting top trees. In Proceedings of the sixteenth annual ACM-SIAM symposium on Discrete algorithms (SODA '05). Society for Industrial and Applied Mathematics, USA, 813–822. DOI 10.5555/1070432.1070547
 
-2.  [negiizhao 的博客](https://negiizhao.blog.uoj.ac/blog/4912)
+2.  [negiizhao's blog](https://negiizhao.blog.uoj.ac/blog/4912)

@@ -1,112 +1,112 @@
 author:ouuan, Backl1ght, billchenchina, CCXXXI, ChickenHu, ChungZH, cjsoft, countercurrent-time, diauweb, Early0v0, Enter-tainer, EtaoinWu, H-J-Granger, H-Shen, Henry-ZHR, HeRaNO, hsfzLZH1, huaruoji, iamtwz, imp2002, Ir1d, kenlig, Konano, Lyccrius, Marcythm, Menci, NachtgeistW, PeterlitsZo, psz2007, shuzhouliu, SkqLiao, sshwy, SukkaW, therehello, TrisolarisHD, ttzztztz, vincent-163, WAAutoMaton, Hunter19019
 
-## 定义
+## Definition
 
-最近公共祖先简称 LCA（Lowest Common Ancestor）．两个节点的最近公共祖先，就是这两个点的公共祖先里面，离根最远的那个．
-为了方便，我们记某点集 $S=\{v_1,v_2,\ldots,v_n\}$ 的最近公共祖先为 $\text{LCA}(v_1,v_2,\ldots,v_n)$ 或 $\text{LCA}(S)$．
+The Lowest Common Ancestor (LCA) of two nodes is the common ancestor of these two nodes that is farthest from the root.
+For convenience, we denote the LCA of a set of nodes $S=\{v_1,v_2,\ldots,v_n\}$ as $\text{LCA}(v_1,v_2,\ldots,v_n)$ or $\text{LCA}(S)$.
 
-## 性质
+## Properties
 
-> 本节 **性质** 部分内容翻译自 [wcipeg](http://wcipeg.com/wiki/Lowest_common_ancestor)，并做过修改．
+> The **Properties** section is translated from [wcipeg](http://wcipeg.com/wiki/Lowest_common_ancestor) with modifications.
 
-1.  $\text{LCA}(\{u\})=u$；
-2.  $u$ 是 $v$ 的祖先，当且仅当 $\text{LCA}(u,v)=u$；
-3.  如果 $u$ 不为 $v$ 的祖先并且 $v$ 不为 $u$ 的祖先，那么 $u,v$ 分别处于 $\text{LCA}(u,v)$ 的两棵不同子树中；
-4.  前序遍历中，$\text{LCA}(S)$ 出现在所有 $S$ 中元素之前，后序遍历中 $\text{LCA}(S)$ 则出现在所有 $S$ 中元素之后；
-5.  两点集并的最近公共祖先为两点集分别的最近公共祖先的最近公共祖先，即 $\text{LCA}(A\cup B)=\text{LCA}(\text{LCA}(A), \text{LCA}(B))$；
-6.  两点的最近公共祖先必定处在树上两点间的最短路上；
-7.  $d(u,v)=h(u)+h(v)-2h(\text{LCA}(u,v))$，其中 $d$ 是树上两点间的距离，$h$ 代表某点到树根的距离．
+1.  $\text{LCA}(\{u\})=u$;
+2.  $u$ is an ancestor of $v$ if and only if $\text{LCA}(u,v)=u$;
+3.  If $u$ is not an ancestor of $v$ and $v$ is not an ancestor of $u$, then $u$ and $v$ lie in two different subtrees of $\text{LCA}(u,v)$;
+4.  In a preorder traversal, $\text{LCA}(S)$ appears before all elements of $S$; in a postorder traversal, $\text{LCA}(S)$ appears after all elements of $S$;
+5.  The LCA of the union of two node sets is the LCA of the LCAs of each set, i.e., $\text{LCA}(A\cup B)=\text{LCA}(\text{LCA}(A), \text{LCA}(B))$;
+6.  The LCA of two nodes must lie on the shortest path between them;
+7.  $d(u,v)=h(u)+h(v)-2h(\text{LCA}(u,v))$, where $d$ is the distance between two nodes on the tree, and $h$ represents the distance from a node to the root.
 
-## 求法
+## Algorithms
 
-### 朴素算法
+### Naive Algorithm
 
-#### 过程
+#### Procedure
 
-可以每次找深度比较大的那个点，让它向上跳．显然在树上，这两个点最后一定会相遇，相遇的位置就是想要求的 LCA．
-或者先向上调整深度较大的点，令他们深度相同，然后再共同向上跳转，最后也一定会相遇．
+Each time, we can move the node with greater depth upward. Clearly, on a tree, the two nodes will eventually meet, and the meeting point is the desired LCA.
+Alternatively, we can first adjust the depths of the two nodes to be equal, then move them upward together; they will also eventually meet.
 
-#### 性质
+#### Complexity
 
-朴素算法预处理时需要 dfs 整棵树，时间复杂度为 $O(n)$，单次查询时间复杂度为 $\Theta(n)$．如果树满足随机性质，则时间复杂度与这种随机树的期望高度有关．
+The naive algorithm requires a DFS of the entire tree for preprocessing, with time complexity $O(n)$, and each query takes $\Theta(n)$. If the tree has random properties, the time complexity is related to the expected height of this random tree.
 
-### 倍增算法
+### Binary Lifting
 
-#### 过程
+#### Procedure
 
-倍增算法是最经典的 LCA 求法，他是朴素算法的改进算法．通过预处理 $\text{fa}_{x,i}$ 数组，游标可以快速移动，大幅减少了游标跳转次数．$\text{fa}_{x,i}$ 表示点 $x$ 的第 $2^i$ 个祖先．$\text{fa}_{x,i}$ 数组可以通过 dfs 预处理出来．
+Binary lifting is the most classic method for finding LCA. It is an improvement over the naive algorithm. By preprocessing the $\text{fa}_{x,i}$ array, the cursor can move quickly, greatly reducing the number of jumps. $\text{fa}_{x,i}$ represents the $2^i$-th ancestor of node $x$. The $\text{fa}_{x,i}$ array can be preprocessed using DFS.
 
-现在我们看看如何优化这些跳转：
-在调整游标的第一阶段中，我们要将 $u,v$ 两点跳转到同一深度．我们可以计算出 $u,v$ 两点的深度之差，设其为 $y$．通过将 $y$ 进行二进制拆分，我们将 $y$ 次游标跳转优化为「$y$ 的二进制表示所含 `1` 的个数」次游标跳转．
-在第二阶段中，我们从最大的 $i$ 开始循环尝试，一直尝试到 $0$（包括 $0$），如果 $\text{fa}_{u,i}\not=\text{fa}_{v,i}$，则 $u\gets\text{fa}_{u,i},v\gets\text{fa}_{v,i}$，那么最后的 LCA 为 $\text{fa}_{u,0}$．
+Now let's see how to optimize these jumps:
+In the first phase of adjusting the cursor, we need to move nodes $u$ and $v$ to the same depth. We can compute the depth difference between $u$ and $v$, denoted as $y$. By decomposing $y$ into binary, we optimize $y$ cursor jumps to "the number of `1`s in the binary representation of $y$" cursor jumps.
+In the second phase, we iterate from the largest $i$ down to $0$ (inclusive). If $\text{fa}_{u,i}\not=\text{fa}_{v,i}$, then $u\gets\text{fa}_{u,i},v\gets\text{fa}_{v,i}$. The final LCA is $\text{fa}_{u,0}$.
 
-#### 性质
+#### Complexity
 
-倍增算法的预处理时间复杂度为 $O(n \log n)$，单次查询时间复杂度为 $O(\log n)$．
-另外倍增算法可以通过交换 `fa` 数组的两维使较小维放在前面．这样可以减少 cache miss 次数，提高程序效率．
+Binary lifting has preprocessing time complexity $O(n \log n)$, and each query takes $O(\log n)$.
+Additionally, binary lifting can reduce cache misses and improve efficiency by swapping the two dimensions of the `fa` array so that the smaller dimension comes first.
 
-??? note "例题"
-    [HDU 2586 How far away?](https://acm.hdu.edu.cn/showproblem.php?pid=2586) 树上最短路查询．
+??? note "Example"
+    [HDU 2586 How far away?](https://acm.hdu.edu.cn/showproblem.php?pid=2586) - Query shortest paths on a tree.
 
-可先求出 LCA，再结合性质 $7$ 进行解答．也可以直接在求 LCA 时求出结果．
+    First find the LCA, then use property 7 to solve. Alternatively, compute the result directly while finding the LCA.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_1.cpp"
     ```
 
-### Tarjan 算法
+### Tarjan Algorithm
 
-#### 过程
+#### Procedure
 
-Tarjan 算法是一种 **离线算法**，需要使用 [并查集](../ds/dsu.md) 记录某个结点的祖先结点．做法如下：
+Tarjan's algorithm is an **offline algorithm** that uses [Disjoint Set Union (DSU)](../ds/dsu.md) to record ancestors of nodes. The approach is as follows:
 
-1.  首先接受输入边（邻接链表）、查询边（存储在另一个邻接链表内）．查询边其实是虚拟加上去的边，为了方便，每次输入查询边的时候，将这个边及其反向边都加入到 `queryEdge` 数组里．
-2.  然后对其进行一次 DFS 遍历，同时使用 `visited` 数组进行记录某个结点是否被访问过、`parent` 记录当前结点的父亲结点．
-3.  其中涉及到了 **回溯思想**，我们每次遍历到某个结点的时候，认为这个结点的根结点就是它本身．让以这个结点为根节点的 DFS 全部遍历完毕了以后，再将这个结点的根节点设置为这个结点的父一级结点．
-4.  回溯的时候，如果以该节点为起点，`queryEdge` 查询边的另一个结点也恰好访问过了，则直接更新查询边的 LCA 结果．
-5.  最后输出结果．
+1.  First, accept the input edges (adjacency list) and query edges (stored in another adjacency list). Query edges are virtually added edges; for convenience, each time a query edge is input, both this edge and its reverse edge are added to the `queryEdge` array.
+2.  Then perform a DFS traversal, using a `visited` array to record whether a node has been visited and `parent` to record the parent of the current node.
+3.  This involves **backtracking**. When we traverse to a node, we consider its root to be itself. After all DFS traversals starting from this node as root are completed, we set this node's root to its parent.
+4.  During backtracking, if for a node, another node in the query edge has also been visited, we directly update the LCA result for that query edge.
+5.  Finally, output the results.
 
-#### 性质
+#### Complexity
 
-Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(n)$．
+Tarjan's algorithm requires initializing the DSU, so preprocessing takes $O(n)$.
 
-朴素的 Tarjan 算法处理所有 $m$ 次询问的时间复杂度为 $O(m \alpha(m+n, n) + n)$，但是 Tarjan 算法的常数比倍增算法大．存在 $O(m + n)$ 的实现．
+The naive Tarjan algorithm processes all $m$ queries in $O(m \alpha(m+n, n) + n)$, but Tarjan's constant factor is larger than binary lifting. An $O(m + n)$ implementation exists.
 
-???+ warning "注意"
-    并不存在「朴素 Tarjan LCA 算法中使用的并查集性质比较特殊，单次调用 `find()` 函数的时间复杂度为均摊 $O(1)$」这种说法．
+???+ warning "Note"
+    There is no statement like "the DSU properties used in the naive Tarjan LCA algorithm are special, so a single call to `find()` has amortized $O(1)$ time complexity."
     
-    以下的朴素 Tarjan 实现复杂度为 $O(m \alpha(m+n, n) + n)$．如果需要追求严格线性，可以参考 [Gabow 和 Tarjan 于 1983 年的论文](https://dl.acm.org/doi/pdf/10.1145/800061.808753)．其中给出了一种复杂度为 $O(m + n)$ 的做法．
+    The complexity of the following naive Tarjan implementation is $O(m \alpha(m+n, n) + n)$. If you need strictly linear complexity, refer to [Gabow and Tarjan's 1983 paper](https://dl.acm.org/doi/pdf/10.1145/800061.808753), which gives an $O(m + n)$ solution.
 
-#### 实现
+#### Implementation
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_tarjan.cpp"
     ```
 
-### 用欧拉序列转化为 RMQ 问题
+### Reducing LCA to RMQ using Euler Tour
 
-#### 定义
+#### Definition
 
-对一棵树进行 DFS，无论是第一次访问还是回溯，每次到达一个结点时都将编号记录下来，可以得到一个长度为 $2n-1$ 的序列，这个序列被称作这棵树的欧拉序列．
+When performing DFS on a tree, we record the node number each time we visit or backtrack from a node, resulting in a sequence of length $2n-1$, called the Euler tour sequence of the tree.
 
-在下文中，把结点 $u$ 在欧拉序列中第一次出现的位置编号记为 $pos(u)$（也称作节点 $u$ 的欧拉序），把欧拉序列本身记作 $E[1..2n-1]$．
+In the following, we denote the position of node $u$'s first appearance in the Euler tour sequence as $pos(u)$ (also called the Euler tour order of node $u$), and denote the Euler tour sequence itself as $E[1..2n-1]$.
 
-#### 过程
+#### Procedure
 
-有了欧拉序列，LCA 问题可以在线性时间内转化为 RMQ 问题，即 $pos(LCA(u, v))=\min\{pos(k)|k\in E[pos(u)..pos(v)]\}$．
+With the Euler tour sequence, the LCA problem can be reduced to an RMQ problem in linear time, i.e., $pos(LCA(u, v))=\min\{pos(k)|k\in E[pos(u)..pos(v)]\}$.
 
-这个等式不难理解：从 $u$ 走到 $v$ 的过程中一定会经过 $LCA(u,v)$，但不会经过 $LCA(u,v)$ 的祖先．因此，从 $u$ 走到 $v$ 的过程中经过的欧拉序最小的结点就是 $LCA(u, v)$．
+This identity is easy to understand: on the path from $u$ to $v$, we must pass through $LCA(u,v)$, but we will not pass through ancestors of $LCA(u,v)$. Therefore, the node with the minimum Euler tour order among those encountered from $u$ to $v$ is exactly $LCA(u, v)$.
 
-用 DFS 计算欧拉序列的时间复杂度是 $O(n)$，且欧拉序列的长度也是 $O(n)$，所以 LCA 问题可以在 $O(n)$ 的时间内转化成等规模的 RMQ 问题．
+Computing the Euler tour sequence with DFS takes $O(n)$ time, and the sequence length is also $O(n)$. Thus, the LCA problem can be reduced to an RMQ problem of equal scale in $O(n)$ time.
 
-#### 实现
+#### Implementation
 
-???+ note "参考代码"
+???+ note "Reference Code"
     ```cpp
     int dfn[N << 1], pos[N], tot, st[30][(N << 1) + 2],
-        rev[30][(N << 1) + 2];  // rev表示最小深度对应的节点编号
+        rev[30][(N << 1) + 2];  // rev represents the node number corresponding to the minimum depth
     
     void dfs(int cur, int dep) {
       dfn[++tot] = cur;
@@ -123,7 +123,7 @@ Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(
     
     void init() {
       for (int i = 2; i <= tot + 1; ++i)
-        lg[i] = lg[i >> 1] + 1;  // 预处理 lg 代替库函数 log2 来优化常数
+        lg[i] = lg[i >> 1] + 1;  // Precompute lg to replace log2 for better constants
       for (int i = 1; i <= tot; i++) st[0][i] = depth[i], rev[0][i] = dfn[i];
       for (int i = 1; i <= lg[tot]; i++)
         for (int j = 1; j + (1 << i) - 1 <= tot; j++)
@@ -141,39 +141,39 @@ Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(
     }
     ```
 
-当我们需要查询某点对 $(u, v)$ 的 LCA 时，查询区间 $[\min\{pos[u], pos[v]\}, \max\{pos[u], pos[v]\}]$ 上最小值的所代表的节点即可．
+When we need to query the LCA of a pair $(u, v)$, we just query the node corresponding to the minimum value on the interval $[\min\{pos[u], pos[v]\}, \max\{pos[u], pos[v]\}]$.
 
-若使用 ST 表来解决 RMQ 问题，那么该算法不支持在线修改，预处理的时间复杂度为 $O(n\log n)$，每次查询 LCA 的时间复杂度为 $O(1)$．
+If using a Sparse Table to solve the RMQ problem, this algorithm does not support online modifications. Preprocessing takes $O(n\log n)$ time, and each LCA query takes $O(1)$.
 
-### 树链剖分
+### Heavy-Light Decomposition
 
-LCA 为两个游标跳转到同一条重链上时深度较小的那个游标所指向的点．
+The LCA is the node with smaller depth when the two cursors are moved to the same heavy path.
 
-树链剖分的预处理时间复杂度为 $O(n)$，单次查询的时间复杂度为 $O(\log n)$，并且常数较小．
+Heavy-light decomposition has preprocessing time complexity $O(n)$ and each query takes $O(\log n)$, with a relatively small constant.
 
 ### Link Cut Tree
 
-在 [Link Cut Tree](../ds/lct.md) 中，设连续两次 [access](../ds/lct.md#access) 操作的点分别为 `u` 和 `v`，则第二次 [access](../ds/lct.md#access) 操作返回的点即为 `u` 和 `v` 的 LCA.
+In a [Link Cut Tree](../ds/lct.md), let the nodes of two consecutive [access](../ds/lct.md#access) operations be `u` and `v`. The node returned by the second [access](../ds/lct.md#access) operation is the LCA of `u` and `v`.
 
-在无 link 和 cut 等操作的情况下，使用 Link Cut Tree 单次查询的时间复杂度为 $O(\log n)$．
+Without link and cut operations, a single query using Link Cut Tree takes $O(\log n)$.
 
-### 标准 RMQ
+### Standard RMQ
 
-前面讲到了借助欧拉序将 LCA 问题转化为 RMQ 问题，其瓶颈在于 RMQ．如果能做到 $O(n) \sim O(1)$ 求解 RMQ，那么也就能做到 $O(n) \sim O(1)$ 求解 LCA．
+Earlier we discussed reducing the LCA problem to RMQ using Euler tour, and the bottleneck is in RMQ. If we can solve RMQ in $O(n) \sim O(1)$, then we can also solve LCA in $O(n) \sim O(1)$.
 
-注意到欧拉序满足相邻两数之差为 1 或者 -1，所以可以使用 $O(n) \sim O(1)$ 的 [加减 1RMQ](../topic/rmq.md#加减-1rmq) 来做．
+Note that adjacent values in the Euler tour differ by 1 or -1, so we can use $O(n) \sim O(1)$ [Plus/Minus 1 RMQ](../topic/rmq.md#plus-minus-1-rmq).
 
-时间复杂度 $O(n) \sim O(1)$，空间复杂度 $O(n)$，支持在线查询，常数较大．
+Time complexity $O(n) \sim O(1)$, space complexity $O(n)$, supports online queries, with a relatively large constant.
 
-#### 例题 [Luogu P3379【模板】最近公共祖先（LCA）](https://www.luogu.com.cn/problem/P3379)
+#### Example [Luogu P3379 Template: Lowest Common Ancestor](https://www.luogu.com.cn/problem/P3379)
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_2.cpp"
     ```
 
-## 习题
+## Practice Problems
 
--   [祖孙询问](https://loj.ac/problem/10135)
--   [货车运输](https://loj.ac/problem/2610)
--   [点的距离](https://loj.ac/problem/10130)
+-   [Ancestor Query](https://loj.ac/problem/10135)
+-   [Truck Transport](https://loj.ac/problem/2610)
+-   [Distance Between Nodes](https://loj.ac/problem/10130)

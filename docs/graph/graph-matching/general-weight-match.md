@@ -1,139 +1,139 @@
 author: accelsao, Henry-ZHR, yuhuoji
 
-本页从一般图最大权完美匹配到一般图最大权匹配（最大权匹配可以通过增加零边变成最大权完美匹配）．
+This page covers maximum weight perfect matching in general graphs and maximum weight matching in general graphs (maximum weight matching can be converted to maximum weight perfect matching by adding zero-weight edges).
 
-## 预备知识
+## Preliminaries
 
-### 花（blossom）
+### Blossom
 
-一般图匹配和二分图匹配不同的是，图可能存在奇环．可以将偶环视为二分图．
+The difference between general graph matching and bipartite graph matching is that general graphs may contain odd cycles. We can treat even cycles as bipartite graphs.
 
-带花树算法（Blossom Algorithm）的处理方式时是遇到奇环就把它缩成一个 **花（Blossom）**，并把花中所有的点设为偶点．既然花上的点都可以成为偶点，那么可以把整个花直接缩成一个偶点．注意，一个花可以包含其它花．
+The Blossom Algorithm handles this by contracting an odd cycle into a **blossom** when encountered, and marking all vertices in the blossom as even vertices. Since vertices on a blossom can all become even vertices, the entire blossom can be directly contracted into an even vertex. Note that a blossom can contain other blossoms.
 
-这也可以变成线性规划和对偶问题，但是要对花进行一些处理．
+This can also be formulated as a linear programming problem with dual variables, but requires some special handling for blossoms.
 
-### 顶标（vertex labeling）和等边（Equality Edge）
+### Vertex Labeling and Equality Edge
 
-定义 $z_u$ 是点 $u$ 的顶标（vertex labeling），与 $KM$ 算法中定义的顶标含义相同．定义边 $e(u,v)$ 为 "等边" 当且仅当点 $u$ 和点 $v$ 的标号和等于边 $e$ 的权值（$z_u + z_v = w(e)$），此时边的标号 $z_e = z_u + z_v − w(e) = 0$．
+Define $z_u$ as the vertex labeling of vertex $u$, with the same meaning as vertex labeling in the KM algorithm. Define an edge $e(u,v)$ as an "equality edge" if and only if the sum of the labels of vertices $u$ and $v$ equals the weight of edge $e$ (i.e., $z_u + z_v = w(e)$). In this case, the edge's label is $z_e = z_u + z_v - w(e) = 0$.
 
-## 一般图最大权完美匹配的线性规划
+## Linear Programming for Maximum Weight Perfect Matching in General Graphs
 
-### 定义
+### Definitions
 
-因为一朵花最少有三个点，缩花后成为一个点．设 $O$ 为大小为 $≥3$ 奇数的集合的集合（包含所有花），$\gamma(S)$ 表示 $S$ 集合中的边．
+Since a blossom has at least three vertices, after contraction it becomes one vertex. Let $O$ be the collection of sets with odd cardinality $\geq 3$ (containing all blossoms), and let $\gamma(S)$ denote the set of edges inside set $S$.
 
 $$
 \begin{aligned}
-& \text{设} S\subseteq V \\
+& \text{Let } S\subseteq V \\
 & \gamma(S)=\{(u,v)\in E:u\in S,v\in S\} \\
-& O=\{B\subseteq V:|B|\text{是奇数且}|B|\geq3\} \\
+& O=\{B\subseteq V:|B|\text{ is odd and }|B|\geq3\} \\
 \end{aligned}
 $$
 
-### 对偶问题
+### Dual Problem
 
-???+ note "原问题"
+???+ note "Primal Problem"
     $$
     \begin{aligned}
     & \max\sum_{e\in E}w(e)x_e \\
-    & \text{限制：} \\
+    & \text{subject to:} \\
     & x(\delta(u))=1:\forall u\in V \\
     & x(\gamma(B))\leq\lfloor\frac{|B|}{2}\rfloor:\forall B\in O \\
     & x_e\geq0:\forall e\in E \\
     \end{aligned}
     $$
 
-然后通过原始对偶（Primal-Dual）将问题转换为对偶问题．
+The problem is then converted to a dual problem using the Primal-Dual method.
 
-???+ note "对偶问题"
+???+ note "Dual Problem"
     $$
     \begin{aligned}
     & \min\sum_{u\in V}z_u+\sum_{B\in O}\left\lfloor\frac{|B|}{2}\right\rfloor z_B \\
-    & \text{限制：} \\
+    & \text{subject to:} \\
     & z_B\geq0:\forall B\in O \\
     & z_e\geq0:\forall e\in E \\
-    & \text{设} e=(u,v)，\text{这里} \\
+    & \text{Let } e=(u,v),\text{ here} \\
     & \begin{array}{lll}
     z_e & = & z_u + z_v - w(e) + \sum_{\substack{B \in O \\ u,v \in \gamma(B)}} z_B
     \end{array}
     \end{aligned}
     $$
 
-$x_e=1$ 的边是匹配边，$x_e=0$ 的边是非匹配边．和二分图一样，我们必须满足 $x_e\in\{0,1\}:\forall e\in E$．因此必须在最大权完美匹配的时候，让所有匹配边都是 **等边** 的．
+Edges with $x_e=1$ are matching edges, and edges with $x_e=0$ are non-matching edges. As with bipartite graphs, we must satisfy $x_e\in\{0,1\}:\forall e\in E$. Therefore, when finding the maximum weight perfect matching, all matching edges must be **equality edges**.
 
-和二分图不同的是，一般图多了 $z_B$ 要处理．下面考虑 $z_B$ 什么时候大于 $0$．
+Unlike bipartite graphs, general graphs have additional $z_B$ variables to handle. Below we consider when $z_B$ should be greater than $0$.
 
-可以看出，尽量使 $z_B=0$ 是最好的做法，但在不得已时还是要让 $z_B>0$．在 $x(\gamma(B)) = \left\lfloor \dfrac{|B|}2 \right\rfloor \text{且} x(\delta(B)) = 1$ 时，让 $z_B>0$ 即可．因为除了在这种情况下，$z_B>0$ 是无意义的．
+We can see that setting $z_B=0$ whenever possible is ideal, but sometimes we must allow $z_B>0$. We can set $z_B>0$ when $x(\gamma(B)) = \left\lfloor \dfrac{|B|}2 \right\rfloor \text{and} x(\delta(B)) = 1$. Because apart from this case, $z_B>0$ would be meaningless.
 
-根据互补松弛条件，有以下的对应关系：
+According to complementary slackness conditions, we have the following correspondences:
 
--   对于选中的边 $e$，必有 $z_e=0$．
+-   For any selected edge $e$, we must have $z_e=0$.
 
     $$
     x_e>0 \longrightarrow z_e=0,\quad \forall e\in E
     $$
 
--   对于选中的集合*B*，$z_B>0 \longrightarrow x(\gamma(B))= \left\lfloor \dfrac{|B|}2 \right\rfloor$，即所有 $z_B>0$ 的集合 $B$，都被选了集合大小一半的边，也即集合 $B$ 是一朵花，选中花中的一条边进行增广．同时，我们加入一个条件：$x(\delta(B))=1$，即只有花 $B$ 向外连了一条边的时候，$z_B>0$ 才是有意义的．
+-   For any selected set $B$, $z_B>0 \longrightarrow x(\gamma(B))= \left\lfloor \dfrac{|B|}2 \right\rfloor$, meaning all sets $B$ with $z_B>0$ have half of the set's edges selected. In other words, set $B$ is a blossom, and we select an edge in the blossom to augment. Additionally, we add the condition: $x(\delta(B))=1$, meaning $z_B>0$ is only meaningful when blossom $B$ has exactly one edge connecting to the outside.
 
     $$
     z_B>0 \longrightarrow x(\gamma(B))=\left\lfloor\frac{|B|}2\right\rfloor, x(\delta(B))=1\quad \forall B\in O
     $$
 
-以「**等边**」的概念，结合之前的带花树算法：用「等边」构成的增广路不断进行扩充，由于用来扩充的边全是「等边」，最后得到的最大权完美匹配仍然全是「等边」．
+Using the concept of **equality edge** combined with the Blossom Algorithm: by continuously augmenting along alternating paths composed of equality edges, the final maximum weight perfect matching will still consist entirely of equality edges.
 
-### 处理花的问题
+### Handling Blossoms
 
-当遇到花的时候，要将它缩成一个偶点．将花中所有点都设为偶点，并让它的 $z_B=0$．
+When encountering a blossom, it must be contracted into an even vertex. Set all vertices in the blossom as even vertices and set $z_B=0$.
 
-由于缩花后会把花保存起来，直到满足某些条件才会拆开，所以不能用之前的方法记录花．
+Since contracted blossoms are stored until certain conditions are met before being expanded, we cannot record blossoms using the previous method.
 
-如果没有特殊说明，之前提到的点，都包含缩花形成的偶点．
+Unless otherwise specified, all vertices mentioned previously include contracted blossom vertices since they are also even vertices.
 
-由于花也有可能缩成点被加入队列中，并且花的数量是不固定的，因此不能像之前一样枚举每个点来检查是否有增广路．因此，在进行广度优先搜索（BFS）时，必须将所有未匹配的点都放入队列中．
+Since blossoms may also be added to the queue as contracted vertices and the number of blossoms is not fixed, we cannot enumerate each vertex to check for augmenting paths as before. Therefore, during BFS, all unmatched vertices must be added to the queue.
 
-这样会同时产生很多棵交错树．
+This results in multiple alternating trees simultaneously.
 
-### 算法的四个步骤
+### Four Steps of the Algorithm
 
-这个算法可以分成四个步骤．
+The algorithm can be divided into four steps:
 
-1.  GROW（等边）：用 "等边" 构成交错树．
-2.  AUGMENT（增广）：找出增广路并扩充匹配．
-3.  SHRINK（缩花）：把花缩成一个点．
-4.  EXPAND（展开）：把花拆开．
+1.  GROW (Equality Edge): Construct an alternating tree using equality edges.
+2.  AUGMENT (Augment): Find and perform augmentation along an augmenting path.
+3.  SHRINK (Contract Blossom): Contract a blossom into a single vertex.
+4.  EXPAND (Expand): Expand a blossom.
 
 ![general-weight-match-1](images/general-weight-match-1.png)
 
-在 AUGMENT 阶段时，因为所有未匹配点都会在不同的交错树上，所以当增广时两棵交错树的偶点连在一起，就表示找到了一条增广路．
+During the AUGMENT stage, since all unmatched vertices are on different alternating trees, when even vertices from two alternating trees connect, it indicates an augmenting path has been found.
 
-### 找不到等边扩充
+### Cannot Find Equality Edge for Augmentation
 
-和二分图一样，也会有找不到「等边」扩充的问题．这时就需要调整 vertex labeling．
+As with bipartite graphs, there may be cases where no equality edge can be found for augmentation. In this case, vertex labeling needs to be adjusted.
 
-### 调整 VERTEX LABELING
+### Adjusting Vertex Labeling
 
-vertex labeling 仍要维持大于等于的性质，而且既有的「等边」不能被改变，还要让 $z_B$ 尽量的小．
+Vertex labeling must still maintain the greater-than-or-equal-to property, existing equality edges cannot be changed, and $z_B$ should be kept as small as possible.
 
-???+ note "定义符号 奇偶点"
-    以 $u^−$ 来表示 $u$ 在交错树上为奇点．  
-    以 $u^+$ 来表示 $u$ 在交错树上为偶点．  
-    以 $u^\varnothing$ 来表示 $u$ 不在任何一棵交错树上．  
-    之后所有提到的 $B$ 预设都是花，并同时代表缩花之后的点．  
-    花也可以有奇花偶花之分，因此也适用 $B^+$、$B^−$、$B^\varnothing$ 等符号．
+???+ note "Notation for Odd/Even Vertices"
+    Use $u^+$ to denote $u$ as an even vertex in the alternating tree.  
+    Use $u^-$ to denote $u$ as an odd vertex in the alternating tree.  
+    Use $u^\varnothing$ to denote $u$ is not in any alternating tree.  
+    All $B$ mentioned later are assumed to be blossoms and represent contracted vertices.  
+    Blossoms can also be odd or even blossoms, so the notations $B^+$, $B^-$, $B^\varnothing$ also apply.
 
-设目前有 r 棵交错树 $T_i=(U_{t_i},V_{t_i}):1\leq i\leq r$，令
+Let there be $r$ alternating trees $T_i=(U_{t_i},V_{t_i}):1\leq i\leq r$, and let
 
 $$
 \begin{aligned}
 d1 &= \min(\{z_e : e = (u^+,v^\varnothing)\}) \\
 d2 &= \min(\{z_e : e = (u^+,v^+), ~ u^+ \in T_i, ~ v^+ \in T_j, ~ i \neq j\}) / 2 \\
-d3 &= \min(\{z_{B^-} : B^- \in O\}) / 2
+d3 &= \min({z_{B^-} : B^- \in O\}) / 2
 \end{aligned}
 $$
 
-注意这里*B*是缩花之后的点，所以可以有奇偶性．
+Note that here $B$ is a contracted blossom, so it can have odd/even parity.
 
-设 $d=min(d1,d2,d3)$，让
+Let $d=\min(d1,d2,d3)$, and let
 
 $$
 \begin{aligned}
@@ -144,24 +144,24 @@ z_{B^-} - &= 2d \\
 \end{aligned}
 $$
 
-如果出现 $z_B=0(d=d3)$，为了防止 $z_B<0$ 的情况，所以要把这朵花拆了 (EXPAND)．
-拆花后只留下花里的交替路径，并把花里不在交替路径上的点设为未走访 ($\varnothing$)．
+If $z_B=0$ occurs (i.e., $d=d3$), to prevent $z_B<0$, this blossom must be expanded (EXPAND).
+After expanding, only the alternating paths inside the blossom remain, and vertices not on the alternating path are marked as unvisited ($\varnothing$).
 
-如此便制造了一条（以上）的等边，既有等边保持不动，并维持了 $z_e\geq0:\forall e\in E$ 的性质，且最低限度增加了 $z_B$，可以继续找增广路了．
+This creates additional equality edges: existing equality edges remain unchanged, the property $z_e\geq0:\forall e\in E$ is maintained, and $z_B$ is increased minimally so that augmenting paths can continue to be found.
 
-## 一般图最大权匹配
+## Maximum Weight Matching in General Graphs
 
-以上求的是最大权完美匹配，求最大权匹配需要在 vertex labeling 额外增加一个限制：对于所有匹配点 $u$，$z_u>0$．
+The above method finds maximum weight perfect matching. To find maximum weight matching, an additional constraint is added to the vertex labeling: for all matched vertices $u$, $z_u>0$.
 
-开始时先设所有的 $z_u=max(\{w(e):e\in E\})/2$．
+At the beginning, set all $z_u = \max(\{w(e):e\in E\}) / 2$.
 
-vertex labeling 为 $0$ 的点最后将成为未匹配点．
+Vertices with vertex labeling $0$ will eventually become unmatched.
 
-### 参考代码
+### Reference Implementation
 
-这里为了方便实现，使用边权乘 $2$ 来计算 $z_e$ 的值，这样就不会出现浮点数误差了．
+For convenient implementation, edge weights are multiplied by 2 to calculate $z_e$, avoiding floating-point errors.
 
-???+ note "存储"
+???+ note "Storage"
     ```cpp
     constexpr int INF = INT_MAX;
     constexpr int MAXN = 400;
@@ -169,27 +169,27 @@ vertex labeling 为 $0$ 的点最后将成为未匹配点．
     struct edge {
       int u, v, w;
     
-      // 表示(u,v)为一条边其权重为w
+      // Represents edge (u,v) with weight w
       edge() {}
     
       edge(int u, int v, int w) : u(u), v(v), w(w) {}
     };
     
     int n, n_x;
-    // 有n个点，编号为 1 ~ n
-    // n_x表示当前点加上花的数量，编号从n+1到n_x为花的节点
+    // There are n vertices, numbered 1 ~ n
+    // n_x represents the current number of vertices plus blossoms, numbered from n+1 to n_x are blossom nodes
     edge g[MAXN * 2 + 1][MAXN * 2 + 1];
-    // 图用邻接矩阵存储，因为最多有n-1朵花，所以大小为MAXN*
+    // Graph stored as adjacency matrix, since there can be at most n-1 blossoms, size is MAXN*
     vector<int> flower[MAXN * 2 + 1];
-    // flower[b]记录了花b中有哪些点
-    // 我们记录花中的点的方式是只记录花里面的最外层花
+    // flower[b] records which vertices are in blossom b
+    // We record vertices in a blossom by only recording the outermost blossoms
     ```
 
-下面是嵌套花的例子．
+Here is an example of nested blossoms:
 
 ![general-weight-match-2](images/general-weight-match-2.png)
 
-其中 $\{ 6, 5, 8\} \in b1,\{ b1, 4, 3, 2, 11, 10, 9\} \in b2$．存储为：
+Where $\{ 6, 5, 8\} \in b1,\{ b1, 4, 3, 2, 11, 10, 9\} \in b2$. Stored as:
 
 ```text
 flower[b2] = {b1, 4, 3, 2, 11, 10, 9} 
@@ -205,22 +205,22 @@ flower[b1] = {5, 8, 6}
 
 ```cpp
 int lab[MAXN * 2 + 1];
-// lab[u]用来记录z_u, lab[b]用来记录z_B
+// lab[u] records z_u, lab[b] records z_B
 int match[MAXN * 2 + 1], slack[MAXN * 2 + 1], st[MAXN * 2 + 1],
     pa[MAXN * 2 + 1];
-// match[x]=y表示(x,y)是匹配，这里x、y可能是花
-// slack[x]=u表示z(x,u)是所有和x相邻的边中最小的那条边
-// 表示节点 x 所在的花是 b．如果 x=b 且 b<=n，则表示 x
-// 是一个普通节点（不属于任何花） 表示在交错树中，节点 v 的父节点是 u
+// match[x]=y indicates (x,y) is a match, x and y can be blossoms
+// slack[x]=u indicates z(x,u) is the minimum among all edges adjacent to x
+// Represents the blossom containing vertex x. If x=b and b<=n, then x
+// is a normal vertex (not in any blossom) Represents in the alternating tree that the parent of vertex v is u
 int flower_from[MAXN * 2 + 1][MAXN + 1], S[MAXN * 2 + 1], vis[MAXN * 2 + 1];
 /*
-flower_from[b][x]=xs表示最大的包含x的b的子花是xs
-x是b里面的一个点，xs是b里面的一朵花或一个点，同时x=xs或x是xs的其中一个点
+flower_from[b][x]=xs indicates the largest sub-blossom of b containing x is xs
+x is a vertex in b, xs is a blossom or vertex in b, also x=xs or x is one of xs's vertices
 */
-// S[u]={-1:没走过 0:偶点 1:奇点}
-// vis只用在找lca的时候检查是不是走过了
+// S[u]={-1:unvisited 0:even vertex 1:odd vertex}
+// vis is only used to check if visited when finding lca
 queue<int> q;
-// BFS找增广路用的queue
+// BFS queue for finding augmenting paths
 ```
 
 ![general-weight-match-4](images/general-weight-match-4.png)
@@ -230,25 +230,25 @@ flower_from[b2][6] = b1
 flower_from[b2][5] = b1 
 flower_from[b2][9] = 9 
 flower_from[b1][6] = 6 
-以此类推
+and so on
 ```
 
 ```cpp
 int e_delta(const edge &e) {
-  // 计算ze，为了方便起见先把所有边的权重乘二
-  // 在花里面直接计算 e_delta 值会导致错误
+  // Calculate ze, first multiply all edge weights by 2 for convenience
+  // Directly calculating e_delta in blossoms leads to errors
   return lab[e.u] + lab[e.v] - g[e.u][e.v].w * 2;
 }
 
 void update_slack(int u, int x) {
-  // 以u更新slack[x]的值
+  // Update slack[x] with u
   if (!slack[x] || e_delta(g[u][x]) < e_delta(g[slack[x]][x])) {
     slack[x] = u;
   }
 }
 
 void set_slack(int x) {
-  // 算出slack[x]的值，slack[x]=0表示x是交错树中的节点
+  // Calculate slack[x], slack[x]=0 indicates x is a vertex in the alternating tree
   slack[x] = 0;
   for (int u = 1; u <= n; ++u) {
     if (g[u][x].w > 0 && st[u] != x && S[st[u]] == 0) {
@@ -260,11 +260,11 @@ void set_slack(int x) {
 
 ```cpp
 void q_push(int x) {
-  // 把x丟到queue里面，我们设定queue不能直接push一朵花
+  // Add x to queue, we don't directly push a blossom into the queue
   if (x <= n)
     q.push(x);
   else {
-    // 若要push花必须将花里面原图的点都添加到queue中
+    // If pushing a blossom, add all original vertices in the blossom to the queue
     for (size_t i = 0; i < flower[x].size(); i++) {
       q_push(flower[x][i]);
     }
@@ -272,10 +272,10 @@ void q_push(int x) {
 }
 
 void set_st(int x, int b) {
-  // 将x所在的花设为b
+  // Set the blossom containing x to b
   st[x] = b;
   if (x > n) {
-    // 若x也是花的话，就必须要把x里面的点其所在的花也设为b
+    // If x is also a blossom, set the blossoms containing x's vertices to b
     for (size_t i = 0; i < flower[x].size(); ++i) {
       set_st(flower[x][i], b);
     }
@@ -285,13 +285,13 @@ void set_st(int x, int b) {
 
 ```cpp
 int get_pr(int b, int xr) {
-  // xr是flower[b]中的一个点，返回值pr是它的位置
-  // 为了方便程序运行，我们让 flower[b][0]~flower[b][pr]为花里的交替路
+  // xr is a vertex in flower[b], return value pr is its position
+  // For convenient execution, we let flower[b][0]~flower[b][pr] be the alternating path in the blossom
   int pr = find(flower[b].begin(), flower[b].end(), xr) - flower[b].begin();
   if (pr % 2 == 1) {
-    // 检查他在花里的位置，如果 flower[b][0]~flower[b][pr] 不是交替路
-    // 就把整朵花反转，重新计算 pr
-    // 让 flower[b][0]~flower[b][pr] 为花里的交替路
+    // Check its position in the blossom, if flower[b][0]~flower[b][pr] is not an alternating path
+    // reverse the entire blossom and recalculate pr
+    // Let flower[b][0]~flower[b][pr] be the alternating path in the blossom
     reverse(flower[b].begin() + 1, flower[b].end());
     return (int)flower[b].size() - pr;
   } else
@@ -301,31 +301,31 @@ int get_pr(int b, int xr) {
 
 ![general-weight-match-5](images/general-weight-match-5.png)
 
-如果使用 `get_pr(b2,11)`，`flower[b2]` 会变成 `{9,10,11,2,3,4,b1}`，并返回 2．
+If using `get_pr(b2,11)`, `flower[b2]` becomes `{9,10,11,2,3,4,b1}` and returns 2.
 
-如果使用 `get_pr(b2,2)`，`flower[b2]` 会变成 `{9,b1,4,3,2,11,10}`，并返回 4．
+If using `get_pr(b2,2)`, `flower[b2]` becomes `{9,b1,4,3,2,11,10}` and returns 4.
 
 ```cpp
 void set_match(int u, int v) {
-  // 设置u和v为匹配边，u和v有可能是花
+  // Set u and v as matched edges, u and v can be blossoms
   match[u] = g[u][v].v;
   if (u > n) {
-    // 如果u是花的话
+    // If u is a blossom
     edge e = g[u][v];
-    int xr = flower_from[u][e.u];  // 找出e.u在flower[u]里的哪朵花上
-    int pr = get_pr(u, xr);  // 找出xr的位置并让0~pr为花里的交替路径
-    for (int i = 0; i < pr; ++i) {  // 把花里的交替路上的匹配边和非匹配边反转
+    int xr = flower_from[u][e.u];  // Find which blossom e.u is in flower[u]
+    int pr = get_pr(u, xr);  // Find xr's position and let 0~pr be the alternating path in the blossom
+    for (int i = 0; i < pr; ++i) {  // Reverse matched and unmatched edges on the alternating path in the blossom
       set_match(flower[u][i], flower[u][i ^ 1]);
     }
-    set_match(xr, v);  // 设置(xr,v)为匹配边
+    set_match(xr, v);  // Set (xr,v) as matched edge
     rotate(flower[u].begin(), flower[u].begin() + pr, flower[u].end());
-    // 最后把pr设为花托，因为花的存法是flower[u][0]会是u的花托
-    // 所以要把flower[u][pr] rotate 到最前面
+    // Finally set pr as the base, since flower[u][0] is u's base
+    // So we need to rotate flower[u][pr] to the front
   }
 }
 
 void augment(int u, int v) {
-  // 把u和u的祖先全部增广，并设(u,v)为匹配边
+  // Augment all ancestors of u and set (u,v) as matched edge
   for (;;) {
     int xnv = st[match[u]];
     set_match(u, v);
@@ -337,12 +337,12 @@ void augment(int u, int v) {
 }
 
 int get_lca(int u, int v) {
-  // 找出u,v在交错树上的lca
+  // Find lca of u,v in alternating tree
   static int t = 0;
   for (++t; u || v; swap(u, v)) {
     if (u == 0) continue;
     if (vis[u] == t) return u;
-    vis[u] = t;  // 这种方法可以不用清空vis数组
+    vis[u] = t;  // This method avoids needing to clear the vis array
     u = st[match[u]];
     if (u) u = st[pa[u]];
   }
@@ -350,18 +350,18 @@ int get_lca(int u, int v) {
 }
 ```
 
-???+ note "增加一朵奇花"
+???+ note "Adding an Odd Blossom"
     ```cpp
     void add_blossom(int u, int lca, int v) {
-      // 将u,v,lca这朵花缩成一个点 b
-      // 交错树上u,v的lca即为花托
+      // Contract u,v,lca into a single vertex b
+      // lca in the alternating tree is the base
       int b = n + 1;
       while (b <= n_x && st[b]) ++b;
       if (b > n_x) ++n_x;
-      // 找出目前未使用的花的编号
-      lab[b] = 0;             // 设置zB=0
-      S[b] = 0;               // 整朵花为一个偶点
-      match[b] = match[lca];  // 设置花的匹配边为花托的匹配边
+      // Find an unused blossom number
+      lab[b] = 0;             // Set z_B=0
+      S[b] = 0;               // The entire blossom is an even vertex
+      match[b] = match[lca];  // Set blossom's matched edge to base's matched edge
       flower[b].clear();
       flower[b].push_back(lca);
       for (int x = u, y; x != lca; x = st[pa[y]]) {
@@ -377,8 +377,8 @@ int get_lca(int u, int v) {
         flower[b].push_back(y);
         q_push(y);
       }
-      // b中所有点以环形的方式加入flower[b]，并设花托为首个元素
-      set_st(b, b);  // 把整朵花里所有的元素其所在的花设为b
+      // All vertices in b are added to flower[b] in circular order, with base as the first element
+      set_st(b, b);  // Set all elements' blossoms in the entire blossom to b
       for (int x = 1; x <= n_x; ++x) {
         g[b][x].w = 0;
         g[x][b].w = 0;
@@ -389,7 +389,7 @@ int get_lca(int u, int v) {
       for (size_t i = 0; i < flower[b].size(); ++i) {
         int xs = flower[b][i];
         for (int x = 1; x <= n_x; ++x) {
-          // 设置b和x相邻的边为b里面和x相邻的边e_delta最小的那条
+          // Set edges adjacent to b to the edge with minimum e_delta among edges adjacent to x in b
           if (g[b][x].w == 0 || e_delta(g[xs][x]) < e_delta(g[b][x])) {
             g[b][x] = g[xs][x];
             g[x][b] = g[x][xs];
@@ -397,33 +397,33 @@ int get_lca(int u, int v) {
         }
         for (int x = 1; x <= n; ++x) {
           if (flower_from[xs][x]) {
-            // 如果b里面的点xs有包含x
-            // 那flower_from[b][x]就会是xs
+            // If some vertex xs in b contains x
+            // Then flower_from[b][x] will be xs
             flower_from[b][x] = xs;
           }
         }
       }
       set_slack(b);
-      // 最后必须要设置b的slack值
+      // Finally must set b's slack value
     }
     ```
 
-???+ note "拆花"
+???+ note "Expanding Blossom"
     ```cpp
     void expand_blossom(int b) {
-      // b是奇花且zB=0时，必须要把b拆开
-      // 因为只拆开b而已，所以如果b里面有包含其他的花
-      // 不需要把他们拆开
+      // b is an odd blossom and z_B=0, must expand b
+      // Since we only expand b, if b contains other blossoms
+      // we don't need to expand them
       for (size_t i = 0; i < flower[b].size(); ++i) {
         set_st(flower[b][i], flower[b][i]);
-        // 先把flower[b]里每个元素所在的花设为自己
+        // First set each element's blossom in flower[b] to itself
       }
       int xr = flower_from[b][g[b][pa[b]].u];
-      // xr表示交错路上b的父母节点在flower[b]里的哪朵花上
-      int pr = get_pr(b, xr);  // 找出xr的位置并让0~pr为花里的交替路径
+      // xr represents which blossom the parent of b in the alternating tree is in flower[b]
+      int pr = get_pr(b, xr);  // Find xr's position and let 0~pr be the alternating path in the blossom
       for (int i = 0; i < pr; i += 2) {
-        // 把交替路径拆开到交错树中
-        // 并把交替路中的偶点丢到queue里
+        // Expand the alternating path into the alternating tree
+        // Add even vertices in the alternating path to the queue
         int xs = flower[b][i];
         int xns = flower[b][i + 1];
         pa[xs] = g[xns][xs].u;
@@ -433,10 +433,10 @@ int get_lca(int u, int v) {
         set_slack(xns);
         q_push(xns);
       }
-      S[xr] = 1;  // 这时xr会是奇点或奇花
+      S[xr] = 1;  // Now xr will be an odd vertex or odd blossom
       pa[xr] = pa[b];
       for (size_t i = pr + 1; i < flower[b].size(); ++i) {
-        // 把花中所有不再交替路径上的点设为未走访
+        // Set all vertices in the blossom not on the alternating path to unvisited
         int xs = flower[b][i];
         S[xs] = -1;
         set_slack(xs);
@@ -445,15 +445,15 @@ int get_lca(int u, int v) {
     }
     ```
 
-???+ note "尝试增广一条等边"
+???+ note "Trying to Augment with an Equality Edge"
     ```cpp
     bool on_found_edge(const edge &e) {
-      // BFS时找到一条等边e
-      // 要对它进行以下的处理
-      // 这里u一定是偶点
+      // During BFS, find an equality edge e
+      // Perform the following processing
+      // Here u must be an even vertex
       int u = st[e.u], v = st[e.v];
       if (S[v] == -1) {
-        // v是未走访节点
+        // v is an unvisited vertex
         pa[v] = e.u;
         S[v] = 1;
         int nu = st[match[v]];
@@ -462,35 +462,35 @@ int get_lca(int u, int v) {
         S[nu] = 0;
         q_push(nu);
       } else if (S[v] == 0) {
-        // v是偶点
+        // v is an even vertex
         int lca = get_lca(u, v);
-        if (!lca) {  // lca=0表示u,v在不同的交错树上，有增广路
+        if (!lca) {  // lca=0 indicates u,v are in different alternating trees, there is an augmenting path
           augment(u, v);
           augment(v, u);
-          return true;  // 找到增广路
+          return true;  // Found augmenting path
         } else
           add_blossom(u, lca, v);
-        // 否则u,v在同棵树上就会是一朵花，要缩花
+        // Otherwise u,v in the same tree will form a blossom, contract it
       }
       return false;
     }
     ```
 
-???+ note "增广"
+???+ note "Augmentation"
     ```cpp
     bool matching() {
       memset(S + 1, -1, sizeof(int) * n_x);
       memset(slack + 1, 0, sizeof(int) * n_x);
-      q = queue<int>();  // 把queue清空
+      q = queue<int>();  // Clear queue
       for (int x = 1; x <= n_x; ++x) {
         if (st[x] == x && !match[x]) {
-          // 把所有非匹配点加入queue里面，并设为偶点
+          // Add all unmatched vertices to queue and set as even vertices
           pa[x] = 0;
           S[x] = 0;
           q_push(x);
         }
       }
-      if (q.empty()) return false;  // 所有点都有匹配了
+      if (q.empty()) return false;  // All vertices are matched
       for (;;) {
         while (q.size()) {
           // BFS
@@ -506,11 +506,11 @@ int get_lca(int u, int v) {
             }
           }
         }
-        // 修改lab值
+        // Update lab values
         int d = INF;
         for (int u = 1; u <= n; ++u) {
-          // 这是为了防止出现lab<0的情况发生
-          // 只要有任何一个lab[u]=0就结束程序
+          // This is to prevent lab<0
+          // End program if any lab[u]=0
           if (S[st[u]] == 0) d = min(d, lab[u]);
         }
         for (int b = n + 1; b <= n_x; ++b) {
@@ -526,7 +526,7 @@ int get_lca(int u, int v) {
         for (int u = 1; u <= n; ++u) {
           if (S[st[u]] == 0) {
             if (lab[u] == d) return false;
-            // 如果lab[u]=0就直接结束程序
+            // If lab[u]=0, end program
             lab[u] -= d;
           } else if (S[st[u]] == 1)
             lab[u] += d;
@@ -539,15 +539,15 @@ int get_lca(int u, int v) {
               lab[b] -= d * 2;
           }
         }
-        q = queue<int>();  // 把queue清空
+        q = queue<int>();  // Clear queue
         for (int x = 1; x <= n_x; ++x) {
-          // 检查看看有没有增广路径产生
+          // Check if augmenting paths are generated
           if (st[x] == x && slack[x] && st[slack[x]] != x &&
               e_delta(g[slack[x]][x]) == 0)
             if (on_found_edge(g[slack[x]][x])) return true;
         }
         for (int b = n + 1; b <= n_x; ++b) {
-          // EXPAND的操作，把所有lab[b]=0的奇花拆开
+          // EXPAND operation, expand all blossoms with lab[b]=0
           if (st[b] == b && S[b] == 1 && lab[b] == 0) expand_blossom(b);
         }
       }
@@ -555,30 +555,30 @@ int get_lca(int u, int v) {
     }
     ```
 
-???+ note "主函数"
+???+ note "Main Function"
     ```cpp
     pair<long long, int> weight_blossom() {
-      // 主函数，一开始先初始化
+      // Main function, initialize first
       memset(match + 1, 0, sizeof(int) * n);
-      n_x = n;  // 一开始没有花
+      n_x = n;  // No blossoms initially
       int n_matches = 0;
       long long tot_weight = 0;
       for (int u = 0; u <= n; ++u) {
-        // 先把自己所在的花设为自己
+        // Set each vertex's blossom to itself first
         st[u] = u;
         flower[u].clear();
       }
       int w_max = 0;
       for (int u = 1; u <= n; ++u)
         for (int v = 1; v <= n; ++v) {
-          // u是一个点时，里面所包含的点只有自己
+          // When u is a vertex, the only vertex it contains is itself
           flower_from[u][v] = (u == v ? u : 0);
           w_max = max(w_max, g[u][v].w);
-          // 找出最大的边权
+          // Find the maximum edge weight
         }
       for (int u = 1; u <= n; ++u) lab[u] = w_max;
-      // 让所有的lab=最大的边权
-      // 因为这里实现是用边权乘二来计算ze的值所以不用除以二
+      // Set all lab to the maximum edge weight
+      // Since implementation uses edge weight times 2 to calculate ze, no need to divide by 2
       while (matching()) ++n_matches;
       for (int u = 1; u <= n; ++u)
         if (match[u] && match[u] < u) tot_weight += g[u][match[u]].w;
@@ -586,29 +586,29 @@ int get_lca(int u, int v) {
     }
     ```
 
-???+ note "初始化"
-    很重要 使用前一定要初始化
+???+ note "Initialization"
+    Important: Must initialize before use
     
     ```cpp
     void init_weight_graph() {
-      // 在把边输入到图里面前必须要初始化
-      // 因为是最大权匹配所以把不存在的边设为0
+      // Must initialize before inputting edges into the graph
+      // Since this is maximum weight matching, set non-existent edges to 0
       for (int u = 1; u <= n; ++u)
         for (int v = 1; v <= n; ++v) g[u][v] = edge(u, v, 0);
     }
     ```
 
-## 复杂度分析
+## Complexity Analysis
 
-每朵花在一次 BFS 中只会被缩花或拆花一次．每次缩花或拆花的时间复杂度为 $O(|V|)$．最多总共有 $O(|V|)$ 朵花，所以花的处理花费 $O(|V|^2)$ 的时间．而 BFS 花费 $O(|V| + |E|)$ 的时间复杂度．因此，找增广路花费 $O(|V| + |E|) + O(|V|^2) = O(|V|^2)$ 的时间复杂度．
+Each blossom can only be contracted or expanded once during a BFS. Each contraction or expansion takes $O(|V|)$ time. There can be at most $O(|V|)$ blossoms, so blossom processing takes $O(|V|^2)$ time. BFS takes $O(|V| + |E|)$ time. Therefore, finding augmenting paths takes $O(|V| + |E|) + O(|V|^2) = O(|V|^2)$ time.
 
-最多做 $|V|$ 次 BFS．所以，总时间复杂度为 $O(|V|^3)$．
+At most $|V|$ BFS iterations are performed. So the total time complexity is $O(|V|^3)$.
 
-## 习题
+## Exercises
 
--   [UOJ #81. 一般图最大权匹配](https://uoj.ac/problem/81)
+-   [UOJ #81. General Graph Maximum Weight Matching](https://uoj.ac/problem/81)
 
-## 参考资料
+## References
 
 1.  [Kolmogorov, Vladimir (2009), "Blossom V: A new implementation of a minimum cost perfect matching algorithm"](http://pub.ist.ac.at/~vnk/papers/BLOSSOM5.html)
-2.  [从匈牙利算法到带权带花树——详解对偶问题在图匹配上的应用](https://www.luogu.com.cn/blog/potassium/solution-p6699)
+2.  [From Hungarian Algorithm to Weighted Blossom - Detailed Explanation of Dual Problems in Graph Matching](https://www.luogu.com.cn/blog/potassium/solution-p6699)

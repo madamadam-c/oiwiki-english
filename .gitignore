@@ -7,4 +7,5 @@ site/
 .env
 .well-known/
 node_modules/
+.venv/
 *.pyc

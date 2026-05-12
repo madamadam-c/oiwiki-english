@@ -1,69 +1,69 @@
-## 第二类斯特林数（Stirling Number）
+## Stirling Numbers of the Second Kind
 
-??? note "为什么先介绍第二类斯特林数"
-    虽然被称作「第二类」，第二类斯特林数却在斯特林的相关著作和具体数学中被首先描述，同时也比第一类斯特林数常用得多．
+??? note "Why introduce Stirling numbers of the second kind first?"
+    Although called the "second kind", Stirling numbers of the second kind were first described in Stirling's works and concrete mathematics, and are much more commonly used than Stirling numbers of the first kind.
 
-**第二类斯特林数**（斯特林子集数）$\begin{Bmatrix}n\\ k\end{Bmatrix}$，也可记做 $S(n,k)$，表示将 $n$ 个两两不同的元素，划分为 $k$ 个互不区分的非空子集的方案数．
+**Stirling numbers of the second kind** (Stirling subset numbers) $\begin{Bmatrix}n \\ k\end{Bmatrix}$, also denoted as $S(n, k)$, represent the number of ways to divide $n$ distinct elements into $k$ non-empty, indistinguishable subsets.
 
-### 递推式
-
-$$
-\begin{Bmatrix}n\\ k\end{Bmatrix}=\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}+k\begin{Bmatrix}n-1\\ k\end{Bmatrix}
-$$
-
-边界是 $\begin{Bmatrix}n\\ 0\end{Bmatrix}=[n=0]$．
-
-考虑用组合意义来证明．
-
-我们插入一个新元素时，有两种方案：
-
--   将新元素单独放入一个子集，有 $\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}$ 种方案；
--   将新元素放入一个现有的非空子集，有 $k\begin{Bmatrix}n-1\\ k\end{Bmatrix}$ 种方案．
-
-根据加法原理，将两式相加即可得到递推式．
-
-### 通项公式
+### Recurrence Formula
 
 $$
-\begin{Bmatrix}n\\m\end{Bmatrix}=\sum\limits_{i=0}^m\dfrac{(-1)^{m-i}i^n}{i!(m-i)!}
+\begin{Bmatrix}n \\ k\end{Bmatrix} = \begin{Bmatrix}n-1 \\ k-1\end{Bmatrix} + k \begin{Bmatrix}n-1 \\ k\end{Bmatrix}
 $$
 
-使用容斥原理证明该公式．设将 $n$ 个两两不同的元素，划分到 $i$ 个两两不同的集合（允许空集）的方案数为 $G_i$，将 $n$ 个两两不同的元素，划分到 $i$ 个两两不同的非空集合（不允许空集）的方案数为 $F_i$．
+The boundary condition is $\begin{Bmatrix}n \\ 0\end{Bmatrix} = [n = 0]$.
 
-显然
+Let's prove this using combinatorial meaning.
+
+When inserting a new element, there are two cases:
+
+-   Put the new element into a subset alone, which has $\begin{Bmatrix}n-1 \\ k-1\end{Bmatrix}$ ways;
+-   Put the new element into an existing non-empty subset, which has $k \begin{Bmatrix}n-1 \\ k\end{Bmatrix}$ ways.
+
+By the addition principle, adding these two gives the recurrence formula.
+
+### Closed Form Formula
 
 $$
-\begin{aligned}
-G_i&=i^n\\
-G_i&=\sum\limits_{j=0}^i\binom{i}{j}F_j
-\end{aligned}
+\begin{Bmatrix}n \\ m\end{Bmatrix} = \sum_{i=0}^m \frac{(-1)^{m-i} i^n}{i!(m - i)!}
 $$
 
-根据二项式反演
+Prove this formula using the inclusion-exclusion principle. Let $G_i$ be the number of ways to divide $n$ distinct elements into $i$ distinct sets (allowing empty sets), and let $F_i$ be the number of ways to divide $n$ distinct elements into $i$ distinct non-empty sets (not allowing empty sets).
+
+Obviously
 
 $$
 \begin{aligned}
-F_i&=\sum\limits_{j=0}^{i}(-1)^{i-j}\binom{i}{j}G_j\\
-&=\sum\limits_{j=0}^{i}(-1)^{i-j}\binom{i}{j}j^n\\
-&=\sum\limits_{j=0}^{i}\dfrac{i!(-1)^{i-j}j^n}{j!(i-j)!}
+G_i &= i^n\\
+G_i &= \sum_{j=0}^i \binom{i}{j} F_j
 \end{aligned}
 $$
 
-考虑 $F_i$ 与 $\begin{Bmatrix}n\\i\end{Bmatrix}$ 的关系．第二类斯特林数要求集合之间互不区分，因此 $F_i$ 正好就是 $\begin{Bmatrix}n\\i\end{Bmatrix}$ 的 $i!$ 倍．于是
+According to binomial inversion:
 
 $$
-\begin{Bmatrix}n\\m\end{Bmatrix}=\dfrac{F_m}{m!}=\sum\limits_{i=0}^m\dfrac{(-1)^{m-i}i^n}{i!(m-i)!}
+\begin{aligned}
+F_i &= \sum_{j=0}^{i} (-1)^{i-j} \binom{i}{j} G_j\\
+&= \sum_{j=0}^{i} (-1)^{i-j} \binom{i}{j} j^n\\
+&= \sum_{j=0}^{i} \frac{i! (-1)^{i-j} j^n}{j!(i - j)!}
+\end{aligned}
 $$
 
-### 同一行第二类斯特林数的计算
+Consider the relationship between $F_i$ and $\begin{Bmatrix}n \\ i\end{Bmatrix}$. Stirling numbers of the second kind require sets to be indistinguishable from each other, so $F_i$ is exactly $i!$ times $\begin{Bmatrix}n \\ i\end{Bmatrix}$. Thus:
 
-「同一行」的第二类斯特林数指的是，有着不同的 $i$，相同的 $n$ 的一系列 $\begin{Bmatrix}n\\i\end{Bmatrix}$．求出同一行的所有第二类斯特林数，就是对 $i=0..n$ 求出了将 $n$ 个不同元素划分为 $i$ 个非空集的方案数．
+$$
+\begin{Bmatrix}n \\ m\end{Bmatrix} = \frac{F_m}{m!} = \sum_{i=0}^m \frac{(-1)^{m-i} i^n}{i!(m - i)!}
+$$
 
-根据上面给出的通项公式，卷积计算即可．该做法的时间复杂度为 $O(n \log n)$．
+### Computing Stirling Numbers of the Second Kind in the Same Row
 
-下面的代码使用了名为 `poly` 的多项式类，仅供参考．
+"Stirling numbers of the second kind in the same row" refers to $\begin{Bmatrix}n \\ i\end{Bmatrix}$ with different $i$ but the same $n$. Computing all Stirling numbers in the same row means finding the number of ways to divide $n$ different elements into $i$ non-empty sets for $i = 0..n$.
 
-??? note "实现"
+Using the closed form formula given above, we can compute through convolution. The time complexity is $O(n \log n)$.
+
+The code below uses a polynomial class called `poly` for reference only.
+
+??? note "Implementation"
     ```cpp
     #ifndef _FEISTDLIB_POLY_
     #define _FEISTDLIB_POLY_
@@ -86,55 +86,55 @@ $$
     
     class poly {
      private:
-      std::vector<int> data;
+       std::vector<int> data;
     
-      void out(void) {
-        for (int i = 0; i < (int)data.size(); ++i) printf("%d ", data[i]);
-        puts("");
-      }
+       void out(void) {
+         for (int i = 0; i < (int)data.size(); ++i) printf("%d ", data[i]);
+         puts("");
+       }
     
      public:
-      poly(std::size_t len = std::size_t(0)) { data = std::vector<int>(len); }
+       poly(std::size_t len = std::size_t(0)) { data = std::vector<int>(len); }
     
-      poly(const std::vector<int> &b) { data = b; }
+       poly(const std::vector<int> &b) { data = b; }
     
-      poly(const poly &b) { data = b.data; }
+       poly(const poly &b) { data = b.data; }
     
-      void resize(std::size_t len, int val = 0) { data.resize(len, val); }
+       void resize(std::size_t len, int val = 0) { data.resize(len, val); }
     
-      std::size_t size(void) const { return data.size(); }
+       std::size_t size(void) const { return data.size(); }
     
-      void clear(void) { data.clear(); }
+       void clear(void) { data.clear(); }
     #if __cplusplus >= 201103L
-      void shrink_to_fit(void) { data.shrink_to_fit(); }
+       void shrink_to_fit(void) { data.shrink_to_fit(); }
     #endif
-      int &operator[](std::size_t b) { return data[b]; }
+       int &operator[](std::size_t b) { return data[b]; }
     
-      const int &operator[](std::size_t b) const { return data[b]; }
+       const int &operator[](std::size_t b) const { return data[b]; }
     
-      poly operator*(const poly &h) const;
-      poly operator*=(const poly &h);
-      poly operator*(const int &h) const;
-      poly operator*=(const int &h);
-      poly operator+(const poly &h) const;
-      poly operator+=(const poly &h);
-      poly operator-(const poly &h) const;
-      poly operator-=(const poly &h);
-      poly operator<<(const std::size_t &b) const;
-      poly operator<<=(const std::size_t &b);
-      poly operator>>(const std::size_t &b) const;
-      poly operator>>=(const std::size_t &b);
-      poly operator/(const int &h) const;
-      poly operator/=(const int &h);
-      poly operator==(const poly &h) const;
-      poly operator!=(const poly &h) const;
-      poly operator+(const int &h) const;
-      poly operator+=(const int &h);
-      poly inv(void) const;
-      poly inv(const int &h) const;
-      friend poly sqrt(const poly &h);
-      friend poly log(const poly &h);
-      friend poly exp(const poly &h);
+       poly operator*(const poly &h) const;
+       poly operator*=(const poly &h);
+       poly operator*(const int &h) const;
+       poly operator*=(const int &h);
+       poly operator+(const poly &h) const;
+       poly operator+=(const poly &h);
+       poly operator-(const poly &h) const;
+       poly operator-=(const poly &h);
+       poly operator<<(const std::size_t &b) const;
+       poly operator<<=(const std::size_t &b);
+       poly operator>>(const std::size_t &b) const;
+       poly operator>>=(const std::size_t &b);
+       poly operator/(const int &h) const;
+       poly operator/=(const int &h);
+       poly operator==(const poly &h) const;
+       poly operator!=(const poly &h) const;
+       poly operator+(const int &h) const;
+       poly operator+=(const int &h);
+       poly inv(void) const;
+       poly inv(const int &h) const;
+       friend poly sqrt(const poly &h);
+       friend poly log(const poly &h);
+       friend poly exp(const poly &h);
     };
     
     int qpow(int a, int b, int p = mod) {
@@ -205,7 +205,7 @@ $$
       std::vector<int> &f = this->data;
       if (f.size() < h.size()) f.resize(h.size());
       for (int i = 0; i < (int)h.size(); ++i) f[i] = (f[i] + h[i]) % mod;
-      return f;
+      return *this;
     }
     
     poly poly::operator-(const poly &h) const {
@@ -219,7 +219,7 @@ $$
       std::vector<int> &f = this->data;
       if (f.size() < h.size()) f.resize(h.size());
       for (int i = 0; i < (int)h.size(); ++i) f[i] = (f[i] - h[i] + mod) % mod;
-      return f;
+      return *this;
     }
     
     poly poly::operator<<(const std::size_t &b) const {
@@ -276,14 +276,14 @@ $$
     poly poly::operator==(const poly &h) const {
       if (size() != h.size()) return 0;
       for (int i = 0; i < (int)size(); ++i)
-        if (data[i] != h[i]) return 0;
+        if (data[i] != h.data[i]) return 0;
       return 1;
     }
     
     poly poly::operator!=(const poly &h) const {
       if (size() != h.size()) return 1;
       for (int i = 0; i < (int)size(); ++i)
-        if (data[i] != h[i]) return 1;
+        if (data[i] != h.data[i]) return 1;
       return 0;
     }
     
@@ -293,7 +293,7 @@ $$
       return f;
     }
     
-    poly poly::operator+=(const int &h) { return *this = (*this) + h; }
+    poly poly::operator+=(const int &h) { return *this = *this + h; }
     
     poly poly::inv(const int &h) const {
       poly f(*this);
@@ -408,64 +408,64 @@ $$
     
     class arbitrary_module_poly {
      private:
-      std::vector<int> data;
+       std::vector<int> data;
     
-      int construct_element(int D, ll x, ll y, ll z) const {
-        x %= mod, y %= mod, z %= mod;
-        return ((ll)D * D * x % mod + (ll)D * y % mod + z) % mod;
-      }
+       int construct_element(int D, ll x, ll y, ll z) const {
+         x %= mod, y %= mod, z %= mod;
+         return ((ll)D * D * x % mod + (ll)D * y % mod + z) % mod;
+       }
     
      public:
-      int mod;
+       int mod;
     
-      arbitrary_module_poly(std::size_t len = std::size_t(0),
-                            int module_value = 1e9 + 7) {
-        mod = module_value;
-        data = std::vector<int>(len);
-      }
+       arbitrary_module_poly(std::size_t len = std::size_t(0),
+                             int module_value = 1e9 + 7) {
+         mod = module_value;
+         data = std::vector<int>(len);
+       }
     
-      arbitrary_module_poly(const std::vector<int> &b, int module_value = 1e9 + 7) {
-        mod = module_value;
-        data = b;
-      }
+       arbitrary_module_poly(const std::vector<int> &b, int module_value = 1e9 + 7) {
+         mod = module_value;
+         data = b;
+       }
     
-      arbitrary_module_poly(const arbitrary_module_poly &b) {
-        mod = b.mod;
-        data = b.data;
-      }
+       arbitrary_module_poly(const arbitrary_module_poly &b) {
+         mod = b.mod;
+         data = b.data;
+       }
     
-      void resize(std::size_t len, const int &val = 0) { data.resize(len, val); }
+       void resize(std::size_t len, const int &val = 0) { data.resize(len, val); }
     
-      std::size_t size(void) const { return data.size(); }
+       std::size_t size(void) const { return data.size(); }
     
-      void clear(void) { data.clear(); }
+       void clear(void) { data.clear(); }
     #if __cplusplus >= 201103L
-      void shrink_to_fit(void) { data.shrink_to_fit(); }
+       void shrink_to_fit(void) { data.shrink_to_fit(); }
     #endif
-      int &operator[](std::size_t b) { return data[b]; }
+       int &operator[](std::size_t b) { return data[b]; }
     
-      const int &operator[](std::size_t b) const { return data[b]; }
+       const int &operator[](std::size_t b) const { return data[b]; }
     
-      arbitrary_module_poly operator*(const arbitrary_module_poly &h) const;
-      arbitrary_module_poly operator*=(const arbitrary_module_poly &h);
-      arbitrary_module_poly operator*(const int &h) const;
-      arbitrary_module_poly operator*=(const int &h);
-      arbitrary_module_poly operator+(const arbitrary_module_poly &h) const;
-      arbitrary_module_poly operator+=(const arbitrary_module_poly &h);
-      arbitrary_module_poly operator-(const arbitrary_module_poly &h) const;
-      arbitrary_module_poly operator-=(const arbitrary_module_poly &h);
-      arbitrary_module_poly operator<<(const std::size_t &b) const;
-      arbitrary_module_poly operator<<=(const std::size_t &b);
-      arbitrary_module_poly operator>>(const std::size_t &b) const;
-      arbitrary_module_poly operator>>=(const std::size_t &b);
-      arbitrary_module_poly operator/(const int &h) const;
-      arbitrary_module_poly operator/=(const int &h);
-      arbitrary_module_poly operator==(const arbitrary_module_poly &h) const;
-      arbitrary_module_poly operator!=(const arbitrary_module_poly &h) const;
-      arbitrary_module_poly inv(void) const;
-      arbitrary_module_poly inv(const int &h) const;
-      friend arbitrary_module_poly sqrt(const arbitrary_module_poly &h);
-      friend arbitrary_module_poly log(const arbitrary_module_poly &h);
+       arbitrary_module_poly operator*(const arbitrary_module_poly &h) const;
+       arbitrary_module_poly operator*=(const arbitrary_module_poly &h);
+       arbitrary_module_poly operator*(const int &h) const;
+       arbitrary_module_poly operator*=(const int &h);
+       arbitrary_module_poly operator+(const arbitrary_module_poly &h) const;
+       arbitrary_module_poly operator+=(const arbitrary_module_poly &h);
+       arbitrary_module_poly operator-(const arbitrary_module_poly &h) const;
+       arbitrary_module_poly operator-=(const arbitrary_module_poly &h);
+       arbitrary_module_poly operator<<(const std::size_t &b) const;
+       arbitrary_module_poly operator<<=(const std::size_t &b);
+       arbitrary_module_poly operator>>(const std::size_t &b) const;
+       arbitrary_module_poly operator>>=(const std::size_t &b);
+       arbitrary_module_poly operator/(const int &h) const;
+       arbitrary_module_poly operator/=(const int &h);
+       arbitrary_module_poly operator==(const arbitrary_module_poly &h) const;
+       arbitrary_module_poly operator!=(const arbitrary_module_poly &h) const;
+       arbitrary_module_poly inv(void) const;
+       arbitrary_module_poly inv(const int &h) const;
+       friend arbitrary_module_poly sqrt(const arbitrary_module_poly &h);
+       friend arbitrary_module_poly log(const arbitrary_module_poly &h);
     };
     
     arbitrary_module_poly arbitrary_module_poly::operator*(
@@ -548,7 +548,7 @@ $$
     }
     
     arbitrary_module_poly arbitrary_module_poly::operator<<=(const std::size_t &b) {
-      return *this = (*this) << b;
+      return *this = *this << b;
     }
     
     arbitrary_module_poly arbitrary_module_poly::operator>>(
@@ -559,7 +559,7 @@ $$
     }
     
     arbitrary_module_poly arbitrary_module_poly::operator>>=(const std::size_t &b) {
-      return *this = (*this) >> b;
+      return *this = *this >> b;
     }
     
     arbitrary_module_poly arbitrary_module_poly::inv(void) const {
@@ -600,7 +600,7 @@ $$
         const arbitrary_module_poly &h) const {
       if (size() != h.size() || mod != h.mod) return 0;
       for (int i = 0; i < (int)size(); ++i)
-        if (data[i] != h[i]) return 0;
+        if (data[i] != h.data[i]) return 0;
       return 1;
     }
     
@@ -608,7 +608,7 @@ $$
         const arbitrary_module_poly &h) const {
       if (size() != h.size() || mod != h.mod) return 1;
       for (int i = 0; i < (int)size(); ++i)
-        if (data[i] != h[i]) return 1;
+        if (data[i] != h.data[i]) return 1;
       return 0;
     }
     
@@ -643,7 +643,7 @@ $$
     #endif
     ```
 
-???+ note "实现"
+??? note "Implementation"
     ```cpp
     int main() {
       scanf("%d", &n);
@@ -662,21 +662,21 @@ $$
     }
     ```
 
-### 同一列第二类斯特林数的计算
+### Computing Stirling Numbers of the Second Kind in the Same Column
 
-「同一列」的第二类斯特林数指的是，有着不同的 $i$，相同的 $k$ 的一系列 $\begin{Bmatrix}i\\k\end{Bmatrix}$．求出同一列的所有第二类斯特林数，就是对 $i=0..n$ 求出了将 $i$ 个不同元素划分为 $k$ 个非空集的方案数．
+"Stirling numbers of the second kind in the same column" refers to $\begin{Bmatrix}i \\ k\end{Bmatrix}$ with different $i$ but the same $k$. Computing all Stirling numbers in the same column means finding, for $i = 0..n$, the number of ways to divide $i$ different elements into $k$ non-empty sets.
 
-利用指数型生成函数计算．
+Use exponential generating functions for calculation.
 
-一个盒子装 $i$ 个物品且盒子非空的方案数是 $[i>0]$．我们可以写出它的指数型生成函数为 $F(x)=\sum\limits_{i=1}^{+\infty}\dfrac{x^i}{i!} = \mathrm{e}^x-1$．经过之前的学习，我们明白 $F^k(x)$ 就是 $i$ 个有标号物品放到 $k$ 个有标号盒子里的指数型生成函数，那么除掉 $k!$ 就是 $i$ 个有标号物品放到 $k$ 个无标号盒子里的指数型生成函数．
+The number of ways to put $i$ items in one box with the box being non-empty is $[i > 0]$. We can write its exponential generating function as $F(x) = \sum\limits_{i=1}^{+\infty} \dfrac{x^i}{i!} = \mathrm{e}^x - 1$. From previous studies, we know that $F^k(x)$ is the exponential generating function for placing $i$ labeled items into $k$ labeled boxes. Then, dividing by $k!$ gives the exponential generating function for placing $i$ labeled items into $k$ unlabeled boxes.
 
-$\begin{Bmatrix}i\\k\end{Bmatrix}=\dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}$，$O(n\log n)$ 计算多项式幂即可．
+$\begin{Bmatrix}i \\ k\end{Bmatrix} = \dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}$, compute polynomial powers in $O(n \log n)$.
 
-另外，$\exp F(x)=\sum\limits_{i=0}^{+\infty}\dfrac{F^i(x)}{i!}$ 就是 $i$ 个有标号物品放到任意多个无标号盒子里的指数型生成函数（EXP 通过每项除以一个 $i!$ 去掉了盒子的标号）．这其实就是贝尔数的生成函数．
+Additionally, $\exp F(x) = \sum\limits_{i=0}^{+\infty} \dfrac{F^i(x)}{i!}$ is the exponential generating function for placing $i$ labeled items into any number of unlabeled boxes (EXP removes box labels by dividing each term by $i!$). This is actually the generating function for Bell numbers.
 
-这里涉及到很多「有标号」「无标号」的内容，注意辨析．
+There is a lot of content about "labeled" and "unlabeled", pay attention to distinguishing them.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int main() {
       scanf("%d%d", &n, &k);
@@ -692,60 +692,60 @@ $\begin{Bmatrix}i\\k\end{Bmatrix}=\dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}
     }
     ```
 
-## 第一类斯特林数（Stirling Number）
+## Stirling Numbers of the First Kind
 
-**第一类斯特林数**（斯特林轮换数）$\begin{bmatrix}n\\ k\end{bmatrix}$，也可记做 $s(n,k)$，表示将 $n$ 个两两不同的元素，划分为 $k$ 个互不区分的非空轮换的方案数．
+**Stirling numbers of the first kind** (Stirling cycle numbers) $\begin{bmatrix}n \\ k\end{bmatrix}$, also denoted as $s(n, k)$, represent the number of ways to divide $n$ distinct elements into $k$ non-empty, indistinguishable cycles.
 
-一个轮换就是一个首尾相接的环形排列．我们可以写出一个轮换 $[A,B,C,D]$，并且我们认为 $[A,B,C,D]=[B,C,D,A]=[C,D,A,B]=[D,A,B,C]$，即，两个可以通过旋转而互相得到的轮换是等价的．注意，我们不认为两个可以通过翻转而相互得到的轮换等价，即 $[A,B,C,D]\neq[D,C,B,A]$．
+A cycle is a circular arrangement where the beginning and end connect. We can write a cycle as $[A, B, C, D]$, and we consider $[A, B, C, D] = [B, C, D, A] = [C, D, A, B] = [D, A, B, C]$, that is, two cycles that can be transformed into each other by rotation are equivalent. Note that we do not consider two cycles that can be transformed into each other by flipping as equivalent, i.e., $[A, B, C, D] \neq [D, C, B, A]$.
 
-### 递推式
+### Recurrence Formula
 
 $$
-\begin{bmatrix}n\\ k\end{bmatrix}=\begin{bmatrix}n-1\\ k-1\end{bmatrix}+(n-1)\begin{bmatrix}n-1\\ k\end{bmatrix}
+\begin{bmatrix}n \\ k\end{bmatrix} = \begin{bmatrix}n-1 \\ k-1\end{bmatrix} + (n - 1) \begin{bmatrix}n-1 \\ k\end{bmatrix}
 $$
 
-边界是 $\begin{bmatrix}n\\ 0\end{bmatrix}=[n=0]$．
+The boundary condition is $\begin{bmatrix}n \\ 0\end{bmatrix} = [n = 0]$.
 
-该递推式的证明可以考虑其组合意义．
+The proof of this recurrence formula can be considered using its combinatorial meaning.
 
-我们插入一个新元素时，有两种方案：
+When inserting a new element, there are two cases:
 
--   将该新元素置于一个单独的轮换中，共有 $\begin{bmatrix}n-1\\ k-1\end{bmatrix}$ 种方案；
--   将该元素插入到任何一个现有的轮换中，共有 $(n-1)\begin{bmatrix}n-1\\ k\end{bmatrix}$ 种方案．
+-   Put the new element in a separate cycle, which has $\begin{bmatrix}n-1 \\ k-1\end{bmatrix}$ ways;
+-   Insert the element into any existing cycle, which has $(n - 1)\begin{bmatrix}n-1 \\ k\end{bmatrix}$ ways.
 
-根据加法原理，将两式相加即可得到递推式．
+By the addition principle, adding these two gives the recurrence formula.
 
-### 通项公式
+### Closed Form Formula
 
-第一类斯特林数没有实用的通项公式．
+Stirling numbers of the first kind do not have a practical closed form formula.
 
-### 同一行第一类斯特林数的计算
+### Computing Stirling Numbers of the First Kind in the Same Row
 
-类似第二类斯特林数，我们构造同行第一类斯特林数的生成函数，即
+Similar to Stirling numbers of the second kind, we construct the generating function for Stirling numbers of the first kind in the same row, that is:
 
-$F_n(x)=\sum\limits_{i=0}^n\begin{bmatrix}n\\i\end{bmatrix}x^i$
+$F_n(x) = \sum\limits_{i=0}^n \begin{bmatrix}n \\ i\end{bmatrix} x^i$
 
-根据递推公式，不难写出
+According to the recurrence formula, it's not hard to write:
 
-$F_n(x)=(n-1)F_{n-1}(x)+xF_{n-1}(x)$
+$F_n(x) = (n - 1)F_{n-1}(x) + xF_{n-1}(x)$
 
-于是
+Thus:
 
-$F_n(x)=\prod\limits_{i=0}^{n-1}(x+i)=\dfrac{(x+n-1)!}{(x-1)!}$
+$F_n(x) = \prod\limits_{i=0}^{n-1}(x + i) = \dfrac{(x + n - 1)!}{(x - 1)!}$
 
-这其实是 $x$ 的 $n$ 次上升阶乘幂，记做 $x^{\overline n}$．这个东西自然是可以暴力分治乘 $O(n\log^2n)$ 求出的，但用上升幂相关做法可以 $O(n\log n)$ 求出，详情见 [多项式平移 | 连续点值平移](../poly/shift.md#同一行第一类无符号-stirling-数)．
+This is actually the rising factorial of $x$ of degree $n$, denoted as $x^{\overline{n}}$. This can be computed by brute force divide-and-conquer multiplication in $O(n \log^2 n)$, but using methods related to rising factorials, it can be computed in $O(n \log n)$. For details, see [Polynomial Shift | Sequential Point Value Shift](../poly/shift.md#computing-stirling-numbers-of-the-first-kind-in-the-same-row).
 
-### 同一列第一类斯特林数的计算
+### Computing Stirling Numbers of the First Kind in the Same Column
 
-仿照第二类斯特林数的计算，我们可以用指数型生成函数解决该问题．注意，由于递推公式和行有关，我们不能利用递推公式计算同列的第一类斯特林数．
+Following the computation of Stirling numbers of the second kind, we can use exponential generating functions to solve this problem. Note that since the recurrence formula is related to rows, we cannot use the recurrence formula to compute Stirling numbers of the first kind in the same column.
 
-显然，单个轮换的指数型生成函数为
+Obviously, the exponential generating function for a single cycle is:
 
-$F(x)=\sum\limits_{i=1}^n\dfrac{(i-1)!x^i}{i!}=\sum\limits_{i=1}^n\dfrac{x^i}{i}$
+$F(x) = \sum\limits_{i=1}^n \dfrac{(i-1)! x^i}{i!} = \sum\limits_{i=1}^n \dfrac{x^i}{i}$
 
-它的 $k$ 次幂就是 $\begin{bmatrix}i\\k\end{bmatrix}$ 的指数型生成函数，$O(n\log n)$ 计算即可．
+The $k$-th power of this is the exponential generating function for $\begin{bmatrix}i \\ k\end{bmatrix}$, which can be computed in $O(n \log n)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int main() {
       scanf("%d%d", &n, &k);
@@ -762,79 +762,77 @@ $F(x)=\sum\limits_{i=1}^n\dfrac{(i-1)!x^i}{i!}=\sum\limits_{i=1}^n\dfrac{x^i}{i}
     }
     ```
 
-## 应用
+## Applications
 
-### 上升幂与普通幂的相互转化
+### Conversion between Rising Factorials and Ordinary Powers
 
-我们记上升阶乘幂 $x^{\overline{n}}=\prod_{k=0}^{n-1} (x+k)$．
+We denote the rising factorial as $x^{\overline{n}} = \prod_{k=0}^{n-1} (x + k)$.
 
-则可以利用下面的恒等式将上升幂转化为普通幂：
-
-$$
-x^{\overline{n}}=\sum_{k} \begin{bmatrix}n\\ k\end{bmatrix} x^k
-$$
-
-如果将普通幂转化为上升幂，则有下面的恒等式：
+Then we can use the following identity to convert rising factorials to ordinary powers:
 
 $$
-x^n=\sum_{k} \begin{Bmatrix}n\\ k\end{Bmatrix} (-1)^{n-k} x^{\overline{k}}
+x^{\overline{n}} = \sum_{k} \begin{bmatrix}n \\ k\end{bmatrix} x^k
 $$
 
-### 下降幂与普通幂的相互转化
-
-我们记下降阶乘幂 $x^{\underline{n}}=\dfrac{x!}{(x-n)!}=\prod_{k=0}^{n-1} (x-k)$．
-
-则可以利用下面的恒等式将普通幂转化为下降幂：
+If converting ordinary powers to rising factorials, we have:
 
 $$
-x^n=\sum_{k} \begin{Bmatrix}n\\ k\end{Bmatrix} x^{\underline{k}}
+x^n = \sum_{k} \begin{Bmatrix}n \\ k\end{Bmatrix} (-1)^{n-k} x^{\overline{k}}
 $$
 
-如果将下降幂转化为普通幂，则有下面的恒等式：
+### Conversion between Falling Factorials and Ordinary Powers
+
+We denote the falling factorial as $x^{\underline{n}} = \dfrac{x!}{(x-n)!} = \prod_{k=0}^{n-1} (x - k)$.
+
+Then we can use the following identity to convert ordinary powers to falling factorials:
 
 $$
-x^{\underline{n}}=\sum_{k} \begin{bmatrix}n\\ k\end{bmatrix} (-1)^{n-k} x^k
+x^n = \sum_{k} \begin{Bmatrix}n \\ k\end{Bmatrix} x^{\underline{k}}
 $$
 
-### 多项式下降阶乘幂表示与多项式点值表示的关系
-
-在这里，多项式的下降阶乘幂表示就是用
+If converting falling factorials to ordinary powers, we have:
 
 $$
-f(x)=\sum\limits_{i=0}^nb_i{x^{\underline{i}}}
+x^{\underline{n}} = \sum_{k} \begin{bmatrix}n \\ k\end{bmatrix} (-1)^{n-k} x^k
 $$
 
-的形式表示一个多项式，而点值表示就是用 $n+1$ 个点
+### Relationship between Polynomial Falling Factorial Representation and Point Value Representation
+
+Here, the falling factorial representation of a polynomial is expressing a polynomial as:
 
 $$
-(i,a_i),i=0..n
+f(x) = \sum\limits_{i=0}^n b_i x^{\underline{i}}
 $$
 
-来表示一个多项式．
-
-显然，下降阶乘幂 $b$ 和点值 $a$ 间满足这样的关系：
+And point value representation is expressing a polynomial using $n + 1$ points:
 
 $$
-a_k=\sum\limits_{i=0}^{n}b_ik^{\underline{i}}
+(i, a_i), i = 0..n
 $$
 
-即
+Obviously, the falling factorial coefficients $b$ and point values $a$ satisfy:
+
+$$
+a_k = \sum\limits_{i=0}^n b_i k^{\underline{i}}
+$$
+
+That is:
 
 $$
 \begin{aligned}
-a_k&=\sum\limits_{i=0}^{n}\dfrac{b_ik!}{(k-i)!}\\\dfrac{a_k}{k!}&=\sum\limits_{i=0}^kb_i\dfrac{1}{(k-i)!}
+a_k &= \sum\limits_{i=0}^n \dfrac{b_i k!}{(k - i)!}\\\dfrac{a_k}{k!} &= \sum\limits_{i=0}^k b_i \dfrac{1}{(k - i)!}
 \end{aligned}
 $$
 
-这是一个卷积形式的式子，我们可以在 $O(n\log n)$ 的时间复杂度内完成点值和下降阶乘幂的互相转化．
+This is a convolution form, and we can complete the mutual conversion between point values and falling factorials in $O(n \log n)$ time complexity.
 
-## 习题
+## Exercises
 
 -   [HDU3625 Examining the Rooms](https://acm.hdu.edu.cn/showproblem.php?pid=3625)
 -   [UOJ540 联合省选 2020 组合数问题](https://uoj.ac/problem/540)
 -   [UOJ269 清华集训 2016 如何优雅地求和](https://uoj.ac/problem/269)
 
-## 参考资料与注释
+## References and Notes
 
 1.  [Stirling Number of the First Kind - Wolfram MathWorld](http://mathworld.wolfram.com/StirlingNumberoftheFirstKind.html)
 2.  [Stirling Number of the Second Kind - Wolfram MathWorld](http://mathworld.wolfram.com/StirlingNumberoftheSecondKind.html)

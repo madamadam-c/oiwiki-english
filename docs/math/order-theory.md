@@ -1,178 +1,178 @@
-## 引入
+## Introduction
 
-序理论是利用二元关系来将「次序」这一概念严格化的数学分支，下面将介绍这一分支的基本定义．
+Order theory is a branch of mathematics that formalizes the concept of "order" using binary relations. The basic definitions of this branch are introduced below.
 
-## 定义
+## Definitions
 
-### 二元关系
+### Binary Relations
 
-???+ note "定义"
-    集合 $X$ 和集合 $Y$ 上的一个 **二元关系**（binary relation）$R$ 定义为元组 $(X,Y,G(R))$，其中 $X$ 称为定义域（domain），$Y$ 称为陪域（codomain），$G(R)\subseteq X\times Y=\{(x,y):x\in X,y\in Y\}$ 称为二元关系 $R$ 的图（graph）．$xRy$ 成立当且仅当 $(x,y)\in G(R)$．
+???+ note "Definition"
+    A **binary relation** $R$ on sets $X$ and $Y$ is defined as the tuple $(X, Y, G(R))$, where $X$ is called the **domain**, $Y$ is called the **codomain**, and $G(R)\subseteq X\times Y=\{(x,y):x\in X,y\in Y\}$ is called the **graph** of the binary relation $R$. $xRy$ holds if and only if $(x,y)\in G(R)$.
     
-    若 $X=Y$，则称该二元关系为齐次二元关系（homogeneous relation）或内关系（endorelation）．
+    If $X=Y$, the binary relation is called a **homogeneous relation** or **endorelation**.
     
-    若没有特别说明，下文中的二元关系均为齐次二元关系．
+    Unless otherwise specified, all binary relations discussed below are homogeneous relations.
 
-例如 $\mathbf{N}_+$ 上的整除 $\mid$ 和小于等于 $\leq$ 均为二元关系．
+For example, divisibility $\mid$ and less-than-or-equal $\leq$ on $\mathbf{N}_+$ are both binary relations.
 
-我们研究二元关系时，往往会关注其是否具有一些特别的性质．对集合 $S$ 上的二元关系 $R$，我们定义如下特殊性质：
+When studying binary relations, we often focus on whether they possess certain special properties. For a binary relation $R$ on set $S$, we define the following special properties:
 
-1.  自反性（reflexive）：$(\forall~a \in S)~~aRa$，
-2.  反自反性（irreflexive，anti-reflexive）：$(\forall~a \in S)~~\lnot(aRa)$，
-3.  对称性（symmetric）：$(\forall~a,b \in S)~~aRb \iff bRa$，
-4.  反对称性（antisymmetric）：$(\forall~a,b \in S)~~(aRb \land bRa) \implies a=b$，
-5.  非对称性（asymmetric）：$(\forall~a,b \in S)~~aRb \implies \lnot(bRa)$，
-6.  传递性（transitive）：$(\forall~a,b,c \in S)~~(aRb \land bRc) \implies aRc$，
-7.  连接性（connected）：$(\forall~a,b \in S)~~a \neq b \implies (aRb \lor bRa)$，
-8.  良基性（well-founded）：$(\exists~m \in S \neq \varnothing)~~(\forall~a \in S\setminus\{m\})~~\lnot(aRm)$（即非空集合 $S$ 中有极小元 $m$），
-9.  不可比的传递性（transitive of incomparability）：$(\forall~a,b,c \in S)~~(\lnot(aRb \lor bRa) \land \lnot(bRc \lor cRb)) \implies \lnot(aRc \lor cRa)$（若 $\lnot(aRb \lor bRa)$，则称 $a$ 和 $b$ 是不可比的）．
+1.  **Reflexive**: $(\forall~a \in S)~~aRa$,
+2.  **Irreflexive** (anti-reflexive): $(\forall~a \in S)~~\lnot(aRa)$,
+3.  **Symmetric**: $(\forall~a,b \in S)~~aRb \iff bRa$,
+4.  **Antisymmetric**: $(\forall~a,b \in S)~~(aRb \land bRa) \implies a=b$,
+5.  **Asymmetric**: $(\forall~a,b \in S)~~aRb \implies \lnot(bRa)$,
+6.  **Transitive**: $(\forall~a,b,c \in S)~~(aRb \land bRc) \implies aRc$,
+7.  **Connected**: $(\forall~a,b \in S)~~a \neq b \implies (aRb \lor bRa)$,
+8.  **Well-founded**: $(\exists~m \in S \neq \varnothing)~~(\forall~a \in S\setminus\{m\})~~\lnot(aRm)$ (i.e., non-empty set $S$ has a minimal element $m$),
+9.  **Transitive of incomparability**: $(\forall~a,b,c \in S)~~(\lnot(aRb \lor bRa) \land \lnot(bRc \lor cRb)) \implies \lnot(aRc \lor cRa)$ (if $\lnot(aRb \lor bRa)$, then $a$ and $b$ are **incomparable**).
 
-同时我们定义一些特殊的二元关系：
+We also define some special binary relations:
 
-| 二元关系                       | 自反性 | 反自反性 | 对称性 | 反对称性 | 非对称性 | 传递性 | 连接性 | 良基性 | 不可比的传递性 |
-| -------------------------- | --- | ---- | --- | ---- | ---- | --- | --- | --- | ------- |
-| 等价关系（equivalence relation） | 有   |      | 有   |      |      | 有   |     |     |         |
-| 预序（preorder，quasiorder）    | 有   |      |     |      |      | 有   |     |     |         |
-| 偏序（partial order）          | 有   |      |     | 有    |      | 有   |     |     |         |
-| 全序（total order）            | 有   |      |     | 有    |      | 有   | 有   |     |         |
-| 良序（well-order）             | 有   |      |     | 有    |      | 有   | 有   | 有   |         |
-| 严格预序（strict preorder）      |     | 有    |     |      |      | 有   |     |     |         |
-| 严格偏序（strict partial order） |     | 有    |     |      | 有    | 有   |     |     |         |
-| 严格弱序（strict weak order）    |     | 有    |     |      | 有    | 有   |     |     | 有       |
-| 严格全序（strict total order）   |     | 有    |     |      | 有    | 有   | 有   |     |         |
+| Binary relation | Reflexive | Irreflexive | Symmetric | Antisymmetric | Asymmetric | Transitive | Connected | Well-founded | Transitive of incomparability |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Equivalence relation | Yes | | Yes | | | Yes | | | |
+| Preorder (quasiorder) | Yes | | | | | Yes | | | |
+| Partial order | Yes | | | Yes | | Yes | | | |
+| Total order | Yes | | | Yes | | Yes | Yes | | |
+| Well-order | Yes | | | Yes | | Yes | Yes | Yes | |
+| Strict preorder | | Yes | | | | Yes | | | |
+| Strict partial order | | Yes | | | Yes | Yes | | | |
+| Strict weak order | | Yes | | | Yes | Yes | | | Yes |
+| Strict total order | | Yes | | | Yes | Yes | Yes | | |
 
-### 关系间的运算
+### Operations on Relations
 
-对集合 $X$ 和集合 $Y$ 上的二元关系 $R$ 和 $S$，我们可以定义如下运算：
+For binary relations $R$ on sets $X$ and $Y$ and $S$ on sets $Y$ and $Z$, we can define the following operations:
 
-1.  $R$ 和 $S$ 的并 $R\cup S$ 满足 $G(R\cup S):=\{(x,y):xRy \lor xSy\}$（如 $\leq$ 是 $<$ 和 $=$ 的并），
-2.  $R$ 和 $S$ 的交 $R\cap S$ 满足 $G(R\cap S):=\{(x,y):xRy \land xSy\}$，
-3.  $R$ 的补 $\bar{R}$ 满足 $G(\bar{R}):=\{(x,y):\lnot(xRy)\}$，
-4.  $R$ 的对偶 $R^T$ 满足 $G(R^T):=\{(y,x):xRy\}$.
+1.  The **union** $R\cup S$ satisfies $G(R\cup S):=\{(x,y):xRy \lor xSy\}$ (e.g., $\leq$ is the union of $<$ and $=$),
+2.  The **intersection** $R\cap S$ satisfies $G(R\cap S):=\{(x,y):xRy \land xSy\}$,
+3.  The **complement** $\bar{R}$ satisfies $G(\bar{R}):=\{x,y):\lnot(xRy)\}$,
+4.  The **converse** (transpose) $R^T$ satisfies $G(R^T):=\{(y,x):xRy\}$.
 
-对集合 $X$ 和集合 $Y$ 上的二元关系 $R$ 以及集合 $Y$ 和集合 $Z$ 上的二元关系 $S$，我们可以定义其复合 $S\circ R$ 满足 $G(S\circ R):=\{(x,z):(\exists~y\in Y)~~xRy\land ySz\}$.
+For binary relations $R$ on $X$ and $Y$ and $S$ on $Y$ and $Z$, we define their **composition** $S\circ R$ satisfying $G(S\circ R):=\{(x,z):(\exists~y\in Y)~~xRy\land ySz\}$.
 
-### 偏序集
+### Partially Ordered Sets
 
-???+ note "定义"
-    若集合 $S$ 上的一个二元关系 $\preceq$ 具有 **自反性**、**反对称性**、**传递性**，则称 $S$ 是 **偏序集**（partially ordered set，poset），$\preceq$ 为其上一 **偏序**（partial order）．
+???+ note "Definition"
+    If a binary relation $\preceq$ on a set $S$ is **reflexive**, **antisymmetric**, and **transitive**, then $S$ is called a **partially ordered set** (poset), and $\preceq$ is a **partial order** on it.
     
-    若偏序 $\preceq$ 还具有 **连接性**，则称其为 **全序**（total order），对应的集合称为 **全序集**（totally ordered set）、**线性序集**（linearly ordered set，loset）、**简单序集**（simply ordered set）．
+    If the partial order $\preceq$ is also **connected**, it is called a **total order**, and the corresponding set is called a **totally ordered set**, **linearly ordered set** (loset), or **simply ordered set**.
 
-不难发现 $\mathbf{N}$，$\mathbf{Z}$，$\mathbf{Q}$、$\mathbf{R}$ 均关于 $\leq$ 构成全序集．
+It is easy to see that $\mathbf{N}$, $\mathbf{Z}$, $\mathbf{Q}$, and $\mathbf{R}$ are all totally ordered sets under $\leq$.
 
-### 偏序集的可视化表示：Hasse 图
+### Visualizing Partially Ordered Sets: Hasse Diagrams
 
-对于有限偏序集，我们可以用 Hasse 图直观地表示其上的偏序关系．
+For finite partially ordered sets, we can use Hasse diagrams to intuitively represent the partial order.
 
-???+ note "定义"
-    对有限偏序集 $S$ 和其上的偏序 $\preceq$，定义 $x\prec y\iff (x\preceq y\land x\neq y)$ 其对应的 **Hasse 图** 为满足如下条件的图 $G=\langle V,E\rangle$：
+???+ note "Definition"
+    For a finite partially ordered set $S$ with partial order $\preceq$, define $x\prec y\iff (x\preceq y\land x\neq y)$. Its corresponding **Hasse diagram** is a graph $G=\langle V,E\rangle$ satisfying:
     
     -   $V=S$,
     -   $E=\{(x,y)\in S\times S: x\prec y \land ((\nexists~z\in S)~~x\prec z\prec y)\}$
 
-如对于集合 $\{0,1,2\}$ 的幂集 $S$ 和集合的包含关系 $\subseteq$，其对应的 Hasse 图为：
+For example, for the power set $S$ of $\{0,1,2\}$ with set inclusion $\subseteq$, its Hasse diagram is:
 
 ![](images/order-theory1.svg)
 
-由于偏序具有反对称性，所以 Hasse 图一定是 [有向无环图](../graph/dag.md)，进而我们可以根据 [拓扑排序](../graph/topo.md) 对任意有限偏序集构造全序．
+Since a partial order is antisymmetric, a Hasse diagram is always a [directed acyclic graph](../graph/dag.md), and therefore we can construct a total order for any finite partially ordered set via [topological sorting](../graph/topo.md).
 
-### 链与反链
+### Chains and Antichains
 
-???+ note "定义"
-    对偏序集 $S$ 和其上的偏序 $\preceq$，称 $S$ 的全序子集为 **链**（chain）．若 $S$ 的子集 $T$ 中任意两个不同元素均不可比（即 $(\forall~a,b \in T)~~a \neq b \implies (a \npreceq b \land b \npreceq a)$），则称 $T$ 为 **反链**（antichain）．
+???+ note "Definition"
+    For a partially ordered set $S$ with partial order $\preceq$, a totally ordered subset of $S$ is called a **chain**. If every two distinct elements in a subset $T$ of $S$ are incomparable (i.e., $(\forall~a,b \in T)~~a \neq b \implies (a \npreceq b \land b \npreceq a)$), then $T$ is called an **antichain**.
     
-    对偏序集 $S$ 和其上的偏序 $\preceq$，我们将偏序集 $S$ 的最长反链长度称为 **宽度**（partial order width）．
+    For a partially ordered set $S$ with partial order $\preceq$, the length of the longest antichain of $S$ is called the **width** (partial order width) of $S$.
 
-如对于集合 $\{0,1,2\}$ 的幂集 $S$ 和集合的包含关系 $\subseteq$，$\{\varnothing,\{1\},\{1,2\}\}$ 为一条链，$\{\{1\},\{0,2\}\}$ 为一条反链，$S$ 的宽度为 $3$.
+For example, for the power set $S$ of $\{0,1,2\}$ with set inclusion $\subseteq$, $\{\varnothing,\{1\},\{1,2\}\}$ is a chain, $\{\{1\},\{0,2\}\}$ is an antichain, and the width of $S$ is $3$.
 
-### 预序集中的特殊元素
+### Special Elements in Preordered Sets
 
-在预序集中，我们可以定义极大（小）元、上（下）界、上（下）确界等概念，这些概念可以推广到其他序关系中．
+In preordered sets, we can define the concepts of maximal (minimal) elements, upper (lower) bounds, supremum (infimum), etc. These concepts can be extended to other order relations.
 
-???+ note "定义"
-    对预序集 $S$ 和其上的预序 $\preceq$，取 $S$ 中的元素 $m$：
+???+ note "Definition"
+    For a preordered set $S$ with preorder $\preceq$, take an element $m$ in $S$:
     
-    1.  若 $(\forall~a \in S\setminus\{m\})~~\lnot(m\preceq a)$，则称 $m$ 为 **极大元**（maximal element），
-    2.  若对 $T \subseteq S$ 满足 $(\forall~t\in T)~~t\preceq m$，则称 $m$ 为 $T$ 的 **上界**（upper bound），
-    3.  若对 $T \subseteq S$ 满足 $m$ 是 $T$ 的上界且对 $T$ 的任意上界 $n$ 均有 $m \preceq n$，则称 $m$ 为 $T$ 的 **上确界**（supremum）．
+    1.  If $(\forall~a \in S\setminus\{m\})~~\lnot(m\preceq a)$, then $m$ is called a **maximal element**,
+    2.  If for $T \subseteq S$ we have $(\forall~t\in T)~~t\preceq m$, then $m$ is called an **upper bound** of $T$,
+    3.  If for $T \subseteq S$ we have $m$ is an upper bound of $T$ and for any upper bound $n$ of $T$ we have $m \preceq n$, then $m$ is called the **supremum** of $T$.
     
-    类似可定义 **极小元**（minimal element）、**下界**（lower bound）和 **下确界**（infimum）．
+    **Minimal elements**, **lower bounds**, and **infimum** can be defined similarly.
 
-如 $1$ 是 $\mathbf{N}_+$ 的极小元和下界．
+For example, $1$ is a minimal element and lower bound of $\mathbf{N}_+$.
 
-可以证明：
+It can be proven that:
 
--   预序集中，极大（小）元、上（下）界、上（下）确界都是不一定存在的，即使存在也不一定唯一．
+-   In a preordered set, maximal (minimal) elements, upper (lower) bounds, and supremum (infimum) may not exist, and even if they exist, they may not be unique.
 
--   若偏序集 $S$ 的子集 $T$ 存在上（下）确界，则一定唯一．
+-   If a subset $T$ of a partially ordered set $S$ has a supremum (infimum), it must be unique.
 
-    我们可将 $T$ 的上确界、下确界分别记为 $\sup T$，$\inf T$. 若偏序集 $S$ 既有上界又有下界，则称 $S$ 是有界的．
+    We denote the supremum and infimum of $T$ as $\sup T$ and $\inf T$ respectively. If a partially ordered set $S$ has both an upper bound and a lower bound, $S$ is called **bounded**.
 
-在无限偏序集中，极大元不一定存在．可用 **Zorn 引理**（Zorn's Lemma）来判断无限偏序集中是否存在极大元．
+In infinite partially ordered sets, maximal elements may not exist. **Zorn's Lemma** can be used to determine whether maximal elements exist in infinite partially ordered sets.
 
-???+ note "[Zorn 引理](https://en.wikipedia.org/wiki/Zorn%27s_lemma)"
-    **Zorn 引理** 也被称为 **Kuratowski–Zorn 引理**，其内容为：若非空偏序集的每条链都有上界，则该偏序集存在极大元．
+???+ note "[Zorn's Lemma](https://en.wikipedia.org/wiki/Zorn%27s_lemma)"
+    **Zorn's Lemma** is also known as the **Kuratowski–Zorn lemma**. Its statement is: if every chain in a non-empty partially ordered set has an upper bound, then the partially ordered set has a maximal element.
 
-Zorn 引理与 **[选择公理](https://en.wikipedia.org/wiki/Axiom_of_choice)**、**[良序定理](https://en.wikipedia.org/wiki/Well-ordering_theorem)** 等价．
+Zorn's Lemma is equivalent to the **[Axiom of Choice](https://en.wikipedia.org/wiki/Axiom_of_choice)** and the **[Well-ordering theorem](https://en.wikipedia.org/wiki/Well-ordering_theorem)**.
 
-### 有向集与格
+### Directed Sets and Lattices
 
-我们知道若偏序集的子集存在上（下）确界，则一定唯一．但是这一点并不适用于极大（小）元．例如：考虑偏序集 $S=\{\{0\},\{1\},\{2\},\{0,1\},\{0,2\},\{1,2\}\}$ 和其上的偏序 $\subseteq$，不难发现其有 $3$ 个极大元和 $3$ 个极小元．
+We know that if a subset of a partially ordered set has a supremum (infimum), it must be unique. However, this does not apply to maximal (minimal) elements. For example: consider the partially ordered set $S=\{\{0\},\{1\},\{2\},\{0,1\},\{0,2\},\{1,2\}\}$ with partial order $\subseteq$. It is easy to see it has $3$ maximal elements and $3$ minimal elements.
 
-我们希望通过向偏序集添加一定的条件来使得若极大（小）元存在则一定唯一，这样我们就可以定义最大（小）元的概念了．
+We want to add certain conditions to partially ordered sets so that if maximal (minimal) elements exist, they must be unique. This allows us to define the concept of greatest (least) elements.
 
-???+ note "有向集"
-    对预序集 $S$ 和其上的预序 $\preceq$，若 $(\forall~a,b\in S)~~(\exists~c\in S)~~a\preceq c\land b\preceq c$，则称 $\preceq$ 为 $S$ 的一个 **方向**（direction），$S$ 称为 **有向集**（directed set）或 **过滤集**（filtered set）．
+???+ note "Directed set"
+    For a preordered set $S$ with preorder $\preceq$, if $(\forall~a,b\in S)~~(\exists~c\in S)~~a\preceq c\land b\preceq c$, then $\preceq$ is called a **direction** on $S$, and $S$ is called a **directed set** or **filtered set**.
     
-    有时也将满足上述定义的集合 $S$ 称为 **上有向集**（upward directed set），类似地可定义 **下有向集**（downward directed set）．
+    Sometimes such a set $S$ is called an **upward directed set**. **Downward directed sets** can be defined analogously.
 
-有向集也可用如下方式定义：
+Directed sets can also be defined as follows:
 
-???+ note "有向集的等价定义"
-    对预序集 $S$ 和其上的预序 $\preceq$，若 $S$ 的任意有限子集 $T$ 均有上界，则称 $\preceq$ 为 $S$ 的一个方向，$S$ 称为有向集．
+???+ note "Equivalent definition of directed sets"
+    For a preordered set $S$ with preorder $\preceq$, if every finite subset $T$ of $S$ has an upper bound, then $\preceq$ is called a direction on $S$, and $S$ is called a directed set.
 
-不难发现：
+It is easy to see that:
 
--   若上有向集存在极大元，则一定唯一．我们将上有向集的极大元称为 **最大元**（greatest element）．
--   若下有向集存在极小元，则一定唯一．我们将下有向集的极小元称为 **最小元**（least element）．
+-   If an upward directed set has a maximal element, it must be unique. We call the maximal element of an upward directed set the **greatest element**.
+-   If a downward directed set has a minimal element, it must be unique. We call the minimal element of a downward directed set the **least element**.
 
-有方向的偏序集中，对任意元素 $a,b$，$\{a,b\}$ 都有上界，若将上界修改为上确界，则得到了并半格的定义．
+In a directed partially ordered set, for any elements $a$ and $b$, $\{a,b\}$ has an upper bound. If we replace the upper bound with the supremum, we get the definition of a join semilattice.
 
-对偏序集 $S$ 和其上的偏序 $\preceq$：
+For a partially ordered set $S$ with partial order $\preceq$:
 
-???+ note "并半格"
-    若对 $S$ 中的任意元素 $a,b$，$\{a,b\}$ 均有上确界 $c$，则称 $S$ 为 **并半格**（join-semilattice，upper semilattice），并且我们称 $c$ 为 $a$ 和 $b$ 的 **并**（join），记为 $a\lor b$.
+???+ note "Join semilattice"
+    If for any elements $a,b$ in $S$, $\{a,b\}$ has a supremum $c$, then $S$ is called a **join-semilattice** (or **upper semilattice**), and we call $c$ the **join** of $a$ and $b$, denoted $a\lor b$.
 
-???+ note "交半格"
-    若对 $S$ 中的任意元素 $a,b$，$\{a,b\}$ 均有下确界 $c$，则称 $S$ 为 **交半格**（meet-semilattice，lower semilattice），并且我们称 $c$ 为 $a$ 和 $b$ 的 **交**（meet），记为 $a\land b$.
+???+ note "Meet semilattice"
+    If for any elements $a,b$ in $S$, $\{a,b\}$ has an infimum $c$, then $S$ is called a **meet-semilattice** (or **lower semilattice**), and we call $c$ the **meet** of $a$ and $b$, denoted $a\land b$.
 
-???+ note "格"
-    若 $S$ 既是并半格也是交半格，则称 $S$ 为 **格**（lattice）．
+???+ note "Lattice"
+    If $S$ is both a join-semilattice and a meet-semilattice, then $S$ is called a **lattice**.
 
-例如 $60$ 的正因子构成的集合 $S=\{1,2,3,4,5,6,10,12,15,20,30,60\}$ 关于整除构成偏序集，其上的任意正整数 $a,b$，$\operatorname{lcm}(a,b)$ 为 $a$ 和 $b$ 的并，$\gcd(a,b)$ 为 $a$ 和 $b$ 的交，从而 $S$ 是格．
+For example, the set $S=\{1,2,3,4,5,6,10,12,15,20,30,60\}$ of positive divisors of $60$ forms a partially ordered set under divisibility. For any positive integers $a,b$, $\operatorname{lcm}(a,b)$ is the join of $a$ and $b$, and $\gcd(a,b)$ is the meet of $a$ and $b$. Thus $S$ is a lattice.
 
-### 对偶
+### Duality
 
-在序理论中，对偶是非常常见的概念，如上文提到的极大元与极小元对偶、上界与下界对偶、上确界与下确界对偶．
+In order theory, duality is a very common concept. For example, maximal and minimal elements are dual, upper and lower bounds are dual, supremum and infimum are dual.
 
-对偏序集 $P$ 和其上的偏序 $\preceq$，定义其 **对偶**（dual，opposite）偏序集 $P^d$ 满足：$x \preceq y$ 在 $P$ 中成立当且仅当 $y \preceq x$ 在 $P^d$ 中成立．将 $P$ 的 Hasse 图的边反转即可得到 $P^d$ 的 Hasse 图．
+For a partially ordered set $P$ with partial order $\preceq$, define its **dual** (or **opposite**) partially ordered set $P^d$ such that: $x \preceq y$ holds in $P$ if and only if $y \preceq x$ holds in $P^d$. The Hasse diagram of $P^d$ can be obtained by reversing the edges of the Hasse diagram of $P$.
 
-## Dilworth 定理与 Mirsky 定理
+## Dilworth's Theorem and Mirsky's Theorem
 
-对有限偏序集 $S$ 和其上的偏序 $\preceq$，我们有如下的一对对偶的定理：
+For a finite partially ordered set $S$ with partial order $\preceq$, we have the following pair of dual theorems:
 
-???+ note "Dilworth 定理"
-    $S$ 的宽度（最长反链长度）等于最小的链覆盖数．
+???+ note "Dilworth's Theorem"
+    The width of $S$ (length of the longest antichain) equals the minimum chain cover number.
     
-    ??? note "证明"
-        考虑数学归纳法．当 $|S|\leq 3$ 时，命题显然成立．
+    ??? note "Proof"
+        We use mathematical induction. When $|S|\leq 3$, the statement is trivially true.
         
-        假设命题对所有元素个数小于 $|S|$ 的偏序集都成立，令 $S$ 的宽度为 $d$. 若 $|S|$ 中所有元素均不可比，则命题显然成立，否则在 $S$ 中取一条长度大于 $1$ 的链，令其中的最小元为 $m$，最大元为 $M$.
+        Assume the statement holds for all partially ordered sets with fewer than $|S|$ elements. Let the width of $S$ be $d$. If all elements in $|S|$ are incomparable, the statement holds trivially. Otherwise, take a chain of length greater than $1$ in $S$, and let its least element be $m$ and greatest element be $M$.
         
-        令 $T=S\setminus\{m,M\}$，若 $T$ 中的宽度不超过 $d-1$，则由归纳假设知 $T$ 可被至多 $d-1$ 条链覆盖，进而 $S$ 可被这些链再加上链 $\{m,M\}$ 覆盖，命题成立，否则说明 $T$ 中的宽度也为 $d$，令 $T$ 中最长的一条反链为 $A$.
+        Let $T=S\setminus\{m,M\}$. If the width of $T$ does not exceed $d-1$, then by the induction hypothesis, $T$ can be covered by at most $d-1$ chains. Adding the chain $\{m,M\}$ covers $S$, so the statement holds. Otherwise, the width of $T$ is also $d$. Let $A$ be a longest antichain in $T$.
         
-        我们考虑如下两个集合：
+        Consider the following two sets:
         
         $$
         S^+:=\{x\in S:(\exists~a\in A)~~a\preceq x\}
@@ -182,103 +182,103 @@ Zorn 引理与 **[选择公理](https://en.wikipedia.org/wiki/Axiom_of_choice)**
         S^-:=\{x\in S:(\exists~a\in A)~~x\preceq a\}
         $$
         
-        我们不难发现如下性质：
+        We observe the following properties:
         
-        -   $S^+\cup S^-=S$，
-        -   $S^+\cap S^-=A$，
-        -   $|S^+|<|S|$,$|S^-|<|S|$（因为 $m\notin S^+$ 且 $M\notin S^-$）．
+        -   $S^+\cup S^-=S$,
+        -   $S^+\cap S^-=A$,
+        -   $|S^+|<|S|$, $|S^-|<|S|$ (because $m\notin S^+$ and $M\notin S^-$).
         
-        对 $S^+$ 和 $S^-$ 都应用归纳假设，则这两个集合的最小链覆盖数为 $d$，且这些链中恰好包含一个 $A$ 中的元素 $a$，设这些链分别为 $C_a^+$，$C_a^-$，则 $\{C_a^-\cup\{a\}\cup C_a^+\}_{a\in A}$ 是 $S$ 的一个最小链覆盖，命题得证．
+        Applying the induction hypothesis to both $S^+$ and $S^-$, the minimum chain cover number of these two sets is $d$, and these chains each contain exactly one element $a$ from $A$. Let these chains be $C_a^+$ and $C_a^-$. Then $\{C_a^-\cup\{a\}\cup C_a^+\}_{a\in A}$ is a minimum chain cover of $S$, completing the proof.
 
-???+ note "Mirsky 定理"
-    $S$ 的最长链长度等于最小的反链覆盖数．
+???+ note "Mirsky's Theorem"
+    The length of the longest chain of $S$ equals the minimum antichain cover number.
     
-    ??? note "证明"
-        设 $S$ 的最长链长度为 $d$，则由定义，最小反链覆盖数至少为 $d$.
+    ??? note "Proof"
+        Let the length of the longest chain of $S$ be $d$. By definition, the minimum antichain cover number is at least $d$.
         
-        令 $f(s)$ 为以 $s$ 为最小元的最长链长度，注意到若 $f(s)=f(t)$，则 $s$ 与 $t$ 不可比，进而 $(\forall~n\in\mathbf{N})~~f^{-1}(\{n\})$ 均为反链，其中 $f^{-1}(\{n\}):=\{a\in S:f(a)=n\}$ 称为 [水平集（level set）](https://en.wikipedia.org/wiki/Level_set)．
+        Let $f(s)$ be the length of the longest chain with $s$ as the minimal element. Note that if $f(s)=f(t)$, then $s$ and $t$ are incomparable. Thus $(\forall~n\in\mathbf{N})~~f^{-1}(\{n\})$ are all antichains, where $f^{-1}(\{n\}):=\{a\in S:f(a)=n\}$ is called a [level set](https://en.wikipedia.org/wiki/Level_set).
         
-        因此不难得出 $\{f^{-1}(\{i\}):1\leq i\leq d\}$ 是一个反链覆盖，从而最小反链覆盖数至多为 $d$.
+        Therefore, it follows that $\{f^{-1}(\{i\}):1\leq i\leq d\}$ is an antichain cover, so the minimum antichain cover number is at most $d$.
 
-Dilworth 定理与 [Hall 婚配定理](../graph/graph-matching/graph-match.md#hall-定理) 等价．
+Dilworth's theorem is equivalent to [Hall's marriage theorem](../graph/graph-matching/graph-match.md#hall-theorem).
 
-我们可以用 Dilworth 定理证明如下定理：
+We can use Dilworth's theorem to prove the following theorem:
 
-???+ note "Erdős–Szekeres 定理"
-    含至少 $rs+1$ 个元素的实数序列 $\{a_i\}$ 要么有一个长为 $r+1$ 的不下降子序列，要么有一个长为 $s+1$ 的不上升子序列．
+???+ note "Erdős–Szekeres Theorem"
+    Any sequence of $rs+1$ real numbers either has a non-decreasing subsequence of length $r+1$, or has a non-increasing subsequence of length $s+1$.
     
-    ??? note "证明"
-        设序列长度为 $n\geq rs+1$，定义偏序集 $\{(i,a_i)\}_{i=1}^{n}$，其上的偏序 $\preceq$ 定义为：
+    ??? note "Proof"
+        Let the sequence length be $n\geq rs+1$. Define the partially ordered set $\{(i,a_i)\}_{i=1}^{n}$ with partial order $\preceq$ defined as:
         
         $$
         (i,a_i)\preceq (j,a_j)\iff (i\leq j\land a_i\leq a_j)
         $$
         
-        假设该偏序集的宽度不超过 $s$，则由 Dilworth 定理可知该偏序集可以被至多 $s$ 条链覆盖，若这些链的长度都不超过 $r$，则序列所含元素数至多为 $rs$，与条件矛盾．
+        Suppose the width of this partially ordered set does not exceed $s$. Then by Dilworth's theorem, the partially ordered set can be covered by at most $s$ chains. If none of these chains has length exceeding $r$, the sequence contains at most $rs$ elements, contradicting the condition.
 
-### 例题
+### Example Problems
 
-???+ note "[Luogu P1020 \[NOIP1999 提高组\] 导弹拦截](https://www.luogu.com.cn/problem/P1020)"
-    某国为了防御敌国的导弹袭击，发展出一种导弹拦截系统．但是这种导弹拦截系统有一个缺陷：虽然它的第一发炮弹能够到达任意的高度，但是以后每一发炮弹都不能高于前一发的高度．某天，雷达捕捉到敌国的导弹来袭．由于该系统还在试用阶段，所以只有一套系统，因此有可能不能拦截所有的导弹．
+???+ note "[Luogu P1020 [NOIP1999 Senior Group] Missile Interception](https://www.luogu.com.cn/problem/P1020)"
+    A certain country has developed a missile interception system for defending against enemy missile attacks. However, this missile interception system has a flaw: while the first missile can reach any altitude, each subsequent missile cannot be higher than the previous one. One day, radar detects incoming enemy missiles. Since the system is still in the trial phase, there is only one system, so it may not be able to intercept all the missiles.
     
-    输入导弹依次飞来的高度，计算这套系统最多能拦截多少导弹，如果要拦截所有导弹最少要配备多少套这种导弹拦截系统．
+    Given the altitudes of the missiles in the order they arrive, compute the maximum number of missiles this system can intercept, and the minimum number of such missile interception systems needed to intercept all missiles.
     
-    对于全部数据，满足导弹的高度为正整数，且不超过 $5\times 10^4$.
+    For all data, the missile altitudes are positive integers not exceeding $5\times 10^4$.
     
-    ??? note "题解"
-        令一共有 $n$ 个导弹，第 $i$ 个导弹的高度为 $h_i$，则集合 $\{(i,h_i)\}_{i=1}^{n}$ 为偏序集，其上的偏序 $\preceq$ 定义为：
+    ??? note "Solution"
+        Let there be $n$ missiles, with the $i$-th missile at altitude $h_i$. The set $\{(i,h_i)\}_{i=1}^{n}$ is a partially ordered set with partial order $\preceq$ defined as:
         
         $$
         (i,h_i)\preceq(j,h_j) \iff (i\leq j \land h_i\geq h_j)
         $$
         
-        进而根据 Dilworth 定理有：**序列的不上升子序列的最少覆盖数等于最长上升子序列长度**．从而可以通过 [最长不下降子序列的 $O(n\log n)$ 做法](../dp/basic.md#算法二) 解决本题．
+        Then by Dilworth's theorem: **the minimum chain cover number of non-increasing subsequences equals the length of the longest non-decreasing subsequence**. Thus this problem can be solved using the $O(n\log n)$ method for the [longest non-decreasing subsequence](../dp/basic.md#algorithm-2).
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/math/code/order-theory/order-theory_1.cpp"
         ```
 
-???+ note "[\[TJOI2015\] 组合数学](https://www.luogu.com.cn/problem/P3974)"
-    给一个 $n$ 行 $m$ 列的网格图，其中每个格子中均有若干块财宝．每次从左上角出发，只能往右或下走，每次经过一个格子至多只能捡走一块财宝．问至少要走几次才可能把财宝全捡完．
+???+ note "[[TJOI2015] Combinatorics](https://www.luogu.com.cn/problem/P3974)"
+    Given an $n$ rows by $m$ columns grid, each cell contains several treasures. Starting from the top-left corner, you can only move right or down. Each time you pass through a cell, you can pick up at most one treasure. How many times must you walk to possibly collect all the treasures?
     
-    $1\le n \le 1000$，$1\le m \le 1000$，每个格子中的财宝不超过 $10^6$ 块．
+    $1\le n \le 1000$, $1\le m \le 1000$, each cell contains at most $10^6$ treasures.
     
-    ??? note "题解"
-        不考虑网格图的点权，不难发现按给定的规则下在网格图上行走等价于在 DAG 上行走，从而我们可以将其视作 Hasse 图来构造偏序集，进而根据 Dilworth 定理有：**DAG 的最小链覆盖数等于最大的点独立集大小**．
+    ??? note "Solution"
+        Ignoring the point weights of the grid, it is easy to see that walking on the grid following the given rules is equivalent to walking on a DAG. Thus we can view it as a Hasse diagram to construct a partially ordered set. By Dilworth's theorem: **the minimum chain cover number of a DAG equals the size of the largest vertex independent set**.
         
-        因此本题所求即为给定网格图最大点权独立集的点权和．
+        Therefore, the problem asks for the sum of weights of a maximum-weight vertex independent set in the given grid.
         
-        令 $a_{ij}$ 为网格图在点 $(i,j)$ 处的权值，$f(i,j)$ 为 从 $(i,j)$ 到 $(1,m)$ 这个子网格中的答案，注意到每个点都和其右上角的点不相邻，则状态转移方程为：
+        Let $a_{ij}$ be the weight at point $(i,j)$ in the grid, and $f(i,j)$ be the answer for the subgrid from $(i,j)$ to $(1,m)$. Note that each point is not adjacent to its upper-right diagonal point. The state transition equation is:
         
         $$
         f(i,j)=\max\{f(i-1,j),f(i,j+1),f(i-1,j+1)+a_{ij}\}
         $$
         
-        答案即为 $f(n,1)$.
+        The answer is $f(n,1)$.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/math/code/order-theory/order-theory_2.cpp"
         ```
 
-### 习题
+### Practice Problems
 
--   [\[CTSC2008\] 祭祀](https://www.luogu.com.cn/problem/P4298)
--   [CodeForces 590E Birthday](https://codeforces.com/problemset/problem/590/E)
+-   [[CTSC2008] Sacrifice](https://www.luogu.com.cn/problem/P4298)
+-   [CodeForces 590-E Birthday](https://codeforces.com/problemset/problem/590-E)
 
-## C++ 中的应用
+## Applications in C++
 
-另请参阅：[排序相关 STL -  算法基础](../basic/stl-sort.md)．
+See also: [Sorting-related STL - Algorithm Basics](../basic/stl-sort.md).
 
-C++ STL 中 [需要使用比较的算法和数据结构](https://en.cppreference.com/w/cpp/named_req/Compare#Standard_library) 中有序理论的应用．我们经常需要在 C++ 中自定义比较器，STL [要求](https://en.cppreference.com/w/cpp/named_req/Compare) 其必须为 **严格弱序**．令 $<$ 为自定义比较器，则可以定义：
+The C++ STL has [applications of order theory](https://en.cppreference.com/w/cpp/named_req/Compare#Standard_library) in algorithms and data structures that require comparisons. We often need to define custom comparators in C++. The STL [requires](https://en.cppreference.com/w/cpp/named_req/Compare) them to be **strict weak orders**. Let $<$ be the custom comparator. Then we can define:
 
--   $x>y$ 为 $y<x$；
--   $x \leq y$ 为 $y \nless x$；
--   $x \geq y$ 为 $x \nless y$；
--   $x=y$ 为 $x \nless y\land y \nless x$.
+-   $x>y$ as $y<x$;
+-   $x \leq y$ as $y \nless x$;
+-   $x \geq y$ as $x \nless y$;
+-   $x=y$ as $x \nless y\land y \nless x$.
 
-## 参考资料与拓展阅读
+## References and Further Reading
 
 1.  [Order theory - From Academic Kids](https://academickids.com/encyclopedia/index.php/Order_theory)
 2.  [Binary Relation - Wikipedia](https://en.wikipedia.org/wiki/Binary_relation)
@@ -286,12 +286,12 @@ C++ STL 中 [需要使用比较的算法和数据结构](https://en.cppreference
 4.  [Hasse diagram - Wikipedia](https://en.wikipedia.org/wiki/Hasse_diagram)
 5.  [Directed set - Wikipedia](https://en.wikipedia.org/wiki/Directed_set)
 6.  [Order Theory, Lecture Notes by Mark Dean for Decision Theory](http://www.columbia.edu/~md3405/DT_Order_15.pdf)
-7.  卢开澄，卢华明，[《组合数学》（第 3 版）](http://www.tup.tsinghua.edu.cn/bookscenter/book_00458101.html), 2006
+7.  Lu Kaicheng, Lu Huaming, [*Combinatorics* (3rd Edition)](http://www.tup.tsinghua.edu.cn/bookscenter/book_00458101.html), 2006
 8.  [List of Order Theory Topics - Wikipedia](https://en.wikipedia.org/wiki/List_of_order_theory_topics)
-9.  [浅谈邻项交换排序的应用以及需要注意的问题 by ouuan](https://ouuan.github.io/post/%E6%B5%85%E8%B0%88%E9%82%BB%E9%A1%B9%E4%BA%A4%E6%8D%A2%E6%8E%92%E5%BA%8F%E7%9A%84%E5%BA%94%E7%94%A8%E4%BB%A5%E5%8F%8A%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98/)
+9.  [A Discussion on Adjacent Exchange Sort and Its Caveats by ouuan](https://ouuan.github.io/post/%E6%B5%85%E8%B0%88%E9%82%BB%E9%A1%B9%E4%BA%A4%E6%8D%A2%E6%8E%92%E5%BA%8F%E7%9A%84%E5%BA%94%E7%94%A8%E4%BB%A5%E5%8F%8A%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98/)
 10. [One thing you should know about comparators—Strict Weak Ordering](https://codeforces.com/blog/entry/72525)
 11. [Dilworth's theorem - Wikipedia](https://en.wikipedia.org/wiki/Dilworth%27s_theorem)
 12. [Dilworth's Theorem | Brilliant Math & Science Wiki](https://brilliant.org/wiki/dilworths-theorem/)
 13. [Hall's marriage theorem - Wikipedia](https://en.wikipedia.org/wiki/Hall's_marriage_theorem)
 14. [Hall's Marriage Theorem | Brilliant Math & Science Wiki](https://brilliant.org/wiki/hall-marriage-theorem/)
-15. [Dilworth 学习笔记 - Selfish](https://www.luogu.com.cn/blog/Rolling-Code/dilworth)
+15. [Dilworth Learning Notes - Selfish](https://www.luogu.com.cn/blog/Rolling-Code/dilworth)

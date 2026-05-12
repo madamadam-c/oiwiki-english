@@ -1,44 +1,44 @@
 author: Ir1d, TianyiQ
 
-## 引入
+## Introduction
 
-随机增量算法是计算几何的一个重要算法，它对理论知识要求不高，算法时间复杂度低，应用范围广大．
+The randomized incremental algorithm is an important algorithm in computational geometry. It does not require much theoretical background, has low time complexity, and applies to a wide range of problems.
 
-增量法 (Incremental Algorithm) 的思想与第一数学归纳法类似，它的本质是将一个问题化为规模刚好小一层的子问题．解决子问题后加入当前的对象．写成递归式是：
+The idea of the incremental algorithm is similar to ordinary mathematical induction. Its essence is to reduce a problem to a subproblem whose size is exactly one smaller, solve that subproblem, and then add the current object. Written as a recurrence:
 
 $$
 T(n)=T(n-1)+g(n)
 $$
 
-增量法形式简洁，可以应用于许多的几何题目中．
+The incremental method has a concise form and can be applied to many geometry problems.
 
-增量法往往结合随机化，可以避免最坏情况的出现．
+The incremental method is often combined with randomization to avoid worst-case behavior.
 
-## 最小圆覆盖问题
+## Minimum Enclosing Circle Problem
 
-### 题意描述
+### Statement
 
-在一个平面上有 $n$ 个点，求一个半径最小的圆，能覆盖所有的点．
+Given $n$ points on a plane, find a circle with the minimum radius that covers all points.
 
-### 过程
+### Procedure
 
-假设圆 $O$ 是前 $i-1$ 个点的最小覆盖圆，加入第 $i$ 个点，如果在圆内或边上则什么也不做．否则，新得到的最小覆盖圆肯定经过第 $i$ 个点．
+Suppose circle $O$ is the minimum enclosing circle of the first $i-1$ points. Add the $i$-th point. If it lies inside or on the circle, do nothing. Otherwise, the new minimum enclosing circle must pass through the $i$-th point.
 
-然后以第 $i$ 个点为基础（半径为 $0$），重复以上过程依次加入第 $j$ 个点，若第 $j$ 个点在圆外，则最小覆盖圆必经过第 $j$ 个点．
+Then use the $i$-th point as the base, with radius $0$, and repeat the above process while adding the $j$-th point in order. If the $j$-th point lies outside the circle, the minimum enclosing circle must pass through the $j$-th point.
 
-重复以上步骤．（因为最多需要三个点来确定这个最小覆盖圆，所以重复三次）
+Repeat the above steps. Since at most three points are needed to determine this minimum enclosing circle, repeat three times.
 
-遍历完所有点之后，所得到的圆就是覆盖所有点得最小圆．
+After all points have been traversed, the resulting circle is the minimum circle covering all points.
 
-### 性质
+### Properties
 
-**时间复杂度**  $O(n)$，证明详见参考资料．
+**Time complexity**  $O(n)$. See the references for the proof.
 
-**空间复杂度**  $O(n)$
+**Space complexity**  $O(n)$
 
-### 实现
+### Implementation
 
-??? note "代码实现"
+??? note "Implementation"
     ```cpp
     #include <cmath>
     #include <cstdio>
@@ -108,17 +108,17 @@ $$
     }
     ```
 
-## 练习
+## Exercises
 
-[最小圆覆盖](https://www.luogu.com.cn/problem/P1742)
+[Minimum Enclosing Circle](https://www.luogu.com.cn/problem/P1742)
 
-[「HNOI2012」射箭](https://www.luogu.com.cn/problem/P3222)
+[HNOI2012 Archery](https://www.luogu.com.cn/problem/P3222)
 
 [CodeForces 442E](https://codeforces.com/problemset/problem/442/E)
 
-## 参考资料与扩展阅读
+## References and Further Reading
 
-[随机增量算法 - 解轶伦](https://github.com/hzwer/shareOI/blob/master/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/%E9%9A%8F%E6%9C%BA%E5%A2%9E%E9%87%8F%E7%AE%97%E6%B3%95_%E8%A7%A3%E8%BD%B6%E4%BC%A6.pdf)
+[Randomized Incremental Algorithm - Xie Yilun](https://github.com/hzwer/shareOI/blob/master/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/%E9%9A%8F%E6%9C%BA%E5%A2%9E%E9%87%8F%E7%AE%97%E6%B3%95_%E8%A7%A3%E8%BD%B6%E4%BC%A6.pdf)
 
 <https://www.cnblogs.com/aininot260/p/9635757.html>
 

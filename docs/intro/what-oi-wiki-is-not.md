@@ -1,67 +1,67 @@
 author: abc1763613206, HeRaNO, NachtgeistW, r-value, Tiphereth-A, wlbksy, YZircon, 0zu-cc, real01bit
 
-???+ warning "注意"
-    作为项目方针的一部分，本页面十分重要，每个贡献者都应确保您的贡献满足如下条件．
+???+ warning "Note"
+    As part of the project policy, this page is very important. Every contributor should ensure that their contributions satisfy the following requirements.
 
-## OI Wiki 不是发表原创研究的场所
+## OI Wiki Is Not a Place to Publish Original Research
 
-作为一个 Wiki，**OI Wiki** 不是发表 [原创研究](https://en.wikipedia.org/wiki/Wikipedia:No_original_research)（如 **新理论及解法**、**原创观点**、**自创定义或词语** 等）的场所．例如：
+As a wiki, **OI Wiki** is not a place to publish [original research](https://en.wikipedia.org/wiki/Wikipedia:No_original_research), such as **new theories or solutions**, **original opinions**, or **self-created definitions or terms**. For example:
 
--   您发现了某题目的非常规做法，若您不能证明该做法已经被应用于其他题目中，则 **不应** 在 **OI Wiki** 中开设单独的界面．
--   您提出了新的算法或数据结构，若您不能证明该内容已经被用于解决编程竞赛中的某一类问题，则 **不应** 将其提交至 **OI Wiki**．
+-   If you discover an unconventional solution to a problem but cannot prove that this method has already been applied to other problems, you **should not** create a standalone page for it on **OI Wiki**.
+-   If you propose a new algorithm or data structure but cannot prove that it has already been used to solve a class of programming contest problems, you **should not** submit it to **OI Wiki**.
 
-## OI Wiki 不是新闻的收集处
+## OI Wiki Is Not a News Aggregator
 
-作为泛中文为主语境之下、以编程竞赛相关内容为主的知识整合站点，**OI Wiki** 侧重于提供 **稳定沉淀并已取得广泛认可** 的信息．
+As a knowledge integration site mainly serving a broadly Chinese-language context and focused on programming contests, **OI Wiki** emphasizes information that has **stabilized over time and gained broad recognition**.
 
-换言之，除非是权威机构发布的信息（如中国计算机学会发布的赛制更新），您所贡献的内容应当是已经经过检验沉淀，获得了广泛认可，且在一段时间内不会产生时效性问题的信息．例如：
+In other words, unless the information is released by an authoritative organization, such as rule updates published by the China Computer Federation, your contribution should consist of information that has been tested over time, gained broad recognition, and is unlikely to become outdated soon. For example:
 
--   您发现 X 博士在某个位置发布了新的算法，若您想将其加入 **OI Wiki** 中，此时您应该观察其是否能获得广泛认可（如可作为正式比赛中的泛用优秀解法），且与 **OI Wiki** 中现存的算法有一定的区分性．
--   您发现 **OI Wiki** 中提到的某软件或人物出现了舆情问题，此时请您关注评论区等的相关公告，切勿重复开 issue 等说明问题．**OI Wiki** 的目的在于记载 **可长久流传的信息**，而不是 **带有时效性的临时信息**．
+-   If you find that Dr. X has published a new algorithm somewhere and want to add it to **OI Wiki**, you should first observe whether it can gain broad recognition, such as becoming a generally useful high-quality solution in official contests, and whether it is sufficiently distinct from algorithms already present on **OI Wiki**.
+-   If software or a person mentioned on **OI Wiki** becomes involved in a public controversy, please follow relevant announcements in the comment area or elsewhere, and do not repeatedly open issues to report it. The purpose of **OI Wiki** is to record **information that can remain useful for a long time**, not **temporary information with a short shelf life**.
 
-## OI Wiki 不是档案馆
+## OI Wiki Is Not an Archive
 
-**OI Wiki** 主站不会收录各类 **文献**、**课件**、**讲义**、**说明书** 等资料，若您想提交有关编程竞赛的资料，请移步至 [OI-wiki/libs](https://github.com/OI-wiki/libs)．
+The **OI Wiki** main site does not collect materials such as **papers**, **courseware**, **lecture notes**, or **manuals**. If you want to submit programming contest-related materials, please go to [OI-wiki/libs](https://github.com/OI-wiki/libs).
 
-## OI Wiki 不是宣传工具
+## OI Wiki Is Not a Promotional Tool
 
-**OI Wiki** 是一个知识整合站点，**不是** 演讲台、论坛、宣传工具等，因此在添加或修改条目时，请勿：
+**OI Wiki** is a knowledge integration site, **not** a podium, forum, promotional tool, or similar platform. Therefore, when adding or modifying entries, please do not:
 
--   发表观点或评论：**OI Wiki** 的内容必须 **客观中立**，如果您想要发表与 **OI Wiki** 有关的观点与评论，请移步至评论区或 issue 页面．如果您想要发表的观点与评论与 **OI Wiki** 无关，请移步至个人博客或论坛；
--   作任何形式的宣传行为：出于知识收录需要，**OI Wiki** 可以接受对「在编程竞赛领域已经 **广为人知** 的网站或软件」的介绍．除此之外，**OI Wiki** 不会接受任何非赞助商提供的任何宣传性质的内容．
+-   Publish opinions or comments: **OI Wiki** content must be **objective and neutral**. If you want to express opinions or comments related to **OI Wiki**, please use the comment area or issue pages. If your opinions or comments are unrelated to **OI Wiki**, please use a personal blog or forum.
+-   Carry out promotion in any form: for knowledge coverage purposes, **OI Wiki** may accept introductions to websites or software that are already **widely known** in the programming contest field. Apart from this, **OI Wiki** does not accept promotional content from non-sponsors.
 
-## OI Wiki 不是权威机构
+## OI Wiki Is Not an Authority
 
-作为一个主要依靠用户贡献的社区项目，**OI Wiki** 不具有权威性，不应也没有能力作为一个权威机构．**OI Wiki** 可以作为学习编程竞赛相关知识的参考，而不是标准教科书．作为一个社区维护的参考站点，您不应将 **OI Wiki** 用作最终的权威标准（如作为编程竞赛的「考纲」），也不应盲目采信所有 **OI Wiki** 的内容．**OI Wiki** 不对由使用 **OI Wiki** 的内容而产生的任何后果负责．
+As a community project that mainly relies on user contributions, **OI Wiki** is not authoritative, and neither should nor can act as an authority. **OI Wiki** can serve as a reference for learning programming contest-related knowledge, but it is not a standard textbook. As a community-maintained reference site, you should not treat **OI Wiki** as a final authoritative standard, such as a programming contest syllabus, nor should you blindly trust all **OI Wiki** content. **OI Wiki** is not responsible for any consequences arising from the use of its content.
 
-## OI Wiki 不是个人博客
+## OI Wiki Is Not a Personal Blog
 
-**OI Wiki** 基于「Wiki」一词，本质上是依靠用户 **协同编辑内容** 的社区．这就意味着，您所提供的内容应当 **尽量减轻个人色彩**，服务于整个 Wiki，关注您所贡献的相关词条的结构．切勿以撰写个人博客文章的思维对待 Wiki 中的条目．例如：
+As implied by the word "Wiki", **OI Wiki** is essentially a community that relies on users **collaboratively editing content**. This means that the content you provide should **minimize personal tone as much as possible**, serve the wiki as a whole, and pay attention to the structure of the relevant entries you contribute to. Do not treat wiki entries as personal blog posts. For example:
 
--   您 **不应** 将 **OI Wiki** 作为您个人博客的导航站点；
--   您 **不应** 在词条的描述中加入条目历史、个人吐槽、冷笑话等无关内容．
+-   You **should not** use **OI Wiki** as a navigation site for your personal blog.
+-   You **should not** add irrelevant content such as entry history, personal complaints, or bad jokes to entry descriptions.
 
-以上例子的反面均为撰写个人博客时的常见思维，而这些在提倡客观中立的 **OI Wiki** 中是不受欢迎的．
+The opposite of the examples above reflects common habits in personal blog writing, which are unwelcome on **OI Wiki**, where objectivity and neutrality are encouraged.
 
-## OI Wiki 不是译名标准委员会
+## OI Wiki Is Not a Translation Standardization Committee
 
-**OI Wiki** 的目标群体不是历史学家及语言学家，因此在外文名词的翻译中，**OI Wiki** 倾向于使用中文语境下 **已经获得了广泛认同** 的译文，即使它们可能是有瑕疵的．
+The target audience of **OI Wiki** is not historians or linguists. Therefore, when translating foreign terms, **OI Wiki** tends to use translations that have **already gained broad acceptance** in the Chinese-language context, even if they may be imperfect.
 
-在译文已经获得了广泛熟知认同的基础上，盲目因「正确性」而修改现有的译文只会引发更大的混淆与混乱，与之引发的文字游戏也会影响沟通效率．
+Once a translation has become widely known and accepted, blindly changing the existing translation in the name of "correctness" will only cause greater confusion and disorder, and the resulting word games will also reduce communication efficiency.
 
-## OI Wiki 不是百科全书
+## OI Wiki Is Not an Encyclopedia
 
-**OI Wiki** 收录的内容应限定在「已经被应用于编程竞赛」的计算机科学、数学等领域的部分知识．其他与编程竞赛无关的领域或知识均不适合收录于 **OI Wiki**．
+Content included in **OI Wiki** should be limited to parts of computer science, mathematics, and related fields that have **already been applied in programming contests**. Other fields or knowledge unrelated to programming contests are not suitable for **OI Wiki**.
 
-例如，如下的领域或知识 **不适合** 收录于 **OI Wiki**：
+For example, the following fields or knowledge are **not suitable** for inclusion in **OI Wiki**:
 
--   历史，艺术等无关领域；
--   [TBN 矩阵](https://learnopengl.com/Advanced-Lighting/Normal-Mapping) 等虽然从属于有关领域但目前不能应用于编程竞赛的知识；
--   [PID 控制](https://en.wikipedia.org/wiki/PID_controller)、[有限元法](https://en.wikipedia.org/wiki/Finite_element_method) 等目前不能应用于编程竞赛的领域算法；
--   [深度学习](https://en.wikipedia.org/wiki/Deep_learning)、[强化学习](https://en.wikipedia.org/wiki/Reinforcement_learning) 等目前不能应用于编程竞赛的通用算法．
+-   Unrelated fields such as history and art.
+-   Knowledge such as the [TBN matrix](https://learnopengl.com/Advanced-Lighting/Normal-Mapping), which belongs to related fields but currently cannot be applied to programming contests.
+-   Domain algorithms such as [PID control](https://en.wikipedia.org/wiki/PID_controller) and the [finite element method](https://en.wikipedia.org/wiki/Finite_element_method), which currently cannot be applied to programming contests.
+-   General algorithms such as [deep learning](https://en.wikipedia.org/wiki/Deep_learning) and [reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which currently cannot be applied to programming contests.
 
-## OI Wiki 不是编程语言的文档和学习指南
+## OI Wiki Is Not Programming Language Documentation or a Study Guide
 
-**OI Wiki** 收录的算法相较于代码实现，应更关心算法本身．算法的具体实现仅作为一种更加细致的理解或者实现提示，而不是给具体的语言学习者以方便．如果您想要学习某种语言，您应该阅读该语言的官方文档等资料．
+For algorithms included in **OI Wiki**, the focus should be on the algorithm itself rather than code implementation. Specific implementations are only provided as a more detailed aid to understanding or as implementation hints, not for the convenience of learners of a particular language. If you want to learn a language, you should read that language's official documentation and related materials.
 
-出于知识收录需要，**OI Wiki** 可以收录编程竞赛常用语言的简单使用指南．除此之外，**OI Wiki** 不会收录诸如「某编程语言的某标准库里某函数的实现细节等」与编程竞赛和算法关系不大的内容．
+For knowledge coverage purposes, **OI Wiki** may include simple usage guides for languages commonly used in programming contests. Apart from this, **OI Wiki** does not include content with little relation to programming contests or algorithms, such as implementation details of a function in a standard library of a programming language.

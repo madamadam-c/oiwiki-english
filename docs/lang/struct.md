@@ -1,13 +1,13 @@
 author: Ir1d, cjsoft, Lans1ot
 
-**结构体**（struct），可以看做是一系列称为成员元素的组合体．
+A **struct** can be regarded as a collection of elements called members.
 
-可以看做是自定义的数据类型．
+It can also be regarded as a custom data type.
 
 ???+ note "Note"
-    本页描述的 `struct` 不同于 C 中 `struct`，在 C++ 中 `struct` 被扩展为类似 [`class`](./class.md) 的类说明符．
+    The `struct` described on this page is different from `struct` in C. In C++, `struct` is extended into a class specifier similar to [`class`](./class.md).
 
-## 定义结构体
+## Defining a Struct
 
 ```cpp
 struct Object {
@@ -20,17 +20,17 @@ Object b, B[array_length], tmp;
 Object *c;
 ```
 
-上例中定义了一个名为 `Object` 的结构体，两个成员元素 `value, weight`，类型都为 `int`．
+The example above defines a struct named `Object` with two members, `value` and `weight`, both of type `int`.
 
-在 `}` 后，定义了数据类型为 `Object` 的常量 `a`，变量 `b`，变量 `tmp`，数组 `B`，指针 `c`．对于某种已经存在的类型，都可以使用这里的方法进行定义常量、变量、指针、数组等．
+After `}`, it defines a constant `a`, variables `b` and `tmp`, an array `B`, and a pointer `c`, all with data type `Object`. For any existing type, you can use this method to define constants, variables, pointers, arrays, and so on.
 
-*关于指针：不必强求掌握．*
+*About pointers: you do not have to master them immediately.*
 
-### 定义指针
+### Defining Pointers
 
-如果是定义内置类型的指针，则与平常定义指针一样．
+If you are defining a pointer to a built-in type, define it the same way as usual.
 
-如果是定义结构体指针，在定义中使用 `StructName*` 进行定义．
+If you are defining a pointer to a struct, use `StructName*` in the definition.
 
 ```cpp
 struct Edge {
@@ -41,34 +41,34 @@ struct Edge {
 };
 ```
 
-上例仅作举例，不必纠结实际意义．
+The example above is only illustrative; do not worry about its practical meaning.
 
-## 访问/修改成员元素
+## Accessing/Modifying Members
 
-可以使用 `变量名.成员元素名` 进行访问．例如可以使用 `cout << var.v` 来输出 `var` 的 `v` 成员．
+You can access members with `variable_name.member_name`. For example, `cout << var.v` outputs the `v` member of `var`.
 
-也可以使用 `指针名->成员元素名` 或者 使用 `(*指针名).成员元素名` 进行访问．例如使用 `(*ptr).v = tmp` 或者 `ptr->v = tmp` 可以将结构体指针 `ptr` 指向的结构体的成员元素 `v` 赋值为 `tmp`：．
+You can also access members with `pointer_name->member_name` or `(*pointer_name).member_name`. For example, `(*ptr).v = tmp` or `ptr->v = tmp` assigns `tmp` to the member `v` of the struct pointed to by the struct pointer `ptr`.
 
-## 为什么需要结构体？
+## Why Use Structs?
 
-首先，条条大路通罗马，可以不使用结构体达到相同的效果．但是结构体能够显式地将成员元素（在算法竞赛中通常是变量）捆绑在一起，如本例中的 `Object` 结构体，便将 `value,weight` 放在了一起（定义这个结构体的实际意义是表示一件物品的重量与价值）．这样的好处边是限制了成员元素的使用．  
-想象一下，如果不使用结构体而且有两个数组 `value[], Value[]`，很容易写混淆．但如果使用结构体，能够减轻出现使用变量错误的几率．
+First, many roads lead to Rome: you can achieve the same effect without structs. However, structs can explicitly bind members (usually variables in algorithm competitions) together. For example, the `Object` struct in this page puts `value` and `weight` together; its practical meaning is to represent the weight and value of an item. One benefit is that it constrains how members are used.  
+Imagine using two arrays, `value[]` and `Value[]`, without a struct. It is easy to mix them up. Using a struct can reduce the chance of using the wrong variable.
 
-并且不同的结构体（结构体类型，如 `Object` 这个结构体）或者不同的结构体变量（结构体的实例，如上方的 `e` 数组）可以拥有相同名字的成员元素（如 `tmp.value,b.value`），同名的成员元素相互独立（拥有独自的内存，比如说修改 `tmp.value` 不会影响 `b.value` 的值）．  
-这样的好处是可以使用尽可能相同或者相近的变量去描述一个物品．比如说 `Object` 里有 `value` 这个成员变量；我们还可以定义一个 `Car` 结构体，同时也拥有 `value` 这个成员；如果不使用结构体，或许我们就需要定义 `valueOfObject[],valueOfCar[]` 等不同名称的数组来区分．
+Also, different structs (struct types, such as `Object`) or different struct variables (instances of a struct, such as the array `e` above) can have members with the same name (such as `tmp.value` and `b.value`). Members with the same name are independent and have their own memory; for example, modifying `tmp.value` does not affect the value of `b.value`.  
+This makes it possible to use identical or similar variable names to describe an object. For example, `Object` has a member variable `value`; we can also define a `Car` struct that also has a `value` member. Without structs, we might need arrays with different names such as `valueOfObject[]` and `valueOfCar[]` to distinguish them.
 
-*如果想要更详细的描述一种事物，还可以定义成员函数．请参考 [类](./class.md) 获取详细内容．*
+*If you want to describe something in more detail, you can also define member functions. See [classes](./class.md) for details.*
 
-## 更多的操作？
+## More Operations?
 
-详见 [类](./class.md)．
+See [classes](./class.md).
 
-## 注意事项
+## Notes
 
-为了访问内存的效率更高，编译器在处理结构中成员的实际存储情况时，可能会将成员对齐在一定的字节位置，也就意味着结构中有空余的地方．因此，该结构所占用的空间可能大于其中所有成员所占空间的总和．
+To improve memory access efficiency, when the compiler lays out the actual storage of members in a struct, it may align members to certain byte positions. This means there may be padding inside the struct. Therefore, the space occupied by the struct may be larger than the total space occupied by all of its members.
 
-## 参考资料
+## References
 
-1.  [Class - zh.cppreference.com](https://zh.cppreference.com/w/cpp/language/class)
+1.  [Classes - cppreference.com](https://en.cppreference.com/w/cpp/language/class)
 2.  [Data structures - cplusplus.com](http://www.cplusplus.com/doc/tutorial/structures/)
-3.  [对齐方式 - Microsoft Docs](https://docs.microsoft.com/zh-cn/cpp/cpp/alignment-cpp-declarations)
+3.  [Alignment - Microsoft Docs](https://learn.microsoft.com/en-us/cpp/cpp/alignment-cpp-declarations)

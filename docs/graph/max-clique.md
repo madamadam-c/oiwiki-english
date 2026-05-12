@@ -1,45 +1,45 @@
 author: Persdre
 
-前置知识：[团](./concept.md)
+Prerequisites: [Clique](./concept.md)
 
-## 引入
+## Introduction
 
-在计算机科学中，团问题指的是在给定的图中找到团（顶点的子集，都彼此相邻，也称为完全子图）的计算问题．
+In computer science, the clique problem refers to the computational problem of finding a clique (a subset of vertices where every two vertices are adjacent, also called a complete subgraph) in a given graph.
 
-团的问题在现实生活中也有体现．例如我们考虑一个社交网络，其中图的点代表用户，图的边代表其所连接的两个用户互相认识．那么我们找到了一个团，也就找到了一群互相认识的人．
+Clique problems also appear in real life. Consider a social network where vertices represent users and edges represent that the two connected users know each other. Finding a clique in this graph means finding a group of people who all know each other.
 
-我们如果想要找到这个社交网络中最大的一群互相认识的人，那么就需要用到最大团搜索算法．
+To find the largest such group of mutual acquaintances, we need a maximum clique search algorithm.
 
-我们已经介绍了 [极大团](./concept.md) 的概念，最大团指的是点数量最多的极大团．
+We've already introduced the concept of [maximal clique](./concept.md). The maximum clique is the maximal clique with the most vertices.
 
-## 解释
+## Explanation
 
-想法是利用递归和回溯，用一个列表存储点，每次加入点进来都检查这些点是否仍在一个团中．如果加入进来这个点后就无法还是一个团了，就回溯到满足条件的位置，重新加入别的点．
+The idea is to use recursion and backtracking. Maintain a list of vertices, and each time we add a vertex, check if these vertices still form a clique. If adding a vertex makes it impossible to remain a clique, backtrack to the last valid state and try a different vertex.
 
-采用回溯策略的原因是，我们并不知道某个顶点 $v$  **最终** 是否是最大团中的成员．如果递归算法选择 $v$ 作为最大团的成员时，并没有找到最大团，那么应该回溯，并查找最大团中没有 $v$ 的解．
+Backtracking is used because we don't know whether a vertex $v$ will ultimately be a member of a maximum clique. If the recursive algorithm chooses $v$ as a member but fails to find the maximum clique, it should backtrack and look for a solution that doesn't include $v$.
 
-## 过程
+## Process
 
-**Bron–Kerbosch** 算法对于这种想法进行了优化实现．它的基础形式是通过给定三个集合：$R$、$P$、$X$ 来递归地进行搜索．步骤如下：
+The **Bron–Kerbosch** algorithm provides an optimized implementation of this idea. Its basic form uses three sets: $R$, $P$, and $X$, and performs a recursive search. Steps:
 
-1.  初始化集合 $R,X$ 分别为空，集合 $P$ 是图中所有点的集合．
-2.  每次从集合 $P$ 中取顶点 $v$，当集合中没有顶点时，有两种情况：
-    1.  集合 $R$ 是最大团，此时集合 $X$ 为空
-    2.  无最大团，此时回溯
-3.  对于每一个从集合 $P$ 中取得的顶点 $v$，有如下处理：
-    1.  将顶点 $v$ 加到集合 $R$ 中，之后递归集合 $R,P,X$
-    2.  从集合 $P$ 中删除顶点 $v$，并将顶点 $v$ 添加到集合 $X$ 中
-    3.  若集合 $P,X$ 都为空，则集合 $R$ 即为最大团
+1. Initialize $R$ and $X$ as empty sets, and $P$ as the set of all vertices in the graph.
+2. Each time we take a vertex $v$ from set $P$. When there are no vertices left, there are two cases:
+    1. Set $R$ is a maximal clique, and set $X$ is empty.
+    2. No maximal clique exists, so we backtrack.
+3. For each vertex $v$ taken from set $P$, the processing is:
+    1. Add vertex $v$ to set $R$, then recursively call on $R, P, X$.
+    2. Remove vertex $v$ from set $P$, and add vertex $v$ to set $X$.
+    3. If both sets $P$ and $X$ are empty, then set $R$ is a maximal clique.
 
-此方法也可继续优化．为了节省时间让算法更快的回溯，可以通过设定关键点（pivot vertex）来进行搜索．另一种优化思路是在开始时把所有点排序，枚举时按照下标顺序，防止重复．
+This method can be further optimized. To save time and enable faster backtracking, we can use a pivot vertex. Another optimization is to sort all vertices at the start and enumerate them in order to avoid duplicates.
 
-## 实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 ```text
 R := {}
-P := node set of G 
+P := node set of G
 X := {}
 
 BronKerbosch1(R, P, X):
@@ -51,59 +51,59 @@ BronKerbosch1(R, P, X):
         X := X ⋃ {v}
 ```
 
-### C++ 实现
+### C++ Implementation
 
-??? note "实现代码"
+??? note "Implementation Code"
     ```cpp
     --8<-- "docs/graph/code/max-clique/max-clique_1.cpp"
     ```
 
-## 例题
+## Examples
 
 ???+ note "[POJ 2989: All Friends](http://poj.org/problem?id=2989)"
-    题目大意：给出 $n$ 个人，其中有 $m$ 对朋友，求最大团数量．
+    Problem: Given $n$ people and $m$ pairs of friends, find the number of maximal cliques.
 
-思路：模版题，要用 Bron–Kerbosch 算法
+    Approach: Template problem requiring the Bron–Kerbosch algorithm.
 
-伪代码：
+    Pseudocode:
 
-```text
- BronKerbosch(All, Some, None):  
-     if Some and None are both empty:  
-         report All as a maximal clique // 所有点已选完，且没有不能选的点，累加答案  
-     for each vertex v in Some: // 枚举 Some 中的每一个元素  
-         BronKerbosch1(All ⋃ {v}, Some ⋂ N(v), None ⋂ N(v))   
-         // 将 v 加入 All，显然只有与 v 为朋友的人才能作为备选，None 中也只有与 v 为朋友的才会对接下来造成影响  
-         Some := Some - {v} // 已经搜过，从 Some 中删除，加入 None  
-         None := None ⋃ {v} 
-```
-
-为了节省时间和让算法更快的回溯，我们可以通过设定关键点（pivot vertex）$v$ 进行优化．
-
-我们知道在上述的算法中必然有许多重复计算之前计算过的极大团，然后回溯的过程．
-
-以前文提到的 $R$、$P$、$X$ 三个集合为例：
-
-我们考虑如下问题，取集合 $P\cup X$ 中的一个点 $u$，要与 $R$ 集合构成极大团，那么取的点必然是 $P\cap N(u)$ 中一个点（$N(u)$ 代表与 $u$ 相邻的点）．
-
-如果取完 $u$ 之后我们再取与 $u$ 相邻的点 $v$ 也能加入到极大团，那么我们只取 $u$ 就好了．这样做可以减少之后对 $v$ 的重复计算．我们之后只需要取与 $u$ 不相邻的点．
-
-加入优化后的 C++ 代码实现：
-
-??? note "实现代码"
-    ```cpp
-    --8<-- "docs/graph/code/max-clique/max-clique_2.cpp"
+    ```text
+     BronKerbosch(All, Some, None):
+         if Some and None are both empty:
+             report All as a maximal clique // all vertices selected, no excluded vertices, increment answer
+         for each vertex v in Some: // enumerate each element in Some
+             BronKerbosch1(All ⋃ {v}, Some ⋂ N(v), None ⋂ N(v))
+             // add v to All; only v's friends can be candidates; only v's friends in None affect future processing
+             Some := Some - {v} // already processed, remove from Some and add to None
+             None := None ⋃ {v}
     ```
 
-## 习题
+    To save time and enable faster backtracking, we can optimize by selecting a pivot vertex $v$.
 
--   [ZOJ 1492 Maximum Clique](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=4&problemSetProblemId=91827364991)
--   [POJ 1419 无向图最大团](http://poj.org/problem?id=1419)
--   [POJ 1129 广播电台](http://poj.org/problem?id=1129)
+    In the algorithm above, there are inevitably many repeated computations of the same maximal cliques followed by backtracking.
 
-## 参考资料
+    Using the sets $R$, $P$, $X$ mentioned earlier:
 
--   [团问题 - 维基百科](https://en.wikipedia.org/wiki/Clique_problem)
--   [无向图的极大团、最大团（Bron–Kerbosch 算法）](https://blog.csdn.net/yo_bc/article/details/77453478)
--   [最大团问题——Bron–Kerbosch 算法](https://hallelujahjeff.github.io/2018/04/12/34/)
--   [最大团问题](https://www.cnblogs.com/zhj5chengfeng/archive/2013/07/29/3224092.html)
+    Consider the following: pick a vertex $u$ from $P \cup X$. To form a maximal clique with $R$, the vertices we pick must be in $P \cap N(u)$ ($N(u)$ denotes vertices adjacent to $u$).
+
+    If after picking $u$, a vertex $v$ adjacent to $u$ can also be added to the maximal clique, then picking only $u$ is sufficient. This reduces redundant computation of $v$ later. We only need to pick vertices not adjacent to $u$.
+
+    C++ code with this optimization:
+
+    ??? note "Implementation Code"
+        ```cpp
+        --8<-- "docs/graph/code/max-clique/max-clique_2.cpp"
+        ```
+
+## Exercises
+
+- [ZOJ 1492 Maximum Clique](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=4&problemSetProblemId=91827364991)
+- [POJ 1419 Maximum Clique in an Undirected Graph](http://poj.org/problem?id=1419)
+- [POJ 1129 Radio Station](http://poj.org/problem?id=1129)
+
+## References
+
+- [Clique Problem - Wikipedia](https://en.wikipedia.org/wiki/Clique_problem)
+- [Maximal and Maximum Cliques in Undirected Graphs (Bron–Kerbosch Algorithm)](https://blog.csdn.net/yo_bc/article/details/77453478)
+- [Maximum Clique Problem — Bron–Kerbosch Algorithm](https://hallelujahjeff.github.io/2018/04/12/34/)
+- [Maximum Clique Problem](https://www.cnblogs.com/zhj5chengfeng/archive/2013/07/29/3224092.html)

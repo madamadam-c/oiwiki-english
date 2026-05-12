@@ -1,99 +1,99 @@
 author: GitPinkRabbit, Early0v0, Backl1ght, mcendu, ksyx, iamtwz, Xeonacid, kenlig, Menci, Enter-tainer, CCXXXI, hcx2012Git
 
-在阅读下列内容之前，请务必了解 [图论相关概念](./concept.md) 部分．
+Before reading the following content, make sure you understand the [graph theory concepts](./concept.md) section.
 
-相关阅读：[割点和桥](./cut.md)．
+Related reading: [Articulation Points and Bridges](./cut.md).
 
-## 引入
+## Introduction
 
-众所周知，树（或森林）有很好的性质，并且容易通过很多常见数据结构维护．
+As is well known, trees (or forests) have good properties and are easy to maintain using many common data structures.
 
-而一般图则没有那么好的性质，所幸有时我们可以把一般图上的某些问题转化到树上考虑．
+General graphs, however, do not have such nice properties. Fortunately, sometimes we can transform problems on general graphs into tree problems.
 
-而圆方树（Block forest 或 Round-square tree）[^ref1]就是一种将图变成树的方法．本文将介绍圆方树的构建，性质和一些应用．
+The Block-forest (also called Round-square tree)[^ref1] is a method to transform a graph into a tree. This article will introduce the construction, properties, and some applications of the block-forest tree.
 
-限于篇幅，本文中有一些结论未经证明，读者可以自行理解或证明．
+Due to space limitations, some conclusions in this article are not proved. Readers can understand or prove them on their own.
 
-## 定义
+## Definitions
 
-圆方树最初是处理「仙人掌图」（每条边在不超过一个简单环中的无向图）的一种工具，不过发掘它的更多性质，有时我们可以在一般无向图上使用它．
+The block-forest tree was originally a tool for processing "cactus graphs" (undirected graphs where each edge belongs to at most one simple cycle). However, by exploring its further properties, we can sometimes use it on general undirected graphs.
 
-要介绍圆方树，首先要介绍 **点双连通分量**．
+To introduce the block-forest tree, we first need to introduce **biconnected components** (also called vertex biconnected components).
 
-一个 **点双连通图** 的一个定义是：图中任意两不同点之间都有至少两条点不重复的路径．  
-点不重复既指路径上点不重复（简单路径），也指两条路径的交集为空（当然，路径必然都经过出发点和到达点，这不在考虑范围内）．
+One definition of a **biconnected graph** is: between any two distinct vertices in the graph, there exist at least two vertex-disjoint paths.
+Vertex-disjoint means that the paths have no vertices in common (simple paths), and the two paths have empty intersection (of course, the paths must both pass through the starting and ending vertices, which are not considered).
 
-可以发现对于只有一个点的图比较难定义它是不是一个点双，这里先不考虑节点数为 $1$ 的图．
+It can be seen that graphs with only one vertex are difficult to define as biconnected. Here we do not consider graphs with 1 vertex.
 
-一个近乎等价的定义是：不存在割点的图．  
-这个定义只在图中只有两个点，一条连接它们的边时失效．它没有割点，但是并不能找到两条不相交的路径，因为只有一条路径．  
-（也可以理解为那一条路径可以算两次，的确没有交，因为不经过其他点）
+An almost equivalent definition is: a graph without cut vertices.
+This definition only fails when the graph has exactly two vertices connected by one edge. It has no cut vertex, but we cannot find two vertex-disjoint paths because there is only one path.
+(We can also interpret that the single path can be counted twice, and indeed there is no intersection since no other vertices are traversed.)
 
-虽然原始的定义的确是前者，但是为了方便，我们规定点双图的定义采用后者．
+Although the original definition is indeed the former, for convenience, we adopt the latter as the definition of a biconnected graph.
 
-而一个图的 **点双连通分量** 则是一个 **极大点双连通子图**．  
-与强连通分量等不同，一个点可能属于多个点双，但是一条边属于恰好一个点双（如果定义采用前者则有可能不属于任何点双）．
+A **biconnected component** of a graph is a **maximally biconnected subgraph**.
+Unlike strongly connected components, a vertex may belong to multiple biconnected components, but an edge belongs to exactly one biconnected component (if we use the first definition, an edge might not belong to any biconnected component).
 
-在圆方树中，原来的每个点对应一个 **圆点**，每一个点双对应一个 **方点**．  
-所以共有 $n+c$ 个点，其中 $n$ 是原图点数，$c$ 是原图点双连通分量的个数．
+In a block-forest tree, each original vertex corresponds to a **circle node** (or round node), and each biconnected component corresponds to a **square node**.  
+Therefore, there are $n+c$ nodes in total, where $n$ is the number of vertices in the original graph and $c$ is the number of biconnected components.
 
-而对于每一个点双连通分量，它对应的方点向这个点双连通分量中的每个点连边．  
-每个点双形成一个「菊花图」，多个「菊花图」通过原图中的割点连接在一起（因为点双的分隔点是割点）．
+For each biconnected component, its corresponding square node connects to every vertex in that biconnected component.
+Each biconnected component forms a "star" (multiple square nodes connecting to a central vertex), and multiple "stars" are connected through cut vertices of the original graph (because cut vertices separate biconnected components).
 
-显然，圆方树中每条边连接一个圆点和一个方点．
+Clearly, every edge in a block-forest tree connects a circle node and a square node.
 
-下面的图显示了一张图对应的点双和圆方树形态．[^ref2]
+The following diagram shows the biconnected components and the block-forest tree structure of a graph.[^ref2]
 
 ![](./images/block-forest1.svg)![](./images/block-forest2.svg)![](./images/block-forest3.svg)
 
-圆方树的点数小于 $2n$，这是因为割点的数量小于 $n$，所以请注意各种数组大小要开两倍．
+The number of nodes in a block-forest tree is less than $2n$, because the number of cut vertices is less than $n$. Please note that various array sizes should be doubled.
 
-其实，如果原图连通，则「圆方树」才是一棵树，如果原图有 $k$ 个连通分量，则它的圆方树也会形成 $k$ 棵树形成的森林．
+In fact, if the original graph is connected, the "block-forest tree" is indeed a tree. If the original graph has $k$ connected components, its block-forest tree will form a forest of $k$ trees.
 
-如果原图中某个连通分量只有一个点，则需要具体情况具体分析，我们在后续讨论中不考虑孤立点．
+If a connected component in the original graph consists of only one vertex, specific analysis is needed. We do not consider isolated vertices in the following discussion.
 
-## 过程
+## Construction
 
-对于一个图，如何构造出它的圆方树呢？首先可以发现如果图不连通，可以拆分成每个连通子图考虑，所以我们只考虑连通图．
+For a given graph, how do we construct its block-forest tree? First, note that if the graph is not connected, we can split it into connected components. So we only consider connected graphs.
 
-因为圆方树是基于点双连通分量的，而点双连通分量又基于割点，所以只需要用类似求割点的方法即可．
+Since the block-forest tree is based on biconnected components, and biconnected components are based on cut vertices, we only need to use a method similar to finding cut vertices.
 
-求割点的常用算法是 Tarjan 算法，如果你会了理解下面的内容就很简单了，如果你不会也没关系．
+The common algorithm for finding cut vertices is Tarjan's algorithm. If you know it, understanding the following content will be easy. If you don't, that's fine.
 
-我们跳过 Tarjan 求割点，直接介绍圆方树使用的算法（其实是 Tarjan 的变体）：
+We skip Tarjan's algorithm for finding cut vertices and directly introduce the algorithm used for block-forest trees (which is actually a variant of Tarjan):
 
-对图进行 DFS，并且中间用到了两个关键数组 `dfn` 和 `low`（类似于 Tarjan）．
+Perform a DFS on the graph, using two key arrays `dfn` and `low` (similar to Tarjan).
 
-`dfn[u]` 存储的是节点 $u$ 的 DFS 序，即第一次访问到 $u$ 时它是第几个被访问的节点．  
-`low[u]` 存储的是节点 $u$ 的 DFS 树中的子树中的某个点 $v$ 通过 **最多一次返祖边或向父亲的树边** 能访问到的点的 **最小** DFS 序．  
-如果没有听说过 Tarjan 算法可能会有点难理解，让我们举个例子吧：
+`dfn[u]` stores the DFS order of vertex $u$, i.e., the order in which $u$ is first visited.
+`low[u]` stores the minimum DFS order that some vertex $v$ in the DFS subtree of $u$ can reach using **at most one back edge or tree edge to the parent**.
+If you haven't heard of Tarjan's algorithm, this might be a bit difficult to understand. Let me give an example:
 
 ![](./images/block-forest4.svg)
 
-（可以发现这张图其实和上面图片中的图等价）  
-这里树边从上至下用直线画出，返祖边从下至上用曲线画出．节点的编号便是它的 DFS 序．
+(You can see this graph is equivalent to the one in the diagram above.)  
+Here, tree edges are drawn as straight lines from top to bottom, and back edges are drawn as curves from bottom to top. The node numbers are their DFS orders.
 
-则有 `low` 数组如下：
+Then the `low` array is as follows:
 
 |        $i$        | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ | $7$ | $8$ | $9$ |
 | :---------------: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 | $\mathrm{low}[i]$ | $1$ | $1$ | $1$ | $3$ | $3$ | $4$ | $3$ | $3$ | $7$ |
 
-并不是很难理解吧，注意这里 $9$ 的 `low` 是 $7$，与一些求割点的做法有差异，因为为了方便，我们规定了可以通过父边向上，但主要思想是相同的．
+It's not difficult to understand. Note that the `low` of 9 is 7, which differs from some implementations for finding cut vertices. For convenience, we allow going up through the parent edge, but the main idea is the same.
 
-我们可以很容易地写出计算 `dfn` 和 `low` 的 DFS 函数（初始时 `dfn` 数组清零）：
+We can easily write a DFS function to compute `dfn` and `low` (initially, set all `dfn` to zero):
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void Tarjan(int u) {
-          low[u] = dfn[u] = ++dfc;                // low 初始化为当前节点 dfn
-          for (int v : G[u]) {                    // 遍历 u 的相邻节点
-            if (!dfn[v]) {                        // 如果未访问过
-              Tarjan(v);                          // 递归
-              low[u] = std::min(low[u], low[v]);  // 未访问的和 low 取 min
+          low[u] = dfn[u] = ++dfc;                // low is initialized to current node's dfn
+          for (int v : G[u]) {                    // iterate through adjacent nodes of u
+            if (!dfn[v]) {                        // if not visited
+              Tarjan(v);                          // recursive call
+              low[u] = std::min(low[u], low[v]);  // take min with low of unvisited nodes
             } else
-              low[u] = std::min(low[u], dfn[v]);  // 已访问的和 dfn 取 min
+              low[u] = std::min(low[u], dfn[v]);  // take min with dfn of visited nodes
           }
         }
         ```
@@ -101,42 +101,42 @@ author: GitPinkRabbit, Early0v0, Backl1ght, mcendu, ksyx, iamtwz, Xeonacid, kenl
     === "Python"
         ```python
         def Tarjan(u):
-            low[u] = dfn[u] = dfc  # low 初始化为当前节点 dfn
+            low[u] = dfn[u] = dfc  # low is initialized to current node's dfn
             dfc = dfc + 1
-            for v in G[u]:  # 遍历 u 的相邻节点
-                if dfn[v] == False:  # 如果未访问过
-                    Tarjan(v)  # 递归
-                    low[u] = min(low[u], low[v])  # 未访问的和 low 取 min
+            for v in G[u]:  # iterate through adjacent nodes of u
+                if dfn[v] == False:  # if not visited
+                    Tarjan(v)  # recursive call
+                    low[u] = min(low[u], low[v])  # take min with low of unvisited nodes
                 else:
-                    low[u] = min(low[u], dfn[v])  # 已访问的和 dfn 取 min
+                    low[u] = min(low[u], dfn[v])  # take min with dfn of visited nodes
         ```
 
-接下来，我们考虑点双和 DFS 树以及这两个数组之间的关联．
+Next, we consider the relationship between biconnected components, the DFS tree, and these two arrays.
 
-可以发现，每个点双在 DFS 树上是一棵连通子树，并至少包含两个点；特别地，最顶端节点仅往下接一个点．
+It can be observed that each biconnected component is a connected subtree in the DFS tree and contains at least two vertices. In particular, the topmost node has only one child.
 
-同时还可以发现每条树边恰好在一个点双内．
+It can also be observed that each tree edge belongs to exactly one biconnected component.
 
-我们考虑一个点双在 DFS 树中的最顶端节点 $u$，在 $u$ 处确定这个点双，因为 $u$ 的子树包含了整个点双的信息．
+We consider the topmost node $u$ of a biconnected component in the DFS tree. We determine the biconnected component at $u$, because $u$'s subtree contains the information of the entire biconnected component.
 
-因为至少有两个点，考虑这个点双的下一个点 $v$，则有 $u$，$v$ 之间存在一条树边．
+Since there are at least two vertices, consider the next vertex $v$ in this biconnected component. Then there is a tree edge between $u$ and $v$.
 
-不难发现，此时一定有 $\mathrm{low}[v]=\mathrm{dfn}[u]$．  
-更准确地说，对于一条树边 $u\to v$，$u,v$ 在同一个点双中，且 $u$ 是这个点双中深度最浅的节点 **当且仅当** $\mathrm{low}[v]=\mathrm{dfn}[u]$．
+It is not hard to see that at this point, we must have $\mathrm{low}[v]=\mathrm{dfn}[u]$.
+More precisely, for a tree edge $u\to v$, $u$ and $v$ are in the same biconnected component, and $u$ is the shallowest node in this biconnected component **if and only if** $\mathrm{low}[v]=\mathrm{dfn}[u]$.
 
-那么我们可以在 DFS 的过程中确定哪些地方存在点双，但是还不能准确确定一个点双所包含的点集．
+Therefore, we can identify where biconnected components exist during the DFS process, but we cannot yet accurately determine the set of vertices in a biconnected component.
 
-这并不难处理，我们可以在 DFS 过程中维护一个栈，存储还未确定所属点双（可能有多个）的节点．
+This is not difficult to handle. We can maintain a stack during DFS, storing vertices whose biconnected component membership has not yet been determined (possibly multiple).
 
-在找到点双时，点双中除了 $u$ 以外的其他的点都集中在栈顶端，只需要不断弹栈直到弹出 $v$ 为止即可．
+When we find a biconnected component, all vertices in it except $u$ are at the top of the stack. We just need to pop from the stack until we pop $v$.
 
-当然，我们可以同时处理被弹出的节点，只要将其和新建的方点连边即可．最后还要让 $u$ 和方点连边．
+Of course, we can process the popped vertices simultaneously by connecting them to the newly created square node. Finally, we also connect $u$ to the square node.
 
-这样就很自然地完成了圆方树的构建，我们可以给方点标号为 $n+1$ 开始的整数，这样可以有效区分圆点和方点．
+This naturally completes the construction of the block-forest tree. We can label square nodes with integers starting from $n+1$, so that circle nodes and square nodes can be easily distinguished.
 
-这部分可能讲述得不够清晰，下面贴出一份代码，附有详尽注释以及帮助理解的输出语句和一份样例，建议读者复制代码并自行实践理解，毕竟代码才是最能帮助理解的（不要忘记开 `c++11`）．
+This section might not be entirely clear. Below is a piece of code with detailed comments and helpful output statements, along with a sample input. Readers are encouraged to copy the code and practice understanding it. After all, code is the best way to understand (don't forget to enable C++11).
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -152,29 +152,29 @@ author: GitPinkRabbit, Early0v0, Backl1ght, mcendu, ksyx, iamtwz, Xeonacid, kenl
     
     void Tarjan(int u) {
       printf("  Enter : #%d\n", u);
-      low[u] = dfn[u] = ++dfc;                // low 初始化为当前节点 dfn
-      stk[++tp] = u;                          // 加入栈中
-      for (int v : G[u]) {                    // 遍历 u 的相邻节点
-        if (!dfn[v]) {                        // 如果未访问过
-          Tarjan(v);                          // 递归
-          low[u] = std::min(low[u], low[v]);  // 未访问的和 low 取 min
-          if (low[v] == dfn[u]) {  // 标志着找到一个以 u 为根的点双连通分量
-            ++cnt;                 // 增加方点个数
+      low[u] = dfn[u] = ++dfc;                // low is initialized to current node's dfn
+      stk[++tp] = u;                          // push onto stack
+      for (int v : G[u]) {                    // iterate through adjacent nodes of u
+        if (!dfn[v]) {                        // if not visited
+          Tarjan(v);                          // recursive call
+          low[u] = std::min(low[u], low[v]);  // take min with low of unvisited nodes
+          if (low[v] == dfn[u]) {  // indicates finding a new BCC with u as root
+            ++cnt;                 // increment square node count
             printf("  Found a New BCC #%d.\n", cnt - N);
-            // 将点双中除了 u 的点退栈，并在圆方树中连边
+            // Pop vertices except u from stack and connect to square node in block-forest tree
             for (int x = 0; x != v; --tp) {
               x = stk[tp];
               T[cnt].push_back(x);
               T[x].push_back(cnt);
               printf("    BCC #%d has vertex #%d\n", cnt - N, x);
             }
-            // 注意 u 自身也要连边（但不退栈）
+            // Note: u itself needs to be connected (but not popped from stack)
             T[cnt].push_back(u);
             T[u].push_back(cnt);
             printf("    BCC #%d has vertex #%d\n", cnt - N, u);
           }
         } else
-          low[u] = std::min(low[u], dfn[v]);  // 已访问的和 dfn 取 min
+          low[u] = std::min(low[u], dfn[v]);  // take min with dfn of visited nodes
       }
       printf("  Exit : #%d : low = %d\n", u, low[u]);
       printf("  Stack:\n    ");
@@ -184,22 +184,22 @@ author: GitPinkRabbit, Early0v0, Backl1ght, mcendu, ksyx, iamtwz, Xeonacid, kenl
     
     int main() {
       scanf("%d%d", &N, &M);
-      cnt = N;  // 点双 / 方点标号从 N 开始
+      cnt = N;  // BCC / square node labels start from N
       for (int i = 1; i <= M; ++i) {
         int u, v;
         scanf("%d%d", &u, &v);
-        G[u].push_back(v);  // 加双向边
+        G[u].push_back(v);  // add bidirectional edge
         G[v].push_back(u);
       }
-      // 处理非连通图
+      // handle disconnected graphs
       for (int u = 1; u <= N; ++u)
         if (!dfn[u]) Tarjan(u), --tp;
-      // 注意到退出 Tarjan 时栈中还有一个元素即根，将其退栈
+      // note: when exiting Tarjan, there's still one element (root) on the stack, pop it
       return 0;
     }
     ```
 
-提供一个测试用例：
+A test case:
 
 ```text
 13 15
@@ -220,127 +220,127 @@ author: GitPinkRabbit, Early0v0, Backl1ght, mcendu, ksyx, iamtwz, Xeonacid, kenl
 11 12
 ```
 
-这个例子对应的图（包含了重边和孤立点的情况）：
+The corresponding graph for this example (includes parallel edges and isolated vertices):
 
 ![](./images/block-forest5.svg)
 
-## 例题
+## Example Problems
 
-我们讲一些可以使用圆方树求解的例题．
+We will discuss some example problems that can be solved using block-forest trees.
 
-???+ note "[「APIO2018」铁人两项](https://loj.ac/p/2587)"
-    ??? note "题意简述"
-        给定一张简单无向图，问有多少对三元组 $\langle s, c, f \rangle$（$s, c, f$ 互不相同）使得存在一条简单路径从 $s$ 出发，经过 $c$ 到达 $f$．
+???+ note "[APIO2018 Ironman Three](https://loj.ac/p/2587)"
+    ??? note "Problem Summary"
+        Given a simple undirected graph, count how many ordered triples $\langle s, c, f \rangle$ ($s, c, f$ are all distinct) such that there exists a simple path from $s$ to $f$ passing through $c$.
     
-    ??? note "题解"
-        说到简单路径，就必须提一个关于点双很好的性质：对于一个点双中的两点，它们之间简单路径的并集，恰好完全等于这个点双．  
-        即同一个点双中的两不同点 $u,v$ 之间一定存在一条简单路径经过给定的在同一个点双内的另一点 $w$．
+    ??? note "Solution"
+        When talking about simple paths, we must mention a good property of biconnected components: for two vertices in the same biconnected component, the union of simple paths between them exactly equals this biconnected component.
+        That is, for any two distinct vertices $u, v$ in the same biconnected component, and any given vertex $w$ in that biconnected component, there must exist a simple path from $u$ to $v$ passing through $w$.
         
-        这个性质的证明：
+        Proof of this property:
         
-        -   显然如果简单路径出了点双，就不可能再回到这个点双中，否则会和点双的定义冲突．
-        -   所以我们只需考虑证明一个点双连通图中任意三不同点 $u,v,c$，必存在一条从 $u$ 到 $v$ 的简单路径经过 $c$．
-        -   首先排除点数为 $2$ 的情况，它满足这个性质，但是无法取出 $3$ 个不同点．
-        -   对于余下的情况，考虑建立网络流模型，源点向 $c$ 连容量为 $2$ 的边，$u$ 和 $v$ 向汇点连容量为 $1$ 的边．
-        -   原图中的双向边 $\langle x,y\rangle$，变成 $x$ 向 $y$ 连一条容量为 $1$ 的边，$y$ 也向 $x$ 连一条容量为 $1$ 的边．
-        -   最后，给除了源点，汇点和 $c$ 之外的每个点赋上 $1$ 的容量，这可以通过拆点实现．
-        -   因为源点到 $c$ 的边的容量为 $2$，那么如果这个网络最大流为 $2$，则证明一定有路径经过 $c$．
-        -   考虑最大流最小割定理，显然最小割小于等于 $2$，接下来只要证最小割大于 $1$．
-        -   这等价于证明割掉任意一条容量为 $1$ 的边，是无法使源点和汇点不连通的．
-        -   考虑割掉 $u$ 或 $v$ 与汇点连接的点，根据点双的第一种定义，必然存在简单路径从 $c$ 到另一个没割掉的点．
-        -   考虑割掉一个节点拆点形成的边，这等价于删除一个点，根据点双的第二种定义，余下的图仍然连通．
-        -   考虑割掉一条由原先的边建出的边，这等价于删除一条边，这比删除一个点更弱，显然存在路径．
-        -   所以我们证明了最小割大于 $1$，即最大流等于 $2$．证毕．
+        -   Obviously, if a simple path leaves a biconnected component, it cannot return to that component, otherwise it would conflict with the definition of biconnected components.
+        -   So we only need to prove that in a biconnected graph, for any three distinct vertices $u, v, c$, there exists a simple path from $u$ to $v$ passing through $c$.
+        -   First, exclude the case where the graph has 2 vertices. It satisfies the property, but we cannot select 3 distinct vertices.
+        -   For the remaining cases, consider building a network flow model. Connect a source to $c$ with capacity 2, and connect $u$ and $v$ to the sink with capacity 1 each.
+        -   For each bidirectional edge $\langle x,y\rangle$ in the original graph, add an edge from $x$ to $y$ with capacity 1 and an edge from $y$ to $x$ with capacity 1.
+        -   Finally, assign capacity 1 to every vertex except the source, sink, and $c$. This can be done by vertex splitting.
+        -   Since the edge from source to $c$ has capacity 2, if the maximum flow of this network is 2, then there must exist a path passing through $c$.
+        -   Consider the max-flow min-cut theorem. Obviously, the minimum cut is less than or equal to 2. Now we need to prove the minimum cut is greater than 1.
+        -   This is equivalent to proving that cutting any edge with capacity 1 cannot disconnect the source and sink.
+        -   Consider cutting the vertex connecting $u$ or $v$ to the sink. According to the first definition of biconnected components, there must exist a simple path from $c$ to the other uncut vertex.
+        -   Consider cutting an edge formed by vertex splitting. This is equivalent to deleting a vertex. According to the second definition of biconnected components, the remaining graph is still connected.
+        -   Consider cutting an edge originally from the graph. This is equivalent to deleting an edge, which is weaker than deleting a vertex. Obviously, a path exists.
+        -   Therefore, we have proved the minimum cut is greater than 1, i.e., the maximum flow equals 2. QED.
         
-        这个结论能告诉我们什么呢？它告诉了我们：考虑两圆点在圆方树上的路径，与路径上经过的方点相邻的圆点的集合，就等于原图中两点简单路径上的点集．
+        What does this conclusion tell us? It tells us: consider the path between two circle nodes on the block-forest tree. The set of circle nodes adjacent to the square nodes on that path equals the set of vertices on simple paths between the two original vertices.
         
-        回到题目，考虑固定 $s$ 和 $f$，求合法的 $c$ 的数量，显然有合法 $c$ 的数量等于 $s,f$ 之间简单路径的并集的点数减 $2$（去掉 $s,f$ 本身）．
+        Back to the problem, fix $s$ and $f$. The number of valid $c$ is clearly equal to the number of vertices in the union of simple paths between $s$ and $f$ minus 2 (excluding $s$ and $f$ themselves).
         
-        那么，对原图建出圆方树后，两点之间简单路径的点数，就和它们在圆方树上路径经过的方点（点双）和圆点的个数有关．
+        After constructing the block-forest tree of the original graph, the number of vertices on simple paths between two vertices is related to the number of square nodes (biconnected components) and circle nodes on the path between them on the block-forest tree.
         
-        接下来是圆方树的一个常用技巧：路径统计时，点赋上合适的权值．  
-        本题中，每个方点的权值为对应点双的大小，而每个圆点权值为 $-1$．
+        Next is a common technique for block-forest trees: assign appropriate weights to vertices during path counting.
+        In this problem, each square node's weight is the size of its corresponding biconnected component, and each circle node's weight is $-1$.
         
-        这样赋权后则有两圆点间圆方树上路径点权和，恰好等于原图中简单路径并集大小减 $2$．
+        After such weight assignment, the sum of vertex weights on the path between two circle nodes on the block-forest tree exactly equals the size of the union of simple paths between the original two vertices minus 2.
         
-        问题转化为统计圆方树上 $\sum$ 两圆点路径权值和．
+        The problem is transformed into counting $\sum$ path weights between all pairs of circle nodes on the block-forest tree.
         
-        换个角度考虑，改为统计每一个点对答案的贡献，即权值乘以经过它的路径条数，这可以通过简单的树形 DP 求出．
+        From another perspective, we can count the contribution of each vertex to the answer, i.e., weight times the number of paths passing through it. This can be computed with a simple tree DP.
         
-        最后，不要忘记处理图不连通的情况．下面是对应代码：
+        Finally, don't forget to handle the case where the graph is not connected. Below is the corresponding code:
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/graph/code/block-forest/block-forest_1.cpp"
         ```
     
-    顺带一提，刚刚的测试用例在这题的答案是 $212$．
+    By the way, the answer for the test case above on this problem is $212$.
 
 ???+ note "[Codeforces #487 E. Tourists](https://codeforces.com/contest/487/problem/E)"
-    ??? note "题意简述"
-        给定一张简单无向连通图，要求支持两种操作：
+    ??? note "Problem Summary"
+        Given a simple undirected connected graph, support two types of operations:
         
-        1.  修改一个点的点权．
+        1.  Update the weight of a vertex.
         
-        2.  询问两点之间所有简单路径上点权的最小值．
+        2.  Query the minimum vertex weight on all simple paths between two vertices.
     
-    ??? note "题解"
-        同样地，我们建出原图的圆方树，令方点权值为相邻圆点权值的最小值，问题转化为求路径上最小值．
+    ??? note "Solution"
+        Similarly, we construct the block-forest tree of the original graph. Let the weight of a square node be the minimum of the weights of its adjacent circle nodes. The problem becomes finding the minimum value on a path.
         
-        路径最小值可以使用树链剖分和线段树维护，但是修改呢？
+        Path minimum can be maintained using tree decomposition and segment trees. But what about updates?
         
-        一次修改一个圆点的点权，需要修改所有和它相邻的方点，这样很容易被卡到 $O(n)$ 个修改．
+        When updating a circle node's weight, we need to update all adjacent square nodes. This can easily be $O(n)$ updates.
         
-        这时我们利用圆方树是棵树的性质，令方点权值为自己的儿子圆点的权值最小值，这样的话修改时只需要修改父亲方点．
+        Here we use the property that the block-forest tree is a tree. Let the weight of a square node be the minimum of its child circle nodes' weights. Then during an update, we only need to modify the parent square node.
         
-        对于方点的维护，只需要对每个方点开一个 `multiset` 维护权值集合即可．
+        For maintaining square nodes, we only need to open a `multiset` for each square node to maintain the weight set.
         
-        需要注意的是查询时若 LCA 是方点，则还需要查 LCA 的父亲圆点的权值．
+        Note that if the LCA is a square node during a query, we also need to query the weight of its parent circle node.
         
-        注意：圆方树点数要开原图的两倍，否则会数组越界．
+        Note: The number of nodes in the block-forest tree should be twice that of the original graph; otherwise, array out of bounds will occur.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/graph/code/block-forest/block-forest_2.cpp"
         ```
 
-???+ note "[「SDOI2018」战略游戏](https://loj.ac/p/2562)"
-    ??? note "题意简述"
-        给出一个简单无向连通图．有 $q$ 次询问：
+???+ note "[SDOI2018 Strategic Game](https://loj.ac/p/2562)"
+    ??? note "Problem Summary"
+        Given a simple undirected connected graph. There are $q$ queries:
         
-        每次给出一个点集 $S$（$2 \le |S| \le n$），问有多少个点 $u$ 满足 $u \notin S$ 且删掉 $u$ 之后 $S$ 中的点不全在一个连通分量中．
+        Each query gives a vertex set $S$ ($2 \le |S| \le n$), and asks how many vertices $u$ satisfy $u \notin S$ and after removing $u$, the vertices in $S$ are not all in one connected component.
         
-        每个测试点有多组数据．
+        Multiple test cases per problem.
     
-    ??? note "题解"
-        先建出圆方树，则变为询问 $S$ 在圆方树上对应的连通子图中的圆点个数减去 $|S|$．
+    ??? note "Solution"
+        First, construct the block-forest tree. Then the problem becomes: find the number of circle nodes in the connected subgraph of the block-forest tree corresponding to $S$ minus $|S|$.
         
-        如何计算连通子图中的圆点个数？有一个方法：
+        How to compute the number of circle nodes in a connected subgraph? One method:
         
-        把圆点的权值放到它和它的父亲方点的边上，问题转化为求边权和，这个问题可以参考 [「SDOI2015」寻宝游戏](https://loj.ac/p/2182) 的一种解法．  
-        即把 $S$ 中的点按照 DFS 序排序，计算排序后相邻两点的距离和（还包括首尾两点之间的距离），答案就是距离和的一半，因为每条边只被经过两次．
+        Put the weight of each circle node on the edge connecting it to its parent square node. The problem becomes finding the sum of edge weights. This problem can be referenced by a solution to [SDOI2015 Treasure Hunt](https://loj.ac/p/2182).
+        That is, sort the vertices in $S$ by DFS order, compute the sum of distances between consecutive vertices (including the distance between the last and first), and the answer is half of that sum, because each edge is traversed exactly twice.
         
-        最后，如果子图中的深度最浅的节点是圆点，答案还要加上 $1$，因为我们没有统计到它．
+        Finally, if the shallowest node in the subgraph is a circle node, add 1 to the answer, because we haven't counted it.
         
-        因为有多组数据，要注意初始化数组．
+        Since there are multiple test cases, remember to reinitialize the arrays.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/graph/code/block-forest/block-forest_3.cpp"
         ```
 
-## 习题
+## Practice Problems
 
 -   [UVa 1464 Traffic Real Time Query](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=447&page=show_problem&problem=4210)
--   [洛谷 P4320 道路相遇](https://www.luogu.com.cn/problem/P4320)
--   [洛谷 P10517 国土规划](https://www.luogu.com.cn/problem/P10517)
+-   [Luogu P4320 Road Meeting](https://www.luogu.com.cn/problem/P4320)
+-   [Luogu P10517 National Planning](https://www.luogu.com.cn/problem/P10517)
 
-## 外部链接
+## External Links
 
-immortalCO，[圆方树——处理仙人掌的利器](https://immortalco.blog.uoj.ac/blog/1955)，Universal OJ．
+immortalCO, [Block-forest Tree - A Powerful Tool for Processing Cactus](https://immortalco.blog.uoj.ac/blog/1955), Universal OJ.
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: 2017 年陈俊锟同学在他的 IOI2017 中国国家集训队论文《〈神奇的子图〉命题报告及其拓展》中定义并命名了圆方树这一结构．
+[^ref1]: In 2017, Chen Junkun defined and named the block-forest tree structure in his IOI2017 China national team paper "Problem Report and Extensions of 'Magical Subgraphs'".
 
-[^ref2]: 陈俊锟，《平凡的圆方树和神奇的（~~动态~~）动态规划》，NOI2018 冬令营，第 4 页．
+[^ref2]: Chen Junkun, "Ordinary Block-forest Trees and Magical (~~Dynamic~~) Dynamic Programming", NOI2018 Winter Camp, Page 4.

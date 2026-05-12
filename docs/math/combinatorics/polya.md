@@ -1,533 +1,530 @@
 author: Wajov, Early0v0, Enter-tainer, Great-designer, iamtwz, Ir1d, MegaOwIer, mgt, StudyingFather, Tiphereth-A, warzone-oier, Xeonacid, c-forrest
 
-前置知识：[置换和排列](../permutation.md)
+Prerequisite: [Permutations and Combinations](../permutation.md)
 
-## 引入
+## Introduction
 
-Pólya 计数原理通常用来解决一些涉及「本质不同」的计数问题．
+The Pólya enumeration theorem is typically used to solve counting problems involving "essentially different" configurations.
 
-???+ info "本文可能涉及群论的相关内容"
-    本文可能涉及到群论的相关内容．本文会对涉及到的群论概念做简单的解释，以便于不熟悉相关内容的读者理解和应用 Pólya 计数原理．关于群论的内容，严格的表述和讨论请参考 [抽象代数基本概念](../algebra/basic.md)、[群论](../algebra/group-theory.md) 等章节．
+???+ info "This article may involve related content from group theory"
+    This article may involve content from group theory. This article will provide simple explanations of the relevant group theory concepts to help readers unfamiliar with this content understand and apply the Pólya enumeration theorem. For rigorous definitions and discussions of group theory, please refer to chapters such as [Basic Concepts of Abstract Algebra](../algebra/basic.md) and [Group Theory](../algebra/group-theory.md).
 
-??? info "「空间对称群」、「对称群」与「置换群」"
-    本文中将不可避免地同时使用这三类群的名字．尽管可能很容易造成混淆，但它们确实代指不同的概念．给定几何结构，它上面的对称操作指的是能够使它与它自身重合的几何变换，而空间对称群（symmetry group）就是这些对称操作的集合．对称群（symmetric group）是给定集合上的全体置换的集合．置换群（permutation group）则是对称群的子群，即一些（未必是全体）置换构成的群．后文会解释如何将给定几何结构的空间对称群表示成置换群的形式，并用于计数问题．
+??? info ""Space Symmetry Group", "Symmetric Group", and "Permutation Group""
+    This article will inevitably use these three types of group names simultaneously. Although this may easily cause confusion, they indeed refer to different concepts. Given a geometric structure, a symmetry operation on it refers to a geometric transformation that makes it coincide with itself, and the space symmetry group is the set of all such symmetry operations. The symmetric group is the set of all permutations on a given set. A permutation group is a subgroup of the symmetric group, i.e., a group formed by some (not necessarily all) permutations. Later, we will explain how to represent the space symmetry group of a given geometric structure as a permutation group for counting problems.
 
-## Burnside 引理
+## Burnside's Lemma
 
-相关阅读：[Burnside 引理](../algebra/group-theory.md#burnside-引理)
+Further reading: [Burnside's Lemma](../algebra/group-theory.md#burnside-lemma)
 
-Pólya 计数原理是 Burnside 引理的应用和推广．在介绍 Pólya 计数原理之前，需要先简单地回顾 Burnside 引理的内容．
+The Pólya enumeration theorem is an application and generalization of Burnside's lemma. Before introducing the Pólya enumeration theorem, we need to briefly review Burnside's lemma.
 
-为了总结出一般的规律，首先考虑简单的例子．
+To derive the general pattern, let's first consider a simple example.
 
-???+ example "项链染色"
-    现在有一串共四个珠子的项链，每个珠子可以是红色或者蓝色，计算共有几种本质不同的珠子．（如果两种染色的结果可以通过旋转项链重合，就认为是相同的．)
+???+ example "Necklace Coloring"
+    Consider a necklace with 4 beads, where each bead can be colored either red or blue. How many essentially different colorings are there? (If two colorings can be made identical by rotating the necklace, they are considered the same.)
 
-??? example "解答和分析"
-    这个问题足够简单，可以通过枚举的方式加以解答．珠子共计 $4$ 个，每个珠子可以染 $2$ 种颜色，所以，项链所有可能的染色方案共计 $2^4=16$ 种．将可以通过旋转相互得到的分到一组，共计 $6$ 组，如下图所示．（其中，单个染色方案的编码表示了自左下角的珠子开始顺时针染的颜色，$B$ 表示蓝色，$R$ 表示红色；分到同一组的染色方案的编码有着相同的背景颜色．）
-    
-    ![项链染色](../images/necklaces.svg)
-    
-    从这个例子中可以看到，要计算本质不同的染色的种类数，关键其实是知道每种本质相同的染色对应几种不同的染色方案．也就是说，要搞清楚上图中每个分组的大小．
-    
-    能够分到同一个组中的染色方案，就是指它们之间能够通过旋转操作互相转化的染色方案．总共有 $4$ 种旋转的方式，即
-    
+??? example "Solution and Analysis"
+    This problem is simple enough to be solved by enumeration. There are 4 beads, each with 2 possible colors, so there are $2^4 = 16$ possible colorings in total. Grouping those that can be transformed into each other by rotation yields 6 groups, as shown in the figure. (Here, each coloring is encoded by the colors of beads starting from the bottom-left bead and going clockwise; B represents blue, R represents red; colorings in the same group have the same background color.)
+
+    ![Necklace coloring](../images/necklaces.svg)
+
+    From this example, we can see that to calculate the number of essentially different colorings, the key is to know how many different colorings correspond to each essentially identical coloring. In other words, we need to determine the size of each group in the figure above.
+
+    Colorings that can be grouped together are those that can be transformed into each other by rotation. There are 4 possible rotations, namely
+
     $$
-    G=\{r_0,r_1,r_2,r_3\},
+    G = \{r_0, r_1, r_2, r_3\},
     $$
-    
-    分别表示旋转 $0,1,2,3$ 次．旋转 $0$ 次就是原地不动．
-    
-    首先看染色方案 $RRBB$ 所在的分组．对它施加这四种操作，将分别得到
-    
+
+    representing rotations by 0, 1, 2, and 3 positions respectively. Rotation by 0 positions means staying in place.
+
+    First, consider the group containing the coloring $RRBB$. Applying these four operations yields
+
     $$
     RRBB, RBBR, BBRR, BRRB.
     $$
-    
-    四种染色方案互不相同，因此这个组就有 $4$ 个元素．
-    
-    再看染色方案 $BRBR$ 所在的分组．对它同样施加这四种操作，将分别得到
-    
+
+    These four colorings are all different, so this group has 4 elements.
+
+    Now consider the group containing the coloring $BRBR$. Applying these four operations yields
+
     $$
     BRBR, RBRB, BRBR, RBRB.
     $$
-    
-    此时，旋转两次的结果和不旋转的结果是一致的，旋转三次和旋转一次的结果是一致的．所以，这个组就有 $2$ 个元素．
-    
-    如果看染色方案 $BBBB$ 和 $RRRR$ 所在的分组．对它们施加四种操作得到的结果都是它们自身．因而，每个组就只有 $1$ 个元素．
-    
-    如果用 $x$ 表示染色方案，$Gx$ 表示对染色方案 $x$ 操作后能够得到的颜色编码的集合，那么从上面的例子可以总结出一个规律，那就是 $G$ 的操作对于 $x$ 的影响存在某种「周期性」．
-    
-    设 $|G|$ 表示操作的总个数，这种影响的「周期性」意味着，如果有 $m$ 个不同的 $G$ 中的操作将染色方案 $x$ 变换到它自身，那么 $x$ 在这些操作下的结果就会重复出现 $m$ 次．因而，染色方案 $x$ 在这些操作下共计有 $|G|/m$ 种不同的结果，这也就是 $x$ 所在分组的大小．
-    
-    这个例子中，因为只有旋转零次 $r_0$ 才能够将 $RRBB$ 变换到它自身，所以，它所在分组的大小等于 $4/1=4$；而旋转零次 $r_0$ 和两次 $r_2$ 都能将 $BRBR$ 变换到它自身，所以，它所在分组的大小等于 $4/2=2$；无论旋转几次都能将 $BBBB$ 变换到它自身，所以，它所在分组的大小就是 $4/4=1$．
-    
-    在下面的叙述中，用 $G_x$ 表示能够将 $x$ 变换到它自身的操作的数目，所以，$|G_x|$ 就是上面的 $m$．此时，$X$ 所在分组大小是 $|G|/|G_x|$．要计算染色方案的分组的数目，只需要穷举所有可能的染色方案 $x\in X$，对所在分组大小为 $|Gx|$ 的染色方案 $x$ 赋以权重 $1/|Gx|$，就能够将分组的数目表达为
-    
+
+    Here, the result of rotation by 2 positions is the same as no rotation, and the result of rotation by 3 positions is the same as rotation by 1 position. So this group has 2 elements.
+
+    If we look at the groups containing $BBBB$ and $RRRR$, applying the four operations yields only themselves. Therefore, each group has only 1 element.
+
+    Let $x$ represent a coloring, and $Gx$ represent the set of color encodings obtainable by applying operations to $x$. From the above example, we can summarize a pattern: the effect of operations in $G$ on $x$ exhibits some kind of "periodicity".
+
+    Let $|G|$ represent the total number of operations. This "periodicity" means that if there are $m$ different operations in $G$ that map $x$ to itself, then the results of $x$ under these operations will repeat $m$ times. Therefore, under these operations, there are $|G|/m$ different results for $x$, which is exactly the size of the group containing $x$.
+
+    In this example, only rotation by 0 positions ($r_0$) can map $RRBB$ to itself, so its group size is $4/1 = 4$. Both rotation by 0 positions ($r_0$) and rotation by 2 positions ($r_2$) can map $BRBR$ to itself, so its group size is $4/2 = 2$. No matter how many positions we rotate, $BBBB$ maps to itself, so its group size is $4/4 = 1$.
+
+    In the following, let $G_x$ represent the number of operations that map $x$ to itself, so $|G_x|$ is $m$ from above. Then the group size of $X$ is $|G|/|G_x|$. To calculate the number of groups of colorings, we only need to enumerate all possible colorings $x \in X$, and for colorings with group size $|Gx|$, assign weight $1/|Gx|$. This allows us to express the number of groups as
+
     $$
-    |X/G|=\sum_{x\in X}\frac{1}{|Gx|}=\sum_{x\in X}\frac{|G_x|}{|G|}.
+    |X/G| = \sum_{x \in X}\frac{1}{|Gx|} = \sum_{x \in X}\frac{|G_x|}{|G|}.
     $$
-    
-    现在这个式子的形式并不便于应用．记 $gx$ 是对染色方案 $x\in X$ 应用操作 $g\in G$ 的结果，那么上面描述的集合 $G_x$ 就是 $\{g\in G:gx=x\}$，所以交换求和顺序就有
-    
+
+    The current form of this formula is not convenient for application. Let $gx$ be the result of applying operation $g \in G$ to the coloring $x \in X$. Then the set $G_x$ described above is $\{g \in G: gx = x\}$. Changing the order of summation gives
+
     $$
     \begin{aligned}
-    \sum_{x\in X}|G_x| 
-    &=\sum_{x\in X}|\{g\in G:gx=x\}|\\
-    &=\sum_{x\in X}\sum_{g\in G}[gx=x]\\
-    &=\sum_{g\in G}\sum_{x\in X}[gx=x]\\
-    &=\sum_{g\in G}|\{x\in X:gx=x\}|\\
-    &=\sum_{g\in G}|X^g|.
+    \sum_{x \in X}|G_x| 
+    &= \sum_{x \in X}|\{g \in G: gx = x\}|\\
+    &= \sum_{x \in X}\sum_{g \in G}[gx = x]\\
+    &= \sum_{g \in G}\sum_{x \in X}[gx = x]\\
+    &= \sum_{g \in G}|\{x \in X: gx = x\}|\\
+    &= \sum_{g \in G}|X^g|.
     \end{aligned}
     $$
-    
-    其中 $[\cdot]$ 为 Iverson 括号．交换求和记号的结果中，$X^g=\{x\in X:gx=x\}$ 是指在操作 $g$ 下保持不变的染色方案 $x$ 的集合．简言之，它是操作 $g$ 的不动点．
-    
-    在这些讨论之后，现在可以将分组的个数写作
-    
+
+    Here, $[\cdot]$ is the Iverson bracket. In the result after changing the order of summation, $X^g = \{x \in X: gx = x\}$ is the set of colorings $x$ that remain unchanged under operation $g$. In other words, it consists of the fixed points of operation $g$.
+
+    After these discussions, the number of groups can now be written as
+
     $$
-    |X/G|=\frac{1}{|G|}\sum_{g\in G}|X^g|.
+    |X/G| = \frac{1}{|G|}\sum_{g \in G}|X^g|.
     $$
-    
-    也就是说，分组的个数是各种旋转操作的不动点的平均个数．
-    
-    作为这个结果的应用，再次计算项链染色的个数．这些旋转操作的不动点可以列举如下．
-    
-    |   操作  |            不动点            |
-    | :---: | :-----------------------: |
-    | $r_0$ |            $X$            |
-    | $r_1$ |      $\{BBBB,RRRR\}$      |
-    | $r_2$ | $\{BBBB,BRBR,RBRB,RRRR\}$ |
-    | $r_3$ |      $\{BBBB,RRRR\}$      |
-    
-    因而，分组的个数就等于
-    
+
+    That is, the number of groups equals the average number of fixed points of all rotation operations.
+
+    As an application of this result, let's recalculate the number of essentially different colorings for the necklace. The fixed points of these rotation operations are listed below.
+
+    |   Operation  |            Fixed Points             |
+    | :---: | :-------------------------------: |
+    | $r_0$ |               $X$                |
+    | $r_1$ |        $\{BBBB, RRRR\}$        |
+    | $r_2$ |   $\{BBBB, BRBR, RBRB, RRRR\}$  |
+    | $r_3$ |        $\{BBBB, RRRR\}$        |
+
+    Therefore, the number of groups equals
+
     $$
-    \frac{16+2+4+2}{4} = 6.
+    \frac{16 + 2 + 4 + 2}{4} = 6.
     $$
-    
-    这样就得到了前面的结果．
 
-从这个例子中，可以归纳出一般的结果，用于求解这类计数问题．为了方便讨论，本文考虑的情景是染色问题，当然也可以应用到别的情景上去，在文末会提供相应的例子．
+    This matches our earlier result.
 
-染色问题是说，给定某个结构，在它的每个顶点上染色，会得到不同的染色方案．这个结构拥有某种对称性，使得看似不同的染色方案在经过一系列对称操作后能够互相转化．这些能互相转化的染色方案就称为本质相同的．问题是要求解本质不同的染色的数目．
+From this example, we can derive a general result for solving such counting problems. For the sake of discussion, we consider the scenario of coloring problems in this article, though it can also be applied to other scenarios, with examples provided at the end.
 
-根据例子中的分析，要求解这样的问题，首先要讨论给定的结构都有哪些对称操作．这些对称操作的集合 $G$ 称为给定结构的空间对称群．实际应用中，大多时候无需了解群的定义，只需要能够不重不漏地讨论所有的空间对称操作就可以了．本文后面分析了几个常见的空间对称群的结构，那里解释了群的定义．
+A coloring problem is: given some structure, coloring each of its vertices yields different coloring schemes. This structure has some symmetry such that seemingly different colorings can be transformed into each other through a series of symmetry operations. These mutually transformable colorings are called essentially identical. The problem asks for the number of essentially different colorings.
 
-所有染色方案的集合记作 $X$，其中的单个染色方案记作 $x$．操作 $g\in G$ 作用在染色方案 $x\in X$ 的结果是 $gx$．那么，能够通过某个操作作用在染色方案 $x$ 上的所有结果就是 $Gx=\{gx:g\in G\}$，它称为群 $G$ 作用下 $x$ 的轨道．同一轨道中的不同染色方案就是这类问题中所谓「本质相同」的．故而，所有本质不同的染色的数目，就等价于不同轨道的数目．
+Based on the analysis in the example, to solve this problem, we first need to determine what symmetry operations the given structure has. The set of these symmetry operations $G$ is called the space symmetry group of the given structure. In practical applications, most of the time we don't need to understand the definition of groups; we only need to be able to discuss all space symmetry operations without omission. Later in this article, we analyze several common space symmetry group structures, where the definition of groups is explained.
 
-例子中的分析可以推广到一般的情形．
+The set of all colorings is denoted $X$, and an individual coloring is denoted $x$. The result of applying operation $g \in G$ to coloring $x \in X$ is $gx$. Then all results obtainable by applying some operation to coloring $x$ is $Gx = \{gx: g \in G\}$, which is called the orbit of $x$ under group $G$. Different colorings in the same orbit are what this problem calls "essentially identical". Therefore, the number of essentially different colorings is equivalent to the number of distinct orbits.
 
-???+ note "Burnside 引理"
-    给定群 $G$ 在集合 $X$ 上的作用，则所有不同的轨道的数目
-    
+The analysis in the example can be generalized to general cases.
+
+???+ note "Burnside's Lemma"
+    Given a group $G$ acting on a set $X$, the number of distinct orbits is
+
     $$
-    |X/G|=\frac{1}{|G|}\sum_{g\in G}|X^g|.
+    |X/G| = \frac{1}{|G|}\sum_{g \in G}|X^g|.
     $$
-    
-    这里，$X^g=\{x\in X:gx=x\}$ 是 $g\in G$ 的作用下的不动点集合．
 
-它的证明几乎就是照搬上面例子中的分析．但是，例子中用到了观察，即群 $G$ 在单个元素 $x$ 上的作用结果具有某种「周期性」，所以，这种周期重复的数目就等于能将 $x$ 变换到它自身的操作的数目．这个观察在一般的情形是正确的，但是因为群 $G$ 的结构可能很复杂，它的「周期性」未必是例子中呈现的那么直接．严格地表述这个观察，需要用到群论中的 [轨道稳定子定理（orbit-stabilizer theorem）](../algebra/group-theory.md#稳定化子)．
+    Here, $X^g = \{x \in X: gx = x\}$ is the set of fixed points under the action of $g \in G$.
 
-在应用的时候，只要能够列举出所有的对称操作，并且给出每个对称操作对应的不动点数目就可以解决对应的计数问题．下面是一个稍微复杂的应用．
+The proof is essentially a direct application of the analysis in the example above. However, the example used an observation: the results of the action of group $G$ on a single element $x$ have some kind of "periodicity", so the number of such period repetitions equals the number of operations that map $x$ to itself. This observation is correct in general cases, but because the structure of group $G$ may be complex, its "periodicity" may not be as straightforward as in the example. To state this observation rigorously, we need to use the orbit-stabilizer theorem from group theory.
 
-???+ example "立方体染色"
-    用三种颜色给一个立方体染色，求本质不同的方案数（经过空间旋转后相同的两种方案视为同一种）．
+In applications, as long as we can enumerate all symmetry operations and provide the number of fixed points for each symmetry operation, we can solve the corresponding counting problem. Below is a slightly more complex application.
 
-??? example "解答"
-    因为立方体有 $6$ 个面，每个面有 $3$ 中染色方法，所以，总共有 $3^6$ 种染色方案，即 $|X|=3^6$．记立方体的空间对称群为 $G$．
-    
+???+ example "Cube Coloring"
+    Color a cube using three colors. How many essentially different colorings are there? (Two colorings that become the same after spatial rotation are considered the same.)
+
+??? example "Solution"
+    Since the cube has 6 faces, each with 3 coloring methods, there are $3^6$ possible colorings in total, i.e., $|X| = 3^6$. Let the space symmetry group of the cube be $G$.
+
     ![](../images/cube.svg)
-    
-    接下来我们需要对 $G$ 中的所有操作进行分析，它们可以分为以下几类（方便起见，将立方体的六个面分别称为前、后、上、下、左、右）：
-    
-    -   不动：即恒等变换，因为所有直接染色方案经过恒等变换都不变，因此它对应的 $|X^g|=3^6$；
-    -   以两个相对面的中心连线为轴的 $90^\circ$ 旋转：相对面有 $3$ 种选择，旋转的方向有 $2$ 种选择，因此这类共有 $6$ 个置换．假设选择了前、后两个面中心的连线为轴，则必须要满足上、下、左、右四个面的颜色一样，才能使旋转后不变．此时，有 $3$ 个可以独立染色的区域，因此它对应的 $|X^g|=3^3$；
-    -   以两个相对面的中心连线为轴的 $180^\circ$ 旋转：相对面有 $3$ 种选择，旋转方向的选择没有影响，因此这类共有 $3$ 个置换．假设选择了前、后两个面中心的连线为轴，则必须要满足上、下两个面的颜色一样，左、右两个面的颜色一样，才能使旋转后不变．此时，有 $4$ 个可以独立染色的区域，因此它对应的 $|X^g|=3^4$；
-    -   以两条相对棱的中点连线为轴的 $180^\circ$ 旋转：相对棱有 $6$ 种选择，旋转方向对置换依然没有影响，因此这类共有 $6$ 个置换．假设选择了前、上两个面的边界和下、后两个面的边界作为相对棱，则必须要满足前、上两个面的颜色一样，下、后两个面的颜色一样，左、右两个面的颜色一样，才能使旋转后不变．此时，有 $3$ 个可以独立染色的区域，因此它对应的 $|X^g|=3^3$；
-    -   以两个相对顶点的连线为轴的 $120^\circ$ 旋转：相对顶点有 $4$ 种选择，旋转的方向有 $2$ 种选择，因此这类共有 $8$ 个置换．假设选择了前面的右上角和后面的左下角作为相对顶点，则必须满足前、上、右三个面的颜色一样，后、下、左三个面的颜色一样，才能使旋转后不变．此时，有 $2$ 个可以独立染色的区域，因此它对应的 $|X^g|=3^2$．
-    
-    因此，所有本质不同的染色方案数为
-    
+
+    Next, we need to analyze all operations in $G$. They can be divided into the following categories (for convenience, we call the six faces: front, back, top, bottom, left, right):
+
+    -   Identity: since all direct coloring schemes remain unchanged under the identity transformation, it has $|X^g| = 3^6$;
+    -   $90^\circ$ rotation about the axis through the centers of two opposite faces: there are 3 choices for the pair of opposite faces, and 2 choices for rotation direction, so there are 6 permutations in total. If we choose the axis through the centers of the front and back faces, then to remain unchanged after rotation, the top, bottom, left, and right faces must all have the same color. At this point, there are 3 independently colorable regions, so $|X^g| = 3^3$;
+    -   $180^\circ$ rotation about the axis through the centers of two opposite faces: there are 3 choices for the pair of opposite faces, and the rotation direction doesn't matter, so there are 3 permutations in total. If we choose the axis through the centers of the front and back faces, then to remain unchanged after rotation, the top and bottom faces must have the same color, and the left and right faces must have the same color. At this point, there are 4 independently colorable regions, so $|X^g| = 3^4$;
+    -   $180^\circ$ rotation about the axis through the midpoints of two opposite edges: there are 6 choices for the pair of opposite edges, and the rotation direction still doesn't matter, so there are 6 permutations in total. If we choose the edge between the front and top faces and the edge between the back and bottom faces as the pair of opposite edges, then to remain unchanged after rotation, the front and top faces must have the same color, the back and bottom faces must have the same color, and the left and right faces must have the same color. At this point, there are 3 independently colorable regions, so $|X^g| = 3^3$;
+    -   $120^\circ$ rotation about the axis through two opposite vertices: there are 4 choices for the pair of opposite vertices, and 2 choices for rotation direction, so there are 8 permutations in total. If we choose the top-right corner of the front face and the bottom-left corner of the back face as the pair of opposite vertices, then to remain unchanged after rotation, the front, top, and right faces must all have the same color, and the back, bottom, and left faces must all have the same color. At this point, there are 2 independently colorable regions, so $|X^g| = 3^2$.
+
+    Therefore, the number of essentially different colorings is
+
     $$
-    \frac{1\times3^6+6\times3^3+3\times3^4+6\times3^3+8\times3^2}{1+6+3+6+8}=57.
-    $$
-
-## Pólya 计数原理
-
-在 Burnside 引理的叙述中，并没有用到集合 $X$ 是某结构上的全部染色方案这一性质．其实，Burnside 引理的应用范围并不局限于染色计数问题．对于染色计数问题，Pólya 计数原理则提供了更为准确的计算方法．它可以看作是一般性的 Burnside 引理在染色计数问题上的应用．
-
-相较于 Burnside 引理，Pólya 计数原理的改进就是提供了不动点集合大小 $|X^g|$ 在染色计数问题中的具体计算方法．
-
-这一点从上面的立方体染色的例子可以直观地看出来．对于正方体的各种对称操作，它的不动点集合的大小都是 $m^{c(g)}$ 的形式，这里 $m$ 是颜色的数目，$c(g)$ 是在操作 $g$ 下可以独立染色的区域数目．这个观察在一般的情形下也是成立的，不过需要进一步明晰如何对给定的 $g$ 计算 $c(g)$ 的取值．
-
-给某个结构选择一种染色方案，用数学语言表示，就是选择一个从这个结构的可以染色的对象（比如项链中的珠子、立方体的面等）的集合 $X$ 到颜色集合 $C$ 的映射 $f:X\rightarrow C$．因此，染色方案的集合就是 $C^X$．该结构的空间对称群 $G$ 作用在结构上，自然也连带着作用在集合 $X$ 上．这种对称操作，总对应着集合 $X$ 上的双射，即 **置换**（permutation）．[^perm-group]
-
-现在分析不动点集合 $(C^X)^g$ 的结构．给定 $g$，看作 $X$ 上的置换，比照例子中的分析可以知道，如果 $X$ 中的位置 $x$ 在有限次重复操作 $g$ 之后可以移动到位置 $y$，那么，作为不动点 $f\in (C^X)^g$，必然需要满足 $f(x)=f(y)$．用上一节轨道的语言来说，因为位置 $x$ 和位置 $y$ 处于操作 $g$ 作用[^g-act]的同一个轨道上，所以它们需要染相同的颜色．用置换的语言来说，在置换 $g$ 的 [轮换分解](../permutation.md#轮换表示) 中，位置 $x$ 和位置 $y$ 处于同一轮换，故而需要染相同的颜色．轮换分解中不同的轮换的染色不必相同，可以独立染色，所以此时可以独立染色的区域数目就是 $c(g)$，即 $g$ 的轮换分解中的轮换数目．
-
-由此，操作 $g$ 的不动点的数目就是 $|C|^{c(g)}$．将这个结论代入 Burnside 引理，就能得到无权重版本的 **Pólya 计数原理**（Pólya enumeration theorem）．
-
-???+ note "Pólya 计数原理（无权重版本）"
-    给定群 $G$ 在集合 $X$ 上的作用和颜色集合 $C$，则不同的染色方案的数目
-    
-    $$
-    |C^X/G|=\frac{1}{|G|}\sum_{g\in G}m^{c(g)},
-    $$
-    
-    这里，$m$ 是颜色数目，$c(g)$ 是元素 $g\in G$ 的置换表示的轮换分解中的轮换数目．
-
-??? info "关于群 $G$ 的含义"
-    这里略微有些滥用记号．如果群 $G$ 作用在 $X$ 上，那么染色方案集合 $C^X$ 上的群作用是需要重新定义的，这里没有加以区分．
-
-作为 Pólya 计数原理的简单应用，下面重新用 Pólya 计数原理计算前文的例子．
-
-??? example "项链染色问题另解"
-    将四个珠子标号 $1\sim 4$，则例子中的群 $G$ 中的元素分别有置换表示如下：（均写作轮换分解的形式）
-    
-    -   旋转零次 $r_0=(1)$，共计 $4$ 个轮换（注意省略的 $1$‑轮换）；
-    -   旋转一次 $r_1=(1234)$，共计 $1$ 个轮换；
-    -   旋转二次 $r_2=(13)(24)$，共计 $2$ 个轮换；
-    -   旋转三次 $r_3=(1432)$，共计 $1$ 个轮换．
-    
-    因此，本质不同染色的数目是
-    
-    $$
-    \frac{2^4+2^1+2^2+2^1}{4}=6.
+    \frac{1 \times 3^6 + 6 \times 3^3 + 3 \times 3^4 + 6 \times 3^3 + 8 \times 3^2}{1 + 6 + 3 + 6 + 8} = 57.
     $$
 
-??? example "立方体染色问题另解"
-    由于前文的分析实质上已经给出了各类置换的轮换表示，只是没有用数字符号显式地书写出来，这里不再重复前文的分析．仅仅考虑以相对棱的中点连线为轴的 $180^\circ$ 旋转的情形，加以示例．将前、后、上、下、左、右六个面依次编号为 $1\sim6$，此时对应的置换是 $(13)(24)(56)$，因此 $c(g)=3$．其它类型的置换也可以类似分析，最后的计数的表达式也和上文完全一致．
+## Pólya Enumeration Theorem
 
-## 带权重形式的推广
+In the statement of Burnside's lemma, the property that $X$ is the set of all colorings of some structure is not used. Actually, the application scope of Burnside's lemma is not limited to coloring counting problems. For coloring counting problems, the Pólya enumeration theorem provides a more precise calculation method. It can be seen as the application of the general Burnside's lemma to coloring counting problems.
 
-无权重版本的 Pólya 计数原理只能够给出所有的本质不同的染色问题的计数，但是在处理更为精细的问题时就无能为力了．比如说，如果在上述染色问题中，给定每种可以使用的颜色的数目，就不能套用上面的 Pólya 计数公式．在实际求解这类问题时，需要再次使用 Burnside 引理加以推导；而将这些结果总结为生成函数的形式，就是带权重版本的 Pólya 计数原理．
+Compared to Burnside's lemma, the improvement of the Pólya enumeration theorem is that it provides a specific calculation method for the size of the fixed point set $|X^g|$ in coloring counting problems.
 
-???+ example "项链染色（带限制）"
-    现在有一串共四个珠子的项链，每个珠子可以是红色或者蓝色，恰有两个红色珠子、两个蓝色珠子可以使用，计算共有几种本质不同的珠子．（如果两种染色的结果可以通过旋转项链重合，就认为是相同的．)
+This can be intuitively seen from the cube coloring example above. For various symmetry operations of the cube, the size of the fixed point set is always in the form $m^{c(g)}$, where $m$ is the number of colors, and $c(g)$ is the number of independently colorable regions under operation $g$. This observation also holds in general cases, but we need to further clarify how to calculate $c(g)$ for a given $g$.
 
-??? example "解答和分析"
-    考虑使用 Burnside 引理．红色、蓝色珠子各两个，共计有 $\dbinom{4}{2}=6$ 种染色方案．空间对称群 $G=\{r_0,r_1,r_2,r_3\}$ 分别对应旋转 $0\sim3$ 次，则它们对应的不动点集合分析如下：
-    
-    -   旋转零次 $r_0=(1)$，全部 $6$ 个染色方案都是不动点；
-    -   旋转一次 $r_1=(1234)$，不动点要求所有珠子染同样的颜色，没有不动点；
-    -   旋转两次 $r_2=(13)(24)$，有两个可独立染色的区域，大小都是 $2$，它们要分别染成红色和蓝色，则不动点集合的大小为 $2$；
-    -   旋转三次 $r_3=(1432)$，与旋转一次的情形相同，没有不动点．
-    
-    所以，根据 Burnside 引理，本质不同的染色数目为
-    
+Choosing a coloring scheme for a structure, mathematically, means choosing a mapping $f: X \rightarrow C$ from the set of colorable objects of this structure (such as beads in a necklace, faces of a cube, etc.) $X$ to the set of colors $C$. Therefore, the set of coloring schemes is $C^X$. The space symmetry group $G$ of the structure acts on the structure, and naturally also acts on the set $X$. This symmetry operation always corresponds to a bijection on set $X$, i.e., a **permutation**.
+
+Now let's analyze the structure of the fixed point set $(C^X)^g$. Given $g$, treated as a permutation on $X$, following the analysis in the example, if a position $x$ in $X$ can move to position $y$ after finitely many repeated applications of $g$, then as a fixed point $f \in (C^X)^g$, it must satisfy $f(x) = f(y)$. In the language of orbits from the previous section, since positions $x$ and $y$ are in the same orbit under the action of $g$, they must be colored the same. In the language of permutations, in the cycle decomposition of $g$, positions $x$ and $y$ are in the same cycle, so they need to be colored the same. Different cycles in the cycle decomposition can be colored differently and independently, so the number of independently colorable regions is $c(g)$, i.e., the number of cycles in the cycle decomposition of $g$.
+
+Thus, the number of fixed points of operation $g$ is $|C|^{c(g)}$. Substituting this into Burnside's lemma gives the unweighted version of the **Pólya enumeration theorem**.
+
+???+ note "Pólya Enumeration Theorem (Unweighted Version)"
+    Given a group $G$ acting on a set $X$ and a set of colors $C$, the number of distinct colorings is
+
     $$
-    \frac{6+0+2+0}{4}=2.
+    |C^X/G| = \frac{1}{|G|}\sum_{g \in G}m^{c(g)},
     $$
 
-从这个例子中可以总结出如下计算方法．对于限制不同颜色个数的问题，同样是要把空间对称群中各个置换的轮换分别染色，但是需要让染色用到的颜色数目恰好等于给定的颜色个数．这样的组合问题通常没有显式解，除了可以通过 [排列组合方法](../combinatorics/combination.md) 计算的特殊情形外，需要看做 [背包问题](../../dp/knapsack.md) 进行求解．
+    where $m$ is the number of colors, and $c(g)$ is the number of cycles in the cycle decomposition of the permutation representation of $g \in G$.
 
-通过生成函数可以给出这类计数问题的答案．给定置换 $g$，如果它的 [型](../permutation.md#置换的型) 是 $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$，即它有 $\alpha_k$ 个长度为 $k$ 的轮换，且对于每个轮换可以染成 $m$ 种颜色中的一种，那么生成函数
+??? info "About the meaning of group $G$"
+    There is some abuse of notation here. If group $G$ acts on $X$, then the group action on the coloring scheme set $C^X$ needs to be redefined, which is not distinguished here.
+
+As a simple application of the Pólya enumeration theorem, let's recalculate the previous example using the Pólya enumeration theorem.
+
+??? example "Necklace Coloring Problem - Alternative Solution"
+    Label the 4 beads $1 \sim 4$, then the elements in group $G$ from the example have the following permutation representations (all written in cycle decomposition form):
+
+    -   Rotation by 0 positions $r_0 = (1)$, with 4 cycles in total (note that 1-cycles are omitted);
+    -   Rotation by 1 position $r_1 = (1234)$, with 1 cycle in total;
+    -   Rotation by 2 positions $r_2 = (13)(24)$, with 2 cycles in total;
+    -   Rotation by 3 positions $r_3 = (1432)$, with 1 cycle in total.
+
+    Therefore, the number of essentially different colorings is
+
+    $$
+    \frac{2^4 + 2^1 + 2^2 + 2^1}{4} = 6.
+    $$
+
+??? example "Cube Coloring Problem - Alternative Solution"
+    Since the previous analysis essentially gave the cycle representations of various permutations, only not written explicitly with numeric symbols, we won't repeat the previous analysis here. Let's just consider the case of $180^\circ$ rotation about the axis through the midpoints of opposite edges as an example. Label the 6 faces as $1 \sim 6$: front, back, top, bottom, left, right. The corresponding permutation is $(13)(24)(56)$, so $c(g) = 3$. Other types of permutations can be analyzed similarly, and the final counting expression is exactly the same as above.
+
+## Weighted Version Extension
+
+The unweighted version of the Pólya enumeration theorem can only give the count of all essentially different coloring problems, but it cannot handle more refined problems. For example, if in the above coloring problem, we are given the number of each color that can be used, we cannot directly apply the Pólya enumeration formula above. To actually solve such problems, we need to derive again using Burnside's lemma; and summarizing these results in the form of generating functions gives the weighted version of the Pólya enumeration theorem.
+
+???+ example "Necklace Coloring (with Restrictions)"
+    Consider a necklace with 4 beads, each bead can be either red or blue. We have exactly 2 red beads and 2 blue beads available. How many essentially different colorings are there? (If two colorings can be made identical by rotating the necklace, they are considered the same.)
+
+??? example "Solution and Analysis"
+    Consider using Burnside's lemma. There are 2 red beads and 2 blue beads, totaling $\binom{4}{2} = 6$ coloring schemes. The space symmetry group $G = \{r_0, r_1, r_2, r_3\}$ corresponds to rotations 0~3 respectively. Their fixed point sets are analyzed as follows:
+
+    -   Rotation by 0 positions $r_0 = (1)$, all 6 coloring schemes are fixed points;
+    -   Rotation by 1 position $r_1 = (1234)$, fixed points require all beads to have the same color, so there are no fixed points;
+    -   Rotation by 2 positions $r_2 = (13)(24)$, there are 2 independently colorable regions, each of size 2. They need to be colored with one red and one blue respectively, so the fixed point set has size 2;
+    -   Rotation by 3 positions $r_3 = (1432)$, same as rotation by 1 position, there are no fixed points.
+
+    Therefore, according to Burnside's lemma, the number of essentially different colorings is
+
+    $$
+    \frac{6 + 0 + 2 + 0}{4} = 2.
+    $$
+
+From this example, we can derive the following calculation method. For problems with restrictions on the number of different colors, we also need to color the cycles of each permutation in the space symmetry group, but we need to ensure that the number of colors used exactly equals the given number of colors. Such combinatorial problems usually don't have explicit solutions. Except for special cases that can be calculated using [combinatorics methods](../combinatorics/combination.md), they need to be treated as [knapsack problems](../../dp/knapsack.md).
+
+This counting problem can be answered using generating functions. Given a permutation $g$, if its [type](../permutation.md#type-of-a-permutation) is $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$, i.e., it has $\alpha_k$ cycles of length $k$, and for each cycle, it can be colored with one of $m$ colors, then in the generating function
 
 $$
-\prod_{k=1}^n\left(\sum_{i=1}^mx_i^k\right)^{\alpha_k}
+\prod_{k=1}^n\left(\sum_{i=1}^m x_i^k\right)^{\alpha_k},
 $$
 
-中单项式 $x_1^{\beta_1}x_2^{\beta_2}\cdots x_m^{\beta_m}$ 的系数就是第 $i$ 种颜色用了 $\beta_i$ 次的计数．这里圆括号中的表达式 $\sum_{i=1}^mx_i^k$ 的组合意义是，对于长度为 $k$ 的轮换，用到 $k$ 次颜色 $i$ 的染色方法的计数是 $1$，对于其它情形，计数是 $0$；这正描述了同一轮换中各位置染色一致的要求．
+the coefficient of the monomial $x_1^{\beta_1}x_2^{\beta_2}\cdots x_m^{\beta_m}$ is the count where color $i$ is used $\beta_i$ times. The expression in parentheses, $\sum_{i=1}^m x_i^k$, has the combinatorial meaning: for a cycle of length $k$, if color $i$ is used $k$ times, the counting method is 1; for other cases, the count is 0; this precisely describes the requirement that positions in the same cycle have consistent coloring.
 
-给定置换 $g$ 下染色计数的生成函数，对各个单项式应用 Burnside 引理，就得到各种颜色组合下的本质不同的计数．因为生成函数对各个单项式是线性的，所以本质不同染色方案的计数的生成函数是
+Applying Burnside's lemma to each monomial in the generating function for counting colorings under a given permutation gives the essentially different counts for various color combinations. Since the generating function is linear for each monomial, the generating function for the count of essentially different coloring schemes is
 
 $$
-\frac1{|G|}\sum_{g\in G}\prod_{k=1}^n\left(\sum_{i=1}^mx_i^k\right)^{\alpha_k}.
+\frac{1}{|G|}\sum_{g \in G}\prod_{k=1}^n\left(\sum_{i=1}^m x_i^k\right)^{\alpha_k}.
 $$
 
-展开这个式子，每个单项式的系数就给出了给定颜色组合下的本质不同染色的计数．
+Expanding this expression, the coefficient of each monomial gives the count of essentially different colorings for the given color combination.
 
-在上述过程中，对每个轮换进行染色的生成函数 $\sum_{i=1}^mx_i^k$ 并无特殊之处，可以替换成其它的生成函数．因而，有如下的一般版本的 Pólya 计数原理．
+In the above process, the generating function $\sum_{i=1}^m x_i^k$ for coloring each cycle has nothing special and can be replaced by other generating functions. Therefore, there is a general version of the Pólya enumeration theorem.
 
-???+ note "置换群的轮换指标"
-    给定置换群 $G$，则群 $G$ 的 **轮换指标**（cycle index），定义为
-    
+???+ note "Cycle Index of a Permutation Group"
+    Given a permutation group $G$, the **cycle index** of group $G$, denoted $Z_G(t_1, t_2, \cdots, t_n)$, is defined as
+
     $$
-    Z_G(t_1,t_2,\cdots,t_n)=\frac{1}{|G|}\sum_{g\in G}t_1^{c_1(g)}t_2^{c_2(g)}\cdots t_n^{c_n(g)},
+    Z_G(t_1, t_2, \cdots, t_n) = \frac{1}{|G|}\sum_{g \in G}t_1^{c_1(g)}t_2^{c_2(g)}\cdots t_n^{c_n(g)},
     $$
-    
-    其中，$c_k(g)$ 是置换 $g$ 的轮换分解中长度为 $k$ 的轮换的个数，即 $1^{c_1(g)}2^{c_2(g)}\cdots n^{c_n(g)}$ 是置换 $g$ 的型．
 
-???+ note "Pólya 计数原理（带权重版本）"
-    给定群 $G$ 在集合 $X$ 上的作用，对每个点的染色方法由它的染色方案的计数的生成函数 $f(x_1,x_2,\cdots,x_m)$ 给出，那么集合 $X$ 的本质不同染色方案的计数的生成函数是
-    
+    where $c_k(g)$ is the number of cycles of length $k$ in the cycle decomposition of permutation $g$, i.e., $1^{c_1(g)}2^{c_2(g)}\cdots n^{c_n(g)}$ is the type of permutation $g$.
+
+???+ note "Pólya Enumeration Theorem (Weighted Version)"
+    Given a group $G$ acting on a set $X$, where the coloring method for each point is given by a generating function $f(x_1, x_2, \cdots, x_m)$ of the count of coloring schemes, then the generating function for the count of essentially different coloring schemes of set $X$ is
+
     $$
-    Z_G(f(x_1^1,x_2^1,\cdots,x_m^1),f(x_1^2,x_2^2,\cdots,x_m^2),\cdots,f(x_1^n,x_2^n,\cdots,x_m^n)),
+    Z_G(f(x_1^1, x_2^1, \cdots, x_m^1), f(x_1^2, x_2^2, \cdots, x_m^2), \cdots, f(x_1^n, x_2^n, \cdots, x_m^n)),
     $$
-    
-    这里，$Z_G(t_1,t_2,\cdots,t_n)$ 是群 $G$ 的轮换指标．
 
-这里，如果单个位置的染色的生成函数是 $f(x_1,x_2,\cdots,x_m)$，那么长度为 $k$ 的轮换的染色的生成函数就是 $f(x_1^k,x_2^k,\cdots,x_m^k)$．这反映了如果某一染色方案是给定置换的不动点，那么同一轮换中的所有位置必须染相同的颜色．如果将生成函数在 $x_i=1$ 处取值，就得到上文的无权重版本的 Pólya 计数原理．
+    where $Z_G(t_1, t_2, \cdots, t_n)$ is the cycle index of group $G$.
 
-定理的叙述用到了置换群的轮换指标的概念．它和具体的染色问题无关．它描述了置换群的结构．
+Here, if the generating function for coloring a single position is $f(x_1, x_2, \cdots, x_m)$, then the generating function for coloring a cycle of length $k$ is $f(x_1^k, x_2^k, \cdots, x_m^k)$. This reflects that if a coloring scheme is a fixed point of a given permutation, all positions in the same cycle must be colored the same color. If we evaluate the generating function at $x_i = 1$, we obtain the unweighted version of the Pólya enumeration theorem.
 
-??? example "带限制的项链染色问题另解"
-    旋转对称群的轮换指标是 $\dfrac14\left(t_1^4+t_2^2+2t_4\right)$，单点染色的生成函数是 $r+b$，故而全体染色方案的生成函数是
-    
+The statement of the theorem uses the concept of the cycle index of a permutation group. It is independent of specific coloring problems. It describes the structure of the permutation group.
+
+??? example "Restricted Necklace Coloring Problem - Alternative Solution"
+    The cycle index of the rotational symmetry group is $\frac{1}{4}(t_1^4 + t_2^2 + 2t_4)$, and the generating function for single-point coloring is $r + b$. Therefore, the generating function for all coloring schemes is
+
     $$
     \begin{aligned}
-    F(r,b)&=\frac14\left((r+b)^4+(r^2+b^2)^2+2(r^4+b^4)\right)\\
-    &=r^4+r^3b+2r^2b^2+rb^3+b^4.
+    F(r, b) &= \frac{1}{4}\left((r+b)^4 + (r^2+b^2)^2 + 2(r^4+b^4)\right)\\
+    &= r^4 + r^3b + 2r^2b^2 + rb^3 + b^4.
     \end{aligned}
     $$
-    
-    所求计数就是 $r^2b^2$ 的系数，即共 $2$ 种本质不同染色．顺便，这个式子也给出了其他限制下的计数．
 
-### 应用
+    The desired count is the coefficient of $r^2b^2$, which is 2 essentially different colorings. Incidentally, this formula also gives counts under other restrictions.
 
-带权重版本的 Pólya 计数原理在组合计数问题中起到重要的作用．这里简单讨论它的应用，而更一般的讨论可以参考 [组合问题的形式化方法](../poly/symbolic-method.md#有限制的构造)．
+### Applications
 
-???+ example "钻石项链"
-    现在有一串共四个相同珠子的项链，每个珠子上可以镶若干颗钻石．如果有四枚钻石，总共有多少本质不同的镶钻方式．（如果两种镶钻的结果可以通过旋转项链重合，就认为是相同的．)
+The weighted version of the Pólya enumeration theorem plays an important role in combinatorial counting problems. Here we briefly discuss its applications, and for more general discussions, refer to [Formal Methods for Combinatorial Problems](../poly/symbolic-method.md#finite-constructions).
 
-??? example "解答和分析"
-    项链的空间对称群仍与前文所述相同．不考虑钻石总数的限制，则单个位置的镶钻方案的生成函数是
-    
+???+ example "Diamond Necklace"
+    Consider a necklace with 4 identical beads, where each bead can have several diamonds. If there are 4 diamonds in total, how many essentially different ways to set them? (If two ways can be made identical by rotating the necklace, they are considered the same.)
+
+??? example "Solution and Analysis"
+    The space symmetry group of the necklace is the same as described before. Without restrictions on the total number of diamonds, the generating function for the diamond-setting scheme at a single position is
+
     $$
-    f(x)=1+x+x^2+\cdots=\sum_{i=1}^\infty x^i=\frac{1}{1-x}.
+    f(x) = 1 + x + x^2 + \cdots = \sum_{i=1}^\infty x^i = \frac{1}{1-x}.
     $$
-    
-    应用带权重版本的 Pólya 计数原理可知，所有镶钻方案的生成函数为
-    
+
+    Applying the weighted version of the Pólya enumeration theorem, the generating function for all diamond-setting schemes is
+
     $$
     \begin{aligned}
-    F(x)&=\frac14\left(f(x)^4+f(x^2)^2+2f(x^4)\right)\\
-    &=1+x+3x^2+5x^3+10x^4+\cdots.
+    F(x) &= \frac{1}{4}\left(f(x)^4 + f(x^2)^2 + 2f(x^4)\right)\\
+    &= 1 + x + 3x^2 + 5x^3 + 10x^4 + \cdots.
     \end{aligned}
     $$
-    
-    故而，所求镶钻方案的数目就是 $x^4$ 的系数，即共计 $10$ 种方案．作为验证，通过枚举可知，它们分别是
-    
+
+    Therefore, the number of diamond-setting schemes is the coefficient of $x^4$, which is 10 schemes in total. For verification, by enumeration, they are
+
     $$
-    4000,3100,3010,3001,2200,2020,2110,2101,2011,1111.
+    4000, 3100, 3010, 3001, 2200, 2020, 2110, 2101, 2011, 1111.
     $$
-    
-    这里，每组四个数字分别表示每个珠子上的镶钻数目．
 
-这个例子说明，带权重版本的 Pólya 计数原理能够解决的问题远比染色计数问题要广泛．它提供了一种将单点的计数扩展到整个结构上本质不同的计数的方法．染色问题只是这类问题的特例．
+    Here, each group of four numbers represents the number of diamonds on each bead.
 
-## 常见空间对称群
+This example shows that the weighted version of the Pólya enumeration theorem can solve problems far broader than just coloring counting problems. It provides a method to extend single-point counting to essentially different counting for the entire structure. Coloring problems are just a special case of such problems.
 
-Pólya 计数相关问题的难点之一在于分析置换群的结构．这里，简单讨论常见的空间对称群的结构，并用它们的轮换指标加以描述．应当注意，对于同一个结构的空间对称群，如果考虑的作用对象的集合不同，相应的 [群作用](../algebra/group-theory.md#群作用) 也就不同，因而它们的置换表示也就不同．比如说，正方体的空间对称群对于它的顶点、棱、面的作用就分别对应着正方体的顶点置换群、棱置换群和面置换群，顶点、棱、面的个数互不相同，故而这些置换群以及对应的轮换指标当然也各不相同．所以，在具体问题的求解中，不能忽视群作用的对象的指定．
+## Common Space Symmetry Groups
 
-??? info "空间对称群和置换群的关系"
-    虽然两者概念上十分相似，但是它们绝不是同一个对象．用群论的语言说，给定空间对称群 $G$ 和它在集合 $X$ 上的群作用，群作用的置换表示实则提供了一个从群 $G$ 到对称群 $S_X$ 的同态 $\varphi$，而且这个置换表示在组合计数的语境下往往是忠实的，即 $\ker\varphi=\{e\}$，故而同态 $\varphi$ 实则是群 $G$ 到群 $S_X$ 内的一个嵌入．文中的置换群则是这个嵌入的像，即 $\varphi(G)$，它与本身的空间对称群 $G$ 同构．因此，对于同样的结构上的空间对称群 $G$，如果群作用的选取不一致，就会同构于不同的置换群 $\varphi(G)$，进而具有不同的轮换指标（同构的置换群的轮换指标未必相同）．
+One of the difficulties in problems related to Pólya enumeration is analyzing the structure of permutation groups. Here, we briefly discuss the structures of common space symmetry groups and describe them using their cycle indices. It should be noted that for the same structure's space symmetry group, if the set of objects being acted upon is different, the corresponding group action is also different, and thus their permutation representations are different. For example, the space symmetry group of a cube acting on its vertices, edges, and faces respectively correspond to the vertex permutation group, edge permutation group, and face permutation group of the cube. The numbers of vertices, edges, and faces are different, so these permutation groups and their corresponding cycle indices are naturally different. Therefore, in solving specific problems, we cannot ignore the specification of the object of the group action.
 
-给定一个结构，它的空间对称群是所有能够将它变换到它自身的操作的集合．它必然满足如下条件：
+??? info "Relationship between Space Symmetry Groups and Permutation Groups"
+    Although the two concepts are very similar, they are not the same object. In the language of group theory, given a space symmetry group $G$ and its action on a set $X$, the permutation representation of the group action provides a homomorphism $\varphi$ from group $G$ to the symmetric group $S_X$. Moreover, this permutation representation is often faithful in the context of combinatorial counting, i.e., $\ker\varphi = \{e\}$, so homomorphism $\varphi$ is actually an embedding of group $G$ into group $S_X$. The permutation group in the text is precisely the image of this embedding, i.e., $\varphi(G)$, which is isomorphic to the original space symmetry group $G$. Therefore, for the same structure's space symmetry group $G$, different choices of group action will be isomorphic to different permutation groups $\varphi(G)$, and consequently have different cycle indices (isomorphic permutation groups do not necessarily have the same cycle indices).
 
--   对给定结构连续应用两个对称操作，可以视作应用另一个对称操作，即对称操作的集合对于复合是满足封闭性的；
--   对称操作的复合满足结合律；
--   存在恒等的对称操作，即给定结构保持不变本身也视作一个操作；
--   任何操作都存在它的逆操作，可以抵消给定操作的效果．
+Given a structure, its space symmetry group is the set of all operations that can map it to itself. It must satisfy the following conditions:
 
-[群](../algebra/basic.md#群) 是对所有满足这些条件的概念的抽象．对于群的结构的讨论，就是 [群论](../algebra/group-theory.md) 的主要研究内容．这里的分析主要集中在空间对称群，对它的结构的讨论也主要应用几何观点．这里给出了常见的例子，读者应当从中获得分析这类问题的常见思路．
+-   Applying two symmetry operations in succession to a given structure can be regarded as applying another symmetry operation, i.e., the set of symmetry operations is closed under composition;
+-   The composition of symmetry operations satisfies the associative law;
+-   There exists an identity symmetry operation, i.e., the given structure remaining unchanged itself is also considered an operation;
+-   Every operation has its inverse operation, which can undo the effect of the given operation.
 
-### 循环群
+A [group](../algebra/basic.md#group) is an abstraction of all concepts satisfying these conditions. The discussion of group structures is the main content of [group theory](../algebra/group-theory.md). Our analysis here focuses on space symmetry groups, and the discussion of their structures mainly uses geometric perspectives. Here we provide common examples, and readers should derive common approaches to analyzing such problems from these.
 
-给定正 $n$ 边形，它的全体旋转操作构成的空间对称群称为循环群（cyclic group），记作 $C_n$．将逆时针旋转 $(360/n)^\circ$ 的操作记作 $r$，则群 $C_n$ 的元素可以写作
+### Cyclic Group
 
-$$
-C_n=\{e,r,r^2,\cdots,r^{n-1}\}.
-$$
-
-这里，$r^k$ 指对操作 $r$ 重复 $k$ 次的结果，即逆时针旋转 $(360k/n)^\circ$，而 $e=r^0$ 指恒等变换．
-
-无论是考虑循环群对正 $n$ 边形的全体顶点还是全体边的集合的作用，它的置换表示都是一样的．以全体顶点的集合为例分析群作用的置换表示．它的轮换指标是
+For a regular $n$-gon, all its rotation operations form a space symmetry group called the cyclic group, denoted $C_n$. Let the counterclockwise rotation by $(360/n)^\circ$ be denoted as $r$, then the elements of group $C_n$ can be written as
 
 $$
-Z(C_n)=\frac1n\sum_{d\mid n}\varphi(d)t_{d}^{n/d}.
+C_n = \{e, r, r^2, \cdots, r^{n-1}\}.
 $$
 
-这里，$\varphi(\cdot)$ 是数论中的 [欧拉函数](../number-theory/euler-totient.md)．
+Here, $r^k$ refers to applying operation $r$ $k$ times, i.e., counterclockwise rotation by $(360k/n)^\circ$, and $e = r^0$ refers to the identity transformation.
 
-只计旋转操作，长度为 $n$ 的项链的空间对称群就是 $C_n$．
+Whether considering the action of the cyclic group on all vertices or all edges of a regular $n$-gon, its permutation representation is the same. Let's analyze the permutation representation of the group action by taking the set of all vertices as an example. Its cycle index is
 
-??? note "分析"
-    设顶点的集合按照逆时针顺序记为 $\{0,1,\cdots,n-1\}$，则 $r^k(i)=i+k\bmod n$．顶点 $i$ 所在的轮换中的顶点集合就是
-    
+$$
+Z(C_n) = \frac{1}{n}\sum_{d \mid n}\varphi(d)t_d^{n/d}.
+$$
+
+Here, $\varphi(\cdot)$ is the [Euler's totient function](../number-theory/euler-totient.md) from number theory.
+
+Considering only rotation operations, the space symmetry group of a necklace of length $n$ is $C_n$.
+
+??? note "Analysis"
+    Let the set of vertices be labeled in counterclockwise order as $\{0, 1, \cdots, n-1\}$, then $r^k(i) = i + k \pmod{n}$. The set of vertices in the cycle containing vertex $i$ is
+
     $$
-    \{i+\ell k\bmod n:\ell\in\mathbf Z\}.
+    \{i + \ell k \pmod{n}: \ell \in \mathbf{Z}\}.
     $$
-    
-    显然，$i\equiv i+\ell k\pmod n$ 当且仅当
-    
-    $$
-    \frac{n}{\gcd(k,n)}\mid\ell.
-    $$
-    
-    这意味着，任何顶点 $i$ 所在的轮换长度都是 $\dfrac{n}{\gcd(k,n)}$．因此，置换 $r^k$ 有 $\gcd(k,n)$ 个等长的轮换．考虑在轮换指标的表达式中合并同类项，给定 $d\mid n$，则满足 $\gcd(k,n)=n/d$ 的 $k$ 共计 $\varphi(d)$ 个，它们对应的单项式都是 $t_d^{n/d}$ 的形式，所以可以得到上面的轮换指标表达式．
 
-### 二面体群
+    Obviously, $i \equiv i + \ell k \pmod{n}$ if and only if
 
-给定正 $n$ 边形，它的全体旋转和关于对称轴翻转的操作也构成空间对称群，它称为二面体群（dihedral group），记作 $D_{2n}$．将逆时针旋转 $(360/n)^\circ$ 的操作记作 $r$，并将沿某个给定对称轴（比如中心与某个顶点的连线）翻转的操作记作 $s$，则群 $D_{2n}$ 的操作可以写作
+    $$
+    \frac{n}{\gcd(k, n)} \mid \ell.
+    $$
+
+    This means that any vertex $i$ lies in a cycle of length $\frac{n}{\gcd(k, n)}$. Therefore, permutation $r^k$ has $\gcd(k, n)$ cycles of equal length. Considering merging like terms in the expression of the cycle index, for a given $d \mid n$, there are $\varphi(d)$ values of $k$ satisfying $\gcd(k, n) = n/d$, and their corresponding monomials are all of the form $t_d^{n/d}$. From this, we can derive the above cycle index expression.
+
+### Dihedral Group
+
+For a regular $n$-gon, all its rotation operations and reflections about symmetry axes also form a space symmetry group, called the dihedral group, denoted $D_{2n}$. Let the counterclockwise rotation by $(360/n)^\circ$ be denoted as $r$, and let the reflection about a given symmetry axis (such as the line through the center and a vertex) be denoted as $s$. Then the operations of group $D_{2n}$ can be written as
 
 $$
-D_{2n}=\{e,r,\cdots,r^{n-1},s,sr,\cdots,sr^{n-1}\}.
+D_{2n} = \{e, r, \cdots, r^{n-1}, s, sr, \cdots, sr^{n-1}\}.
 $$
 
-这里，$r^k$ 依然是旋转操作，而 $sr^k$ 虽然是先进行 $k$ 次旋转再沿给定对称轴翻转，但是可以等价地看作沿着另一个对称轴翻转．因此，群 $D_{2n}$ 中共计 $1$ 个恒等变换、$(n-1)$ 个旋转操作和 $n$ 个翻转操作．它对顶点集合和边集合的群作用也有着相同的置换表示．它的轮换指标是
+Here, $r^k$ is still a rotation operation, and although $sr^k$ means first rotating $k$ times and then reflecting about the given symmetry axis, it can equivalently be regarded as reflecting about another symmetry axis. Therefore, group $D_{2n}$ contains 1 identity transformation, $(n-1)$ rotation operations, and $n$ reflection operations. Its group actions on the vertex set and edge set also have the same permutation representation. Its cycle index is
 
 $$
-Z(D_{2n})=\frac12Z(C_n)+
+Z(D_{2n}) = \frac{1}{2}Z(C_n) +
 \begin{cases}
-\dfrac12t_1t_2^k,&n=2k+1,\\
-\dfrac14\left(t_1^2t_2^{k-1}+t_2^k\right),&n=2k.
+\frac{1}{2}t_1 t_2^k, & n = 2k + 1,\\
+\frac{1}{4}(t_1^2 t_2^{k-1} + t_2^k), & n = 2k.
 \end{cases}
 $$
 
-??? note "分析"
-    群 $D_{2n}$ 中的旋转操作 $r^k$ 的集合（包括恒等变换）的分析和循环群 $C_n$ 如出一辙，关键在于剩下的翻转操作的分析．此时需要对顶点个数 $n$ 的奇偶性分类讨论．
-    
-    当 $n=2k+1$ 时，所有的翻转操作的对称轴都是连结顶点和它对面的边的中点的，共计 $n$ 条这样的对称轴．每个翻转操作后，对称轴上的顶点保持不动，而其它顶点成对地交换，因此有 $1$ 个不动点（$1$‑轮换）和 $k$ 个 $2$‑轮换．
-    
-    当 $n=2k$ 时，有两种对称轴．其中，一半的对称轴是连接相对的顶点的；沿着这样的对称轴翻转，将保持对称轴上的两个顶点不动，而将其余的顶点成对地交换，因此有 $2$ 个不动点（$1$‑轮换）和 $(k-1)$ 个 $2$‑轮换．另一半的对称轴是连接相对的边的中点的；沿着这样的对称轴翻转，将所有顶点都成对地交换，因此有 $k$ 个 $2$‑轮换．
-    
-    根据这一分析，可以写出上面的轮换指标表达式．
+??? note "Analysis"
+    The analysis of rotation operations $r^k$ in group $D_{2n}$ (including the identity transformation) is exactly the same as that for cyclic group $C_n$. The key lies in the analysis of reflection operations. At this point, we need to classify according to the parity of the number of vertices $n$.
 
-### 对称群
+    When $n = 2k + 1$, all reflection axes are lines connecting a vertex to the midpoint of the opposite edge, totaling $n$ such axes. After each reflection, the vertex on the axis remains fixed, while other vertices are swapped in pairs. Therefore, there is 1 fixed point (1-cycle) and $k$ 2-cycles.
 
-给定 $n$ 个元素，它上面的全体置换构成群，称为 $n$ 次对称群（symmetric group），记作 $S_n$．它描述了这 $n$ 个顶点能拥有的全部对称性．它也是这些对称操作对顶点集合的作用的置换表示．
+    When $n = 2k$, there are two types of symmetry axes. Half of them are axes connecting opposite vertices; reflecting about such an axis keeps the two vertices on the axis fixed while swapping the remaining vertices in pairs, so there are 2 fixed points (1-cycles) and $(k-1)$ 2-cycles. The other half are axes connecting the midpoints of opposite edges; reflecting about such an axis swaps all vertices in pairs, so there are $k$ 2-cycles.
 
-根据 [置换与排列](../permutation.md#置换的型) 一文的分析，它的轮换指标是
+    Based on this analysis, we can write the above cycle index expression.
+
+### Symmetric Group
+
+For a set of $n$ elements, all permutations on it form a group, called the symmetric group of degree $n$, denoted $S_n$. It describes all the symmetry these $n$ vertices can have. It is also the permutation representation of these symmetry operations acting on the vertex set.
+
+According to the analysis in [Permutations and Combinations](../permutation.md#type-of-a-permutation), its cycle index is
 
 $$
-Z(S_n)=\sum_{a_1+2\alpha_2+\cdots+n\alpha_n=n}\frac{t_1^{\alpha_1}t_2^{\alpha_2}\cdots t_n^{\alpha_n}}{1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}\alpha_1!\alpha_2!\cdots\alpha_n!}.
+Z(S_n) = \sum_{\alpha_1 + 2\alpha_2 + \cdots + n\alpha_n = n}\frac{t_1^{\alpha_1}t_2^{\alpha_2}\cdots t_n^{\alpha_n}}{1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}\alpha_1!\alpha_2!\cdots\alpha_n!}.
 $$
 
-这里用到了型为 $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$ 的置换的计数是
+Here, the number of permutations with type $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$ is
 
 $$
 \frac{n!}{1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}\alpha_1!\alpha_2!\cdots\alpha_n!}.
 $$
 
-它满足递推关系
+It satisfies the recurrence relation
 
 $$
-Z(S_n)=\frac1n\sum_{k=1}^nt_kZ(S_{n-k}),
+Z(S_n) = \frac{1}{n}\sum_{k=1}^n t_k Z(S_{n-k}),
 $$
 
-而递推起点是 $Z(S_0)=1$．这一递推关系的组合意义是，要构造长度为 $n$ 的置换，可以首先选取点 $n$ 所在轮换的长度 $k$，再对剩下的 $(n-k)$ 个顶点的集合构造．
+with initial condition $Z(S_0) = 1$. The combinatorial meaning of this recurrence relation is: to construct a permutation of length $n$, first choose the length $k$ of the cycle containing point $n$, then construct the set of remaining $(n-k)$ vertices.
 
-给定 $n$ 个顶点的完全图，则它的空间对称群正是 $S_n$．它对全体顶点的集合的作用的轮换指标就由上文的 $Z(S_n)$ 给出．但是，它对全体边的集合的作用的置换表示并不相同．比如说，集合的大小就不相同，全体边的数目是 $n(n-1)/2$．对于边的情形，需要额外的分析．这里给出简单的例子，一般的情形可参考习题．
+Given a complete graph with $n$ vertices, its space symmetry group is exactly $S_n$. The cycle index of its action on the set of all vertices is given by $Z(S_n)$ above. However, its permutation representation on the set of all edges is not the same. For example, the size of the set is different; the number of edges is $n(n-1)/2$. For the case of edges, additional analysis is needed. Here we give a simple example; for general cases, refer to the exercises.
 
-???+ example "无向简单图计数"
-    计算同构意义下有 $4$ 个顶点的无向简单图的数目．
+???+ example "Undirected Simple Graph Counting"
+    Count the number of undirected simple graphs with 4 vertices up to isomorphism.
 
-??? example "解答"
-    这相当于在有 $4$ 个顶点的完全图上染两种颜色，要求本质不同的染色数目．空间对称群是 $S_4$，现在分析它的边置换群 $S_4^{(2)}$ 的轮换指标．
-    
-    -   恒等变换（$1$ 种）：边也保持不动，故对应单项式为 $t_1^6$；
-    -   交换两顶点（$6$ 种）：假设交换 $a$ 和 $b$，则边 $1$ 和边 $3$ 保持不动，同时，边 $2$ 和边 $5$ 对换，边 $4$ 和边 $6$ 对换，故对应单项式为 $6t_1^2t_2^2$；
-    -   轮换三顶点（$8$ 种）：假设轮换是 $(abc)$，则它们之间的连边 $1,2,5$ 也相应轮换，它们和第四点 $d$ 的连边 $4,6,3$ 也相应轮换，故对应单项式为 $8t_3^2$；
-    -   交换两对顶点（$3$ 种）：假设点 $a$ 和点 $b$ 对换，点 $c$ 和点 $d$ 对换，则边 $1$ 和边 $3$ 保持不动，同时，边 $2$ 和边 $4$ 对换，边 $5$ 和边 $6$ 对换，故对应单项式为 $3t_1^2t_2^2$；
-    -   轮换四顶点（$6$ 种）：假设轮换是 $(abcd)$，则其中相邻顶点的连边 $1,2,3,4$ 也相应轮换，相对顶点的连边 $5,6$ 同时对换，故对应的单项式为 $6t_2t_4$．
-    
-    所以，边置换群的轮换指标是
-    
+??? example "Solution"
+    This is equivalent to coloring the complete graph with 4 vertices with two colors, requiring the number of essentially different colorings. The space symmetry group is $S_4$. Now let's analyze the cycle index of its edge permutation group $S_4^{(2)}$.
+
+    -   Identity transformation (1 type): edges also remain fixed, so the corresponding monomial is $t_1^6$;
+    -   Swapping two vertices (6 types): suppose we swap $a$ and $b$, then edges 1 and 3 remain fixed, while edges 2 and 5 swap, and edges 4 and 6 swap, so the corresponding monomial is $6t_1^2t_2^2$;
+    -   Cyclic permutation of three vertices (8 types): suppose the cycle is $(abc)$, then the edges between them, 1, 2, 5, also cycle accordingly, and the edges from them to the fourth point $d$, 4, 6, 3, also cycle accordingly, so the corresponding monomial is $8t_3^2$;
+    -   Swapping two pairs of vertices (3 types): suppose vertex $a$ swaps with vertex $b$, and vertex $c$ swaps with vertex $d$, then edges 1 and 3 remain fixed, while edges 2 and 4 swap, and edges 5 and 6 swap, so the corresponding monomial is $3t_1^2t_2^2$;
+    -   Cyclic permutation of four vertices (6 types): suppose the cycle is $(abcd)$, then the edges between adjacent vertices, 1, 2, 3, 4, also cycle accordingly, and the edges between opposite vertices, 5, 6, swap simultaneously, so the corresponding monomial is $6t_2t_4$.
+
+    Therefore, the cycle index of the edge permutation group is
+
     $$
-    Z(S_4^{(2)})=\dfrac{1}{24}(t_1^6+9t_1^2t_2^2+8t_3^2+6t_2t_4).
-    $$
-    
-    根据 Pólya 计数原理，同构意义下有 $4$ 个顶点的无向简单图的数目是
-    
-    $$
-    \frac{2^6+9\times 2^4+8\times 2^2+6\times 2^2}{24} = 11.
+    Z(S_4^{(2)}) = \dfrac{1}{24}(t_1^6 + 9t_1^2t_2^2 + 8t_3^2 + 6t_2t_4).
     $$
 
-### 多面体群
+    According to the Pólya enumeration theorem, the number of undirected simple graphs with 4 vertices up to isomorphism is
 
-多面体群（polyhedral group）是正多面体的空间对称群．正多面体只有五种：正四面体、正方体、正八面体、正十二面体和正二十面体．如果保持点、棱、面之间的邻接关系，交换点和面，可以得到对偶的正多面体．其中，正四面体和它自身对偶，正方体和正八面体对偶，正十二面体和正二十面体对偶．利用对偶关系，可以简化它们的空间对称群的讨论．
+    $$
+    \frac{2^6 + 9 \times 2^4 + 8 \times 2^2 + 6 \times 2^2}{24} = 11.
+    $$
 
-只计三维空间中可以进行的旋转操作，它们的空间对称群只有三种．
+### Polyhedral Groups
 
--   四面体群（tetrahedral group），即正四面体的空间对称群：
+A polyhedral group is the space symmetry group of a regular polyhedron. There are only five regular polyhedra: regular tetrahedron, cube, regular octahedron, regular dodecahedron, and regular icosahedron. If we keep the adjacency relations between vertices, edges, and faces but swap vertices and faces, we obtain the dual regular polyhedron. The regular tetrahedron is self-dual, the cube and octahedron are dual to each other, and the dodecahedron and icosahedron are dual to each other. Using the dual relationship, we can simplify the discussion of their space symmetry groups.
 
-    -   恒等变换；
-    -   绕顶点和对面中心的连线旋转 $120^\circ$ 和 $240^\circ$；
-    -   绕对边的中点的连线旋转 $180^\circ$．
+Considering only rotation operations in three-dimensional space, there are only three types of space symmetry groups.
 
-    共计 $1+2\times4+1\times3=12$ 个对称操作．
+-   Tetrahedral group, i.e., the space symmetry group of the regular tetrahedron:
+    -   Identity transformation;
+    -   Rotation by $120^\circ$ and $240^\circ$ about the axis through a vertex and the center of the opposite face;
+    -   Rotation by $180^\circ$ about the axis through the midpoints of opposite edges.
 
-    它对应的置换群的轮换指标如下．
+    There are $1 + 2 \times 4 + 1 \times 3 = 12$ symmetry operations in total.
 
-    -   顶点置换群和面置换群：$\dfrac1{12}\left(t_1^4+8t_1t_3+3t_2^2\right)$；
-    -   棱置换群：$\dfrac1{12}\left(t_1^6+8t_3^2+3t_1^2t_2^2\right)$．
+    The cycle indices of the corresponding permutation groups are as follows.
 
--   八面体群（octahedral group），即正方体（和正八面体）的空间对称群：
+    -   Vertex permutation group and face permutation group: $\frac{1}{12}(t_1^4 + 8t_1t_3 + 3t_2^2)$;
+    -   Edge permutation group: $\frac{1}{12}(t_1^6 + 8t_3^2 + 3t_1^2t_2^2)$.
 
-    -   恒等变换；
-    -   绕相对顶点的连线旋转 $120^\circ$ 和 $240^\circ$；
-    -   绕相对的棱的中点的连线旋转 $180^\circ$；
-    -   绕相对的面的中心的连线旋转 $90^\circ$，$180^\circ$ 和 $270^\circ$．
+-   Octahedral group, i.e., the space symmetry group of the cube (and regular octahedron):
+    -   Identity transformation;
+    -   Rotation by $120^\circ$ and $240^\circ$ about the axis through opposite vertices;
+    -   Rotation by $180^\circ$ about the axis through the midpoints of opposite edges;
+    -   Rotation by $90^\circ$, $180^\circ$, and $270^\circ$ about the axis through the centers of opposite faces.
 
-    共计 $1+2\times 4+1\times 6+3\times 3=24$ 个对称操作．
+    There are $1 + 2 \times 4 + 1 \times 6 + 3 \times 3 = 24$ symmetry operations in total.
 
-    它对应的正方体的置换群的轮换指标如下．
+    The cycle indices of the corresponding cube's permutation groups are as follows.
 
-    -   顶点置换群：$\dfrac{1}{24}\left(t_1^8+8t_1^2t_3^2+9t_2^4+6t_4^2\right)$；
-    -   棱置换群：$\dfrac{1}{24}\left(t_1^{12}+8t_3^4+6t_1^2t_2^5+6t_4^3+3t_2^6\right)$；
-    -   面置换群：$\dfrac{1}{24}\left(t_1^6+8t_3^2+6t_2^3+6t_1^2t_4+3t_1^2t_2^2\right)$．
+    -   Vertex permutation group: $\frac{1}{24}(t_1^8 + 8t_1^2t_3^2 + 9t_2^4 + 6t_4^2)$;
+    -   Edge permutation group: $\frac{1}{24}(t_1^{12} + 8t_3^4 + 6t_1^2t_2^5 + 6t_4^3 + 3t_2^6)$;
+    -   Face permutation group: $\frac{1}{24}(t_1^6 + 8t_3^2 + 6t_2^3 + 6t_1^2t_4 + 3t_1^2t_2^2)$.
 
-    正八面体的置换群类似，只是要将顶点和面的角色对换．
+    The permutation group of the regular octahedron is similar, just swapping the roles of vertices and faces.
 
--   二十面体群（icosahedral group），即正十二面体（和正二十面体）的空间对称群：
+-   Icosahedral group, i.e., the space symmetry group of the regular dodecahedron (and regular icosahedron):
+    -   Identity transformation;
+    -   Rotation by $120^\circ$ and $240^\circ$ about the axis through opposite vertices;
+    -   Rotation by $180^\circ$ about the axis through the midpoints of opposite edges;
+    -   Rotation by $72^\circ$, $144^\circ$, $216^\circ$, and $288^\circ$ about the axis through the centers of opposite faces.
 
-    -   恒等变换；
-    -   绕相对顶点的连线旋转 $120^\circ$ 和 $240^\circ$；
-    -   绕相对的棱的中点的连线旋转 $180^\circ$；
-    -   绕相对的面的中心的连线旋转 $72^\circ$，$144^\circ$，$216^\circ$ 和 $288^\circ$．
+    There are $1 + 2 \times 10 + 1 \times 15 + 6 \times 4 = 60$ symmetry operations in total.
 
-    共计 $1+2\times 10+1\times 15+6\times 4=60$ 个对称操作．
+    The cycle indices of the corresponding regular dodecahedron's permutation groups are as follows.
 
-    它对应的正十二面体的置换群的轮换指标如下．
+    -   Vertex permutation group: $\frac{1}{60}(t_1^{20} + 20t_1^2t_3^6 + 15t_2^{10} + 24t_5^4)$;
+    -   Edge permutation group: $\frac{1}{60}(t_1^{30} + 20t_3^{10} + 15t_1^2t_2^{14} + 24t_5^6)$;
+    -   Face permutation group: $\frac{1}{60}(t_1^{12} + 20t_3^4 + 15t_2^6 + 24t_1^2t_5^2)$.
 
-    -   顶点置换群：$\dfrac{1}{60}\left(t_1^{20}+20t_1^2t_3^6+15t_2^{10}+24t_5^4\right)$；
-    -   棱置换群：$\dfrac{1}{60}\left(t_1^{30}+20t_3^{10}+15t_1^2t_2^{14}+24t_5^6\right)$；
-    -   面置换群：$\dfrac{1}{60}\left(t_1^{12}+20t_3^4+15t_2^6+24t_1^2t_5^2\right)$．
+    The permutation group of the regular icosahedron is similar, just swapping the roles of vertices and faces.
 
-    正二十面体的置换群类似，只是要将顶点和面的角色对换．
+All of these are cycle indices of permutation groups acting separately on objects like vertices, edges, and faces. If we need to color different objects simultaneously, we need to write a combined cycle index.
 
-这里给出的都是对顶点、棱、面等单独的对象作用的置换群的轮换指标．如果要对不同的对象同时染色，需要写出联合的轮换指标．
+## Exercises
 
-## 习题
+### Coloring Problems
 
-### 染色问题
-
-这些题目只需要分析置换群的结构，并应用 Pólya 计数原理．
+These problems only require analyzing the structure of permutation groups and applying the Pólya enumeration theorem.
 
 -   [Luogu P4980【模板】Polya 定理](https://www.luogu.com.cn/problem/P4980)
--   [Luogu P2561 \[AHOI2002\] 黑白瓷砖](https://www.luogu.com.cn/problem/P2561)
+-   [Luogu P2561 [AHOI2002] 黑白瓷砖](https://www.luogu.com.cn/problem/P2561)
 -   [TRANSP - Transposing is Fun](https://www.spoj.com/problems/TRANSP/)
 -   [TRANSP2 - Transposing is Even More Fun](https://www.spoj.com/problems/TRANSP2/)
--   [Luogu P3307 \[SDOI2013\] 项链](https://www.luogu.com.cn/problem/P3307)
+-   [Luogu P3307 [SDOI2013] 项链](https://www.luogu.com.cn/problem/P3307)
 
-当可以使用的颜色组合受到限制时，需要通过背包 DP 或者组合方法求解对轮换染色的方法数目．
+When the available color combinations are restricted, we need to use knapsack DP or combinatorial methods to calculate the number of ways to color cycles.
 
--   [Luogu P1446 \[HNOI2008\] Cards](https://www.luogu.com.cn/problem/P1446)
+-   [Luogu P1446 [HNOI2008] Cards](https://www.luogu.com.cn/problem/P1446)
 -   [UVA10601 Cubes](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1542)
--   [Luogu P4916 \[MtOI2018\] 魔力环](https://www.luogu.com.cn/problem/P4916)
+-   [Luogu P4916 [MtOI2018] 魔力环](https://www.luogu.com.cn/problem/P4916)
 
-### 图论计数
+### Graph Enumeration
 
-Pólya 计数原理可以用于 [图论计数](../combinatorics/graph-enumeration.md) 问题，这类问题难点在于图的边置换群的枚举．
+The Pólya enumeration theorem can be used for [graph enumeration](../combinatorics/graph-enumeration.md) problems, where the difficulty lies in enumerating the edge permutation group of graphs.
 
 -   [SGU 282. Isomorphism](https://codeforces.com/problemsets/acmsguru/problem/99999/282)
--   [Luogu P4727 \[HNOI2009\] 图的同构计数](https://www.luogu.com.cn/problem/P4727)
--   [Luogu P4128 \[SHOI2006\] 有色图](https://www.luogu.com.cn/problem/P4128)
+-   [Luogu P4727 [HNOI2009] 图的同构计数](https://www.luogu.com.cn/problem/P4727)
+-   [Luogu P4128 [SHOI2006] 有色图](https://www.luogu.com.cn/problem/P4128)
 
-另一类可以应用 Pólya 计数原理的图论计数问题需要直接操纵生成函数．
+Another type of graph enumeration problem that can be solved using the Pólya enumeration theorem requires directly manipulating generating functions.
 
 -   [LOJ 6538 烷基计数 加强版 加强版](https://loj.ac/p/6538)
 -   [LOJ 6512「雅礼集训 2018」烷烃计数](https://loj.ac/p/6512)
 -   [Luogu P6597 烯烃计数](https://www.luogu.com.cn/problem/P6597)
--   [Luogu P5818 \[JSOI2011\] 同分异构体计数](https://www.luogu.com.cn/problem/P5818)
+-   [Luogu P5818 [JSOI2011] 同分异构体计数](https://www.luogu.com.cn/problem/P5818)
 
-## 参考文献与注释
+## References and Notes
 
 -   [Pólya enumeration theorem - Wikipedia](https://en.wikipedia.org/wiki/P%C3%B3lya_enumeration_theorem)
 -   [Notes on Pólya's Enumeration Theorem](https://www.diva-portal.org/smash/get/diva2:324594/FULLTEXT01.pdf)
 -   [Cycle index - Wikipedia](https://en.wikipedia.org/wiki/Cycle_index)
 
-[^perm-group]: 因此，空间对称群 $G$ 可以表示是集合 $X$ 上的置换群，即对称群 $S_X$ 的子群．
+[^perm-group]: Therefore, the space symmetry group $G$ can be represented as a permutation group on set $X$, i.e., a subgroup of the symmetric group $S_X$.
 
-[^g-act]: 严格来说，是子群 $\langle g\rangle\le G$ 的作用．
+[^g-act]: Strictly speaking, it's the action of the subgroup $\langle g\rangle \le G$.

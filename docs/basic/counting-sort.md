@@ -1,49 +1,49 @@
-前置知识：[前缀和](./prefix-sum.md)
+Prerequisites: [Prefix Sum](./prefix-sum.md)
 
-???+ warning "提醒"
-    本页面要介绍的不是 [**基数排序**](./radix-sort.md)．
+???+ warning "Note"
+    This page is not about [**Radix Sort**](./radix-sort.md).
 
-本页面将简要介绍计数排序．
+This page gives a brief introduction to counting sort.
 
-## 定义
+## Definition
 
-计数排序（英语：Counting sort）是一种线性时间的排序算法．
+Counting sort (English: Counting sort) is a linear-time sorting algorithm.
 
-## 过程
+## Process
 
-计数排序的工作原理是使用一个额外的数组 $C$，其中第 $i$ 个元素是待排序数组 $A$ 中值等于 $i$ 的元素的个数，然后根据数组 $C$ 来将 $A$ 中的元素排到正确的位置．[^ref1]
+The working principle of counting sort is to use an additional array $C$, where the $i$-th element is the number of elements in the array $A$ to be sorted whose value equals $i$, and then use the array $C$ to place the elements in $A$ in their correct positions.[^ref1]
 
-它的工作过程分为三个步骤：
+Its working process consists of three steps:
 
-1.  计算每个数出现了几次；
-2.  求出每个数出现次数的 [前缀和](./prefix-sum.md)；
-3.  利用出现次数的前缀和，从右至左计算每个数的排名．
+1.  Count how many times each number appears;
+2.  Compute the [prefix sum](./prefix-sum.md) of the occurrence counts of each number;
+3.  Use the prefix sums of the occurrence counts to compute the rank of each number from right to left.
 
-### 计算前缀和的原因
+### Why Compute Prefix Sums
 
-直接将 $C$ 中正数对应的元素依次放入 $A$ 中不能解决元素重复的情形．
+Simply placing the elements corresponding to positive values in $C$ into $A$ in order cannot handle the case of duplicate elements.
 
-我们通过为额外数组 $C$ 中的每一项计算前缀和，结合每一项的数值，就可以为重复元素确定一个唯一排名：
+By computing the prefix sum for each entry in the additional array $C$, and combining it with the value of each entry, we can assign a unique rank to duplicate elements.
 
-额外数组 $C$ 中每一项的数值即是该 key 值下重复元素的个数，而该项的前缀和即是排在最后一个的重复元素的排名．
+The value of each entry in the additional array $C$ represents the number of duplicate elements for that key value, and the prefix sum of that entry represents the rank of the last duplicate element.
 
-如果按照 $A$ 的逆序进行排列，那么显然排序后的数组将保持 $A$ 的原序（相同 key 值情况下），也即得到一种稳定的排序算法．
+If we sort in the reverse order of $A$, then the sorted array will clearly preserve the original order of $A$ (for elements with the same key value), which yields a stable sorting algorithm.
 
 ![counting sort animate example](images/counting-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-计数排序是一种稳定的排序算法．
+Counting sort is a stable sorting algorithm.
 
-### 时间复杂度
+### Time Complexity
 
-计数排序的时间复杂度为 $O(n+w)$，其中 $w$ 代表待排序数据的值域大小．
+The time complexity of counting sort is $O(n+w)$, where $w$ represents the range of values in the input data.
 
-## 代码实现
+## Code Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -73,6 +73,6 @@ $$
     --8<-- "docs/basic/code/counting-sort/counting-sort_1.py:core"
     ```
 
-## 参考资料与注释
+## References and Footnotes
 
-[^ref1]: [计数排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F)
+[^ref1]: [Counting sort - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Counting_sort)

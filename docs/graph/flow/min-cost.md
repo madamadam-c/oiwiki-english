@@ -1,49 +1,49 @@
-在看这篇文章前请先看 [网络流简介](../flow.md) 这篇 wiki 的定义部分．
+Before reading this article, please see the definitions in [Network Flow Introduction](../flow.md).
 
-## 费用流
+## Minimum-Cost Flow
 
-给定一个网络 $G=(V,E)$，每条边除了有容量限制 $c(u,v)$，还有一个单位流量的费用 $w(u,v)$．
+Given a network $G=(V,E)$, each edge has a capacity limit $c(u,v)$ and a unit flow cost $w(u,v)$.
 
-当 $(u,v)$ 的流量为 $f(u,v)$ 时，需要花费 $f(u,v)\times w(u,v)$ 的费用．
+When the flow on $(u,v)$ is $f(u,v)$, the cost incurred is $f(u,v)\times w(u,v)$.
 
-$w$ 也满足斜对称性，即 $w(u,v)=-w(v,u)$．
+$w$ also satisfies skew-symmetry, i.e., $w(u,v)=-w(v,u)$.
 
-则该网络中总花费最小的最大流称为 **最小费用最大流**，即在最大化 $\sum_{(s,v)\in E}f(s,v)$ 的前提下最小化 $\sum_{(u,v)\in E}f(u,v)\times w(u,v)$．
+The maximum flow with minimum total cost in this network is called the **minimum-cost maximum flow**, which minimizes $\sum_{(u,v)\in E}f(u,v)\times w(u,v)$ while maximizing $\sum_{(s,v)\in E}f(s,v)$.
 
-## SSP 算法
+## SSP Algorithm
 
-SSP（Successive Shortest Path）算法是一个贪心的算法．它的思路是每次寻找单位费用最小的增广路进行增广，直到图上不存在增广路为止．
+The SSP (Successive Shortest Path) algorithm is a greedy algorithm. Its idea is to find the augmenting path with minimum unit cost and augment along it, until no augmenting path exists in the graph.
 
-如果图上存在单位费用为负的圈，SSP 算法无法正确求出该网络的最小费用最大流．此时需要先使用消圈算法消去图上的负圈．
+If the graph contains cycles with negative total unit cost, the SSP algorithm cannot correctly find the minimum-cost maximum flow. In this case, a cycle-canceling algorithm must be used first to eliminate negative cycles.
 
-### 证明
+### Proof
 
-我们考虑使用数学归纳法和反证法来证明 SSP 算法的正确性．
+We prove the correctness of the SSP algorithm using mathematical induction and proof by contradiction.
 
-设流量为 $i$ 的时候最小费用为 $f_i$．我们假设最初的网络上 **没有负圈**，这种情况下 $f_0=0$．
+Let the minimum cost for flow $i$ be $f_i$. We assume the initial network has **no negative cycles**, in which case $f_0=0$.
 
-假设用 SSP 算法求出的 $f_i$ 是最小费用，我们在 $f_i$ 的基础上，找到一条最短的增广路，从而求出 $f_{i+1}$．这时 $f_{i+1}-f_i$ 是这条最短增广路的长度．
+Assume the SSP algorithm produces $f_i$ as the minimum cost. Based on $f_i$, we find the shortest augmenting path and obtain $f_{i+1}$. At this point, $f_{i+1}-f_i$ equals the length of this shortest augmenting path.
 
-假设存在更小的 $f_{i+1}$，设它为 $f'_{i+1}$．因为 $f_{i+1}-f_i$ 已经是最短增广路了，所以 $f'_{i+1}-f_i$ 一定对应一个经过 **至少一个负圈** 的增广路．
+Assume there exists a smaller $f_{i+1}$, call it $f'_{i+1}$. Since $f_{i+1}-f_i$ is already the shortest augmenting path, $f'_{i+1}-f_i$ must correspond to an augmenting path passing through **at least one negative cycle**.
 
-这时候矛盾就出现了：既然存在一条经过至少一个负圈的增广路，那么 $f_i$ 就不是最小费用了．因为只要给这个负圈添加流量，就可以在不增加 $s$ 流出的流量的前提下，使 $f_i$ 对应的费用更小．
+A contradiction emerges: if such an augmenting path through at least one negative cycle exists, then $f_i$ is not the minimum cost. Because adding flow to this negative cycle would reduce the cost of $f_i$ without increasing the flow from $s$.
 
-综上，SSP 算法可以正确求出无负圈网络的最小费用最大流．
+Therefore, the SSP algorithm correctly computes the minimum-cost maximum flow for networks without negative cycles.
 
-### 时间复杂度
+### Time Complexity
 
-如果使用 [Bellman–Ford 算法](../shortest-path.md#bellmanford-算法) 求解最短路，每次找增广路的时间复杂度为 $O(nm)$．设该网络的最大流为 $f$，则最坏时间复杂度为 $O(nmf)$．事实上，SSP 算法是 [伪多项式时间](../../misc/cc-basic.md#pseudo-polynomial-time-伪多项式时间) 的．
+If using [Bellman-Ford algorithm](../shortest-path.md#bellmanford-algorithm) for shortest paths, the time to find each augmenting path is $O(nm)$. Let the maximum flow of the network be $f$, then the worst-case time complexity is $O(nmf)$. In fact, the SSP algorithm is [pseudo-polynomial time](../../misc/cc-basic.md#pseudo-polynomial-time).
 
-???+ note "为什么 SSP 算法是伪多项式时间的？"
-    SSP 算法的时间复杂度有 $O(nmf)$ 的上界，这是一个关于值域的多项式，所以是伪多项式时间的．
+???+ note "Why is the SSP algorithm pseudo-polynomial time?"
+    The time complexity upper bound of the SSP algorithm is $O(nmf)$, which is a polynomial in the value domain, so it is pseudo-polynomial time.
     
-    可以构造 $m=n^2,f=2^{n/2}$ 的网络[^note1]使得 SSP 算法的时间复杂度达到 $O(n^3 2^{n/2})$，所以 SSP 算法不是多项式时间的．
+    A network with $m=n^2, f=2^{n/2}$ can be constructed[^note1] to make the SSP algorithm reach $O(n^3 2^{n/2})$, so the SSP algorithm is not polynomial time.
 
-### 实现
+### Implementation
 
-只需将 EK 算法或 Dinic 算法中找增广路的过程，替换为用最短路算法寻找单位费用最小的增广路即可．
+Simply replace the augmenting path finding process in the EK algorithm or Dinic algorithm with a shortest path algorithm that finds the augmenting path with minimum unit cost.
 
-??? note "基于 EK 算法的实现"
+??? note "EK-based Implementation"
     ```cpp
     struct qxx {
       int nex, t, v, c;
@@ -92,10 +92,10 @@ SSP（Successive Shortest Path）算法是一个贪心的算法．它的思路�
       }
     }
     
-    // 调用：while(spfa())update();
+    // Usage: while(spfa())update();
     ```
 
-??? note "基于 Dinic 算法的实现"
+??? note "Dinic-based Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -170,27 +170,27 @@ SSP（Successive Shortest Path）算法是一个贪心的算法．它的思路�
     }
     ```
 
-### Primal-Dual 原始对偶算法
+### Primal-Dual Algorithm
 
-用 Bellman–Ford 求解最短路的时间复杂度为 $O(nm)$，无论在稀疏图上还是稠密图上都不及 Dijkstra 算法[^note2]．但网络上存在单位费用为负的边，因此无法直接使用 Dijkstra 算法．
+The time complexity of using Bellman-Ford for shortest paths is $O(nm)$, which is inferior to Dijkstra's algorithm[^note2] on both sparse and dense graphs. However, the network may contain edges with negative unit cost, so Dijkstra's algorithm cannot be directly used.
 
-Primal-Dual 原始对偶算法的思路与 [Johnson 全源最短路径算法](../shortest-path.md#johnson-全源最短路径算法) 类似，通过为每个点设置一个势能，将网络上所有边的费用（下面简称为边权）全部变为非负值，从而可以应用 Dijkstra 算法找出网络上单位费用最小的增广路．
+The Primal-Dual algorithm is similar to [Johnson's all-pairs shortest path algorithm](../shortest-path.md#johnson-全源最短路径算法). By assigning a potential to each vertex, all edge costs (edge weights) in the network become non-negative, allowing Dijkstra's algorithm to find the augmenting path with minimum unit cost.
 
-首先跑一次最短路，求出源点到每个点的最短距离（也是该点的初始势能）$h_i$．接下来和 Johnson 算法一样，对于一条从 $u$ 到 $v$，单位费用为 $w$ 的边，将其边权重置为 $w+h_u-h_v$．
+First, run a shortest path algorithm to find the shortest distance from the source to each vertex (which is the initial potential of that vertex) $h_i$. Then, similar to Johnson's algorithm, for an edge from $u$ to $v$ with unit cost $w$, reset its weight to $w+h_u-h_v$.
 
-可以发现，这样设置势能后新网络上的最短路径和原网络上的最短路径一定对应．证明在介绍 Johnson 算法时已经给出，这里不再展开．
+It can be observed that after setting potentials this way, the shortest path in the new network corresponds exactly to the shortest path in the original network. The proof was given when introducing Johnson's algorithm, so it is not elaborated here.
 
-与常规的最短路问题不同的是，每次增广后图的形态会发生变化，这种情况下各点的势能需要更新．
+Unlike conventional shortest path problems, the graph changes after each augmentation, so the potentials of each vertex need to be updated.
 
-如何更新呢？先给出结论，设增广后从源点到 $i$ 号点的最短距离为 $d'_i$（这里的距离为重置每条边边权后得到的距离），只需给 $h_i$ 加上 $d'_i$ 即可．下面我们证明，这样更新边权后，图上所有边的边权均为非负．
+How to update? First, the conclusion: let $d'_i$ be the shortest distance from the source to vertex $i$ after augmentation (the distance after resetting edge weights), then we only need to add $d'_i$ to $h_i$. Below, we prove that after this update, all edge weights in the graph are non-negative.
 
-容易发现，在一轮增广后，由于一些 $(i,j)$ 边在增广路上，残量网络上会相应多出一些 $(j,i)$ 边，且一定会满足 $d'_i+(w(i,j)+h_i-h_j)=d'_j$（否则 $(i,j)$ 边就不会在增广路上了）．稍作变形后可以得到 $w(j,i)+(h_j+d'_j)-(h_i+d'_i)=0$．因此新增的边的边权非负．
+It is easy to observe that after one augmentation, since some edges $(i,j)$ are on the augmenting path, corresponding $(j,i)$ edges appear in the residual network, and it must satisfy $d'_i+(w(i,j)+h_i-h_j)=d'_j$ (otherwise edge $(i,j)$ would not be on the augmenting path). After rearrangement, we get $w(j,i)+(h_j+d'_j)-(h_i+d'_i)=0$. Therefore, the new edges have non-negative weight.
 
-而对于原有的边，在增广前，$d'_i+(w(i,j)+h_i-h_j) - d'_j \geq 0$，因此 $w(i,j)+(d'_i+h_i)-(d'_j+h_j) \geq 0$，即用 $h_i+d'_i$ 作为新势能并不会使 $(i,j)$ 的边权变为负．
+For original edges, before augmentation, $d'_i+(w(i,j)+h_i-h_j) - d'_j \geq 0$, so $w(i,j)+(d'_i+h_i)-(d'_j+h_j) \geq 0$, meaning using $h_i+d'_i$ as the new potential does not make the weight of edge $(i,j)$ negative.
 
-综上，增广后所有边的边权均非负，使用 Dijkstra 算法可以正确求出图上的最短路．
+In summary, after augmentation, all edge weights are non-negative, so Dijkstra's algorithm can correctly find the shortest path in the graph.
 
-??? note "参考代码"
+??? note "Reference Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -280,7 +280,7 @@ Primal-Dual 原始对偶算法的思路与 [Johnson 全源最短路径算法](..
         addedge(u, v, f, c);
         addedge(v, u, 0, -c);
       }
-      spfa();  // 先求出初始势能
+      spfa();  // Compute initial potentials first
       while (dijkstra()) {
         int minf = INF;
         for (int i = 1; i <= n; i++) h[i] += dis[i];
@@ -297,17 +297,17 @@ Primal-Dual 原始对偶算法的思路与 [Johnson 全源最短路径算法](..
     }
     ```
 
-## 习题
+## Exercises
 
--   [「Luogu 3381」【模板】最小费用最大流](https://www.luogu.com.cn/problem/P3381)
--   [「Luogu 4452」航班安排](https://www.luogu.com.cn/problem/P4452)
--   [「SDOI 2009」晨跑](https://www.luogu.com.cn/problem/P2153)
--   [「SCOI 2007」修车](https://www.luogu.com.cn/problem/P2053)
--   [「HAOI 2010」订货](https://www.luogu.com.cn/problem/P2517)
--   [「NOI 2012」美食节](https://loj.ac/problem/2674)
+-   ["Luogu 3381" Template: Minimum-Cost Maximum Flow](https://www.luogu.com.cn/problem/P3381)
+-   ["Luogu 4452" Flight Scheduling](https://www.luogu.com.cn/problem/P4452)
+-   ["SDOI 2009" Morning Run](https://www.luogu.com.cn/problem/P2153)
+-   ["SCOI 2007" Car Repair](https://www.luogu.com.cn/problem/P2053)
+-   ["HAOI 2010" Ordering](https://www.luogu.com.cn/problem/P2517)
+-   ["NOI 2012" Gourmet Festival](https://loj.ac/problem/2674)
 
-## 参考资料与注释
+## References and Notes
 
-[^note1]: 详细构造方法可以参考 [min\_25 的博客](https://web.archive.org/web/20211009144446/https://min-25.hatenablog.com/entry/2018/03/19/235802)．
+[^note1]: For detailed construction method, refer to [min_25's blog](https://web.archive.org/web/20211009144446/https://min-25.hatenablog.com/entry/2018/03/19/235802).
 
-[^note2]: 在稀疏图上使用堆优化可以做到 $O(m \log n)$ 的时间复杂度，而在稠密图上不使用堆优化，可以做到 $O(n^2)$ 的时间复杂度．
+[^note2]: On sparse graphs, using heap optimization can achieve $O(m \log n)$ time complexity, and on dense graphs without heap optimization, $O(n^2)$ can be achieved.

@@ -1,13 +1,13 @@
 #include <iostream>
 
 long long H(int n) {
-  long long res = 0;  // 储存结果
-  int l = 1, r;       // 块左端点与右端点
+  long long res = 0;  // Store the result
+  int l = 1, r;       // Left and right endpoints of the block
   while (l <= n) {
-    r = n / (n / l);  // 计算当前块的右端点
-    // 累加这一块的贡献到结果中。乘上 1LL 防止溢出
+    r = n / (n / l);  // Compute the right endpoint of the current block
+    // Add this block's contribution to the result. Multiply by 1LL to avoid overflow
     res += 1LL * (r - l + 1) * (n / l);
-    l = r + 1;  // 左端点移到下一块
+    l = r + 1;  // Move the left endpoint to the next block
   }
   return res;
 }

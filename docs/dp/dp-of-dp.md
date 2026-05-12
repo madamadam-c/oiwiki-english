@@ -1,144 +1,144 @@
 author: Hope666666
 
-## 引入
+## Introduction
 
-本文将介绍 DP 套 DP 的思想，并通过两道例题展示它如何应用到具体问题中．
+This article introduces the idea of DP of DP and demonstrates how it is applied to concrete problems through two examples.
 
-## 思想
+## Idea
 
-所谓「DP 套 DP」，实际上指的是在动态规划的过程中，把一个子问题的求解过程（通常是一个 DP）抽象成一个自动机（DFA），然后在这个自动机的基础上再设计一层新的 DP 的方法．
+"DP of DP" refers to a method where, during dynamic programming, the process of solving a subproblem, usually itself a DP, is abstracted into an automaton (DFA), and then a new outer DP is designed on top of that automaton.
 
-这种技巧主要应用于一类 **序列计数**、**概率** 或 **期望** 问题．一个典型的问题具有如下结构：
+This technique is mainly used for **sequence counting**, **probability**, and **expectation** problems. A typical problem has the following structure:
 
--   给定字符集 $\Sigma$ 和它上面一个长度为 $n$ 的「合法序列」的集合 $A\subseteq\Sigma^n$．根据字符集不同，序列可以是二进制串、数字串、状态序列等．
--   对于每一个具体的序列 $s\in\Sigma^n$，可以通过动态规划来判断它是否合法（即 $s\in A$），计算它的权值或求出相关值．
--   最终，我们希望统计集合 $A$ 中所有序列的数目、总权值、期望值等．
+-   Given an alphabet $\Sigma$ and a set $A\subseteq\Sigma^n$ of "valid sequences" of length $n$ over that alphabet. Depending on the alphabet, the sequence may be a binary string, a digit string, a state sequence, and so on.
+-   For each concrete sequence $s\in\Sigma^n$, dynamic programming can determine whether it is valid, i.e. whether $s\in A$, compute its weight, or compute some related value.
+-   Ultimately, we want to count all sequences in $A$, compute their total weight, expectation, and so on.
 
-这时，枚举所有序列是不可行的．于是我们考虑将「判断一个序列是否合法」的过程（即内层 DP）抽象为一个 [确定有限状态自动机](../misc/fsm.md#确定性有限状态自动机)（DFA）．一般地，对于固定的序列 $s\in\Sigma^n$，内层 DP 的状态函数可以表示为 $g(i,x;s)$，即已经处理完序列 $s$ 的长度为 $i$ 的前缀，且其他状态分量为 $x$ 时某个量的取值．相应地，内层 DP 的状态转移方程为
+Enumerating all sequences is infeasible. Therefore, consider abstracting the process of determining whether a sequence is valid, namely the inner DP, into a [deterministic finite automaton](../misc/fsm.md#确定性有限状态自动机) (DFA). In general, for a fixed sequence $s\in\Sigma^n$, the state function of the inner DP can be written as $g(i,x;s)$, meaning the value of some quantity after processing the length-$i$ prefix of sequence $s$, with other state components equal to $x$. The corresponding transition equation of the inner DP is:
 
 $$
 g(i,\cdot;s) = G(g(i-1,\cdot;s),s_i).
 $$
 
-也就是说，函数 $g(i,\cdot;s)$ 由之前的函数 $g(i-1,\cdot;s)$ 和当前的字符 $s_i$ 唯一确定．如果将函数 $g(i,\cdot;s)$ 看作是自动机的一个状态，那么，内层 DP 的状态转移方程就给出了自动机的一个转移．因此，内层 DP 对应的自动机 $(Q,\Sigma,\delta,q_0,F)$ 结构如下：
+That is, the function $g(i,\cdot;s)$ is uniquely determined by the previous function $g(i-1,\cdot;s)$ and the current character $s_i$. If we regard the function $g(i,\cdot;s)$ as one state of an automaton, then the transition equation of the inner DP gives one automaton transition. Therefore, the automaton $(Q,\Sigma,\delta,q_0,F)$ corresponding to the inner DP has the following structure:
 
--   状态集合 $Q$ 就是所有可能的 $s\in\Sigma^n$ 和 $i=0,1,\cdots,n$ 对应的函数 $g(i,\cdot;s)$ 的集合；
--   转移函数 $\delta:Q\times\Sigma\to Q$ 就是内层 DP 的状态转移方程中的 $G$；
--   起始状态 $q_0$ 通常是显然的，即内层 DP 的初始状态；
--   接受状态集合 $F$ 就对应着所有的合法序列 $s\in A$．
+-   The state set $Q$ is the set of all possible functions $g(i,\cdot;s)$ corresponding to all possible $s\in\Sigma^n$ and $i=0,1,\cdots,n$.
+-   The transition function $\delta:Q\times\Sigma\to Q$ is the function $G$ in the transition equation of the inner DP.
+-   The initial state $q_0$ is usually obvious: it is the initial state of the inner DP.
+-   The accepting-state set $F$ corresponds to all valid sequences $s\in A$.
 
-函数 $g(i,\cdot;s)$ 本身可能相当复杂，因此，在处理具体问题时，通常需要进行 [状态压缩](./state.md) 或结合 DFA 最小化的技巧来压缩状态空间．这也是 DP 套 DP 相较于暴力 DP 能够显著降低时空复杂度的主要原因．
+The function $g(i,\cdot;s)$ itself may be quite complex. Therefore, in concrete problems, it is usually necessary to use [state compression](./state.md) or combine it with DFA minimization to compress the state space. This is the main reason DP of DP can significantly reduce time and space complexity compared with brute-force DP.
 
-将内层 DP 抽象为 DFA 后，就可以在这个 DFA 上设计一个新的 DP 用于求解原问题，即外层 DP．为方便表述，以简单的计数问题为例．外层 DP 的状态函数定义为 $f(i,q)$，即处理到长度为 $i$ 的前缀时，到达 DFA 中状态 $q\in Q$ 的前缀的数目．它的状态转移方程为
+After abstracting the inner DP as a DFA, we can design a new DP on this DFA to solve the original problem; this is the outer DP. For convenience, take a simple counting problem as an example. Define the outer DP state function as $f(i,q)$, the number of prefixes of length $i$ that reach state $q\in Q$ in the DFA. Its transition equation is:
 
 $$
 f(i,q) = \sum_{c\in\Sigma}\sum_{q'\in Q:\delta(q',c)=q} f(i-1,q').
 $$
 
-起始状态当然是 $f(0,q_0)$，而最终要求的答案通常可以根据 $\{f(n,q):q\in F\}$ 简单计算得到．外层 DP 实际上是 [DAG 上 DP](./dag.md) 的特殊情形．
+The initial state is naturally $f(0,q_0)$, and the final answer can usually be computed simply from $\{f(n,q):q\in F\}$. The outer DP is essentially a special case of [DP on DAGs](./dag.md).
 
-## 例题
+## Examples
 
-接下来的两个例题会详细说明 DP 套 DP 的一般做法．
+The following two examples explain the general method of DP of DP in detail.
 
-### 例一
+### Example 1
 
 ???+ example "[Hero meet devil](https://www.luogu.com.cn/problem/P10614)"
-    给定一个字符集为 `ACGT` 的字符串 $S$，且 $|S|\le 15$．对于每个 $0\leq i \leq |S|$，求有多少个长度为 $m$，字符集 `ACGT` 的字符串 $T$，满足它与 $S$ 的最长公共子序列长度为 $i$．
+    Given a string $S$ over the alphabet `ACGT`, with $|S|\le 15$. For every $0\leq i\leq |S|$, find how many strings $T$ of length $m$ over the alphabet `ACGT` have longest common subsequence length $i$ with $S$.
 
-??? note "题解"
-    我们首先会想到一个 DP：设 $f_{i,j}$ 表示长度为 $i$ 的 $T$ 中，和 $S$ 的最长公共子序列的长度为 $j$ 的方案数．但是这样无法转移，我们发现主要的问题是，我们不知道这个最长公共子序列对应的是哪些字符．
+??? note "Solution"
+    A first DP idea is to let $f_{i,j}$ denote the number of length-$i$ strings $T$ whose LCS with $S$ has length $j$. However, this cannot transition directly. The main problem is that we do not know which characters correspond to this longest common subsequence.
     
-    考虑朴素求最长公共子序列的过程．设 $g_{i,j}$ 表示 $T$ 的前 $i$ 位和 $S$ 的前 $j$ 位，它们的最长公共子序列的长度，就有
+    Consider the naive process for computing the LCS. Let $g_{i,j}$ denote the LCS length of the first $i$ characters of $T$ and the first $j$ characters of $S$. Then:
     
     $$
     g_{i,j} = \max\{g_{i-1,j},g_{i,j-1},g_{i-1,j-1}+[T_i=S_j]\}.
     $$
     
-    我们发现，对于一个 $i$，只需要记录 $g_i$ 这个一维数组每一位的值，就能准确维护当前 $S$ 与 $T$ 前 $i$ 位最长公共子序列的状态．因为 $S$ 长度只有 $15$，我们发现这个思想是可行的．
+    We observe that for a fixed $i$, recording the one-dimensional array $g_i$ is enough to accurately maintain the LCS state between $S$ and the first $i$ characters of $T$. Since $S$ has length only $15$, this idea is feasible.
     
-    于是重新设状态 $f_{i,x}$ 表示对于长度为 $i$ 的 $T$，与 $S$ 的 DP 数组（就是 $g_i$）状态为 $x$ 的方案数．这个 DP 看起来状态数很多，然而我们发现 $g_{i,j}-g_{i,j-1}\in\{0,1\}$，就可以维护 $g_i$ 的差分数组，状态数是 $2^{|S|}$ 的．
+    Redefine the state $f_{i,x}$ as the number of length-$i$ strings $T$ for which the DP array with $S$, namely $g_i$, is in state $x$. This DP appears to have many states. However, because $g_{i,j}-g_{i,j-1}\in\{0,1\}$, we can maintain the difference array of $g_i$, giving $2^{|S|}$ states.
     
-    现在思考怎么转移．容易发现，如果我们知道了 $g_i$ 这个数组，也知道了 $T_{i+1}$，就能通过朴素 LCS 转移（即前文的 DP 方程）求出 $g_{i+1}$．于是朴素的 LCS 就成为了帮助 $f$ 转移的内层 DP．
+    Now consider transitions. If we know the array $g_i$ and also know $T_{i+1}$, then we can compute $g_{i+1}$ using the naive LCS transition, namely the DP equation above. Thus, the naive LCS becomes the inner DP that helps transition $f$.
     
-    因此，我们枚举 $T_{i+1}$，计算出 $x$ 转移后的状态 $x'$，再将 $f_{i+1,x'}$ 加上 $f_{i,x}$ 就可以完成外层 DP 的状态转移．最后，我们记录 $\textit{ans}_i$ 为 LCS 长度为 $i$ 的答案，枚举每个状态 $S$，$\textit{ans}_{\operatorname{popcount}(S)}$ 加上 $f_{m,S}$ 即可．
+    Therefore, enumerate $T_{i+1}$, compute the state $x'$ after transitioning from $x$, and add $f_{i,x}$ to $f_{i+1,x'}$. This completes the state transition of the outer DP. Finally, record $\textit{ans}_i$ as the answer for LCS length $i$. Enumerate every state $S$ and add $f_{m,S}$ to $\textit{ans}_{\operatorname{popcount}(S)}$.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/dp-of-dp/dp-of-dp_1.cpp"
     ```
 
-### 例二
+### Example 2
 
-???+ example "[\[ZJOI2019\] 麻将](https://loj.ac/p/3042)"
-    假设麻将牌有 $n$ 种大小的牌，每种大小有 $4$ 张牌．定义面子为三张相邻大小的麻将牌 $i,i+1,i+2$（顺子）或三种相同大小的麻将牌 $i,i,i$（刻子），对子为两张相同大小的麻将牌 $i,i$．定义一个麻将牌的序列是胡的，当且仅当它（看作多重集合）可以拆成四个面子和一个对子，或者七个不同的对子．给定 $13$ 张麻将牌，问期望再摸多少张牌可以满足存在一个胡牌的子序列的条件．
+???+ example "[\[ZJOI2019\] Mahjong](https://loj.ac/p/3042)"
+    Suppose there are $n$ tile ranks in mahjong, and each rank has $4$ tiles. A meld is either three consecutive ranks $i,i+1,i+2$ (a chow) or three identical ranks $i,i,i$ (a pung). A pair is two identical ranks $i,i$. A sequence of mahjong tiles is winning if and only if, regarded as a multiset, it can be decomposed into four melds and one pair, or into seven distinct pairs. Given $13$ tiles, find the expected number of additional draws needed until there exists a winning subsequence.
 
-??? note "题解"
-    首先，对于一副牌，我们只需考虑每种牌的数量，而不必关心它们的顺序．因此，对于任何一副牌的任意前缀，我们都可以将它转化为一个长度为 $n$，每个位置上为 $0\sim 4$ 的序列．初始时，第 $i$ 张牌的数量为 $a_i$，就相当于限制了序列中第 $i$ 个数字 $x_i$ 的取值为 $[a_i,4]$ 内的整数．注意，转化后的序列没有考虑摸牌的顺序，但是题目中的麻将牌的序列是考虑顺序的．
+??? note "Solution"
+    First, for a hand, we only need to consider the count of each tile rank, not their order. Therefore, for any prefix of any hand, we can convert it into a sequence of length $n$ where each position is in $0\sim 4$. Initially, if the count of the $i$-th tile is $a_i$, this is equivalent to restricting the value $x_i$ at position $i$ to integers in $[a_i,4]$. Note that the converted sequence does not consider draw order, while the tile sequence in the problem does consider order.
     
-    设 $X$ 表示可以胡牌的最小摸牌次数．直接计算期望 $\mathbf E[X]$ 较为困难，可以考虑进行如下转化．设 $h_i$ 表示摸了 $i$ 张牌后 **没有胡** 的序列数．因为它对应的麻将牌序列中，这 $i$ 张牌必然排在剩下的 $(4n-13-i)$ 张牌前方，但是这 $i$ 张牌和剩下的 $(4n-13-i)$ 张牌的顺序是任意的，所以，只摸前 $i$ 张牌无法胡牌的麻将牌序列的数目就是
+    Let $X$ denote the minimum number of draws needed to win. Directly computing $\mathbf E[X]$ is difficult, so use the following transformation. Let $h_i$ denote the number of sequences that are **not winning** after drawing $i$ tiles. In the corresponding mahjong tile sequence, these $i$ tiles must appear before the remaining $(4n-13-i)$ tiles, while the orders of these $i$ tiles and the remaining $(4n-13-i)$ tiles are arbitrary. Therefore, the number of mahjong tile sequences where the first $i$ drawn tiles still cannot win is:
     
     $$
     h_i\cdot i!(4n-13-i)!.
     $$
     
-    因为麻将牌序列的总数为 $(4n-13)!$，所以，只摸前 $i$ 张牌无法胡牌的概率为
+    Since the total number of mahjong tile sequences is $(4n-13)!$, the probability that the first $i$ drawn tiles still cannot win is:
     
     $$
     \mathbf P[X>i] = \dfrac{h_i\cdot i!(4n-13-i)!}{(4n-13)!}.
     $$
     
-    利用尾求和公式，就可以得到所求期望
+    Using the tail-sum formula, the desired expectation is:
     
     $$
     \mathbf E[X] = \sum_{i=0}^\infty\mathbf P[X>i] = 1 + \sum_{i=1}^{4n-13}\dfrac{h_i\cdot i!(4n-13-i)!}{(4n-13)!}.
     $$
     
-    至此，问题转化为如何计算 $h_i$．我们采用 DP 套 DP 的方法来解决这一问题．
+    The problem is now transformed into computing $h_i$. We solve this with DP of DP.
     
-    首先，考虑内层 DP，也就是要用动态规划判断一个（转化后的）序列是否对应一副能胡的牌．七对子的情形较为容易，重点讨论第一种胡牌的形式．为此，设 $g_{0/1,i,j,k}$ 表示处理完前 $i$ 种牌，还剩 $j$ 组 $(i−1,i)$ 以及 $k$ 张 $i$，且存在/不存在对子（即 $0/1$）时最多的面子数．如果对于一个序列进行 DP，最后得到的 $g_{1,n}$ 中包括一个大于等于 $4$ 的数字，那么这个序列就是能胡的．
+    First, consider the inner DP: use dynamic programming to determine whether a converted sequence corresponds to a winning hand. The seven-pairs case is relatively easy, so focus on the first winning form. Let $g_{0/1,i,j,k}$ denote, after processing the first $i$ tile ranks, the maximum number of melds when $j$ groups of $(i-1,i)$ and $k$ tiles of rank $i$ remain, and a pair exists or does not exist (the $0/1$ dimension). If running DP on a sequence yields a number at least $4$ in $g_{1,n}$, then the sequence is winning.
     
-    这个 DP 的状态转移较为复杂．我们分两步讨论．第一步，考虑 $g_{0/1,i}$ 的转移．这相当于说，如果要向现在的牌型中，添加 $x_i$ 张大小为 $i$ 的牌，但是不组成新的对子时，面子数如何转移．显然，如果希望在添加 $x_i$ 张大小为 $i$ 的牌后，要得到 $\ell$ 个顺子，$j$ 个 $(i-1,i)$ 和 $k$ 个单独的 $i$，那么，就应该从 $(g_{0/1,i-1})_{\ell,j}$ 中转移过来（这里的选择最大程度避免了浪费），并将剩余的牌 $(x_i-\ell-j-k)$ 用于组成尽可能多的刻子．穷举所有的可能性，就得到如下转移方程：
+    The transition of this DP is complicated, so discuss it in two steps. First, consider the transition of $g_{0/1,i}$. This means adding $x_i$ tiles of rank $i$ to the current hand shape without forming a new pair, and asking how the number of melds transitions. If, after adding $x_i$ tiles of rank $i$, we want to obtain $\ell$ chows, $j$ groups of $(i-1,i)$, and $k$ single tiles of rank $i$, then we should transition from $(g_{0/1,i-1})_{\ell,j}$; this choice avoids waste as much as possible. The remaining tiles $(x_i-\ell-j-k)$ are used to form as many pungs as possible. Enumerating all possibilities gives:
     
     $$
     \tilde G(g_{0/1,i-1}, x_i)_{j,k} = \max\left\{(g_{0/1,i-1})_{\ell,j} + \ell + \left\lfloor\dfrac{x_i-\ell-j-k}{3}\right\rfloor:\ell+j+k\le x_i\right\}.
     $$
     
-    第二步，再考虑需要组成对子的情形．加入 $x_i$ 张大小为 $i$ 的牌时，有如下三种转移：
+    Second, consider the case where a pair is formed. When adding $x_i$ tiles of rank $i$, there are three transitions:
     
-    -   将 $g_{0,i-1}$ 加 $x_i$ 张牌转移到 $g_{0,i}$；
-    -   将 $g_{1,i-1}$ 加 $x_i$ 张牌转移到 $g_{1,i}$；
-    -   若 $x_i\ge 2$，将 $g_{0,i-1}$ 加 $x_i-2$ 张牌转移到 $g_{1,i}$．
+    -   Add $x_i$ tiles to $g_{0,i-1}$ and transition to $g_{0,i}$.
+    -   Add $x_i$ tiles to $g_{1,i-1}$ and transition to $g_{1,i}$.
+    -   If $x_i\ge 2$, add $x_i-2$ tiles to $g_{0,i-1}$ and transition to $g_{1,i}$.
     
-    由此，就得到了从 $g_{i-1}$ 添加 $x_i$ 张牌得到 $g_i$ 的全部转移．
+    This gives all transitions from $g_{i-1}$ to $g_i$ after adding $x_i$ tiles.
     
-    解决了内层 DP 的状态转移，就可以构建 **胡牌自动机**．自动机的转移就是上述内层 DP 的转移，还需要考虑如何表示自动机的每个状态．每个状态都对应 $g_i$ 的一种可能的取值．它有三个维度 $(0/1,j,k)$．因为 $j$ 和 $k$ 对应的维度中保留的 $(i-1,i)$ 和 $i$ 都是用于将来组成顺子的，而三个相同顺子总是可以重组为三个刻子，所以，只需要考虑组成不超过 $2$ 个相同顺子的需求就行，每种牌型也就只要保留不超过 $2$ 个，即 $j,k\in\{0,1,2\}$．因此，$g_i$ 可以表示为一个 $2\times 3\times 3$ 的数组．另外，为了维护七对子的胡牌牌型，还需要为每个状态添加一个计数器，用于表示当前最多可组成的对子数目．
+    After solving the inner DP transition, build the **winning-hand automaton**. The automaton transitions are exactly the transitions of the inner DP above. We also need to decide how to represent each automaton state. Each state corresponds to one possible value of $g_i$, which has dimensions $(0/1,j,k)$. Since $j$ and $k$ represent retained groups $(i-1,i)$ and single $i$ tiles used to form future chows, and since three identical chows can always be reorganized into three pungs, it is only necessary to consider demands for at most $2$ identical chows. Thus, each hand shape only needs to retain at most $2$ of each type, meaning $j,k\in\{0,1,2\}$. Therefore, $g_i$ can be represented as a $2\times3\times3$ array. Additionally, to maintain the seven-pairs winning form, add a counter to each state indicating the current maximum number of pairs.
     
-    数组 $g_i$ 中每个元素的取值范围可能是 $\{-\infty\}\cup\mathbf N$，但是，因为面子数目大于等于 $4$ 都是胡牌，所以，可以限制每个元素取值不超过 $4$．由于胡牌序列再添加任何牌都是胡牌序列，所以，可以利用 DFA 最小化的思想，将全体胡牌状态压缩为一个状态．因此，对于非胡牌状态，实际上每个位置的取值只要考虑 $\{-\infty\}\cup\{0,1,2,3\}$ 就可以了．实现时，$-\infty$ 用 $-1$ 表示．
+    Each element of array $g_i$ may take values in $\{-\infty\}\cup\mathbf N$. However, since having at least $4$ melds is already winning, cap every value at $4$. Since adding any tile to a winning sequence still leaves a winning sequence, DFA minimization can be used to compress all winning states into one state. Therefore, for non-winning states, each position only needs values in $\{-\infty\}\cup\{0,1,2,3\}$. In implementation, $-\infty$ is represented by $-1$.
     
-    尽管如此，所有可能的状态依然相当地多，共有 $1+7\times 5^{18}$ 种．穷举它们并不现实．实际上，绝大多数这些可能性都不会真的出现在一个胡牌自动机中．为了避免考虑实际不存在的状态，可以利用 BFS 的思想，从初始状态开始，一步一步扩展状态，直到胡牌状态处停止．这样得到的自动机中有 $N = 2092$ 个状态．
+    Even so, there are still many theoretically possible states: $1+7\times5^{18}$. Enumerating them is unrealistic. In fact, most of these possibilities never actually appear in the winning-hand automaton. To avoid considering nonexistent states, use BFS: start from the initial state and expand states step by step until reaching winning states. The automaton obtained this way has $N=2092$ states.
     
-    最后，考虑如何在胡牌自动机上 DP（即外层 DP）．设 $f_{i,j,k}$ 表示处理到第 $i$ 张牌，共摸了 $j$ 张牌，走到了胡牌自动机上的 $k$ 号状态的序列数．转移时，枚举摸牌数 $0\leq t\leq 4-a_i$，其中 $a_i$ 为初始 $13$ 张牌中用掉的 $i$ 的张数，将之前的序列数乘以 $4−a_i$ 张牌中选 $t$ 张牌的方案数 $\dbinom{4-a_i}{t}$，再累加到一起．形式化地，有：
+    Finally, consider DP on the winning-hand automaton, namely the outer DP. Let $f_{i,j,k}$ denote the number of sequences after processing the $i$-th tile rank, having drawn $j$ tiles in total, and reaching state $k$ in the winning-hand automaton. During transition, enumerate the number of drawn tiles $0\leq t\leq4-a_i$, where $a_i$ is the number of tiles of rank $i$ used in the initial $13$ tiles. Multiply the previous sequence count by the number of ways to choose $t$ tiles from the remaining $4-a_i$ tiles, $\dbinom{4-a_i}{t}$, and accumulate. Formally:
     
     $$
     f_{i+1,j+t,k'} = \sum_{t=0}^{4-a_i}\dbinom{4-a_i}{t}f_{i,j,k}.
     $$
     
-    其中，$k'=\delta(k,a_i+t)$，表示向自动机的状态 $k$ 中加入 $a_i+t$ 张牌后的状态．外层 DP 结束后，就可以计算出摸了 $i$ 张牌仍然没有胡牌的序列数目，即
+    Here, $k'=\delta(k,a_i+t)$ is the state after adding $a_i+t$ tiles to automaton state $k$. After the outer DP finishes, the number of sequences that have drawn $i$ tiles and still are not winning is:
     
     $$
     h_i=\sum_{j=1}^{N} f_{n,i,j}.
     $$
     
-    代入前文所述表达式，就可以得到所要求的期望．
+    Substituting this into the expression above gives the required expectation.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/dp-of-dp/dp-of-dp_2.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [CF979E Kuro and Topological Parity](https://codeforces.com/problemset/problem/979/E)
--   [\[TJOI2018\] 游园会](https://loj.ac/p/2575)
--   [\[NOI2022\] 移除石子](https://loj.ac/p/3848)
+-   [TJOI2018 Amusement Park](https://loj.ac/p/2575)
+-   [NOI2022 Stone Removal](https://loj.ac/p/3848)

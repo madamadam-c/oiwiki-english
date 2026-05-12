@@ -1,50 +1,50 @@
-## 定义
+## Definition
 
-最大公约数即为 Greatest Common Divisor，常缩写为 gcd．
+The greatest common divisor, often abbreviated as gcd.
 
-一组整数的公约数，是指同时是这组数中每一个数的约数的数．$\pm 1$ 是任意一组整数的公约数．
+A common divisor of a set of integers is a number that is simultaneously a divisor of each number in that set. $\pm 1$ is a common divisor of any set of integers.
 
-一组整数的最大公约数，是指所有公约数里面最大的一个．
+The greatest common divisor of a set of integers is the largest among all common divisors.
 
-对不全为 $0$ 的整数 $a,b$，将其最大公约数记为 $\gcd(a,b)$，不引起歧义时可简写为 $(a,b)$．
+For integers $a,b$ not both zero, we denote their greatest common divisor as $\gcd(a,b)$, which can be simply written as $(a,b)$ when there is no ambiguity.
 
-对不全为 $0$ 的整数 $a_1,\dots,a_n$，将其最大公约数记为 $\gcd(a_1,\dots,a_n)$，不引起歧义时可简写为 $(a_1,\dots,a_n)$．
+For integers $a_1,\dots,a_n$ not all zero, we denote their greatest common divisor as $\gcd(a_1,\dots,a_n)$, which can be simply written as $(a_1,\dots,a_n)$ when there is no ambiguity.
 
-最大公约数与最小公倍数的性质见 [数论基础](./basic.md#最大公约数与最小公倍数)．
+The properties of greatest common divisor and least common multiple can be found in [Number Theory Basics](./basic.md#greatest-common-divisor-and-least-common-multiple).
 
-那么如何求最大公约数呢？我们先考虑两个数的情况．
+So how do we find the greatest common divisor? Let's first consider the case of two numbers.
 
-### 欧几里得算法
+### Euclidean Algorithm
 
-#### 过程
+#### Process
 
-如果我们已知两个数 $a$ 和 $b$，如何求出二者的最大公约数呢？
+If we have two numbers $a$ and $b$, how do we find their greatest common divisor?
 
-不妨设 $a > b$．
+Assume $a > b$.
 
-我们发现如果 $b$ 是 $a$ 的约数，那么 $b$ 就是二者的最大公约数．
-下面讨论不能整除的情况，即 $a = b \times q + r$，其中 $r < b$．
+We found that if $b$ is a divisor of $a$, then $b$ is the greatest common divisor.
+Now let's discuss the case where division is not exact, i.e., $a = b \times q + r$, where $r < b$.
 
-我们通过证明可以得到 $\gcd(a,b)=\gcd(b,a \bmod b)$，过程如下：
+We can prove that $\gcd(a,b)=\gcd(b,a \bmod b)$ as follows:
 
-???+ note "证明"
-    设 $a=bk+c$，显然有 $c=a \bmod b$．设 $d \mid a,~d \mid b$，则 $c=a-bk, \frac{c}{d}=\frac{a}{d}-\frac{b}{d}k$．
+???+ note "Proof"
+    Let $a=bk+c$, obviously $c=a \bmod b$. Let $d \mid a,~d \mid b$, then $c=a-bk, \frac{c}{d}=\frac{a}{d}-\frac{b}{d}k$.
     
-    由右边的式子可知 $\frac{c}{d}$ 为整数，即 $d \mid c$，所以对于 $a,b$ 的公约数，它也会是 $b,a \bmod b$ 的公约数．
+    From the right side, $\frac{c}{d}$ is an integer, i.e., $d \mid c$. So for a common divisor of $a,b$, it is also a common divisor of $b,a \bmod b$.
     
-    反过来也需要证明：
+    The reverse also needs proof:
     
-    设 $d \mid b,~d\mid (a \bmod b)$，我们还是可以像之前一样得到以下式子 $\frac{a\bmod b}{d}=\frac{a}{d}-\frac{b}{d}k,~\frac{a\bmod b}{d}+\frac{b}{d}k=\frac{a}{d}$．
+    Let $d \mid b,~d\mid (a \bmod b)$, as before we get $\frac{a\bmod b}{d}=\frac{a}{d}-\frac{b}{d}k,~\frac{a\bmod b}{d}+\frac{b}{d}k=\frac{a}{d}$.
     
-    因为左边式子显然为整数，所以 $\frac{a}{d}$ 也为整数，即 $d \mid a$，所以 $b,a\bmod b$ 的公约数也是 $a,b$ 的公约数．
+    Since the left side is obviously an integer, $\frac{a}{d}$ is also an integer, i.e., $d \mid a$. So the common divisors of $b,a\bmod b$ are also common divisors of $a,b$.
     
-    既然两式公约数都是相同的，那么最大公约数也会相同．
+    Since both equations have the same common divisors, the greatest common divisors are also the same.
     
-    所以得到式子 $\gcd(a,b)=\gcd(b,a\bmod b)$
+    So we get $\gcd(a,b)=\gcd(b,a\bmod b)$
 
-既然得到了 $\gcd(a, b) = \gcd(b, r)$，这里两个数的大小是不会增大的，那么我们也就得到了关于两个数的最大公约数的一个递归求法．
+Since we have $\gcd(a, b) = \gcd(b, r)$, where the two numbers do not increase in size, we have a recursive method for finding the greatest common divisor of two numbers.
 
-#### 实现
+#### Implementation
 
 === "C++"
     ```cpp
@@ -80,9 +80,9 @@
         return gcd(b, a % b)
     ```
 
-递归至 `b == 0`（即上一步的 `a % b == 0`）的情况再返回值即可．
+Return when `b == 0` (that is, when `a % b == 0` in the previous step).
 
-根据上述递归求法，我们也可以写出一个迭代求法：
+Based on this recursive method, we can also write an iterative method:
 
 === "C++"
     ```cpp
@@ -116,81 +116,81 @@
         return a
     ```
 
-上述算法都可被称作欧几里得算法（Euclidean algorithm）．
+The above algorithm can all be called the Euclidean algorithm.
 
-另外，对于 C++17，我们可以使用 [`<numeric>`](https://en.cppreference.com/w/cpp/header/numeric) 头中的 [`std::gcd`](https://en.cppreference.com/w/cpp/numeric/gcd) 与 [`std::lcm`](https://en.cppreference.com/w/cpp/numeric/lcm) 来求最大公约数和最小公倍数．
+Also, for C++17, we can use [`std::gcd`](https://en.cppreference.com/w/cpp/numeric/gcd) and [`std::lcm`](https://en.cppreference.com/w/cpp/numeric/lcm) in the header [`<numeric>`](https://en.cppreference.com/w/cpp/header/numeric) to compute the greatest common divisor and least common multiple.
 
-???+ warning "注意"
-    在部分编译器中，C++14 中可以用 `std::__gcd(a,b)` 函数来求最大公约数，但是其仅作为 `std::rotate` 的私有辅助函数．[^1]使用该函数可能会导致预期之外的问题，故一般情况下不推荐使用．
+???+ warning "Note"
+    In some compilers, in C++14, you can use the function `std::__gcd(a,b)` to compute the greatest common divisor, but it is only used as a private auxiliary function for `std::rotate`.[^1] Using this function may lead to unexpected problems, so it is generally not recommended.
 
-如果两个数 $a$ 和 $b$ 满足 $\gcd(a, b) = 1$，我们称 $a$ 和 $b$ 互质．
+If two numbers $a$ and $b$ satisfy $\gcd(a, b) = 1$, we say $a$ and $b$ are coprime.
 
-#### 性质
+#### Properties
 
-欧几里得算法的时间效率如何呢？下面我们证明，在输入为两个长为 $n$ 的二进制整数时，欧几里得算法的时间复杂度为 $O(n)$．（换句话说，在默认 $a, b$ 同阶的情况下，时间复杂度为 $O(\log\max(a, b))$．）
+What is the time efficiency of the Euclidean algorithm? Let's prove that the time complexity of the Euclidean algorithm is $O(n)$ when the input is two binary integers of length $n$. (In other words, assuming $a, b$ are of the same order, the time complexity is $O(\log\max(a, b))$)
 
-???+ note "证明"
-    当我们求 $\gcd(a,b)$ 的时候，会遇到两种情况：
+???+ note "Proof"
+    When computing $\gcd(a,b)$, we encounter two cases:
     
-    -   $a < b$，这时候 $\gcd(a,b)=\gcd(b,a)$；
-    -   $a \geq b$，这时候 $\gcd(a,b)=\gcd(b,a \bmod b)$，而对 $a$ 取模会让 $a$ 至少折半．这意味着这一过程最多发生 $O(\log a) = O(n)$ 次．
+    -   $a < b$, then $\gcd(a,b)=\gcd(b,a)$;
+    -   $a \ge b$, then $\gcd(a,b)=\gcd(b,a \bmod b)$, and taking $a$ modulo $b$ at least halves $a$. This means this process happens at most $O(\log a) = O(n)$ times.
     
-    第一种情况发生后一定会发生第二种情况，因此第一种情况的发生次数一定 **不多于** 第二种情况的发生次数．
+    The first case must be followed by the second case, so the number of occurrences of the first case is definitely **not more than** the number of occurrences of the second case.
     
-    从而我们最多递归 $O(n)$ 次就可以得出结果．
+    Therefore, we can get the result after at most $O(n)$ recursions.
 
-事实上，假如我们试着用欧几里得算法去求 [斐波那契数列](../combinatorics/fibonacci.md) 相邻两项的最大公约数，会让该算法达到最坏复杂度．
+In fact, if we try to use the Euclidean algorithm to find the greatest common divisor of [adjacent Fibonacci numbers](../combinatorics/fibonacci.md), this algorithm will reach the worst-case complexity.
 
-### 更相减损术
+### More Subtraction Method
 
-大整数取模的时间复杂度较高，而加减法时间复杂度较低．针对大整数，我们可以用加减代替乘除求出最大公约数．
+The time complexity of modular arithmetic on large integers is relatively high, while addition and subtraction have lower time complexity. For large integers, we can use addition and subtraction instead of multiplication and division to find the greatest common divisor.
 
-#### 过程
+#### Process
 
-已知两数 $a$ 和 $b$，求 $\gcd(a,b)$．
+Given two numbers $a$ and $b$, find $\gcd(a,b)$.
 
-不妨设 $a \ge b$，若 $a = b$，则 $\gcd(a,b)=a=b$．
-否则，$\forall d\mid a, d\mid b$，可以证明 $d\mid a-b$．
+Assume $a \ge b$. If $a = b$, then $\gcd(a,b)=a=b$.
+Otherwise, for all $d\mid a, d\mid b$, we can prove that $d\mid a-b$.
 
-因此，$a$ 和 $b$ 的 **所有** 公因数都是 $a-b$ 和 $b$ 的公因数，$\gcd(a,b) = \gcd(a-b, b)$．
+Therefore, all common divisors of $a$ and $b$ are also common divisors of $a-b$ and $b$, i.e., $\gcd(a,b) = \gcd(a-b, b)$.
 
-#### Stein 算法的优化
+#### Stein's Algorithm Optimization
 
-如果 $a\gg b$，更相减损术的 $O(n)$ 复杂度将会达到最坏情况．
+If $a\gg b$, the $O(n)$ complexity of the More Subtraction Method will reach the worst case.
 
-考虑一个优化，若 $2\mid a,2\mid b$，$\gcd(a,b) = 2\gcd\left(\dfrac a2, \dfrac b2\right)$．
+Consider an optimization: if $2\mid a,2\mid b$, then $\gcd(a,b) = 2\gcd\left(\dfrac a2, \dfrac b2\right)$.
 
-否则，若 $2\mid a$（$2\mid b$ 同理），因为 $2\mid b$ 的情况已经讨论过了，所以 $2 \nmid b$．因此 $\gcd(a,b)=\gcd\left(\dfrac a2,b\right)$．
+Otherwise, if $2\mid a$ (similarly if $2\mid b$), since the case $2\mid b$ has been discussed, so $2 \nmid b$. Therefore, $\gcd(a,b)=\gcd\left(\dfrac a2,b\right)$.
 
-优化后的算法（即 Stein 算法）时间复杂度是 $O(\log n)$．
+The optimized algorithm (Stein's algorithm) has time complexity $O(\log n)$.
 
-???+ note "证明"
-    若 $2\mid a$ 或 $2\mid b$，每次递归至少会将 $a,b$ 之一减半．
+???+ note "Proof"
+    If $2\mid a$ or $2\mid b$, each recursion at least halves one of $a,b$.
     
-    否则，$2\mid a-b$，回到了上一种情况．
+    Otherwise, $2\mid a-b$, falling back to the previous case.
     
-    算法最多递归 $O(\log n)$ 次．
+    The algorithm recurs at most $O(\log n)$ times.
 
-#### 实现
+#### Implementation
 
-高精度模板见 [高精度计算](../bignum.md)．
+For high-precision templates, see [High-Precision Computation](../bignum.md).
 
-高精度运算需实现：减法、大小比较、左移、右移（可用低精乘除代替）、二进制末位 0 的个数（可以通过判断奇偶暴力计算）．
+High-precision operations need to implement: subtraction, comparison, left shift, right shift (can be replaced by low-precision multiplication and division), the number of trailing zeros in binary (can be computed by brute force by judging odd/even).
 
 ??? note "C++"
     ```cpp
     Big gcd(Big a, Big b) {
       if (a == 0) return b;
       if (b == 0) return a;
-      // 记录a和b的公因数2出现次数，countr_zero表示二进制末位0的个数
+      // record the number of 2 appearing in common divisors of a and b, countr_zero represents the number of trailing zeros in binary
       int atimes = countr_zero(a);
       int btimes = countr_zero(b);
       int mintimes = min(atimes, btimes);
       a >>= atimes;
       for (;;) {
-        // a和b公因数中的2已经计算过了，后面不可能出现a为偶数的情况
+        // 2 has already been calculated in the common divisors of a and b, so a cannot be even in the future
         b >>= btimes;
-        // 确保 a<=b
+        // ensure a<=b
         if (a > b) swap(a, b);
         b -= a;
         if (b == 0) break;
@@ -200,121 +200,121 @@
     }
     ```
 
-上述代码参考了 [libstdc++](https://github.com/gcc-mirror/gcc/blob/1667962ae755db27965778b8c8c684c6c0c4da21/libstdc%2B%2B-v3/include/std/numeric#L173) 和 [MSVC](https://github.com/microsoft/STL/blob/9aca22477df4eed3222b4974746ee79129eb44e7/stl/inc/numeric#L591) 对 C++17 `std::gcd` 的实现．在 `unsigned int` 和 `unsigned long long` 的数据范围下，如果可以以极快的速度计算 `countr_zero`，则 Stein 算法比欧几里得算法来得快，但反之则可能比欧几里得算法慢．
+The above code references the implementations of C++17 `std::gcd` in [libstdc++](https://github.com/gcc-mirror/gcc/blob/1667962ae755db27965778b8c8c684c6c0c4da21/libstdc%2B%2B-v3/include/std/numeric#L173) and [MSVC](https://github.com/microsoft/STL/blob/9aca22477df4eed3222b4974746ee79129eb44e7/stl/inc/numeric#L591). In the data range of `unsigned int` and `unsigned long long`, if `countr_zero` can be computed extremely fast, then Stein's algorithm is faster than the Euclidean algorithm; conversely, it may be slower than the Euclidean algorithm.
 
-???+ note "关于 countr_zero"
-    1.  gcc 有 [内建函数](../bit.md#gcc-内建函数) `__builtin_ctz`（32 位）或 `__builtin_ctzll`（64 位）可替换上述代码的 `countr_zero`；
-    2.  从 C++20 开始，头文件 `<bit>` 包含了 [`std::countr_zero`](https://en.cppreference.com/w/cpp/numeric/countr_zero)；
-    3.  如果不使用不在标准库的函数，又无法使用 C++20 标准，下面的代码是一种在 Word-RAM with multiplication 模型下经过预处理后 $O(1)$ 的实现：
-    
-    ```cpp
-    constexpr int loghash[64] = {0,  32, 48, 56, 60, 62, 63, 31, 47, 55, 59, 61, 30,
-                                 15, 39, 51, 57, 28, 46, 23, 43, 53, 58, 29, 14, 7,
-                                 35, 49, 24, 44, 54, 27, 45, 22, 11, 37, 50, 25, 12,
-                                 38, 19, 41, 52, 26, 13, 6,  3,  33, 16, 40, 20, 42,
-                                 21, 10, 5,  34, 17, 8,  36, 18, 9,  4,  2,  1};
-    
-    int countr_zero(unsigned long long x) {
-      return loghash[(x & -x) * 0x9150D32D8EB9EFC0Ui64 >> 58];
-    }
-    ```
-    
-    而对于高精度运算，如果实现方法类似 `bitset`，则搭配上述对 `countr_zero` 的实现可以在 `O(n / w)` 的时间复杂度下完成．但如果不便按二进制位拆分，则只能暴力判断最大的 $2$ 的幂因子，时间复杂度取决于实现．比如：
-    
-    ```cpp
-    // 以小端序实现的二进制 Big，要求能枚举每一个元素
-    int countr_zero(Big a) {
-      int ans = 0;
-      for (auto x : a) {
-        if (x != 0) {
-          ans += 32;  // 每一位数据类型的位长
-        } else {
-          return ans + countr_zero(x);
+???+ note "About countr_zero"
+    1.  gcc has built-in function `__builtin_ctz` (32-bit) or `__builtin_ctz64ll` (64-bit) to replace `countr_zero`;
+    2.  Starting from C++20, the header `<bit>` contains [`std::countr_zero`](https://en.cppreference.com/w/cpp/numeric/countr_zero);
+    3.  If not using standard library functions and C++20 is not available, the following code is an $O(1)$ implementation after preprocessing in the Word-RAM with multiplication model:
+        
+        ```cpp
+        constexpr int loghash[64] = {0,  32, 48, 56, 60, 62, 63, 31, 47, 55, 59, 61, 30,
+                                     15, 39, 51, 57, 28, 46, 23, 43, 53, 58, 29, 14, 7,
+                                     35, 49, 24, 44, 54, 27, 45, 22, 11, 37, 50, 25, 12,
+                                     38, 19, 41, 52, 26, 13, 6,  3,  33, 16, 40, 20, 42,
+                                     21, 10, 5,  34, 17, 8,  36, 18, 9,  4,  2,  1};
+        
+        int countr_zero(unsigned long long x) {
+          return loghash[(x & -x) * 0x9150D32D8EB9EFC0Ui64 >> 58];
         }
-      }
-      return ans;
-    }
-    
-    // 暴力计算，如需使用建议直接写进 gcd 加快常数
-    int countr_zero(Big a) {
-      int ans = 0;
-      while ((a & 1) == 0) {
-        a >>= 1;
-        ++ans;
-      }
-      return ans;
-    }
-    ```
+        ```
+        
+        For high-precision operations, if the implementation is similar to `bitset`, then combined with the above implementation of `countr_zero`, it can be completed in $O(n / w)$ time complexity. But if it is not convenient to split by binary bits, we can only judge the largest power of 2 by brute force, and the time complexity depends on the implementation. For example:
+        
+        ```cpp
+        // Little-endian binary Big, requires enumerating each element
+        int countr_zero(Big a) {
+          int ans = 0;
+          for (auto x : a) {
+            if (x != 0) {
+              ans += 32;  // bit length of each data type
+            } else {
+              return ans + countr_zero(x);
+            }
+          }
+          return ans;
+        }
+        
+        // Brute force calculation, if needed it is recommended to write directly into gcd to accelerate constants
+        int countr_zero(Big a) {
+          int ans = 0;
+          while ((a & 1) == 0) {
+            a >>= 1;
+            ++ans;
+          }
+          return ans;
+        }
+        ```
 
-更多关于 `gcd` 实现上快慢的讨论可阅读 [Fastest way to compute the greatest common divisor](https://lemire.me/blog/2013/12/26/fastest-way-to-compute-the-greatest-common-divisor/)．
+For more discussions about the speed of `gcd` implementation, read [Fastest way to compute the greatest common divisor](https://lemire.me/blog/2013/12/26/fastest-way-to-compute-the-greatest-common-divisor/).
 
-### 多个数的最大公约数
+### Greatest Common Divisor of Multiple Numbers
 
-那怎么求多个数的最大公约数呢？显然答案一定是每个数的约数，那么也一定是每相邻两个数的约数．我们采用归纳法，可以证明，每次取出两个数求出答案后再放回去，不会对所需要的答案造成影响．
+So how do we find the greatest common divisor of multiple numbers? Obviously, the answer must be a divisor of each number, so it must also be a divisor of the gcd of each pair of adjacent numbers. Using mathematical induction, it can be proven that taking out two numbers to find the answer and putting them back will not affect the required answer.
 
-## 最小公倍数
+## Least Common Multiple
 
-接下来我们介绍如何求解最小公倍数（Least Common Multiple, LCM）．
+Next, we introduce how to find the Least Common Multiple (LCM).
 
-### 定义
+### Definition
 
-一组整数的公倍数，是指同时是这组数中每一个数的倍数的数．0 是任意一组整数的公倍数．
+A common multiple of a set of integers is a number that is simultaneously a multiple of each number in the set. $0$ is a common multiple of any set of integers.
 
-一组整数的最小公倍数，是指所有正的公倍数里面，最小的一个数．
+The least common multiple of a set of integers is the smallest among all positive common multiples.
 
-对整数 $a,b$，将其最小公倍数记为 $\operatorname{lcm}(a,b)$，不引起歧义时可简写为 $[a,b]$．
+For integers $a,b$, we denote their least common multiple as $\operatorname{lcm}(a,b)$, which can be simply written as $[a,b]$ when there is no ambiguity.
 
-对整数 $a_1,\dots,a_n$，将其最小公倍数记为 $\operatorname{lcm}(a_1,\dots,a_n)$，不引起歧义时可简写为 $[a_1,\dots,a_n]$．
+For integers $a_1,\dots,a_n$, we denote their least common multiple as $\operatorname{lcm}(a_1,\dots,a_n)$, which can be simply written as $[a_1,\dots,a_n]$ when there is no ambiguity.
 
-### 两个数
+### Two Numbers
 
-设 $a = p_1^{k_{a_1}}p_2^{k_{a_2}} \cdots p_s^{k_{a_s}}$，$b = p_1^{k_{b_1}}p_2^{k_{b_2}} \cdots p_s^{k_{b_s}}$
+Let $a = p_1^{k_{a_1}}p_2^{k_{a_2}} \cdots p_s^{k_{a_s}}$, $b = p_1^{k_{b_1}}p_2^{k_{b_2}} \cdots p_s^{k_{b_s}}$
 
-我们发现，对于 $a$ 和 $b$ 的情况，二者的最大公约数等于
+We found that for $a$ and $b$, their greatest common divisor equals:
 
 $p_1^{\min(k_{a_1}, k_{b_1})}p_2^{\min(k_{a_2}, k_{b_2})} \cdots p_s^{\min(k_{a_s}, k_{b_s})}$
 
-最小公倍数等于
+The least common multiple equals:
 
 $p_1^{\max(k_{a_1}, k_{b_1})}p_2^{\max(k_{a_2}, k_{b_2})} \cdots p_s^{\max(k_{a_s}, k_{b_s})}$
 
-由于 $k_a + k_b = \max(k_a, k_b) + \min(k_a, k_b)$
+Since $k_a + k_b = \max(k_a, k_b) + \min(k_a, k_b)$
 
-所以得到结论是 $\gcd(a, b) \times \operatorname{lcm}(a, b) = a \times b$
+So we get the conclusion: $\gcd(a, b) \times \operatorname{lcm}(a, b) = a \times b$
 
-要求两个数的最小公倍数，先求出最大公约数即可．
+To find the least common multiple of two numbers, first find the greatest common divisor.
 
-### 多个数
+### Multiple Numbers
 
-可以发现，当我们求出两个数的 $\gcd$ 时，求最小公倍数是 $O(1)$ 的复杂度．那么对于多个数，我们其实没有必要求一个共同的最大公约数再去处理，最直接的方法就是，当我们算出两个数的 $\gcd$，或许在求多个数的 $\gcd$ 时候，我们将它放入序列对后面的数继续求解，那么，我们转换一下，直接将最小公倍数放入序列即可．
+We can find that when we find $\gcd$ of two numbers, finding the least common multiple is $O(1)$ complexity. So for multiple numbers, we actually don't need to find the common greatest common divisor first. The most direct method is that when we calculate $\gcd$ of two numbers, perhaps when calculating the $\gcd$ of multiple numbers, we put it into the sequence to continue solving for the following numbers. Then, converting, we directly put the least common multiple into the sequence.
 
-## 扩展欧几里得算法
+## Extended Euclidean Algorithm
 
-扩展欧几里得算法（Extended Euclidean algorithm, EXGCD），常用于求 $ax+by=\gcd(a,b)$ 的一组可行解．
+The Extended Euclidean Algorithm (EXGCD) is commonly used to find a feasible solution to $ax+by=\gcd(a,b)$.
 
-### 过程
+### Process
 
-设
+Let:
 
 $ax_1+by_1=\gcd(a,b)$
 
 $bx_2+(a\bmod b)y_2=\gcd(b,a\bmod b)$
 
-由欧几里得定理可知：$\gcd(a,b)=\gcd(b,a\bmod b)$
+From the Euclidean theorem, $\gcd(a,b)=\gcd(b,a\bmod b)$
 
-所以 $ax_1+by_1=bx_2+(a\bmod b)y_2$
+So $ax_1+by_1=bx_2+(a\bmod b)y_2$
 
-又因为 $a\bmod b=a-(\lfloor\frac{a}{b}\rfloor\times b)$
+And since $a\bmod b=a-(\lfloor\frac{a}{b}\rfloor\times b)$
 
-所以 $ax_1+by_1=bx_2+(a-(\lfloor\frac{a}{b}\rfloor\times b))y_2$
+So $ax_1+by_1=bx_2+(a-(\lfloor\frac{a}{b}\rfloor\times b))y_2$
 
 $ax_1+by_1=ay_2+bx_2-\lfloor\frac{a}{b}\rfloor\times by_2=ay_2+b(x_2-\lfloor\frac{a}{b}\rfloor y_2)$
 
-因为 $a=a,b=b$，所以 $x_1=y_2,y_1=x_2-\lfloor\frac{a}{b}\rfloor y_2$
+Since $a=a,b=b$, so $x_1=y_2,y_1=x_2-\lfloor\frac{a}{b}\rfloor y_2$
 
-将 $x_2,y_2$ 不断代入递归求解直至 $b$ 为 $0$ 递归 $x=1,y=0$ 回去求解．
+Keep substituting $x_2,y_2$ into recursion until $b$ is $0$, recursively return $x=1,y=0$ to solve back.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -341,27 +341,27 @@ $ax_1+by_1=ay_2+bx_2-\lfloor\frac{a}{b}\rfloor\times by_2=ay_2+b(x_2-\lfloor\fra
         return d, y, x - (a // b) * y
     ```
 
-函数返回的值为 $\gcd$，在这个过程中计算 $x,y$ 即可．
+The function returns $\gcd$, during which $x,y$ are calculated.
 
-### 值域分析
+### Value Range Analysis
 
-$ax+by=\gcd(a,b)$ 的解有无数个，显然其中有的解会爆 long long．  
-万幸的是，若 $b\not= 0$，扩展欧几里得算法求出的可行解必有 $|x|\le b,|y|\le a$．  
-下面给出这一性质的证明．
+$ax+by=\gcd(a,b)$ has infinitely many solutions, and obviously some solutions can overflow long long.
+Fortunately, if $b\not= 0$, the feasible solution obtained by the Extended Euclidean Algorithm must satisfy $|x|\le b,|y|\le a$.
+The proof is given below.
 
-??? note "证明"
-    -   $\gcd(a,b)=b$ 时，$a\bmod b=0$，必在下一层终止递归．  
-        得到 $x_1=0,y_1=1$，显然 $a,b\ge 1\ge |x_1|,|y_1|$．
-    -   $\gcd(a,b)\not= b$ 时，设 $|x_2|\le (a\bmod b),|y_2|\le b$．  
-        因为 $x_1=y_2,y_1=x_2-{\left\lfloor\dfrac{a}{b}\right\rfloor}y_2$   
-        所以 $|x_1|=|y_2|\le b,|y_1|\le|x_2|+|{\left\lfloor\dfrac{a}{b}\right\rfloor}y_2|\le (a\bmod b)+{\left\lfloor\dfrac{a}{b}\right\rfloor}|y_2|$  
-        $\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}b+{\left\lfloor\dfrac{a}{b}\right\rfloor}|y_2|\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}(b-|y_2|)$   
-        $a\bmod b=a-{\left\lfloor\dfrac{a}{b}\right\rfloor}b\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}(b-|y_2|)\le a$   
-        因此 $|x_1|\le b,|y_1|\le a$ 成立．
+??? note "Proof"
+    -   When $\gcd(a,b)=b$, $a\bmod b=0$, must terminate at the next layer.
+        Get $x_1=0,y_1=1$. Obviously $a,b\ge 1\ge |x_1|,|y_1|$.
+    -   When $\gcd(a,b)\not= b$, assume $|x_2|\le (a\bmod b),|y_2|\le b$.
+        Since $x_1=y_2,y_1=x_2-{\left\lfloor\dfrac{a}{b}\right\rfloor}y_2$
+        So $|x_1|=|y_2|\le b,|y_1|\le|x_2|+|{\left\lfloor\dfrac{a}{b}\right\rfloor}y_2|\le (a\bmod b)+{\left\lfloor\dfrac{a}{b}\right\rfloor}|y_2|$
+        $\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}b+{\left\lfloor\dfrac{a}{b}\right\rfloor}|y_2|\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}(b-|y_2|)$
+        $a\bmod b=a-{\left\lfloor\dfrac{a}{b}\right\rfloor}b\le a-{\left\lfloor\dfrac{a}{b}\right\rfloor}(b-|y_2|)\le a$
+        So $|x_1|\le b,|y_1|\le a$ holds.
 
-### 迭代法编写扩展欧几里得算法
+### Iterative Implementation of Extended Euclidean Algorithm
 
-首先，当 $x = 1$，$y = 0$，$x_1 = 0$，$y_1 = 1$ 时，显然有：
+First, when $x = 1$, $y = 0$, $x_1 = 0$, $y_1 = 1$, obviously:
 
 $$
 \begin{cases}
@@ -370,15 +370,15 @@ $$
 \end{cases}
 $$
 
-成立．
+holds.
 
-已知 $a\bmod b = a - (\lfloor \frac{a}{b} \rfloor \times b)$，下面令 $q = \lfloor \frac{a}{b} \rfloor$．参考迭代法求 gcd，每一轮的迭代过程可以表示为：
+Given $a\bmod b = a - (\lfloor \frac{a}{b} \rfloor \times b)$, let $q = \lfloor \frac{a}{b} \rfloor$. Refer to the iterative method for gcd. Each iteration can be expressed as:
 
 $$
 (a, b) \rightarrow (b, a - qb)
 $$
 
-将迭代过程中的 $a$ 替换为 $ax + by = a$，$b$ 替换为 $ax_1 + by_1 = b$，可以得到：
+Replace $a$ in the iteration process with $ax + by = a$, and replace $b$ with $ax_1 + by_1 = b$:
 
 $$
 \begin{aligned}
@@ -393,9 +393,9 @@ $$
 \end{aligned}
 $$
 
-据此就可以得到迭代法求 exgcd．
+This gives the iterative method for exgcd.
 
-因为迭代的方法避免了递归，所以代码运行速度将比递归代码快一点．
+Since the iterative method avoids recursion, the code runs slightly faster than recursive code.
 
 ```cpp
 int gcd(int a, int b, int& x, int& y) {
@@ -411,13 +411,13 @@ int gcd(int a, int b, int& x, int& y) {
 }
 ```
 
-如果你仔细观察 $a_1$ 和 $b_1$，你会发现，他们在迭代版本的欧几里德算法中取值完全相同，并且以下公式无论何时（在 while 循环之前和每次迭代结束时）都是成立的：$x \cdot a +y \cdot b =a_1$ 和 $x_1 \cdot a +y_1 \cdot b= b_1$．因此，该算法肯定能正确计算出 $\gcd$．
+If you observe $a_1$ and $b_1$, you will find that they take the same values in the iterative Euclidean algorithm, and the following formulas always hold (both before the while loop and at the end of each iteration): $x \cdot a + y \cdot b = a_1$ and $x_1 \cdot a + y_1 \cdot b = b_1$. Therefore, this algorithm can certainly correctly compute $\gcd$.
 
-最后我们知道 $a_1$ 就是要求的 $\gcd$，有 $x \cdot a +y \cdot b = g$．
+Finally, we know that $a_1$ is the required $\gcd$, and $x \cdot a + y \cdot b = g$.
 
-#### 矩阵的解释
+#### Matrix Interpretation
 
-对于正整数 $a$ 和 $b$ 的一次辗转相除即 $\gcd(a,b)=\gcd(b,a\bmod b)$ 使用矩阵表示如
+The Euclidean algorithm for one iteration with two positive integers $a$ and $b$, i.e., $\gcd(a,b)=\gcd(b,a\bmod b)$ can be represented using a matrix:
 
 $$
 \begin{bmatrix}
@@ -432,9 +432,9 @@ a\\b
 \end{bmatrix}
 $$
 
-其中向下取整符号 $\lfloor c\rfloor$ 表示不大于 $c$ 的最大整数．我们定义变换 $\begin{bmatrix}a\\b\end{bmatrix}\mapsto \begin{bmatrix}0&1\\1&-\lfloor a/b\rfloor\end{bmatrix}\begin{bmatrix}a\\b\end{bmatrix}$．
+The floor symbol $\lfloor c\rfloor$ represents the largest integer not exceeding $c$. We define the transformation $\begin{bmatrix}a\\b\end{bmatrix}\mapsto \begin{bmatrix}0&1\\1&-\lfloor a/b\rfloor\end{bmatrix}\begin{bmatrix}a\\b\end{bmatrix}$.
 
-易发现欧几里得算法即不停应用该变换，有
+It is easy to find that the Euclidean algorithm applies this transformation continuously:
 
 $$
 \begin{bmatrix}
@@ -455,7 +455,7 @@ a\\b
 \end{bmatrix}
 $$
 
-令
+Let:
 
 $$
 \begin{bmatrix}
@@ -471,7 +471,7 @@ x_1&x_2\\x_3&x_4
 \end{bmatrix}
 $$
 
-那么
+Then:
 
 $$
 \begin{bmatrix}
@@ -486,7 +486,7 @@ a\\b
 \end{bmatrix}
 $$
 
-满足 $a\cdot x_1+b\cdot x_2=\gcd(a,b)$ 即扩展欧几里得算法，注意在最后乘了一个单位矩阵不会影响结果，提示我们可以在开始时维护一个 $2\times 2$ 的单位矩阵编写更简洁的迭代方法如
+Satisfying $a\cdot x_1+b\cdot x_2=\gcd(a,b)$ is the Extended Euclidean Algorithm. Note that multiplying by an identity matrix at the end does not affect the result, which tells us that we can maintain a $2\times 2$ identity matrix at the beginning to write a simpler iterative method:
 
 ```cpp
 int exgcd(int a, int b, int &x, int &y) {
@@ -501,14 +501,14 @@ int exgcd(int a, int b, int &x, int &y) {
 }
 ```
 
-这种表述相较于递归更简单．
+This representation is simpler than recursion.
 
-## 应用
+## Applications
 
 -   [10104 - Euclid Problem](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1045)
 -   [GYM - (J) once upon a time](http://codeforces.com/gym/100963)
 -   [UVa - 12775 - Gift Dilemma](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=4628)
 
-## 参考资料与链接
+## References and Links
 
 [^1]: [libstdc++: std Namespace Reference](https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.4/a00978.html#a2686a128df5a576cb53a1ed5f674607)

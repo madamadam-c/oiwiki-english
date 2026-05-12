@@ -1,9 +1,9 @@
-本章介绍 OI 中可能会用到的数学知识．计算机科学与数学紧密相关，而在算法竞赛中尤其强调以数论、排列组合、概率期望、多项式为代表离散、具体的数学：其注重程序实现和现实问题，可以出现在几乎任何类别的题目中．
+This chapter introduces mathematical knowledge that may be used in OI. Computer science is closely related to mathematics, and in algorithmic competitions, particular emphasis is placed on discrete, concrete mathematics such as number theory, permutations and combinations, probability and expectation, and polynomials: it focuses on program implementation and real-world problems and can appear in almost any category of problems.
 
-实际上，算法竞赛中涉及到的算法和数据结构以及自动机等也可以被认为属于数学范畴，但是这些内容被细分到诸如字符串等的具体章节加以应用背景以更好理解．本章主要介绍数学中一些基础概念、代数、数论、博弈论及概率论等知识．运用这些知识可以帮助优化其他算法和数据结构，例如：
+In fact, algorithms, data structures, and automata involved in algorithmic competitions can also be considered as belonging to the domain of mathematics, but these topics are subdivided into specific chapters such as strings with application contexts for better understanding. This chapter mainly introduces fundamental mathematical concepts, algebra, number theory, game theory, probability theory, and other knowledge. Using this knowledge can help optimize other algorithms and data structures, for example:
 
--   用多项式优化卷积形式的背包，来做一些字符串题．
--   很多递推类型的题背景都是排列组合或概率期望，可以更进一步用生成函数推导和解决，以及使用基于 FFT 的分治优化算法效率．
--   利用同余和环分析图上非简单路径在模意义下可能的权值和，并用带权并查集维护．
+-   Using polynomials to optimize knapsack in convolution form to solve string problems.
+-   Many problems with recurrence backgrounds involve permutations and combinations or probability and expectation, which can be further derived and solved using generating functions, and algorithm efficiency can be improved using divide-and-conquer optimization based on FFT.
+-   Using congruences and rings to analyze possible weighted sums of non-simple paths on graphs under modular arithmetic, and maintaining them with weighted union-find.
 
-此外，高中数学是信息学竞赛数学的基础，学好课本上的基本概念和性质能更好地帮助学习本章内容．
+Additionally, high school mathematics is the foundation of competitive programming mathematics. Mastering the basic concepts and properties in textbooks can better help in learning the content of this chapter.

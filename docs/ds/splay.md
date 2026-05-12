@@ -1,142 +1,142 @@
-本页面将简要介绍如何用 Splay 维护二叉查找树．
+This page will briefly introduce how to use Splay to maintain binary search trees.
 
-## 定义
+## definition
 
-**Splay 树**，或 **伸展树**，是一种平衡二叉查找树，它通过 **伸展（splay）操作** 不断将某个节点旋转到根节点，使得整棵树仍然满足二叉查找树的性质，能够在均摊 $O(\log N)$ 时间内完成插入、查找和删除操作，并且保持平衡而不至于退化为链．
+**Splay tree**, or **stretch tree**, is a balanced binary search tree that continuously rotates a node to the root node through the **stretch (splay) operation** so that the entire tree still satisfies the properties of a binary search tree and can complete insertion, search, and deletion operations in an evenly distributed $O(\log N)$ time, and remains balanced without degenerating into a chain.
 
-Splay 树由 Daniel Sleator 和 Robert Tarjan 于 1985 年发明．
+The Splay tree was invented by Daniel Sleator and Robert Tarjan in 1985.
 
-## 基本结构与操作
+## Basic structure and operation
 
-本节讨论 Splay 树的基本结构和它的核心操作，其中最为重要的是伸展操作．
+This section discusses the basic structure of the Splay tree and its core operations, the most important of which is the stretch operation.
 
-Splay 树是一棵二叉查找树，查找某个值时满足性质：左子树任意节点的值 $<$ 根节点的值 $<$ 右子树任意节点的值．
+The Splay tree is a binary search tree. When searching for a certain value, it satisfies the following properties: the value of any node in the left subtree $<$ the value of the root node $<$ the value of any node in the right subtree.
 
-### 维护信息
+### Maintenance information
 
-本文使用数组模拟指针来实现 Splay 树，需要维护如下信息：
+This article uses array simulation pointers to implement the Splay tree, and the following information needs to be maintained:
 
 |   rt  |    id   | fa\[i] | ch\[i]\[0/1] | val\[i] | cnt\[i] | sz\[i] |
 | :---: | :-----: | :----: | :----------: | :-----: | :-----: | :----: |
-| 根节点编号 | 已使用节点个数 |   父亲   |    左右儿子编号    |   节点权值  |  权值出现次数 |  子树大小  |
+| Root node number | Number of used nodes | Father | Left and right son numbers | Node weight | Number of weight occurrences | Subtree size |
 
-初始化时，所有信息都置零即可．
+During initialization, all information can be set to zero.
 
-### 辅助操作
+### Auxiliary operations
 
-首先是一些简单的辅助操作：
+First are some simple auxiliary operations:
 
--   `dir(x)`：判断节点 $x$ 是父亲节点的左儿子还是右儿子；
--   `push_up(x)`：在改变节点位置后，根据子节点信息更新节点 $x$ 的信息．
+-   `dir(x)`: Determine whether node $x$ is the left son or right son of the father node;
+-   `push_up(x)`: After changing the node position, update the information of node $x$ based on the child node information.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:aux"
     ```
 
-### 旋转操作
+### rotation operation
 
-为了使 Splay 保持平衡，需要进行旋转操作．旋转的作用是将某个节点上移一个位置．
+In order to keep Splay balanced, rotation is required. The function of rotation is to move a node up one position.
 
-旋转需要保证：
+Rotation needs to ensure:
 
--   整棵 Splay 的中序遍历不变（不能破坏二叉查找树的性质）；
--   受影响的节点维护的信息依然正确有效；
--   `rt` 必须指向旋转后的根节点．
+-   The in-order traversal of the entire Splay remains unchanged (the properties of the binary search tree cannot be destroyed);
+-   The information maintained by the affected nodes is still correct and valid;
+-   `rt` must point to the rotated root node.
 
-在 Splay 中旋转分为两种：左旋和右旋．
+There are two types of rotation in Splay: left-hand rotation and right-hand rotation.
 
 ![](./images/splay-rotate.svg)
 
-观察图示可知，如果要通过旋转将节点 $x$（左旋时的 $1$ 和右旋时的 $2$）上移，则旋转的方向由该节点是其父节点的左节点还是右节点唯一确定．因此，实现旋转操作时，只需要将要上移的节点 $x$ 传入即可．
+Observing the diagram, we can see that if the node $x$ ($1$ when turning left and $2$ when turning right) is moved upward through rotation, the direction of rotation is uniquely determined by whether the node is the left node or the right node of its parent node. Therefore, when implementing the rotation operation, you only need to pass in the node $x$ to be moved up.
 
-具体分析旋转步骤：（假设需要上移的节点为 $x$，以右旋为例）
+Specific analysis of the rotation steps: (Assume that the node that needs to be moved up is $x$, taking right rotation as an example)
 
-1.  首先，记录节点 $x$ 的父节点 $y$，以及 $y$ 的父节点 $z$（可能为空），并记录 $x$ 是 $y$ 的左子节点还是右子节点；
-2.  按照旋转后的树中自下向上的顺序，依次更新 $y$ 的左子节点为 $x$ 的右子节点，$x$ 的右子节点为 $y$，以及若 $z$ 非空，$z$ 的子节点为 $x$；
-3.  按照同样的顺序，依次更新当前 $y$ 的左子节点（若存在）的父节点为 $y$，$y$ 的父节点为 $x$，以及 $x$ 的父节点为 $z$；
-4.  自下而上维护节点信息．
+1.  First, record node $x$'s parent node $y$, and $y$'s parent node $z$ (possibly empty), and record whether $x$ is the left or right child node of $y$;
+2.  In order from bottom to top in the rotated tree, update the left child node of $y$ to the right child node of $x$, the right child node of $x$ to $y$, and if $z$ is not empty, the child node of $z$ to $x$;
+3.  In the same order, update the parent node of the left child node of the current $y$ (if it exists) to $y$, the parent node of $y$ to $x$, and the parent node of $x$ to $z$;
+4.  Maintain node information from bottom to top.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:rotate"
     ```
 
-在所有函数的实现时，都应注意不要修改节点 $0$ 的信息．
+When implementing all functions, care should be taken not to modify the information of node $0$.
 
-### 伸展操作
+### Stretching
 
-Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点．该操作也称为伸展操作．
+The Splay tree requires that every time a node $x$ is accessed, it must be forced to rotate to the root node. This operation is also called a stretching operation.
 
-设刚访问的节点为 $x$．要做伸展操作，就是要对 $x$ 做一系列的 **伸展步骤**．每次对 $x$ 做一次伸展步骤，$x$ 到根节点的距离都会更近．定义 $p$ 为 $x$ 的父节点．伸展步骤有三种：
+Let the node just visited be $x$. To do the stretching operation, you need to do a series of **stretching steps** on $x$. Each time a stretching step is performed on $x$, the distance between $x$ and the root node will be closer. Define $p$ as the parent node of $x$. There are three stretching steps:
 
-1.  **zig**: 在 $p$ 是根节点时操作．Splay 树会根据 $x$ 和 $p$ 间的边旋转．**zig** 存在是用于处理奇偶校验问题，仅当 $x$ 在伸展操作开始时具有奇数深度时作为伸展操作的最后一步执行．
+1.  **zig**: Operate when $p$ is the root node. The Splay tree will rotate based on the edge between $x$ and $p$. **zig** exists to handle parity issues and is only executed as the last step of the stretch operation if $x$ has an odd depth at the beginning of the stretch operation.
 
     ![splay-zig](./images/splay-zig.svg)
 
-    即直接将 $x$ 右旋或左旋（图 1, 2）．
+That is, directly rotate $x$ to the right or left (Figure 1, 2).
 
-    ![图 1](./images/splay-rotate1.svg)![图 2](./images/splay-rotate2.svg)
+![Picture 1](./images/splay-rotate1.svg)![Picture 2](./images/splay-rotate2.svg)
 
-2.  **zig-zig**: 在 $p$ 不是根节点且 $x$ 和 $p$ 都是右侧子节点或都是左侧子节点时操作．下方例图显示了 $x$ 和 $p$ 都是左侧子节点时的情况．Splay 树首先按照连接 $p$ 与其父节点 $g$ 边旋转，然后按照连接 $x$ 和 $p$ 的边旋转．
+2.  **zig-zig**: Operate when $p$ is not the root node and $x$ and $p$ are both right child nodes or both left child nodes. The example below shows the situation when $x$ and $p$ are both left child nodes. The Splay tree is first rotated according to the edge connecting $p$ and its parent node $g$, and then rotated according to the edge connecting $x$ and $p$.
 
     ![splay-zig-zig](./images/splay-zig-zig.svg)
 
-    即首先将 $p$ 右旋或左旋，然后将 $x$ 右旋或左旋（图 3, 4）．
+That is, first rotate $p$ to the right or left, and then rotate $x$ to the right or left (Figure 3, 4).
 
-    ![图 3](./images/splay-rotate3.svg)![图 4](./images/splay-rotate4.svg)
+![Picture 3](./images/splay-rotate3.svg)![Picture 4](./images/splay-rotate4.svg)
 
-3.  **zig-zag**: 在 $p$ 不是根节点且 $x$ 和 $p$ 一个是右侧子节点一个是左侧子节点时操作．Splay 树首先按 $p$ 和 $x$ 之间的边旋转，然后按 $x$ 和 $g$ 新生成的结果边旋转．
+3.  **zig-zag**: Operate when $p$ is not the root node and one of $x$ and $p$ is the right child node and the other is the left child node. The Splay tree is rotated first by the edge between $p$ and $x$, and then by the newly generated result edges of $x$ and $g$.
 
     ![splay-zig-zag](./images/splay-zig-zag.svg)
 
-    即将 $x$ 先左旋再右旋或先右旋再左旋（图 5, 6）．
+That is to say, $x$ first rotates left and then rotates right or first rotates right and then rotates left (Figure 5, 6).
 
-    ![图 5](./images/splay-rotate5.svg)![图 6](./images/splay-rotate6.svg)
+![Picture 5](./images/splay-rotate5.svg)![Picture 6](./images/splay-rotate6.svg)
 
 ???+ tip "Tip"
-    请读者尝试自行模拟 $6$ 种旋转情况，以理解伸展操作的基本思想．
+Readers are asked to try to simulate $6$ rotation situations by themselves to understand the basic idea of ​​the stretching operation.
 
-比较三种伸展步骤可知，要区分此时应使用哪种操作，关键是要判断 $x$ 是否是根节点的子节点，以及 $x$ 和它父节点是否在各自的父节点同侧．
+Comparing the three stretching steps, we can see that to distinguish which operation should be used at this time, the key is to determine whether $x$ is a child node of the root node, and whether $x$ and its parent node are on the same side of their respective parent nodes.
 
-此处提供的实现，可以指定任意根节点 $z$，并将它的子树内任意节点 $x$ 上移至 $z$ 处：
+The implementation provided here can specify any root node $z$ and move any node $x$ up in its subtree to $z$:
 
-1.  首先记录根节点 $z$ 的父节点 $w$，从而可以利用 `fa[x] == w` 判断 $x$ 已经位于根结点处；
-2.  记录 $x$ 当前的父节点 $y$，如果 $y$ 和 $w$ 相同，说明 $x$ 已经到达根节点；
-3.  否则，利用 `fa[y] == w` 判断 $y$ 是否是根节点．如果是，直接做 zig 操作将 $x$ 旋转；如果不是，利用 `dir(x) == dir(y)` 判断使用 zig-zig 还是 zig-zag，前者先旋转 $y$ 再旋转 $x$，后者直接旋转两次 $x$．
+1.  First, record the root node $z$'s parent node $w$, so that you can use `fa[x] == w` to determine that $x$ is already located at the root node;
+2.  Record $x$'s current parent node $y$. If $y$ and $w$ are the same, it means $x$ has reached the root node;
+3.  Otherwise, use `fa[y] == w` to determine whether $y$ is the root node. If so, directly perform zig operation to rotate $x$; if not, use `dir(x) == dir(y)` to determine whether to use zig-zig or zig-zag. The former rotates $y$ first and then $x$, and the latter directly rotates $x$ twice.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:splay"
     ```
 
-伸展操作是 Splay 树的核心操作，也是它的时间复杂度能够得到保证的关键步骤．请务必保证每次向下访问节点后，都进行一次伸展操作．
+The stretching operation is the core operation of the Splay tree, and it is also a key step to ensure that its time complexity can be guaranteed. Please be sure to perform a stretch operation every time you access a node downwards.
 
-另外，伸展操作会将当前节点 $x$ 到根节点 $z$ 的路径上的所有节点信息自下而上地更新一遍．正是因为这一点，才可以修改非根节点，再通过伸展操作将它上移至根来完成整个树的信息更新．
+In addition, the stretching operation will update all node information on the path from the current node $x$ to the root node $z$ from bottom to top. It is precisely because of this that the non-root node can be modified and then moved up to the root through a stretch operation to complete the information update of the entire tree.
 
-### 时间复杂度
+### time complexity
 
-对大小为 $n$ 的 Splay 树做 $m$ 次伸展操作的复杂度是 $O((n+m)\log n)$ 的，单次均摊复杂度是 $O(\log n)$ 的．
+For a Splay tree of size $n$, doing $m$ stretch operations has complexity $O((n+m)\log n)$, and the single amortized complexity is $O(\log n)$.
 
-??? note "基于势能分析的复杂度证明"
-    为此只需分析 **zig**、**zig-zig** 和 **zig-zag** 三种操作的复杂度．为此，我们采用 **势能分析法**，通过研究势能的变化来推导操作的均摊复杂度．假设对一棵包含 $n$ 个节点的 Splay 树进行了 $m$ 次伸展操作，可以通过如下方式进行分析：
+??? note "Complexity Proof Based on Potential Energy Analysis"
+For this purpose, we only need to analyze the complexity of three operations: **zig**, **zig-zig** and **zig-zag**. To this end, we use the **potential energy analysis method** to deduce the amortized complexity of the operation by studying changes in potential energy. Assuming that a Splay tree containing $n$ nodes has been stretched $m$ times, it can be analyzed in the following way:
     
-    **定义**：
+**definition**:
     
-    1.  **单个节点的势能**：$w(x) = \log(\text{size}(x))$，其中 $\text{size}(x)$ 表示以节点 $x$ 为根的子树大小．
-    2.  **整棵树的势能**：$\varphi = \sum w(x)$，即树中所有节点势能的总和，初始势能满足 $\varphi_0 \leq n \log n$．
-    3.  **第 $i$ 次操作的均摊成本**：$c_i = t_i + \varphi_i - \varphi_{i-1}$，其中 $t_i$ 为实际操作代价，$\varphi_i$ 和 $\varphi_{i-1}$ 分别为操作后和操作前的势能．
+    1.  **Potential energy of a single node**: $w(x) = \log(\text{size}(x))$, where $\text{size}(x)$ represents the size of the subtree rooted at node $x$.
+    2.  **Potential energy of the entire tree**: $\varphi = \sum w(x)$, that is, the sum of the potential energy of all nodes in the tree, and the initial potential energy satisfies $\varphi_0 \leq n \log n$.
+    3.  **Amortized cost of the $i$th operation**: $c_i = t_i + \varphi_i - \varphi_{i-1}$, where $t_i$ is the actual operation cost, $\varphi_i$ and $\varphi_{i-1}$ are the potential energy after the operation and before the operation respectively.
     
-    **性质**：
+**nature**:
     
-    1.  如果 $p$ 是 $x$ 的父节点，则有 $w(p) \geq w(x)$，即父节点的势能不小于子节点的势能．
+    1.  If $p$ is the parent node of $x$, then there is $w(p) \geq w(x)$, that is, the potential energy of the parent node is not less than the potential energy of the child node.
     
-    2.  由于根节点的子树大小在操作前后保持不变，因此根节点的势能在操作过程中不变．
+    2.  Since the size of the root node's subtree remains unchanged before and after the operation, the potential energy of the root node remains unchanged during the operation.
     
-    3.  如果 $\text{size}(p)\ge\text{size}(x)+\text{size}(y)$，那么有 $2w(p) - w(x) - w(y) \geq 2$．
+    3.  If $\text{size}(p)\ge\text{size}(x)+\text{size}(y)$, then there is $2w(p) - w(x) - w(y) \geq 2$.
     
-    ??? note "性质 3 的证明"
-        根据均值不等式可知
+??? note "Proof of Property 3"
+According to the mean inequality, we know
         
         $$
         \begin{aligned}
@@ -148,9 +148,9 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
         \end{aligned}
         $$
     
-    接下来，分别对 **zig**、**zig-zig** 和 **zig-zag** 操作进行势能分析．设操作前后的节点 $x$ 的势能分别是 $w(x)$ 和 $w'(x)$．节点的记号与 [上文](#伸展操作) 一致．
+Next, perform potential energy analysis on the **zig**, **zig-zig** and **zig-zag** operations respectively. Assume that the potential energies of node $x$ before and after the operation are $w(x)$ and $w'(x)$ respectively. The notation of the nodes is consistent with [above](#stretch operation).
     
-    **zig**：根据性质 1 和 2，有 $w(p) = w'(x)$，且 $w'(x) \geq w'(p)$．由此，均摊成本为
+**zig**: According to properties 1 and 2, there is $w(p) = w'(x)$, and $w'(x) \geq w'(p)$. Therefore, the amortized cost is
     
     $$
     \begin{aligned}
@@ -160,7 +160,7 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
     \end{aligned}
     $$
     
-    **zig-zig**：根据性质 1 和 2，有 $w(g) = w'(x)$，且 $w'(x) \geq w'(p)$，$w(x) \leq w(p)$．因为
+**zig-zig**: According to properties 1 and 2, there are $w(g) = w'(x)$, and $w'(x) \geq w'(p)$, $w(x) \leq w(p)$. because
     
     $$
     \begin{aligned}
@@ -171,13 +171,13 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
     \end{aligned}
     $$
     
-    根据性质 3 可得
+Available according to property 3
     
     $$
     2 w'(x) - w(x) - w'(g) \geq 2.
     $$
     
-    由此，均摊成本为
+Therefore, the amortized cost is
     
     $$
     \begin{aligned}
@@ -189,13 +189,13 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
     \end{aligned}
     $$
     
-    **zig-zag**：根据性质 1 和 2，有 $w(g) = w'(x)$，且 $w(p) \geq w(x)$．因为 $\text{size}'(x)>\text{size}'(p)+\text{size}'(g)$，根据性质 3，可得
+**zig-zag**: According to properties 1 and 2, there is $w(g) = w'(x)$, and $w(p) \geq w(x)$. Because $\text{size}'(x)>\text{size}'(p)+\text{size}'(g)$, according to property 3, we can get
     
     $$
     2 \cdot w'(x) - w'(g) - w'(p) \geq 2.
     $$
     
-    由此，均摊成本为
+Therefore, the amortized cost is
     
     $$
     \begin{aligned}
@@ -207,19 +207,19 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
     \end{aligned}
     $$
     
-    **单次伸展操作**：
+**Single stretching operation**:
     
-    令 $w^{(n)}(x)=(w^{(n-1)})'(x)$ 且 $w^{(0)}(x)=w(x)$．假设一次伸展操作依次访问了 $x_{1}, x_{2}, \cdots, x_{n}$ 等节点，最终 $x_{1}$ 成为根节点．这必然经过若干次 **zig-zig** 和 **zig-zag** 操作和至多一次 **zig** 操作，前两种操作的均摊成本均不超过 $3(w'(x)-w(x))$，而最后一次操作的均摊成本不超过 $3(w'(x) - w(x))+1$，所以总的均摊成本不超过
+Let $w^{(n)}(x)=(w^{(n-1)})'(x)$ and $w^{(0)}(x)=w(x)$. Assume that a stretch operation visits nodes such as $x_{1}, x_{2}, \cdots, x_{n}$ in sequence, and eventually $x_{1}$ becomes the root node. This must go through several **zig-zig** and **zig-zag** operations and at most one **zig** operation. The amortized cost of the first two operations does not exceed $3(w'(x)-w(x))$, and the amortized cost of the last operation does not exceed $3(w'(x) - w(x))+1$, so the total amortized cost does not exceed
     
     $$
     3(w^{(n)}(x_1) - w^{(0)}(x_1)) + 1 \le 3\log n + 1.
     $$
     
-    因此，一次伸展操作的均摊复杂度是 $O(\log n)$ 的．从而，基于伸展的插入、查询、删除等操作的时间复杂度也为均摊 $O(\log n)$．
+Therefore, the amortized complexity of a stretch operation is $O(\log n)$. Therefore, the time complexity of stretching-based insertion, query, deletion and other operations is also $O(\log n)$.
     
-    **结论**：
+**in conclusion**:
     
-    在进行 $m$ 次伸展操作之后，实际成本
+Actual cost after $m$ stretches
     
     $$
     \begin{aligned}
@@ -229,236 +229,236 @@ Splay 树要求每访问一个节点 $x$ 后都要强制将其旋转到根节点
     \end{aligned}
     $$
     
-    因此，$m$ 次伸展操作的实际时间复杂度为 $O((m+n)\log n)$．
+Therefore, the actual time complexity of $m$ stretch operations is $O((m+n)\log n)$.
 
-??? info "为什么 Splay 树的再平衡操作可以获得 $O(\log n)$ 的均摊复杂度？"
-    朴素的再平衡思路就是对节点反复进行旋转操作使其上升，直到它成为根节点．这种朴素思路的问题在于，对于所有子节点都是左（右）节点的链状树来说，它相当于反复进行 **zig** 操作，因而 **zig** 操作的均摊复杂度中的常数项 $1$ 会不断累积，造成最终的均摊复杂度达到 $O(\log n+n)$ 级别．Splay 树的再平衡操作的设计，避免了连续 **zig** 的情形中的常数累积，使得一次完整的伸展操作中，至多进行一次单独的 **zig** 操作，从而优化了时间复杂度．
+??? info "Why can the rebalancing operation of the Splay tree achieve an amortized complexity of $O(\log n)$?"
+The simple idea of ​​rebalancing is to repeatedly rotate the node to make it rise until it becomes the root node. The problem with this simple idea is that for a chain tree in which all child nodes are left (right) nodes, it is equivalent to repeatedly performing the **zig** operation. Therefore, the constant term $1$ in the amortized complexity of the **zig** operation will continue to accumulate, causing the final amortized complexity to reach the $O(\log n+n)$ level. The design of the rebalancing operation of the Splay tree avoids constant accumulation in the case of continuous **zig**, so that in a complete stretch operation, at most one separate **zig** operation is performed, thus optimizing the time complexity.
 
-## 平衡树操作
+## Balanced tree operation
 
-本节讨论基于 Splay 树实现平衡树的常见操作的方法．其中，较为重要的是按照值或排名查找元素，它们可以将某个特定的元素找到，并上移至根节点处，以便后续处理．
+This section discusses methods to implement common operations of balanced trees based on Splay trees. Among them, the more important thing is to find elements according to value or ranking. They can find a specific element and move it up to the root node for subsequent processing.
 
-作为例子，本节将讨论模板题目 [普通平衡树](https://loj.ac/problem/104) 的实现．
+As an example, this section will discuss the implementation of the template topic [Ordinary Balanced Tree](https://loj.ac/problem/104).
 
-### 按照值查找
+### Find by value
 
-作为二叉查找树，可以通过值 $v$ 查找到相应的节点，只需要将待查找的值 $v$ 和当前节点的值比较即可，找到后将该元素上移至根部即可．
+As a binary search tree, you can find the corresponding node through the value $v$. You only need to compare the value to be found $v$ with the value of the current node. After finding it, move the element up to the root.
 
-应注意，经常存在树中不存在相应的节点的情形．对于这种情形，要记录最后一个访问的节点（即实现中的 $y$），并将 $y$ 上移至根部．此时，节点 $y$ 存储的值必然要么是所有小于 $v$ 的元素中最大的（即 $v$ 的前驱），要么是所有大于 $v$ 的元素中最小的（即 $v$ 的后继）．这是因为查找过程保证，左子树总是存储小于 $v$ 的值，而右子树总是存储大于 $v$ 的值．
+It should be noted that there are often situations where the corresponding node does not exist in the tree. For this case, record the last node visited (that is, $y$ in the implementation) and move $y$ up to the root. At this time, the value stored in node $y$ must be either the largest among all elements smaller than $v$ (i.e., the predecessor of $v$), or the smallest among all elements larger than $v$ (i.e., the successor of $v$). This is because the search process guarantees that the left subtree always stores a value less than $v$, and the right subtree always stores a value greater than $v$.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:find"
     ```
 
-该实现允许指定任何节点 $z$ 作为根节点，并在它的子树内按值查找．
+This implementation allows specifying any node $z$ as the root node and searching by value within its subtree.
 
-### 按照排名访问
+### Visit by ranking
 
-因为记录了子树大小信息，所以 Splay 树还可以通过排名访问元素，即查找树中第 $k$ 小的元素．
+Because the subtree size information is recorded, the Splay tree can also access elements through ranking, that is, find the $k$th smallest element in the tree.
 
-设 $k$ 为剩余排名，具体步骤如下：
+Let $k$ be the remaining ranking. The specific steps are as follows:
 
--   如果左子树非空且剩余排名 $k$ 不大于左子树的大小，那么向左子树查找；
--   否则，如果 $k$ 不大于左子树加上根的大小，那么根节点就是要寻找的；
--   否则，将 $k$ 减去左子树的和根的大小，继续向右子树查找；
--   将最终找到的元素上移至根部．
+-   If the left subtree is not empty and the remaining ranking $k$ is not greater than the size of the left subtree, then search to the left subtree;
+-   Otherwise, if $k$ is not larger than the size of the left subtree plus the root, then the root node is the one to be found;
+-   Otherwise, subtract $k$ by the size of the left subtree and the root, and continue searching to the right subtree;
+-   Move the finally found element up to the root.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:loc"
     ```
 
-该实现需要保证排名 $k$ 不超过根 $z$ 处的树大小．
+The implementation needs to ensure that rank $k$ does not exceed the tree size at root $z$.
 
-模板题目中操作 $4$ 要求按照排名返回值，直接调用该方法，并返回值即可．
+The operation $4$ in the template question requires the return value according to the ranking. Just call this method directly and return the value.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:find-kth"
     ```
 
-### 合并操作
+### merge operation
 
-有些时候需要合并两棵 Splay 树．
+Sometimes it is necessary to merge two Splay trees.
 
-设两棵树的根节点分别为 $x$ 和 $y$，那么为了保证结果仍是二叉查找树，需要要求 $x$ 树中的最大值小于 $y$ 树中的最小值．这条件通常都可以满足，因为两棵树往往是从更大的子树中分裂出的．
+Assume that the root nodes of the two trees are $x$ and $y$ respectively. In order to ensure that the result is still a binary search tree, it is necessary to require that the maximum value in the $x$ tree is less than the minimum value in the $y$ tree. This condition is usually met because two trees are often split from larger subtrees.
 
-合并操作如下：
+The merge operation is as follows:
 
--   如果 $x$ 和 $y$ 其中之一或两者都为空树，直接返回不为空的那一棵树的根节点或空树；
--   否则，通过 `loc(y, 1)` 将 $y$ 树中的最小值上移至根 $y$ 处，再将它的左节点（此时必然为空）设置为 $x$，并更新节点信息，返回节点 $y$．
+-   If one or both of $x$ and $y$ are empty trees, directly return the root node of the tree that is not empty or the empty tree;
+-   Otherwise, move the minimum value in the $y$ tree up to the root $y$ through `loc(y, 1)`, then set its left node (which must be empty at this time) to $x$, update the node information, and return to the node $y$.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:merge"
     ```
 
-分裂操作类似．因而，Splay 树可以模拟 [无旋 treap](./treap.md#无旋-treap) 的思路做各种操作，包括区间操作．[后文](#序列操作) 会介绍更具有 Splay 树风格的区间操作处理方法．
+The splitting operation is similar. Therefore, the Splay tree can simulate the idea of ​​[irrotational treap](./treap.md#%E6%97%A0%E6%97%8B-treap) to perform various operations, including interval operations. [The section below](#sequence-operations) will introduce a more Splay tree-style interval operation processing method.
 
-### 插入操作
+### insert operation
 
-插入操作是一个比较复杂的过程．具体步骤如下：（假设插入的值为 $v$）
+The insertion operation is a relatively complex process. The specific steps are as follows: (assuming the inserted value is $v$)
 
--   类似按值查找的过程，根据 $v$ 向下查找到存储 $v$ 的节点或者空节点，过程中记录父节点 $y$；
--   如果存在存储 $v$ 的节点 $x$，直接更新信息，否则就新建节点 $x$；
--   做伸展操作，将最后一个节点 $x$ 上移至根部．
+-   Similar to the process of searching by value, search downwards according to $v$ to the node storing $v$ or an empty node, and record the parent node $y$ in the process;
+-   If there exists a node storing $v$, call it $x$ and update its information directly, otherwise create a new node $x$;
+-   Perform a stretching operation and move the last node $x$ up to the root.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:insert"
     ```
 
-该实现允许直接向空树内插入值．若不想处理空树，可以在树中提前插入哑节点．
+This implementation allows values ​​to be inserted directly into an empty tree. If you don't want to deal with an empty tree, you can insert dummy nodes in the tree in advance.
 
-### 删除操作
+### Delete operation
 
-删除操作也是一个比较复杂的操作．具体步骤如下：（假设删除的值为 $v$）
+The deletion operation is also a relatively complex operation. The specific steps are as follows: (assuming the deleted value is $v$)
 
--   首先按照值 $v$ 查找存储它的节点，并上移至根部；
--   如果不存在存储它的节点，直接返回；（上一步已经做了伸展操作）
--   否则，更新节点信息；
--   如果得到的根节点为空节点，就合并左右子树作为新的根节点，注意合并前需要更新两个子树的根的父节点为空．
+-   First find the node where it is stored according to the value $v$ and move up to the root;
+-   If there is no node to store it, return directly; (the stretching operation has been done in the previous step)
+-   Otherwise, update the node information;
+-   If the obtained root node is an empty node, merge the left and right subtrees as the new root node. Note that the parent nodes of the roots of the two subtrees need to be updated before merging to be empty.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:remove"
     ```
 
-### 查询排名
+### Query ranking
 
-直接按照值 $v$ 访问节点（并上移至根），然后返回相应的值即可．
+Just access the node directly according to the value $v$ (and move up to the root), and then return the corresponding value.
 
-注意，当 $v$ 不存在时，方法 `find(rt, v)` 返回的根和 $v$ 的大小关系无法确定，需要单独讨论．
+Note that when $v$ does not exist, the relationship between the root returned by method `find(rt, v)` and $v$ cannot be determined and needs to be discussed separately.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:find-rank"
     ```
 
-### 查询前驱
+### Query predecessor
 
-前驱定义为小于 $v$ 的最大的数．具体步骤如下：
+The precursor is defined as the largest number less than $v$. The specific steps are as follows:
 
--   按照值 $v$ 访问节点（并上移至根部）；
--   如果根部的值小于 $v$，那么它必然是最大的那个，直接返回；
--   否则，在左子树中找到最大值，并上移至根部．
+-   Visit the node by value $v$ (and move up to the root);
+-   If the value of the root is less than $v$, then it must be the largest one and is returned directly;
+-   Otherwise, find the maximum value in the left subtree and move it up to the root.
 
-最后一步相当于直接调用 `loc(ch[rt][0], sz[ch[rt][0]])`，只是省去了不必要的判断．
+The last step is equivalent to calling `loc(ch[rt][0], sz[ch[rt][0]])` directly, except that unnecessary judgment is omitted.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:find-prev"
     ```
 
-该实现允许前驱不存在，此时返回 $-1$．
+This implementation allows the predecessor to not exist, in which case $-1$ is returned.
 
-### 查询后继
+### Query successor
 
-后继定义为大于 $x$ 的最小的数．查询方法和前驱类似，只是将左子树的最大值换成了右子树的最小值，即调用 `loc(ch[rt][1], 1)`．
+The successor is defined as the smallest number greater than $x$. The query method is similar to the predecessor, except that the maximum value of the left subtree is replaced by the minimum value of the right subtree, that is, calling `loc(ch[rt][1], 1)`.
 
-???+ example "实现"
+???+ example "implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:find-next"
     ```
 
-### 参考实现
+### Reference implementation
 
-本节的最后，给出模板题目 [普通平衡树](https://loj.ac/problem/104) 的参考实现．
+At the end of this section, the reference implementation of the template problem [Ordinary Balanced Tree](https://loj.ac/problem/104) is given.
 
-??? example "参考实现"
+??? example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-1.cpp:full-text"
     ```
 
-## 序列操作
+## Sequence operations
 
-Splay 树也可以运用在序列上，用于维护区间信息．与线段树对比，Splay 树常数较大，但是支持更复杂的序列操作，如区间翻转等．上文提到 Splay 树同样支持分裂和合并操作，因而可以模拟 [无旋 treap](./treap.md#无旋-treap) 进行区间操作，在此不再过多讨论．本节主要讨论基于伸展操作的区间操作实现方法．
+Splay trees can also be used on sequences to maintain interval information. Compared with the line segment tree, the Splay tree has larger constants, but supports more complex sequence operations, such as interval flipping, etc. As mentioned above, the Splay tree also supports splitting and merging operations, so it can simulate [irrotational treap](./treap.md#%E6%97%A0%E6%97%8B-treap) to perform interval operations, which will not be discussed further here. This section mainly discusses the implementation method of interval operation based on stretch operation.
 
-将序列建成的 Splay 树有如下性质：
+The Splay tree built from the sequence has the following properties:
 
--   Splay 树的中序遍历相当于原序列从左到右的遍历；
--   Splay 树上的一个节点代表原序列的一个元素；
--   Splay 树上的一颗子树，代表原序列的一段区间．
+-   In-order traversal of the Splay tree is equivalent to traversal of the original sequence from left to right;
+-   A node in the Splay tree represents an element of the original sequence;
+-   A subtree on the Splay tree represents an interval of the original sequence.
 
-因为有伸展操作，可以快速提取出代表某个区间的 Splay 子树．
+Because of the stretching operation, the Splay subtree representing a certain interval can be quickly extracted.
 
-作为例子，本节将讨论模板题目 [文艺平衡树](https://loj.ac/problem/105) 的实现．
+As an example, this section will discuss the implementation of the template problem [Literary Balance Tree](https://loj.ac/problem/105).
 
-### 根据序列建树
+### Build tree based on sequence
 
-在操作之前，需要根据所给的序列先把 Splay 树建出来．根据 Splay 树的特性，直接建出一颗只有左儿子的链即可．时间复杂度是 $O(n)$ 的．
+Before operation, the Splay tree needs to be built according to the given sequence. According to the characteristics of the Splay tree, you can directly build a chain with only the left son. The time complexity is $O(n)$.
 
-???+ example "参考实现"
+???+ example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-2.cpp:build"
     ```
 
-最后的伸展操作自下而上地更新了节点信息．为了后文区间操作方便，序列左右两侧添加了两个哨兵节点．
+The final stretch operation updates the node information from bottom to top. For the convenience of subsequent interval operations, two sentinel nodes are added to the left and right sides of the sequence.
 
-### 区间翻转
+### range flip
 
-以区间翻转为例，可以理解区间操作的方法：（设区间为 $[L,R]$）
+Taking interval flipping as an example, you can understand the method of interval operation: (Set the interval as $[L,R]$)
 
--   首先将节点 $L-1$ 上移到根节点，再在其右子树中，将节点 $R+1$ 上移到右子树的根节点；
--   此时，设 $x$ 为根节点的右子节点的左子节点，则以 $x$ 为根的子树就对应着区间 $[L,R]$；
--   在 $x$ 处对区间 $[L,R]$ 做操作，并打上懒标记；
--   在 $x$ 处将标记下传一次，然后利用伸展操作将 $x$ 上移到根．
+-   First, move the node $L-1$ up to the root node, and then in its right subtree, move the node $R+1$ up to the root node of the right subtree;
+-   At this time, assuming $x$ is the left child node of the right child node of the root node, then the subtree with $x$ as the root corresponds to the interval $[L,R]$;
+-   At $x$, perform operations on the interval $[L,R]$ and mark it as lazy;
+-   Pass the mark down once at $x$, and then use the stretch operation to move $x$ up to the root.
 
-第一步需要的操作就是前文平衡树操作中的「按照排名访问」，因为元素的标号就是它的排名．因为涉及懒标记的管理，它的实现与上文略有不同．
+The first step required is the "access by ranking" in the previous balanced tree operation, because the label of the element is its ranking. Because it involves the management of lazy tags, its implementation is slightly different from the above.
 
-???+ example "参考实现"
+???+ example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-2.cpp:reverse"
     ```
 
-最后一步的伸展操作并非为了保证复杂度正确，而是为了更新节点信息．因为伸展操作涉及到节点 $x$ 的左右子节点，所以之前需要将节点 $x$ 处的标记先下传一次．当然，仅对于区间翻转操作而言，子区间的翻转不会对祖先节点产生影响，所以省去这一步骤也是正确的．此处实现保留这两行，是为了说明一般的情形下的操作方法．
+The stretching operation in the last step is not to ensure the correct complexity, but to update the node information. Because the stretching operation involves the left and right child nodes of node $x$, the mark at node $x$ needs to be downloaded first. Of course, only for the interval flip operation, the flip of the subinterval will not affect the ancestor nodes, so it is correct to omit this step. These two lines are retained here to illustrate the operation method under general circumstances.
 
-### 懒标记管理
+### Lazy tag management
 
-首先，需要辅助函数 `lazy_reverse(x)` 和 `push_down(x)`．前者交换左右节点，并更新懒标记；后者将标记下传．
+First, the auxiliary functions `lazy_reverse(x)` and `push_down(x)` are needed. The former exchanges the left and right nodes and updates the lazy mark; the latter downloads the mark.
 
-???+ example "参考实现"
+???+ example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-2.cpp:push-down"
     ```
 
-然后，只需要在向下经过节点时下传标记即可．模板题要求的操作比较简单，只有按照排名寻找的操作（即 `loc`）涉及向下访问节点．注意，需要在函数每次访问一个新的节点 **前** 下传标记．
+Then, you only need to download the tags as you go down through the nodes. The operations required by the template question are relatively simple. Only the operation of searching according to ranking (i.e. `loc`) involves downward access to nodes. Note that the tag needs to be downloaded **before** each time the function accesses a new node.
 
-???+ example "参考实现"
+???+ example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-2.cpp:push-down-lazy"
     ```
 
-因为向下访问节点时已经移除了经过的路径的所有懒标记，所以利用伸展操作上移节点时不再需要处理懒标记．但是，对于区间操作的那一个节点要谨慎处理：因为它同样位于伸展操作的路径上，但是刚刚操作完，可能存在尚未下传的标记，需要首先下传再做伸展操作，正如同上文所做的那样．
+Because all lazy markers along the path have been removed when accessing the node downwards, there is no need to deal with lazy markers when using the stretch operation to move the node up. However, the node used in the interval operation should be handled with caution: because it is also on the path of the stretch operation, but just after the operation, there may be marks that have not yet been downloaded, and it needs to be downloaded first and then the stretch operation is performed, just like what was done above.
 
-### 参考实现
+### Reference implementation
 
-本节的最后，给出模板题目 [文艺平衡树](https://loj.ac/problem/105) 的参考实现．
+At the end of this section, a reference implementation of the template problem [Literary Balance Tree](https://loj.ac/problem/105) is given.
 
-??? example "参考实现"
+??? example "reference implementation"
     ```cpp
     --8<-- "docs/ds/code/splay/splay-2.cpp:full-text"
     ```
 
-## 习题
+## exercise
 
-这些题目都是裸的 Splay 树维护二叉查找树：
+These questions are all bare Splay tree maintenance binary search trees:
 
--   [【模板】普通平衡树](https://loj.ac/problem/104)
--   [【模板】文艺平衡树](https://loj.ac/problem/105)
--   [「HNOI2002」营业额统计](https://loj.ac/problem/10143)
--   [「HNOI2004」宠物收养所](https://loj.ac/problem/10144)
+-   [[Template]Ordinary balanced tree](https://loj.ac/problem/104)
+-   [[Template]Literary Balance Tree](https://loj.ac/problem/105)
+-   ["HNOI2002" turnover statistics](https://loj.ac/problem/10143)
+-   [「HNOI2004」Pet Adoption Center](https://loj.ac/problem/10144)
 
-Splay 树还出现在更复杂的应用场景中：
+Splay trees also appear in more complex application scenarios:
 
--   [「Cerc2007」robotic sort 机械排序](https://www.luogu.com.cn/problem/P4402)
--   [「HNOI2011」括号修复/「JSOI2011」括号序列](https://www.luogu.com.cn/problem/P3215)
--   [二逼平衡树（树套树）](https://loj.ac/problem/106)
--   [BZOJ 2827 千山鸟飞绝](https://hydro.ac/p/bzoj-P2827)
--   [「Lydsy1706 月赛」K 小值查询](https://hydro.ac/p/bzoj-P4923)
+-   [「Cerc2007」robotic sort mechanical sorting](https://www.luogu.com.cn/problem/P4402)
+-   ["HNOI2011" bracket repair/"JSOI2011" bracket sequence](https://www.luogu.com.cn/problem/P3215)
+-   [Two forced balanced trees (trees within trees)](https://loj.ac/problem/106)
+-   [BZOJ 2827 Thousands of Mountains Birds Fly Absolutely](https://hydro.ac/p/bzoj-P2827)
+-   ["Lydsy1706 Monthly Competition" K minimum value query](https://hydro.ac/p/bzoj-P4923)
 -   [POJ3580 SuperMemo](http://poj.org/problem?id=3580)
 
-## 参考资料与注释
+## References and Notes
 
-本文部分内容引用于 algocode 算法博客，特别鸣谢！
+Part of this article is quoted from the algocode algorithm blog, special thanks!

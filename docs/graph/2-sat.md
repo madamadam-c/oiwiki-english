@@ -1,74 +1,74 @@
 author: chu-yuehan
 
-SAT 是适定性（Satisfiability）问题的简称．一般形式为 k - 适定性问题，简称 k-SAT．而当 $k>2$ 时该问题为 NP 完全的．所以我们只研究 $k=2$ 的情况．
+SAT stands for Satisfiability problem. The general form is k-Satisfiability, or k-SAT. When $k > 2$, the problem is NP-complete. Therefore, we only study the case where $k = 2$.
 
-## 定义
+## Definition
 
-2-SAT，简单的说就是给出 $n$ 个布尔方程，每个方程和两个变量相关，如 $a \vee b$，表示变量 $a, b$ 至少满足一个．然后判断是否存在可行方案，显然可能有多种选择方案，一般题中只需要求出一种即可．另外，$\neg a$ 表示 $a$ 取反．
+2-SAT, simply put, gives $n$ Boolean equations, each involving two variables, such as $a \vee b$, meaning at least one of variables $a, b$ is satisfied. Then we need to determine whether a feasible assignment exists. There may be multiple possible solutions, and generally problems only require finding one. Also, $\neg a$ represents the negation of $a$.
 
-## 解决思路
+## Solution Approach
 
-???+ example "[洛谷 P4782「模板」2-SAT](https://www.luogu.com.cn/problem/P4782)"
-    有 $n$ 个布尔变量 $x_1\sim x_n$，另有 $m$ 个需要满足的条件，每个条件的形式都是「$x_i$ 为 `true`/`false` 或 $x_j$ 为 `true`/`false`」．比如「$x_1$ 为真或 $x_3$ 为假」、「$x_7$ 为假或 $x_2$ 为假」．
+???+ example "[Luogu P4782 \"Template\" 2-SAT](https://www.luogu.com.cn/problem/P4782)"
+    There are $n$ Boolean variables $x_1 \sim x_n$, and $m$ conditions that need to be satisfied. Each condition is in the form of "$x_i$ is `true`/`false` or $x_j$ is `true`/`false`". For example, "$x_1$ is true or $x_3$ is false", "$x_7$ is false or $x_2$ is false".
     
-    2-SAT 问题的目标是给每个变量赋值使得所有条件得到满足．
+    The goal of 2-SAT is to assign each variable such that all conditions are satisfied.
 
-使用布尔方程表示上述问题．设 $a$ 表示 $x_a$ 为真（$\neg a$ 就表示 $x_a$ 为假）．如果有个人提出的要求分别是 $a$ 和 $b$，即 $(a \vee b)$（变量 $a, b$ 至少满足一个）．对这些变量关系建有向图，则把 $a$ 成立或不成立用图中的点表示，$\neg a\to b$ $\neg b\to a$，表示 $a$  **不成立** 则 $b$  **一定成立**；同理，$b$  **不成立** 则 $a$  **一定成立**．建图之后，我们就可以使用缩点算法来求解 2-SAT 问题了．
+Use Boolean equations to represent the above problem. Let $a$ denote $x_a$ is true (so $\neg a$ denotes $x_a$ is false). If someone proposes requirements $a$ and $b$ respectively, i.e., $(a \vee b)$ (at least one of variables $a, b$ is satisfied). Construct a directed graph for these variable relationships, where the establishment or non-establishment of $a$ is represented by nodes in the graph. $\neg a \to b$ and $\neg b \to a$ mean if $a$ **does not hold**, then $b$ **must hold**; similarly, if $b$ **does not hold**, then $a$ **must hold**. After constructing the graph, we can use the SCC algorithm to solve the 2-SAT problem.
 
-|         原式         |                建图               |
+|      Original Expression   |                Graph Construction               |
 | :----------------: | :-----------------------------: |
-|   $\neg a \vee b$  | $a \to b$ 和 $\neg b \to \neg a$ |
-|     $a \vee b$     | $\neg a \to b$ 和 $\neg b \to a$ |
-| $\neg a\vee\neg b$ | $a \to \neg b$ 和 $b \to \neg a$ |
+|   $\neg a \vee b$  | $a \to b$ and $\neg b \to \neg a$ |
+|     $a \vee b$     | $\neg a \to b$ and $\neg b \to a$ |
+| $\neg a\vee\neg b$ | $a \to \neg b$ and $b \to \neg a$ |
 
-许多 2-SAT 问题都需要找出如 $a$  **不成立**，则 $b$  **成立** 的关系．
+Many 2-SAT problems require finding relationships like "if $a$ **does not hold**, then $b$ **holds**".
 
-## 求解
+## Solving
 
-思考如果两点在同一强连通分量里有什么含义．根据前文边的逻辑意义可知：若两点在同一强连通分量内，则这两点代表的条件 **要么都满足，要么都不满足**．
+Consider what it means if two nodes are in the same strongly connected component. According to the logical meaning of edges discussed earlier, if two nodes are in the same SCC, then the conditions represented by these two nodes **either both hold or both do not hold**.
 
-建图后我们使用 [Tarjan 算法找 SCC](./scc.md)，判断对于任意布尔变量 $a$，表示 $a$ 成立的点和表示 $a$ 不成立的点是否在同一个 SCC 中（同一条件不可能既满足又不满足，或既不满足又并非不满足），若有则输出无解，否则有解．
+After constructing the graph, we use [Tarjan's algorithm to find SCCs](./scc.md). For any Boolean variable $a$, check whether the node representing $a$ being true and the node representing $a$ being false are in the same SCC (a condition cannot both be satisfied and not satisfied, or both not satisfied and not not satisfied). If so, output "no solution", otherwise there is a solution.
 
-输出方案时可以通过变量在图中的拓扑序确定该变量的取值．如果变量 $x$ 的拓扑序在 $\neg x$ 之后，那么取 $x$ 值为真．应用到 Tarjan 算法的缩点，即 $x$ 所在 SCC 编号在 $\neg x$ 之前时，取 $x$ 为真．因为 Tarjan 算法求强连通分量时使用了栈，如果跑完 Tarjan 缩点之后呈现出的拓扑序更大，在 Tarjan 会更晚被遍历到，就会更早地被弹出栈而缩点，分量编号会更小，所以 Tarjan 求得的 SCC 编号相当于 **反拓扑序**．
+When outputting a solution, the value of a variable can be determined by its topological order in the graph. If the topological order of variable $x$ comes after $\neg x$, then $x$ is true. Applying this to the SCCs from Tarjan's algorithm, when the SCC number of $x$ is before that of $\neg x$, take $x$ as true. Because Tarjan's algorithm uses a stack when finding SCCs, if the topological order after Tarjan's SCC compression is larger, it will be traversed later in Tarjan, popped from the stack earlier during compression, resulting in a smaller SCC number. Therefore, the SCC numbers obtained by Tarjan are equivalent to **reverse topological order**.
 
-算法会把整张图遍历一遍，由于这张图 $n$ 和 $m$ 同阶，计算答案时复杂度为 $O(n)$，因此总复杂度为 $O(n)$．
+The algorithm traverses the entire graph. Since $n$ and $m$ are of the same order in this graph, the time complexity for computing the answer is $O(n)$. Therefore, the total complexity is $O(n)$.
 
-??? note "代码实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_3.cpp"
     ```
 
-## 例题
+## Example Problems
 
-### 例题 1
+### Example 1
 
 ???+ example "[HDU3062 Party](https://acm.hdu.edu.cn/showproblem.php?pid=3062)"
-    有 $n$ 对夫妻被邀请参加一个聚会，因为场地的问题，每对夫妻中只有一人可以列席．在 $2n$ 个人中，某些人之间有着很大的矛盾（当然夫妻之间是没有矛盾的），有矛盾的两个人是不会同时出现在聚会上的．有没有可能会有 $n$ 个人同时列席？
+    There are $n$ couples invited to a party. Due to space limitations, only one person from each couple can attend. Among the $2n$ people, some people have conflicts (of course, couples have no conflicts). People with conflicts will not both appear at the party. Is it possible for $n$ people to attend simultaneously?
 
-按照上面的分析，如果 $a_1$ 中的丈夫和 $a_2$ 中的妻子不合，我们就把 $a_1$ 中的丈夫和 $a_2$ 中的丈夫连边，把 $a_2$ 中的妻子和 $a_1$ 中的妻子连边，然后缩点染色判断即可．
+According to the analysis above, if the husband in couple $a_1$ and the wife in couple $a_2$ have a conflict, we connect the husband in $a_1$ with the husband in $a_2$, and the wife in $a_2$ with the wife in $a_1$. Then perform SCC compression and coloring to determine the solution.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_1.cpp"
     ```
 
-### 例题 2
+### Example 2
 
 ???+ example "[2018-2019 ACM-ICPC Asia Seoul Regional K TV Show Game](https://codeforces.com/gym/101987/problem/K)"
-    有 $k$ 盏灯，每盏灯是红色或者蓝色，但是初始的时候不知道灯的颜色．有 $n$ 个人，每个人选择三盏灯并猜灯的颜色．一个人猜对两盏灯或以上的颜色就可以获得奖品．判断是否存在一个灯的着色方案使得每个人都能领奖，若有则输出一种灯的着色方案．
+    There are $k$ lamps, each either red or blue, but the initial colors are unknown. There are $n$ people, each person selects three lamps and guesses their colors. A person wins a prize if they guess two or more lamps correctly. Determine whether there exists a coloring scheme such that everyone can win a prize. If yes, output one such coloring scheme.
 
-根据 [伍昱 -《由对称性解 2-sat 问题》](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2003%E8%AE%BA%E6%96%87%E9%9B%86/%E4%BC%8D%E6%98%B1--%E7%94%B1%E5%AF%B9%E7%A7%B0%E6%80%A7%E8%A7%A32-SAT%E9%97%AE%E9%A2%98/%E4%BC%8D%E6%98%B1.ppt)，我们可以得出：如果要输出 2-SAT 问题的一个可行解，只需要在 tarjan 缩点后所得的 DAG 上自底向上地进行选择和删除．
+Based on [Wu Yu - "Solving 2-SAT Problems by Symmetry"](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AF%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AF%E9%98%9F2003%E8%AE%BA%E6%96%87%E9%9B%86/%E4%BC%8D%E6%98%B1--%E7%94%B1%E5%AF%B9%E7%A7%B0%E6%80%A7%E8%A7%A32-SAT%E9%97%AE%E9%A2%98/%E4%BC%8D%E6%98%B1.ppt), we can conclude: to output a feasible solution for a 2-SAT problem, we only need to perform selection and deletion from bottom to top on the DAG obtained after Tarjan's SCC compression.
 
-具体实现的时候，可以通过构造 DAG 的反图后在反图上进行拓扑排序实现；也可以根据 tarjan 缩点后，所属连通块编号越小，节点越靠近叶子节点这一性质，优先对所属连通块编号小的节点进行选择．
+Specifically, this can be implemented by performing topological sort on the reverse graph of the DAG. Alternatively, based on the property that after Tarjan's SCC compression, nodes with smaller component numbers are closer to leaf nodes, we can prioritize selecting nodes with smaller component numbers.
 
-下面给出第二种实现方法的代码．
+The following gives the code for the second implementation method.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_2.cpp"
     ```
 
-## 习题
+## Practice Problems
 
--   [洛谷 P5782 和平委员会](https://www.luogu.com.cn/problem/P5782)
+-   [Luogu P5782 Peace Committee](https://www.luogu.com.cn/problem/P5782)
 -   [POJ3683 Priest John's Busiest Day](http://poj.org/problem?id=3683)

@@ -1,32 +1,32 @@
-???+ warning "注意"
-    以下内容均基于 Java JDK 8 版本编写，不排除在更高版本中有部分改动的可能性．
+???+ warning "Note"
+    The following content is based on Java JDK 8. Some details may differ in later versions.
 
-## 更高速的输入输出
+## Faster Input and Output
 
-`Scanner` 和 `System.out.print` 在最开始会工作得很好，但是在处理更大的输入的时候会降低效率，因此我们会需要使用一些方法来提高 IO 速度．
+`Scanner` and `System.out.print` work well at first, but they become inefficient when processing larger input, so we need some methods to improve IO speed.
 
-### 使用 Kattio + StringTokenizer 作为输入
+### Using Kattio + StringTokenizer for Input
 
-最常用的方法之一是使用来自 Kattis 的 [Kattio.java](https://github.com/Kattis/kattio/blob/master/Kattio.java) 来提高 IO 效率．[^ref1]这个方法会将 `StringTokenizer` 与 `PrintWriter` 包装在一个类中方便使用．而在具体进行解题的时候（假如赛会/组织方允许）可以直接使用这个模板．
+One of the most common methods is to use [Kattio.java](https://github.com/Kattis/kattio/blob/master/Kattio.java) from Kattis to improve IO efficiency.[^ref1] This method wraps `StringTokenizer` and `PrintWriter` in one class for convenient use. When solving problems, you can use this template directly if the contest or organizer allows it.
 
-下方即为应包含在代码中的 IO 模板，由于 Kattis 的原 Kattio 包含一些并不常用的功能，下方的模板经过了一些调整（原 Kattio 使用 MIT 作为协议）．
+The following is the IO template that should be included in the code. Since the original Kattio from Kattis contains some less commonly used features, the template below has been adjusted. The original Kattio uses the MIT license.
 
 ```java
 class Kattio extends PrintWriter {
     private BufferedReader r;
     private StringTokenizer st;
-    // 标准 IO
+    // Standard IO
     public Kattio() { this(System.in, System.out); }
     public Kattio(InputStream i, OutputStream o) {
         super(o);
         r = new BufferedReader(new InputStreamReader(i));
     }
-    // 文件 IO
+    // File IO
     public Kattio(String intput, String output) throws IOException {
         super(output);
         r = new BufferedReader(new FileReader(intput));
     }
-    // 在没有其他输入时返回 null
+    // Return null when there is no more input
     public String next() {
         try {
             while (st == null || !st.hasMoreTokens())
@@ -41,32 +41,32 @@ class Kattio extends PrintWriter {
 }
 ```
 
-而下方代码简单展示了 Kattio 的使用：
+The following code briefly demonstrates how to use Kattio:
 
 ```java
 class Test {
     public static void main(String[] args) {
         Kattio io = new Kattio();
-        // 字符串输入
+        // String input
         String str = io.next();
-        // int 输入
+        // int input
         int num = io.nextInt();
-        // 输出
+        // Output
         io.println("Result");
-        // 请确保关闭 IO 流以确保输出被正确写入
+        // Make sure to close the IO stream so the output is written correctly
         io.close();
     }
 }
 ```
 
-### 使用 StreamTokenizer 作为输入
+### Using StreamTokenizer for Input
 
-在某些情况使用 `StringTokenizer` 会导致 MLE（Memory Limit Exceeded，超过内存上限），此时我们需要使用 `StreamTokenizer` 作为输入．
+In some cases, using `StringTokenizer` may cause MLE (Memory Limit Exceeded). In this case, we need to use `StreamTokenizer` for input.
 
 ```java
 import java.io.*;
 public class Main {
-    // IO 代码
+    // IO code
     public static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in), 32768));
     public static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
     public static double nextDouble() throws IOException { in.nextToken(); return in.nval; }
@@ -75,7 +75,7 @@ public class Main {
     public static String next() throws IOException { in.nextToken(); return in.sval; }
     public static long nextLong() throws Exception { in.nextToken(); return (long)in.nval;}
     
-    // 使用示例
+    // Usage example
     public static void main(String[] args) throws Exception {
         int n = nextInt();
         out.println(n);
@@ -84,23 +84,23 @@ public class Main {
 }
 ```
 
-### Kattio + StringTokenizer 的方法与 StreamTokenizer 的方法之间的分析与对比
+### Analysis and Comparison Between Kattio + StringTokenizer and StreamTokenizer
 
-1.  `StreamTokenizer` 相较于 `StringTokenizer` 使用的内存较少，当 Java 标程 MLE 时可以尝试使用 `StreamTokenizer`，但是 `StreamTokenizer` 会丢失精度，读入部分数据时会出现问题；
-    -   `StreamTokenizer` 源码存在 `Type`，该 `Type` 根据输入内容来决定类型，如果输入类似于 `123oi` 以 **数字开头** 的字符串，他会强制认为的类型是 `double` 类型，因此在读入中以 `double` 类型去读 `String` 类型便会抛出异常；
-    -   `StreamTokenizer` 在读入 `1e14` 以上大小的数字会丢失精度；
-2.  在使用 `PrintWriter` 情况下，需注意在程序结束最后 `close()` 关闭输出流或在需要输出的时候使用 `flush()` 清除缓冲区，否则内容将不会被写入到控制台/文件中．
-3.  `Kattio` 是继承自 `PrintWriter` 类，自身对象具有了 `PrintWriter` 的功能，因此可以直接调用 `PrintWriter` 类的函数输出，同时将 `StringTokenizer` 作为了自身的成员变量来修改．而第二种 `Main` 是同时将 `StreamTokenizer` 与 `PrintWriter` 作为了自身的成员变量，因此在使用上有些许差距．
+1.  `StreamTokenizer` uses less memory than `StringTokenizer`. When a standard Java solution gets MLE, you can try `StreamTokenizer`, but `StreamTokenizer` may lose precision and can have issues when reading some data;
+    -   The `StreamTokenizer` source has a `Type` that determines the token type based on the input. If the input is a string such as `123oi` that **starts with a digit**, it forcibly treats it as a `double`, so reading a `String` as a `double` will throw an exception;
+    -   `StreamTokenizer` loses precision when reading numbers larger than `1e14`;
+2.  When using `PrintWriter`, remember to call `close()` at the end of the program to close the output stream, or use `flush()` when output is needed to clear the buffer. Otherwise, the content will not be written to the console or file.
+3.  `Kattio` extends `PrintWriter`, so its objects have `PrintWriter` functionality and can directly call `PrintWriter` methods for output. It also keeps `StringTokenizer` as a member variable. In the second `Main`, `StreamTokenizer` and `PrintWriter` are both member variables, so usage differs slightly.
 
-综上所述，在大部分情况下，`StringTokenizer` 的使用处境要优越于 `StreamTokenizer`，在极端 MLE 的情况下可以尝试 `StreamTokenizer`，同时 `int` 范围以上的数据 `StreamTokenizer` 处理是无能为力的．
+In summary, `StringTokenizer` is preferable in most cases. You can try `StreamTokenizer` under extreme MLE conditions, but `StreamTokenizer` cannot properly handle data beyond the `int` range.
 
-## BigInteger 与数论
+## BigInteger and Number Theory
 
-`BigInteger` 是 Java 提供的高精度计算类，可以很方便地解决高精度问题．
+`BigInteger` is Java's arbitrary-precision integer class, which conveniently solves high-precision problems.
 
-### 初始化
+### Initialization
 
-`BigInteger` 常用创建方式有如下二种：
+There are two common ways to create a `BigInteger`:
 
 ```java
 import java.io.PrintWriter;
@@ -109,47 +109,47 @@ import java.math.BigInteger;
 class Main {
     static PrintWriter out = new PrintWriter(System.out);
     public static void main(String[] args) {
-        BigInteger a = new BigInteger("12345678910");  // 将字符串以十进制的形式创建 BigInteger 对象
-        out.println(a);  // a 的值为 12345678910 
-        BigInteger b = new BigInteger("1E", 16);  // 将字符串以指定进制的形式创建 BigInteger 对象
-        out.println(b);  // b 的值为 30 
+        BigInteger a = new BigInteger("12345678910");  // Create a BigInteger object from the string in decimal
+        out.println(a);  // The value of a is 12345678910 
+        BigInteger b = new BigInteger("1E", 16);  // Create a BigInteger object from the string in the specified radix
+        out.println(b);  // The value of b is 30 
         out.close();
     }
 }
 
 ```
 
-### 基本运算
+### Basic Operations
 
-以下均用 `this` 代替当前 `BigIntger`:
+The following use `this` to represent the current `BigInteger`:
 
-|             函数名             |               功能               |
+|             Method             |               Function               |
 | :-------------------------: | :----------------------------: |
-|           `abs()`           |         返回 `this` 的绝对值         |
-|          `negate()`         |         返回 `this` 的相反数         |
-|    `add(BigInteger val)`    |      返回 `this` 和 `val` 的和      |
-|  `subtract(BigInteger val)` |      返回 `this` 和 `val` 的差      |
-|  `multiply(BigInteger val)` |      返回 `this` 和 `val` 的积      |
-|   `divide(BigInteger val)`  |      返回 `this` 和 `val` 的商      |
-| `remainder(BigInteger val)` |     返回 `this` 除以 `val` 的余数     |
-|    `mod(BigInteger val)`    |     返回 `this` 对 `val` 取模的值     |
-|        `pow(int val)`       |      返回 `this` 的 `val` 次方      |
-|    `and(BigInteger val)`    |     返回 `this` 和 `val` 的按位与     |
-|     `or(BigInteger val)`    |     返回 `this` 和 `val` 的按位或     |
-|           `not()`           |         返回 `this` 的按位取反        |
-|    `xor(BigInteger val)`    |     返回 `this` 和 `val` 的按位异或    |
-|      `shiftLeft(int n)`     |       返回 `this` 左移 `n` 位       |
-|     `shiftRight(int n)`     |       返回 `this` 右移 `n` 位       |
-|    `max(BigInteger val)`    |     返回 `this` 与 `val` 的较大值     |
-|    `min(BigInteger val)`    |     返回 `this` 与 `val` 的较小值     |
-|         `bitCount()`        | 返回 `this` 的二进制中不包括符号位的 `1` 的个数 |
-|        `bitLength()`        |    返回 `this` 的二进制中不包括符号位的长度    |
-|     `getLowestSetBit()`     |      返回 `this` 的二进制中最右边的位置     |
-| `compareTo(BigInteger val)` |      比较 `this` 和 `val` 值大小     |
-|         `toString()`        |      返回 `this` 的十进制字符串表示形式     |
-|    `toString(int radix)`    |  返回 `this` 的 `raidx` 进制字符串表示形式 |
+|           `abs()`           |         Returns the absolute value of `this`         |
+|          `negate()`         |         Returns the negation of `this`         |
+|    `add(BigInteger val)`    |      Returns the sum of `this` and `val`      |
+|  `subtract(BigInteger val)` |      Returns the difference of `this` and `val`      |
+|  `multiply(BigInteger val)` |      Returns the product of `this` and `val`      |
+|   `divide(BigInteger val)`  |      Returns the quotient of `this` divided by `val`      |
+| `remainder(BigInteger val)` |     Returns the remainder of `this` divided by `val`     |
+|    `mod(BigInteger val)`    |     Returns `this` modulo `val`     |
+|        `pow(int val)`       |      Returns `this` raised to the `val`-th power      |
+|    `and(BigInteger val)`    |     Returns the bitwise AND of `this` and `val`     |
+|     `or(BigInteger val)`    |     Returns the bitwise OR of `this` and `val`     |
+|           `not()`           |         Returns the bitwise complement of `this`        |
+|    `xor(BigInteger val)`    |     Returns the bitwise XOR of `this` and `val`    |
+|      `shiftLeft(int n)`     |       Returns `this` shifted left by `n` bits       |
+|     `shiftRight(int n)`     |       Returns `this` shifted right by `n` bits       |
+|    `max(BigInteger val)`    |     Returns the larger of `this` and `val`     |
+|    `min(BigInteger val)`    |     Returns the smaller of `this` and `val`     |
+|         `bitCount()`        | Returns the number of `1` bits in the binary representation of `this`, excluding the sign bit |
+|        `bitLength()`        |    Returns the length of the binary representation of `this`, excluding the sign bit    |
+|     `getLowestSetBit()`     |      Returns the position of the rightmost set bit in the binary representation of `this`     |
+| `compareTo(BigInteger val)` |      Compares the values of `this` and `val`     |
+|         `toString()`        |      Returns the decimal string representation of `this`     |
+|    `toString(int radix)`    |  Returns the radix-`radix` string representation of `this` |
 
-使用案例如下：
+Example usage:
 
 ```java
 import java.io.PrintWriter;
@@ -162,162 +162,162 @@ public class Main {
     static void abs() {
         out.println("abs:");
         a = new BigInteger("-123");
-        out.println(a.abs());  // 输出 123 
+        out.println(a.abs());  // Output 123 
         a = new BigInteger("123");
-        out.println(a.abs());  // 输出 123 
+        out.println(a.abs());  // Output 123 
     }
     
     static void negate() {
         out.println("negate:");
         a = new BigInteger("-123");
-        out.println(a.negate());  // 输出 123 
+        out.println(a.negate());  // Output 123 
         a = new BigInteger("123");
-        out.println(a.negate());  // 输出 -123 
+        out.println(a.negate());  // Output -123 
     }
     
     static void add() {
         out.println("add:");
         a = new BigInteger("123");
         b = new BigInteger("123");
-        out.println(a.add(b));  // 输出 246 
+        out.println(a.add(b));  // Output 246 
     }
     
     static void subtract() {
         out.println("subtract:");
         a = new BigInteger("123");
         b = new BigInteger("123");
-        out.println(a.subtract(b));  // 输出 0 
+        out.println(a.subtract(b));  // Output 0 
     }
     
     static void multiply() {
         out.println("multiply:");
         a = new BigInteger("12");
         b = new BigInteger("12");
-        out.println(a.multiply(b));  // 输出 144 
+        out.println(a.multiply(b));  // Output 144 
     }
     
     static void divide() {
         out.println("divide:");
         a = new BigInteger("12");
         b = new BigInteger("11");
-        out.println(a.divide(b));  // 输出 1 
+        out.println(a.divide(b));  // Output 1 
     }
     
     static void remainder() {
         out.println("remainder:");
         a = new BigInteger("12");
         b = new BigInteger("10");
-        out.println(a.remainder(b));  // 输出 2 
+        out.println(a.remainder(b));  // Output 2 
         a = new BigInteger("-12");
         b = new BigInteger("10");
-        out.println(a.remainder(b));  // 输出 -2 
+        out.println(a.remainder(b));  // Output -2 
     }
     
     static void mod() {
         out.println("mod:");
         a = new BigInteger("12");
         b = new BigInteger("10");
-        out.println(a.mod(b));  // 输出 2 
+        out.println(a.mod(b));  // Output 2 
         a = new BigInteger("-12");
         b = new BigInteger("10");
-        out.println(a.mod(b));  // 输出 8 
+        out.println(a.mod(b));  // Output 8 
     }
     
     static void pow() {
         out.println("pow:");
         a = new BigInteger("2");
-        out.println(a.pow(10));  // 输出 1024 
+        out.println(a.pow(10));  // Output 1024 
     }
     
     static void and() {
         out.println("and:");
         a = new BigInteger("3");  // 11 
         b = new BigInteger("5");  // 101 
-        out.println(a.and(b));  // 输出 1 
+        out.println(a.and(b));  // Output 1 
     }
     
     static void or() {
         out.println("or:");
         a = new BigInteger("2");  // 10 
         b = new BigInteger("5");  // 101 
-        out.println(a.or(b));  // 输出 7 
+        out.println(a.or(b));  // Output 7 
     }
     
     static void not() {
         out.println("not:");
         a = new BigInteger("2147483647");  // 01111111 11111111 11111111 11111111 
-        out.println(a.not());  // 输出 -2147483648 二进制为：10000000 00000000 00000000 00000000 
+        out.println(a.not());  // Output -2147483648 binary is: 10000000 00000000 00000000 00000000 
     }
     
     static void xor() {
         out.println("xor:");
         a = new BigInteger("6");  // 110 
         b = new BigInteger("5");  // 101 
-        out.println(a.xor(b));  // 011 输出 3 
+        out.println(a.xor(b));  // 011 prints 3 
     }
     
     static void shiftLeft() {
         out.println("shiftLeft:");
         a = new BigInteger("1");
-        out.println(a.shiftLeft(10));  // 输出 1024 
+        out.println(a.shiftLeft(10));  // Output 1024 
     }
     
     static void shiftRight() {
         out.println("shiftRight:");
         a = new BigInteger("1024");
-        out.println(a.shiftRight(8));  // 输出 4 
+        out.println(a.shiftRight(8));  // Output 4 
     }
     
     static void max() {
         out.println("max:");
         a = new BigInteger("6");
         b = new BigInteger("5");
-        out.println(a.max(b));  // 输出 6 
+        out.println(a.max(b));  // Output 6 
     }
     
     static void min() {
         out.println("min:");
         a = new BigInteger("6");
         b = new BigInteger("5");
-        out.println(a.min(b));  // 输出 5 
+        out.println(a.min(b));  // Output 5 
     }
     
     static void bitCount() {
         out.println("bitCount:");
         a = new BigInteger("6");  // 110 
-        out.println(a.bitCount());  // 输出 2 
+        out.println(a.bitCount());  // Output 2 
     }
     
     static void bitLength() {
         out.println("bitLength:");
         a = new BigInteger("6");  // 110 
-        out.println(a.bitLength());  // 输出 3 
+        out.println(a.bitLength());  // Output 3 
     }
     
     static void getLowestSetBit() {
         out.println("getLowestSetBit:");
         a = new BigInteger("8");  // 1000 
-        out.println(a.getLowestSetBit());  // 输出 3 
+        out.println(a.getLowestSetBit());  // Output 3 
     }
     
     static void compareTo() {
         out.println("compareTo:");
         a = new BigInteger("8");
         b = new BigInteger("9");
-        out.println(a.compareTo(b));  // 输出 -1 
+        out.println(a.compareTo(b));  // Output -1 
         a = new BigInteger("8");
         b = new BigInteger("8");
-        out.println(a.compareTo(b));  // 输出 0 
+        out.println(a.compareTo(b));  // Output 0 
         a = new BigInteger("8");
         b = new BigInteger("7");
-        out.println(a.compareTo(b));  // 输出 1 
+        out.println(a.compareTo(b));  // Output 1 
     }
     
     static void toStringTest() {
         out.println("toString:");
         a = new BigInteger("15");
-        out.println(a.toString());  // 输出 15 
-        out.println(a.toString(16));  // 输出 f 
+        out.println(a.toString());  // Output 15 
+        out.println(a.toString(16));  // Output f 
     }
     
     public static void main(String[] args) {
@@ -348,19 +348,19 @@ public class Main {
 }
 ```
 
-### 数学运算
+### Mathematical Operations
 
-以下均用 `this` 代替当前 `BigIntger`:
+The following use `this` to represent the current `BigInteger`:
 
-|                  函数名                 |                功能                |
+|                  Method                 |                Function                |
 | :----------------------------------: | :------------------------------: |
-|         `gcd(BigInteger val)`        | 返回 `this` 的绝对值与 `val` 的绝对值的最大公约数 |
-|      `isProbablePrime(int val)`      |      返回一个表示 `this` 是否是素数的布尔值     |
-|         `nextProbablePrime()`        |        返回第一个大于 `this` 的素数        |
-| `modPow(BigInteger b, BigInteger p)` |    返回 `this` 的 `b` 次方模 `p` 的值    |
-|      `modInverse(BigInteger p)`      |     返回 `this` 在模 `p` 意义下的乘法逆元    |
+|         `gcd(BigInteger val)`        | Returns the greatest common divisor of the absolute values of `this` and `val` |
+|      `isProbablePrime(int val)`      |      Returns a boolean indicating whether `this` is prime     |
+|         `nextProbablePrime()`        |        Returns the first prime greater than `this`        |
+| `modPow(BigInteger b, BigInteger p)` |    Returns `this` raised to the `b`-th power modulo `p`    |
+|      `modInverse(BigInteger p)`      |     Returns the multiplicative inverse of `this` modulo `p`    |
 
-使用案例如下：
+Example usage:
 
 ```java
 import java.io.PrintWriter;
@@ -370,25 +370,25 @@ public class Main {
     static PrintWriter out = new PrintWriter(System.out);
     static BigInteger a, b, p;
     
-    static void gcd() {  // 最大公约数 
+    static void gcd() {  // Greatest common divisor 
         a = new BigInteger("120032414321432144212100");
         b = new BigInteger("240231431243123412432140");
         out.println(String.format("gcd(%s,%s)=%s", a.toString(), b.toString(), a.gcd(b).toString()));  // gcd(120032414321432144212100,240231431243123412432140)=20 
     }
     
-    static void isPrime() {  // 基于米勒罗宾判定该数是否是素数，参数越大准确性越高，复杂度越高．准确性为 (1-1/(val*2)) 
+    static void isPrime() {  // Uses Miller-Rabin to determine whether the number is prime. A larger parameter gives higher accuracy and higher complexity. Accuracy is (1-1/(val*2)) 
         a = new BigInteger("1200324143214321442127");
         out.println("a:" + a.toString());
         out.println(a.isProbablePrime(10) ? "a is prime" : "a is not prime");  // a is not prime 
     }
     
-    static void nextPrime() {  // 找出该数的下一个素数 
+    static void nextPrime() {  // Find the next prime after this number 
         a = new BigInteger("1200324143214321442127");
         out.println("a:" + a.toString());
         out.println(String.format("a nextPrime is %s", a.nextProbablePrime().toString()));  // a nextPrime is 1200324143214321442199 
     }
     
-    static void modPow() {  // 快速幂，比正常版本要快，内部有数学优化 
+    static void modPow() {  // Fast exponentiation, faster than the normal version because it has internal mathematical optimizations 
         a = new BigInteger("2");
         b = new BigInteger("10");
         p = new BigInteger("1000");
@@ -396,7 +396,7 @@ public class Main {
         out.println(String.format("a^b mod p:%s", a.modPow(b, p).toString()));//  24 
     }
     
-    static void modInverse() {  // 逆元 
+    static void modInverse() {  // Inverse 
         a = new BigInteger("10");
         b = new BigInteger("3");
         out.println(a.modInverse(b));  // a ^ (p-2) mod p = 1 
@@ -413,15 +413,15 @@ public class Main {
 }
 ```
 
-关于米勒罗宾相关知识可以查阅 [Miller–Rabin 素性测试](../math/number-theory/prime.md#millerrabin-素性测试)．
+For related knowledge about Miller-Rabin, see [Miller-Rabin primality test](../math/number-theory/prime.md#millerrabin-素性测试).
 
-## 基本数据类型与包装数据类型
+## Primitive Types and Wrapper Types
 
-### 简介
+### Introduction
 
-由于基本类型没有面向对象的特征，为了他们参加到面向对象的开发中，Java 为八个基本类型提供了对应的包装类，分别是 `Byte`、`Double`、`Float`、`Integer`、`Long`、`Short`、`Character` 和 `Boolean`．两者之间的对应关系如下：
+Because primitive types do not have object-oriented features, Java provides corresponding wrapper classes for the eight primitive types so they can participate in object-oriented development: `Byte`, `Double`, `Float`, `Integer`, `Long`, `Short`, `Character`, and `Boolean`. Their correspondence is as follows:
 
-|   基本数据类型  |    包装数据类型   |
+|   Primitive type  |    Wrapper type   |
 | :-------: | :---------: |
 |   `byte`  |    `Byte`   |
 |  `short`  |   `Short`   |
@@ -432,163 +432,163 @@ public class Main {
 |  `float`  |   `Float`   |
 |  `double` |   `Double`  |
 
-### 区别
+### Differences
 
-此处以 `int` 与 `Integer` 举例：
+Here, `int` and `Integer` are used as examples:
 
-1.  `Integer` 是 `int` 的包装类，`int` 则是 Java 的一种基本类型数据．
-2.  `Integer` 类型实例后才能使用，而 `int` 类型不需要．
-3.  `Integer` 实际对应的引用，当 `new` 一个 `Integer` 时，实际上生成了一个对象，而 `int` 则是直接存储数据．
-4.  `Integer` 的默认值是 `null`，可接受 `null` 和 `int` 类型的数据，`int` 默认值是 0，不能接受 `null` 类型的数据．
-5.  `Integer` 判定二个变量是否相同使用 `==` 可能会导致不正确的结果，只能使用 `equals()`，而 `int` 可以直接使用 `==`．
+1.  `Integer` is the wrapper class of `int`, while `int` is a Java primitive data type.
+2.  `Integer` can only be used after an instance exists, while `int` does not require this.
+3.  `Integer` is actually a reference. When you `new` an `Integer`, an object is created, while `int` stores data directly.
+4.  The default value of `Integer` is `null`; it can accept `null` and `int` data. The default value of `int` is 0, and it cannot accept `null`.
+5.  Using `==` to determine whether two `Integer` variables are the same may produce incorrect results; use `equals()` instead. For `int`, `==` can be used directly.
 
-### 装箱与拆箱
+### Boxing and Unboxing
 
-此处以 `int` 与 `Integer` 举例：
+Here, `int` and `Integer` are used as examples:
 
-`Integer` 的本质是对象，`int` 是基本类型，两个类型之间是不能直接赋值的．需要转换时，应将基础类型转换为包装类型，这种做法称为装箱，反过来则称为拆箱．
+`Integer` is essentially an object, while `int` is a primitive type. The two types cannot be directly assigned to each other. When conversion is needed, converting a primitive type to a wrapper type is called boxing, and the reverse is called unboxing.
 
 ```java
-// 基本类型
+// Primitive type
 int value1 = 1;
-// 装箱转换为包装类型
+// Boxing: convert to wrapper type
 Integer integer = Integer.valueOf(value1);
-// 拆箱转换为基本类型
+// Unboxing: convert to primitive type
 int value2 = integer.intValue();
 ```
 
-Java 5 引入了自动装箱拆箱机制：
+Java 5 introduced automatic boxing and unboxing:
 
 ```java
 Integer integer = 1;
 int value = integer;
 ```
 
-???+ warning "注意"
-    虽然 JDK 增加了自动装箱拆箱的机制，但在声明变量时请选择合适的类型，因为包装类型 `Integer` 可以接受 `null`，而基本类型 `int` 不能接受 `null`．因此，对使用 `null` 值的包装类型进行拆箱操作时，会抛出异常．如下代码展示了这一行为．
+???+ warning "Note"
+    Although the JDK added automatic boxing and unboxing, choose the appropriate type when declaring variables. The wrapper type `Integer` can accept `null`, while the primitive type `int` cannot. Therefore, unboxing a wrapper type whose value is `null` will throw an exception. The following code demonstrates this behavior.
     
     ```java
     Integer integer = Integer.valueOf(null);
-    integer.intValue();  // 抛出 java.lang.NumberFormatException 异常
+    integer.intValue();  // Throws java.lang.NumberFormatException
     
     Integer integer = null;
-    integer.intValue();  // 抛出 java.lang.NullPointerException 异常
+    integer.intValue();  // Throws java.lang.NullPointerException
     ```
 
-## 继承
+## Inheritance
 
-基于已有的设计创造新的设计，就是面向对象程序设计中的继承．在继承中，新的类不是凭空产生的，而是基于一个已经存在的类而定义出来的．通过继承，新的类自动获得了基础类中所有的成员，包括成员变量和方法，包括各种访问属性的成员，无论是 `public` 还是 `private`．显然，通过继承来定义新的类，远比从头开始写一个新的类要简单快捷和方便．继承是支持代码重用的重要手段之一．
+Creating a new design based on an existing design is inheritance in object-oriented programming. In inheritance, a new class is not created from nothing; it is defined based on an existing class. Through inheritance, the new class automatically obtains all members of the base class, including member variables and methods, with all kinds of access modifiers, whether `public` or `private`. Obviously, defining a new class through inheritance is much simpler, faster, and more convenient than writing a new class from scratch. Inheritance is one of the important ways to support code reuse.
 
-在 Java 中，继承的关键字为 `extends`，且 Java 只支持单继承，但可以实现多接口．
+In Java, the keyword for inheritance is `extends`. Java only supports single inheritance, but a class can implement multiple interfaces.
 
-在 Java 中，所有类都是 `Object` 类的子类．
+In Java, all classes are subclasses of `Object`.
 
-子类继承父类，所有的父类的成员，包括变量和方法，都成为了子类的成员，除了构造方法．构造方法是父类所独有的，因为它们的名字就是类的名字，所以父类的构造方法在子类中不存在．除此之外，子类继承得到了父类所有的成员．
+When a subclass inherits a superclass, all superclass members, including variables and methods, become members of the subclass except constructors. Constructors belong only to the superclass because their names are the class names, so superclass constructors do not exist in the subclass. Apart from this, the subclass inherits all members of the superclass.
 
-每个成员有不同的访问属性，子类继承得到了父类所有的成员，但是不同的访问属性使得子类在使用这些成员时有所不同：有些父类的成员直接成为子类的对外的界面，有些则被深深地隐藏起来，即使子类自己也不能直接访问．
+Each member has a different access modifier. The subclass inherits all members of the superclass, but different access modifiers make their use in the subclass different: some superclass members directly become part of the subclass's external interface, while others are deeply hidden and cannot even be directly accessed by the subclass itself.
 
-下表列出了不同访问属性的父类成员在子类中的访问属性：
+The following table lists how superclass members with different access modifiers are accessible in a subclass:
 
-|    父类成员访问属性   |      在父类中的含义      |                     在子类中的含义                    |
+|    Superclass member access modifier   |      Meaning in the superclass      |                     Meaning in the subclass                    |
 | :-----------: | :---------------: | :--------------------------------------------: |
-|    `public`   |       对所有类开放      |                     对所有类开放                     |
-|  `protected`  | 只有包内其它类、自己和子类可以访问 |                只有包内其它类、自己和子类可以访问               |
-| 缺省（`default`） |    只有包内其它类可以访问    | 如果子类与父类在同一个包内，只有包内其它类可以访问；否则相当于 `private`，不能访问 |
-|   `private`   |      只有自己可以访问     |                      不能访问                      |
+|    `public`   |       Open to all classes      |                     Open to all classes                     |
+|  `protected`  | Accessible only to other classes in the package, itself, and subclasses |                Accessible only to other classes in the package, itself, and subclasses               |
+| Default (`default`) |    Accessible only to other classes in the package    | If the subclass and superclass are in the same package, it is accessible to other classes in the package; otherwise, it is equivalent to `private` and cannot be accessed |
+|   `private`   |      Accessible only to itself     |                      Cannot be accessed                      |
 
-## 多态
+## Polymorphism
 
-在 Java 中当把一个对象赋值给一个变量时，对象的类型必须与变量的类型相匹配．但由于 Java 有继承的概念，便可重新定义为 **一个变量可以保存其所声明的类型或该类型的任何子类型**．
+In Java, when assigning an object to a variable, the object type must match the variable type. However, because Java has inheritance, this can be redefined as: **a variable can hold an object of its declared type or any subtype of that type**.
 
-如果一个类型实现了接口，也可以称之为该接口的子类型．
+If a type implements an interface, it can also be called a subtype of that interface.
 
-Java 中保存对象类型的变量是多态变量．「多态」这个术语（字面意思是许多形态）是指一个变量可以保存不同类型（即其声明的类型或任何子类型）的对象．
+In Java, variables that hold object types are polymorphic variables. The term polymorphism, literally meaning many forms, means that one variable can hold objects of different types, namely its declared type or any subtype.
 
-多态变量：
+Polymorphic variables:
 
-1.  Java 的对象变量是多态的，它们能保存不止一种类型的对象．
-2.  它们可以保存的是声明类型的对象，或声明类型子类的对象．
-3.  当把子类的对象赋给父类的变量的时候，就发生了向上转型．
+1.  Java object variables are polymorphic; they can hold objects of more than one type.
+2.  They can hold objects of the declared type or objects of subclasses of the declared type.
+3.  Upcasting occurs when an object of a subclass is assigned to a variable of its superclass.
 
-## 泛型
+## Generics
 
-泛型指在类定义时不设置类中的属性或方法参数的具体类型，而是在使用（或创建对象）时再进行类型的定义．泛型本质是参数化类型，即所操作的数据类型被指定为一个参数．
+Generics mean that the concrete types of attributes or method parameters in a class are not set when the class is defined, but are specified when the class is used or an object is created. Generics are essentially parameterized types: the data type being operated on is specified as a parameter.
 
-泛型提供了编译时类型安全检测的机制，该机制允许编译时检测非法类型．
+Generics provide compile-time type-safety checking, allowing illegal types to be detected during compilation.
 
-## 接口
+## Interfaces
 
-### 简介
+### Introduction
 
-接口（Interface）在 Java 中是一个抽象类型，是抽象方法的集合，通常以 `interface` 来声明．一个类通过实现接口的方式，从而来继承接口的抽象方法．
+An interface in Java is an abstract type and a collection of abstract methods, usually declared with `interface`. A class inherits the abstract methods of an interface by implementing it.
 
-接口并不是类，编写接口的方式和类很相似，但是它们属于不同的概念．类描述对象的属性和方法．接口则包含类要实现的方法．
+An interface is not a class. Interfaces are written similarly to classes, but they are different concepts. A class describes the properties and methods of objects, while an interface contains methods that a class must implement.
 
-除非实现接口的类是抽象类，否则该类要定义接口中的所有方法．
+Unless the class implementing an interface is abstract, it must define all methods in the interface.
 
-接口无法被实例化，但是可以被实现．一个实现接口的类，必须实现接口内所描述的所有方法，否则就必须声明为抽象类．另外，在 Java 中，接口类型可用来声明一个变量，他们可以成为一个空指针，或是被绑定在一个以此接口实现的对象．
+Interfaces cannot be instantiated, but they can be implemented. A class that implements an interface must implement all methods described in the interface, otherwise it must be declared abstract. In Java, an interface type can also be used to declare a variable; it can be `null` or bound to an object that implements the interface.
 
-### 与类的区别
+### Differences from Classes
 
-1.  接口不能用于实例化对象．
-2.  接口没有构造方法．
-3.  接口中所有的方法必须是抽象方法，Java 8 之后接口中可以使用 `default` 关键字修饰的非抽象方法．
-4.  接口不能包含成员变量，除了 static 和 final 变量．
-5.  接口不是被类继承了，而是要被类实现．
-6.  接口支持多继承，类不支持多继承．
+1.  Interfaces cannot be used to instantiate objects.
+2.  Interfaces do not have constructors.
+3.  All methods in an interface must be abstract methods. After Java 8, interfaces can contain non-abstract methods modified with the `default` keyword.
+4.  Interfaces cannot contain member variables except `static` and `final` variables.
+5.  Interfaces are not inherited by classes; they are implemented by classes.
+6.  Interfaces support multiple inheritance, while classes do not.
 
-### 声明
+### Declaration
 
 ```java
-[可见度] interface 接口名称 [extends 其他的接口名] {
-        // 声明变量
-        // 抽象方法
+[visibility] interface InterfaceName [extends other interface names] {
+        // Declare variables
+        // Abstract methods
 }
 ```
 
-### 实现
+### Implementation
 
 ```java
-...implements 接口名称[, 其他接口名称, 其他接口名称..., ...] ...
+...implements InterfaceName[, OtherInterfaceName, OtherInterfaceName..., ...] ...
 ```
 
-## Lambda 表达式
+## Lambda Expressions
 
-### 简介
+### Introduction
 
-lambda 表达式也可称为闭包，是 Java 8 的最重要的新特性．
+A lambda expression can also be called a closure and is one of the most important new features of Java 8.
 
-lambda 表达式允许把函数作为一个方法的参数（函数作为参数传递进方法中）．
+Lambda expressions allow functions to be passed as parameters to methods.
 
-使用 lambda 表达式可以使代码变的更加简洁紧凑．
+Using lambda expressions can make code more concise and compact.
 
-### 语法
+### Syntax
 
--   可选类型声明：不需要声明参数类型，编译器可以统一识别参数值．
--   可选的参数圆括号：一个参数无需定义圆括号，但多个参数需要定义圆括号．
--   可选的大括号：如果主体包含了一个语句，就不需要使用大括号．
--   可选的返回关键字：如果主体只有一个表达式返回值则编译器会自动返回值，大括号需要指定表达式返回了一个数值．
+-   Optional type declaration: parameter types do not need to be declared; the compiler can infer them.
+-   Optional parentheses around parameters: parentheses are not required for one parameter, but are required for multiple parameters.
+-   Optional braces: if the body contains one statement, braces are not required.
+-   Optional `return` keyword: if the body has only one expression, the compiler automatically returns its value; braces require explicitly returning a value.
 
-lambda 表达式声明方式如下：
+Lambda expressions can be declared as follows:
 
 ```java
-// 1. 不需要参数，返回值为 5
+// 1. No parameter, returns 5
 () -> 5
 
-// 2. 接收一个参数（数字类型），返回其 2 倍的值
+// 2. Takes one parameter (numeric type) and returns twice its value
 x -> 2 * x
 
-// 3. 接受 2 个参数（数字）并返回他们的差值
+// 3. Takes two parameters (numbers) and returns their difference
 (x, y) -> x – y
 
-// 4. 接收 2 个 int 类型整数并返回他们的和
+// 4. Takes two int integers and returns their sum
 (int x, int y) -> x + y
 
-// 5. 接受一个 String 对象并在控制台打印，不返回任何值（看起来像是返回 void）
+// 5. Takes a String object and prints it to the console, returning no value (appears to return void)
 (String s) -> System.out.print(s)
 ```
 
-以字符串数组按长度排序的自定义比较器为例，lambda 表达式可以按如下形式应用．
+For example, with a custom comparator that sorts a string array by length, a lambda expression can be used as follows.
 
 ```java
 import java.util.Arrays;
@@ -607,7 +607,7 @@ public class Main {
 }
 ```
 
-也可以类似下面的例子在 lambda 表达式中使用多条语句．
+Multiple statements can also be used in a lambda expression, as in the following example.
 
 ```java
 import java.io.PrintWriter;
@@ -620,7 +620,7 @@ public class Main {
         String[] plants = {"Mercury", "venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"};
         Arrays.sort(plants, (first, second) ->
         {
-            // 形参不写类型，可以从上下文判断出
+            // Parameter types are omitted and inferred from context
             int result = first.length() - second.length();
             return result;
         });
@@ -632,17 +632,17 @@ public class Main {
 }
 ```
 
-其中，`->` 是一个推导符号，表示前面的括号接收到参数，推导后面的返回值（其实就是传递了方法）．
+Here, `->` is an inference symbol. It indicates that the preceding parentheses receive parameters and infer the return value after it; essentially, a method is being passed.
 
-### 函数式接口
+### Functional Interfaces
 
-1.  是一个接口，符合 Java 接口定义．
-2.  只包含一个抽象方法的接口．
-3.  因为只有一个未实现的方法，所以 lambda 表达式可以自动填上去．
+1.  It is an interface and follows Java interface definitions.
+2.  It is an interface that contains only one abstract method.
+3.  Because there is only one unimplemented method, a lambda expression can automatically fill it in.
 
-函数式接口使用方式如下：
+Functional interfaces are used as follows:
 
-???+ example "输出长度为 2 的倍数的字符串"
+???+ example "Output strings whose lengths are multiples of 2"
     ```java
     import java.io.PrintWriter;
     
@@ -651,7 +651,7 @@ public class Main {
         
         public static void main(String[] args) {
             String[] plants = {"Mercury", "venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"};
-            Test test = s -> {  // lambda 表达式作为函数式接口的实例
+            Test test = s -> {  // The lambda expression is an instance of the functional interface
                 if (s.length() % 2 == 0) {
                     return true;
                 }
@@ -671,7 +671,7 @@ public class Main {
     }
     ```
 
-???+ example "实现加减乘除四则运算"
+???+ example "Implement addition, subtraction, multiplication, and division"
     ```java
     import java.io.PrintWriter;
     
@@ -683,7 +683,7 @@ public class Main {
         }
         
         public static void main(String[] args) {
-            Calculator util[] = new Calculator[4];  // 定义函数式接口数组
+            Calculator util[] = new Calculator[4];  // Define an array of functional interfaces
             util[0] = (a, b) -> a + b;
             util[1] = (a, b) -> a - b;
             util[2] = (a, b) -> a * b;
@@ -703,25 +703,25 @@ public class Main {
 
 ## Collection
 
-`Collection` 是 Java 中的接口，被多个泛型容器接口所实现．在这里，`Collection` 是指代存放对象类型的数据结构．
+`Collection` is an interface in Java and is implemented by multiple generic container interfaces. Here, `Collection` refers to data structures that store object types.
 
-Java 中的 `Collection` 元素类型定义时必须为对象，不能为基本数据类型．
+In Java, the element type of a `Collection` must be an object type, not a primitive type.
 
-以下内容用法均基于 Java 里多态的性质，均是以实现接口的形式出现．
+The following usage is based on polymorphism in Java and appears as implementations of interfaces.
 
-常用的接口包括 `List`、`Queue`、`Set` 和 `Map`．
+Common interfaces include `List`, `Queue`, `Set`, and `Map`.
 
-### 容器定义
+### Container Definitions
 
-当定义泛型容器类时，需要在定义时指定数据类型．如果不指定数据类型，而当成 `Object` 类型随意添加数据，在 Java 8 中虽能编译通过，但会有很多警告风险．
+When defining a generic container class, specify the data type at definition time. If no data type is specified and data is added freely as `Object`, it can compile in Java 8, but it causes many warnings and risks.
 
-例如，如下定义方式是安全的，容器中只接受 `Integer` 类型．
+For example, the following definition is safe because the container only accepts `Integer` values.
 
 ```java
 List<Integer> list1 = new LinkedList<>();
 ```
 
-而如下定义方式会出现警告．
+The following definition will produce warnings.
 
 ```java
 List list = new ArrayList<>();
@@ -732,17 +732,17 @@ list.add(1L);
 list.add("I am String");
 ```
 
-因此，如果没有特殊需求的话不推荐第 2 种行为，编译器无法帮忙检查存入的数据是否安全．`list.get(index)` 取值时无法明确数据的类型（取到的数据类型都为 `Object`），需要手动转回原来的类型，稍有不慎可能出现误转型异常．
+Therefore, unless there is a special need, the second approach is not recommended. The compiler cannot help check whether stored data is safe. When using `list.get(index)`, the data type cannot be determined clearly because all retrieved values are `Object`; they must be manually cast back to the original type, and an incorrect cast can easily cause an exception.
 
-如果是明确了类型如 `List<Integer>`，此时编译器会检查放入的数据类型，只能放入整数的数据．声明集合变量时只能使用包装类型 `List<Integer>` 或者自定义的 `Class`，而不能是基本类型如 `List<int>`．
+If the type is explicitly specified, such as `List<Integer>`, the compiler checks the inserted data type and only integer data can be inserted. When declaring collection variables, use wrapper types such as `List<Integer>` or custom `Class` types, not primitive types such as `List<int>`.
 
 ### List
 
 #### ArrayList
 
-`ArrayList` 是支持可以根据需求动态生长的数组，初始长度默认为 10．如果超出当前长度便扩容 $\dfrac{3}{2}$．
+`ArrayList` is an array that can dynamically grow as needed. Its default initial length is 10. If the current length is exceeded, it expands by $\dfrac{3}{2}$.
 
-##### 初始化
+##### Initialization
 
 ```java
 import java.io.PrintWriter;
@@ -753,18 +753,18 @@ public class Main {
     static PrintWriter out = new PrintWriter(System.out);
     
     public static void main(String[] args) {
-        List<Integer> list1 = new ArrayList<>();  // 创建一个名字为 list1 的可自增数组，初始长度为默认值（10）
-        List<Integer> list2 = new ArrayList<>(30);  // 创建一个名字为list2的可自增数组，初始长度为 30
-        List<Integer> list3 = new ArrayList<>(list2);  // 创建一个名字为 list3 的可自增数组，使用 list2 里的元素和 size 作为自己的初始值
+        List<Integer> list1 = new ArrayList<>();  // Create a dynamically growing array named list1 with the default initial length (10)
+        List<Integer> list2 = new ArrayList<>(30);  // Create a dynamically growing array named list2 with initial length 30
+        List<Integer> list3 = new ArrayList<>(list2);  // Create a dynamically growing array named list3 using the elements and size of list2 as initial values
     }
 }
 ```
 
 #### LinkedList
 
-`LinkedList` 是双链表．
+`LinkedList` is a doubly linked list.
 
-##### 初始化
+##### Initialization
 
 ```java
 import java.io.PrintWriter;
@@ -775,25 +775,25 @@ public class Main {
     static PrintWriter out = new PrintWriter(System.out);
     
     public static void main(String[] args) {
-        List<Integer> list1 = new LinkedList<>();  // 创建一个名字为 list1 的双链表 
-        List<Integer> list2 = new LinkedList<>(list1);  // 创建一个名字为 list2 的双链表，将 list1 内所有元素加入进来 
+        List<Integer> list1 = new LinkedList<>();  // Create a doubly linked list named list1 
+        List<Integer> list2 = new LinkedList<>(list1);  // Create a doubly linked list named list2 and add all elements from list1 
     }
 }
 ```
 
-#### 常用方法
+#### Common Methods
 
-以下均用 `this` 代替当前 `List<Integer>`：
+The following use `this` to represent the current `List<Integer>`:
 
-|            函数名            |                功能                |
+|            Method            |                Function                |
 | :-----------------------: | :------------------------------: |
-|          `size()`         |           返回 `this` 的长度          |
-|     `add(Integer val)`    |      在 `this` 尾部插入 `val` 元素      |
-| `add(int idx, Integer e)` |   在 `this` 的 `idx` 位置插入 `e` 元素   |
-|       `get(int idx)`      | 返回 `this` 中第 `idx` 位置的值，若越界则抛出异常 |
-| `set(int idx, Integer e)` |   修改 `this` 中第 `idx` 位置的值为 `e`   |
+|          `size()`         |           Returns the length of `this`          |
+|     `add(Integer val)`    |      Inserts element `val` at the end of `this`      |
+| `add(int idx, Integer e)` |   Inserts element `e` at position `idx` of `this`   |
+|       `get(int idx)`      | Returns the value at position `idx` in `this`; throws an exception if out of bounds |
+| `set(int idx, Integer e)` |   Changes the value at position `idx` in `this` to `e`   |
 
-使用案例及区别对比：
+Example usage and comparison:
 
 ```java
 import java.io.PrintWriter;
@@ -807,34 +807,34 @@ public class Main {
     static List<Integer> linked = new LinkedList<>();
     
     static void add() {
-        array.add(1);  // 时间复杂度为 O(1) 
-        linked.add(1);  // 时间复杂度为 O(1) 
+        array.add(1);  // time complexity is O(1) 
+        linked.add(1);  // time complexity is O(1) 
     }
     
     static void get() {
-        array.get(10);  // 时间复杂度为 O(1) 
-        linked.get(10);  // 时间复杂度为 O(11) 
+        array.get(10);  // time complexity is O(1) 
+        linked.get(10);  // time complexity is O(11) 
     }
     
     static void addIdx() {
-        array.add(0, 2);  // 最坏情况下时间复杂度为 O(n)
-        linked.add(0, 2);  // 最坏情况下时间复杂度为 O(n)
+        array.add(0, 2);  // worst-case time complexity is O(n)
+        linked.add(0, 2);  // worst-case time complexity is O(n)
     }
     
     static void size() {
-        array.size();  // 时间复杂度为 O(1)
-        linked.size();  // 时间复杂度为 O(1)
+        array.size();  // time complexity is O(1)
+        linked.size();  // time complexity is O(1)
     }
     
-    static void set() {  // 该方法返回值为原本该位置元素的值
-        array.set(0, 1);  // 时间复杂度为 O(1)
-        linked.set(0, 1);  // 最坏时间复杂度为 O(n)
+    static void set() {  // This method returns the original value at that position
+        array.set(0, 1);  // time complexity is O(1)
+        linked.set(0, 1);  // worst-case time complexity is O(n)
     }
 
 }
 ```
 
-#### 遍历
+#### Traversal
 
 ```java
 import java.io.PrintWriter;
@@ -848,25 +848,25 @@ public class Main {
     static List<Integer> array = new ArrayList<>();
     static List<Integer> linked = new LinkedList<>();
     
-    static void function1() {  // 朴素遍历
+    static void function1() {  // Naive traversal
         for (int i = 0; i < array.size(); i++) {
-            out.println(array.get(i));  // 遍历自增数组，复杂度为 O(n)
+            out.println(array.get(i));  // Traverse the dynamically growing array; complexity is O(n)
         }
         for (int i = 0; i < linked.size(); i++) {
-            out.println(linked.get(i));  // 遍历双链表，复杂度为 O(n^2)，因为 LinkedList 的 get(i) 复杂度是 O(i)
+            out.println(linked.get(i));  // Traverse the doubly linked list; complexity is O(n^2) because LinkedList get(i) has complexity O(i)
         }
     }
     
-    static void function2() {  // 增强 for 循环遍历 
+    static void function2() {  // Enhanced for-loop traversal 
         for (int e : array) {
             out.println(e);
         }
         for (int e : linked) {
-            out.println(e);  // 复杂度均为 O(n) 
+            out.println(e);  // complexity is O(n) 
         }
     }
     
-    static void function3() {  // 迭代器遍历 
+    static void function3() {  // Iterator traversal 
         Iterator<Integer> iterator1 = array.iterator();
         Iterator<Integer> iterator2 = linked.iterator();
         while (iterator1.hasNext()) {
@@ -874,77 +874,77 @@ public class Main {
         }
         while (iterator2.hasNext()) {
             out.println(iterator2.next());
-        }  // 复杂度均为 O(n) 
+        }  // complexity is O(n) 
     }
 
 }
 ```
 
-???+ warning "注意"
-    不要在 `for` 或 `foreach` 遍历 `List` 的过程中删除其中的元素，否则会抛出异常．
+???+ warning "Note"
+    Do not delete elements from a `List` while traversing it with `for` or `foreach`; otherwise, an exception will be thrown.
     
-    原因也很简单，`list.size()` 改变了，但在循环中已循环的次数却是没有随之变化．原来预计在下一个 `index` 的数据因为删除的操作变成了当前 `index` 的数据，运行下一个循环时操作的会变为原来预计在下下个 `index` 的数据，最终会导致操作的数据不符合预期．
+    The reason is simple: `list.size()` changes, but the number of loop iterations already performed does not. Data originally expected at the next `index` becomes the data at the current `index` after deletion, and the next loop operates on data originally expected two positions later. This ultimately causes the operated data to differ from expectations.
 
 ### Queue
 
 #### LinkedList
 
-可以使用 `LinkedList` 实现普通队列，底层是链表模拟队列．
+A normal queue can be implemented with `LinkedList`; internally, it simulates a queue with a linked list.
 
-##### 初始化
+##### Initialization
 
 ```java
 Queue<Integer> q = new LinkedList<>();
 ```
 
-`LinkedList` 底层实现了 `List` 接口与 `Deque` 接口，而 `Deque` 接口继承自 `Queue` 接口，所以 `LinkedList` 可以同时实现 `List` 与 `Queue`．
+`LinkedList` implements the `List` and `Deque` interfaces internally, and `Deque` extends `Queue`, so `LinkedList` can implement both `List` and `Queue`.
 
 #### ArrayDeque
 
-可以使用 `ArrayDeque` 实现普通队列，底层是数组模拟队列．
+A normal queue can be implemented with `ArrayDeque`; internally, it simulates a queue with an array.
 
-##### 初始化
+##### Initialization
 
 ```java
 Queue<Integer> q = new ArrayDeque<>();
 ```
 
-`ArrayDeque` 底层实现了 `Deque` 接口，而 `Deque` 接口继承自 `Queue` 接口，所以 `ArrayDeque` 可以实现 `Queue`．
+`ArrayDeque` implements the `Deque` interface internally, and `Deque` extends `Queue`, so `ArrayDeque` can implement `Queue`.
 
-#### LinkedList 与 ArrayDeque 在实现 Queue 接口上的区别
+#### Differences Between LinkedList and ArrayDeque When Implementing Queue
 
-1.  数据结构：在数据结构上，`ArrayDeque` 和 `LinkedList` 都实现了 Java Deque 双端队列接口．但 `ArrayDeque` 没有实现了 Java List 列表接口，所以不具备根据索引位置操作的行为．
-2.  线程安全：`ArrayDeque` 和 `LinkedList` 都不考虑线程同步，不保证线程安全．
-3.  底层实现：在底层实现上，`ArrayDeque` 是基于动态数组的，而 `LinkedList` 是基于双向链表的．
-4.  在遍历速度上：`ArrayDeque` 是一块连续内存空间，基于局部性原理能够更好地命中 CPU 缓存行，而 `LinkedList` 是离散的内存空间对缓存行不友好．
-5.  在操作速度上：`ArrayDeque` 和 `LinkedList` 的栈和队列行为都是 $O(1)$ 时间复杂度，`ArrayDeque` 的入栈和入队有可能会触发扩容，但从均摊分析上看依然是 $O(1)$ 时间复杂度．
-6.  额外内存消耗上：`ArrayDeque` 在数组的头指针和尾指针外部有闲置空间，而 `LinkedList` 在节点上增加了前驱和后继指针．
+1.  Data structure: both `ArrayDeque` and `LinkedList` implement Java's `Deque` double-ended queue interface. However, `ArrayDeque` does not implement the Java `List` interface, so it does not support index-based operations.
+2.  Thread safety: neither `ArrayDeque` nor `LinkedList` handles thread synchronization, so neither guarantees thread safety.
+3.  Underlying implementation: `ArrayDeque` is based on a dynamic array, while `LinkedList` is based on a doubly linked list.
+4.  Traversal speed: `ArrayDeque` uses contiguous memory, which can better hit CPU cache lines due to locality, while `LinkedList` uses scattered memory and is cache-unfriendly.
+5.  Operation speed: stack and queue operations for both `ArrayDeque` and `LinkedList` are $O(1)$. Push and enqueue operations in `ArrayDeque` may trigger expansion, but amortized analysis still gives $O(1)$ time complexity.
+6.  Extra memory usage: `ArrayDeque` has unused space outside the array head and tail pointers, while `LinkedList` adds predecessor and successor pointers to each node.
 
 #### PriorityQueue
 
-`PriorityQueue` 是优先队列，默认是小根堆．
+`PriorityQueue` is a priority queue. By default, it is a min-heap.
 
-##### 初始化
+##### Initialization
 
 ```java
-Queue<Integer> q1 = new PriorityQueue<>();  // 小根堆
-Queue<Integer> q2 = new PriorityQueue<>((x, y) -> {return y - x;});  // 大根堆
+Queue<Integer> q1 = new PriorityQueue<>();  // Min-heap
+Queue<Integer> q2 = new PriorityQueue<>((x, y) -> {return y - x;});  // Max-heap
 ```
 
-#### 常用方法
+#### Common Methods
 
-下表中队列定义为 `Queue<Integer>`．
+In the following table, the queue is defined as `Queue<Integer>`.
 
-|          函数名         |                     功能                     |
+|          Method         |                     Function                     |
 | :------------------: | :----------------------------------------: |
-|       `size()`       |                  返回当前队列长度                  |
-|  `add(Integer val)`  |     将 `val` 插入队列，如果插入时违反了队列的容量限制，将抛出异常     |
-| `offer(Integer val)` | 将 `val` 插入队列，如果插入时违反了队列的容量限制，则插入失败，但不会抛出异常 |
-|      `isEmpty()`     |            判断队列是否为空，为空则返回 `true`           |
-|       `peek()`       |            返回队头元素，若队列为空返回 `null`           |
-|       `poll()`       |          返回并删除队头元素，若队列为空返回 `null`          |
+|       `size()`       |                  Returns the current queue length                  |
+|  `add(Integer val)`  |     Inserts `val` into the queue; throws an exception if insertion violates the queue capacity limit     |
+| `offer(Integer val)` | Inserts `val` into the queue; if insertion violates the queue capacity limit, insertion fails but no exception is thrown |
+|      `isEmpty()`     |            Determines whether the queue is empty; returns `true` if it is           |
+|       `peek()`       |            Returns the front element; returns `null` if the queue is empty           |
+|       `poll()`       |          Returns and removes the front element; returns `null` if the queue is empty          |
 
-使用案例及区别对比：
+Example usage and comparison:
 
 ```java
 import java.io.PrintWriter;
@@ -957,34 +957,34 @@ public class Main {
     static Queue<Integer> q1 = new LinkedList<>();
     static Queue<Integer> q2 = new PriorityQueue<>();
     
-    static void add() {  // add 和 offer 功能上没有差距，区别是是否会抛出异常 
-        q1.add(1);  // 时间复杂度为 O(1) 
-        q2.add(1);  // 时间复杂度为 O(logn) 
+    static void add() {  // add and offer have no functional difference; the difference is whether an exception is thrown 
+        q1.add(1);  // time complexity is O(1) 
+        q2.add(1);  // time complexity is O(logn) 
     }
     
     static void isEmpty() {
-        q1.isEmpty();  // 时间复杂度为 O(1) 
-        q2.isEmpty();  // 空间复杂度为 O(1) 
+        q1.isEmpty();  // time complexity is O(1) 
+        q2.isEmpty();  // space complexity is O(1) 
     }
     
     static void size() {
-        q1.size();  // 时间复杂度为 O(1) 
-        q2.size();  // 返回 q2 的长度 
+        q1.size();  // time complexity is O(1) 
+        q2.size();  // Returns the length of q2 
     }
     
     static void peek() {
-        q1.peek();  // 时间复杂度为 O(1) 
-        q2.peek();  // 时间复杂度为 O(logn) 
+        q1.peek();  // time complexity is O(1) 
+        q2.peek();  // time complexity is O(logn) 
     }
     
     static void poll() {
-        q1.poll();  // 时间复杂度为 O(1) 
-        q2.poll();  // 时间复杂度为 O(logn) 
+        q1.poll();  // time complexity is O(1) 
+        q2.poll();  // time complexity is O(logn) 
     }
 }
 ```
 
-#### 遍历
+#### Traversal
 
 ```java
 import java.io.PrintWriter;
@@ -998,10 +998,10 @@ public class Main {
     static Queue<Integer> q2 = new PriorityQueue<>();
     
     static void test() {
-        while (!q1.isEmpty()) {  // 复杂度为 O(n) 
+        while (!q1.isEmpty()) {  // complexity is O(n) 
             out.println(q1.poll());
         }
-        while (!q2.isEmpty()) {  // 复杂度为 O(nlogn) 
+        while (!q2.isEmpty()) {  // complexity is O(nlogn) 
             out.println(q2.poll());
         }
     }
@@ -1011,32 +1011,32 @@ public class Main {
 
 ### Deque
 
-`Deque` 是 `Java` 中的双端队列，我们通常用其进行队列的操作以及栈的操作．
+`Deque` is a double-ended queue in `Java`; it is usually used for queue operations and stack operations.
 
-#### 主要函数
+#### Main Methods
 
-下表中队列定义为 `Deque<Integer>`．
+In the following table, the queue is defined as `Deque<Integer>`.
 
-|            函数名            |                     功能                     |
+|            Method            |                     Function                     |
 | :-----------------------: | :----------------------------------------: |
-|  `addFirst(Integer val)`  |     将 `val` 插入队头，如果插入时违反了队列的容量限制，将抛出异常     |
-| `offerFirst(Integer val)` | 将 `val` 插入队头，如果插入时违反了队列的容量限制，则插入失败，但不会抛出异常 |
-|      `removeFirst()`      |           返回并删除队头元素，如果队列为空，将抛出异常           |
-|       `pollFirst()`       |         返回并删除队头元素，如果队列为空，则返回 `null`        |
-|       `peekFirst()`       |          返回队头元素，如果队列为空，则返回 `null`          |
-|    `push(Integer val)`    |         将 `val` 插入队头，等效于 `addFirst`        |
-|          `pop()`          |         返回并删除队头元素，等效于 `removeFirst`        |
-|         `remove()`        |          删除队头元素，等效于 `removeFirst`          |
-|          `poll()`         |           删除队头元素，等效于 `pollFirst`           |
-|   `addLast(Integer val)`  |     将 `val` 插入队尾，如果插入时违反了队列的容量限制，将抛出异常     |
-|  `offerLast(Integer val)` | 将 `val` 插入队尾，如果插入时违反了队列的容量限制，则插入失败，但不会抛出异常 |
-|       `removeLast()`      |           返回并删除队尾元素，如果队列为空，将抛出异常           |
-|        `pollLast()`       |         返回并删除队尾元素，如果队列为空，则返回 `null`        |
-|        `peekLast()`       |          返回队尾元素，如果队列为空，则返回 `null`          |
-|     `add(Integer val)`    |         将 `val` 插入队尾，等效于 `addLast`         |
-|    `offer(Integer val)`   |        将 `val` 插入队尾，等效于 `offerLast`        |
+|  `addFirst(Integer val)`  |     Inserts `val` at the front; throws an exception if insertion violates the queue capacity limit     |
+| `offerFirst(Integer val)` | Inserts `val` at the front; if insertion violates the queue capacity limit, insertion fails but no exception is thrown |
+|      `removeFirst()`      |           Returns and removes the front element; throws an exception if the queue is empty           |
+|       `pollFirst()`       |         Returns and removes the front element; returns `null` if the queue is empty        |
+|       `peekFirst()`       |          Returns the front element; returns `null` if the queue is empty          |
+|    `push(Integer val)`    |         Inserts `val` at the front; equivalent to `addFirst`        |
+|          `pop()`          |         Returns and removes the front element; equivalent to `removeFirst`        |
+|         `remove()`        |          Removes the front element; equivalent to `removeFirst`          |
+|          `poll()`         |           Removes the front element; equivalent to `pollFirst`           |
+|   `addLast(Integer val)`  |     Inserts `val` at the back; throws an exception if insertion violates the queue capacity limit     |
+|  `offerLast(Integer val)` | Inserts `val` at the back; if insertion violates the queue capacity limit, insertion fails but no exception is thrown |
+|       `removeLast()`      |           Returns and removes the back element; throws an exception if the queue is empty           |
+|        `pollLast()`       |         Returns and removes the back element; returns `null` if the queue is empty        |
+|        `peekLast()`       |          Returns the back element; returns `null` if the queue is empty          |
+|     `add(Integer val)`    |         Inserts `val` at the back; equivalent to `addLast`         |
+|    `offer(Integer val)`   |        Inserts `val` at the back; equivalent to `offerLast`        |
 
-#### 栈的操作
+#### Stack Operations
 
 ```java
 import java.util.ArrayDeque;
@@ -1050,7 +1050,7 @@ public class Main {
         for (int v : a) {
             stack.push(v);
         }
-        while (!stack.isEmpty()) { //输出 5 4 3 2 1
+        while (!stack.isEmpty()) { // prints 5 4 3 2 1
             System.out.println(stack.pop()); 
         }
     }
@@ -1058,7 +1058,7 @@ public class Main {
 
 ```
 
-#### 双端队列的操作
+#### Deque Operations
 
 ```java
 import java.util.ArrayDeque;
@@ -1076,11 +1076,11 @@ public class Main {
     
     public static void main(String[] args) {
         insert();
-        while (!deque.isEmpty()) { //输出 2 1 3 4
+        while (!deque.isEmpty()) { // prints 2 1 3 4
             System.out.println(deque.poll());
         }
         insert();
-        while (!deque.isEmpty()) { //输出 4 3 1 2
+        while (!deque.isEmpty()) { // prints 4 3 1 2
             System.out.println(deque.pollLast());
         }
     }
@@ -1089,13 +1089,13 @@ public class Main {
 
 ### Set
 
-`Set` 是保持容器中的元素不重复的一种数据结构．
+`Set` is a data structure that keeps elements in a container unique.
 
 #### HashSet
 
-随机位置插入的 `Set`．
+A `Set` with insertion at arbitrary positions.
 
-##### 初始化
+##### Initialization
 
 ```java
 Set<Integer> s1 = new HashSet<>();
@@ -1103,9 +1103,9 @@ Set<Integer> s1 = new HashSet<>();
 
 #### LinkedHashSet
 
-保持插入顺序的 `Set`．
+A `Set` that preserves insertion order.
 
-##### 初始化
+##### Initialization
 
 ```java
 Set<Integer> s2 = new LinkedHashSet<>();
@@ -1113,38 +1113,38 @@ Set<Integer> s2 = new LinkedHashSet<>();
 
 #### TreeSet
 
-保持容器中元素有序的 `Set`，默认为升序．
+A `Set` that keeps the elements in the container ordered; the default is ascending order.
 
-##### 初始化
+##### Initialization
 
 ```java
 Set<Integer> s3 = new TreeSet<>();
-Set<Integer> s4 = new TreeSet<>((x, y) -> {return y - x;});  // 降序 
+Set<Integer> s4 = new TreeSet<>((x, y) -> {return y - x;});  // Descending order 
 ```
 
-##### TreeSet 的更多使用
+##### More TreeSet Usage
 
-这些方法是 `TreeSet` 新创建并实现的，我们无法使用 `Set` 接口调用以下方法，因此我们创建方式如下：
+These methods are newly created and implemented by `TreeSet`. We cannot call the following methods through the `Set` interface, so we create it as follows:
 
 ```java
 TreeSet<Integer> s3 = new TreeSet<>();
-TreeSet<Integer> s4 = new TreeSet<>((x, y) -> {return y - x;});  // 降序 
+TreeSet<Integer> s4 = new TreeSet<>((x, y) -> {return y - x;});  // Descending order
 ```
 
-下表中均用 `this` 代替当前 `TreeSet<Integer>`．
+In the following table, `this` represents the current `TreeSet<Integer>`.
 
-|           函数名          |                    功能                    |
+|           Method          |                    Function                    |
 | :--------------------: | :--------------------------------------: |
-|        `first()`       |       返回 `this` 中第一个元素，无则返回 `null`       |
-|        `last()`        |       返回 `this` 中最后一个元素，无则返回 `null`      |
-|  `floor(Integer val)`  | 返回 `this` 中小于等于 `val` 的第一个元素，无则返回 `null` |
-| `ceiling(Integer val)` | 返回 `this` 中大于等于 `val` 的第一个元素，无则返回 `null` |
-|  `higher(Integer val)` |  返回 `this` 中大于 `val` 的第一个元素，无则返回 `null`  |
-|  `lower(Integer val)`  |  返回 `this` 中小于 `val` 的第一个元素，无则返回 `null`  |
-|      `pollFirst()`     |      返回并删除 `this` 中第一个元素，无则返回 `null`     |
-|      `pollLast()`      |     返回并删除 `this` 中最后一个元素，无则返回 `null`     |
+|        `first()`       |       Returns the first element in `this`; returns `null` if none exists       |
+|        `last()`        |       Returns the last element in `this`; returns `null` if none exists      |
+|  `floor(Integer val)`  | Returns the first element in `this` less than or equal to `val`; returns `null` if none exists |
+| `ceiling(Integer val)` | Returns the first element in `this` greater than or equal to `val`; returns `null` if none exists |
+|  `higher(Integer val)` |  Returns the first element in `this` greater than `val`; returns `null` if none exists  |
+|  `lower(Integer val)`  |  Returns the first element in `this` less than `val`; returns `null` if none exists  |
+|      `pollFirst()`     |      Returns and removes the first element in `this`; returns `null` if none exists     |
+|      `pollLast()`      |     Returns and removes the last element in `this`; returns `null` if none exists     |
 
-代码示例：
+Code example:
 
 ```java
 import java.util.TreeSet;
@@ -1158,35 +1158,35 @@ public class Main {
             set.add(v);
         }
         Integer a2 = set.first();
-        System.out.println(a2); //返回 1
+        System.out.println(a2); // returns 1
         Integer a3 = set.last();
-        System.out.println(a3); //返回 7
+        System.out.println(a3); // returns 7
         Integer a4 = set.floor(5);
-        System.out.println(a4); //返回 4
+        System.out.println(a4); // returns 4
         Integer a5 = set.ceiling(6);
-        System.out.println(a5); //返回 6
+        System.out.println(a5); // returns 6
         Integer a6 = set.higher(7);
-        System.out.println(a6); //返回 null
+        System.out.println(a6); // returns null
         Integer a7 = set.lower(2);
-        System.out.println(a7); //返回 1
+        System.out.println(a7); // returns 1
         Integer a8 = set.pollFirst();
-        System.out.println(a8); //返回 1
+        System.out.println(a8); // returns 1
         Integer a9 = set.pollLast();
-        System.out.println(a9); //返回 7
+        System.out.println(a9); // returns 7
     }
 }
 ```
 
-#### Set 常用方法
+#### Common Set Methods
 
-|            函数名            |                   功能                   |
+|            Method            |                   Function                   |
 | :-----------------------: | :------------------------------------: |
-|          `size()`         |                返回当前集合的大小               |
-|     `add(Integer val)`    |              将 `val` 插入集合              |
-|  `contains(Integer val)`  |            判断集合中是否有元素 `val`            |
-|   `addAll(Collection e)`  |          将容器 `e` 里的所有元素添加进当前集合         |
-| `retainAll(Collection e)` | 删除当前集合中未出现在容器 `e` 中的元素，即求当前集合与 `e` 的交集 |
-| `removeAll(Collection e)` |  删除当前集合中出现在容器 `e` 中的元素，即求当前集合与 `e` 的差集 |
+|          `size()`         |                Returns the current set size               |
+|     `add(Integer val)`    |              Inserts `val` into the set              |
+|  `contains(Integer val)`  |            Determines whether the set contains element `val`            |
+|   `addAll(Collection e)`  |          Adds all elements in container `e` to the current set         |
+| `retainAll(Collection e)` | Deletes elements in the current set that do not appear in container `e`, i.e., computes the intersection of the current set and `e` |
+| `removeAll(Collection e)` |  Deletes elements in the current set that appear in container `e`, i.e., computes the difference of the current set and `e` |
 
 ```java
 import java.io.PrintWriter;
@@ -1203,23 +1203,23 @@ public class Main {
         s1.add(1);
     }
     
-    static void contains() {  // 判断 set 中是否有元素值为 2，有则返回 true，否则返回 false 
+    static void contains() {  // Checks whether set contains an element with value 2; returns true if so, otherwise false 
         s1.contains(2);
     }
     
-    static void test1() {  // s1 与 s2 的并集 
+    static void test1() {  // Union of s1 and s2 
         Set<Integer> res = new HashSet<>();
         res.addAll(s1);
         res.addAll(s2);
     }
     
-    static void test2() {  // s1 与 s2 的交集 
+    static void test2() {  // Intersection of s1 and s2 
         Set<Integer> res = new HashSet<>();
         res.addAll(s1);
         res.retainAll(s2);
     }
     
-    static void test3() {  // 差集：s1 - s2 
+    static void test3() {  // Difference: s1 - s2 
         Set<Integer> res = new HashSet<>();
         res.addAll(s1);
         res.removeAll(s2);
@@ -1227,7 +1227,7 @@ public class Main {
 }
 ```
 
-#### 遍历
+#### Traversal
 
 ```java
 import java.io.PrintWriter;
@@ -1251,13 +1251,13 @@ public class Main {
 
 ### Map
 
-`Map` 是维护键值对 `<Key, Value>` 的一种数据结构，其中 `Key` 唯一．
+`Map` is a data structure that maintains key-value pairs `<Key, Value>`, where each `Key` is unique.
 
 #### HashMap
 
-随机位置插入的 `Map`．
+A `Map` with insertion at arbitrary positions.
 
-##### 初始化
+##### Initialization
 
 ```java
 Map<Integer, Integer> map1 = new HashMap<>();
@@ -1265,9 +1265,9 @@ Map<Integer, Integer> map1 = new HashMap<>();
 
 #### LinkedHashMap
 
-保持插入顺序的 `Map`．
+A `Map` that preserves insertion order.
 
-##### 初始化
+##### Initialization
 
 ```java
 Map<Integer, Integer> map2 = new LinkedHashMap<>();
@@ -1275,28 +1275,28 @@ Map<Integer, Integer> map2 = new LinkedHashMap<>();
 
 #### TreeMap
 
-保持 `key` 有序的 `Map`，默认升序．
+A `Map` that keeps `key` values ordered; the default is ascending order.
 
-##### 初始化
+##### Initialization
 
 ```java
 Map<Integer, Integer> map3 = new TreeMap<>();
-Map<Integer, Integer> map4 = new TreeMap<>((x, y) -> {return y - x;});  // 降序
+Map<Integer, Integer> map4 = new TreeMap<>((x, y) -> {return y - x;});  // Descending order
 ```
 
-#### 常用方法
+#### Common Methods
 
-以下均用 `this` 代替当前 `Map<Integer, Integer>`：
+The following use `this` to represent the current `Map<Integer, Integer>`:
 
-|                函数名                |               功能              |
+|                Method                |               Function              |
 | :-------------------------------: | :---------------------------: |
-| `put(Integer key, Integer value)` |   将 `<key, value>` 插入 `this`  |
-|              `size()`             |         返回 `this` 的大小         |
-|     `containsKey(Integer key)`    | 判断 `this` 中是否有存在某个元素的键为 `key` |
-|         `get(Integer key)`        |  返回 `this` 中键为 `key` 的元素对应的值  |
-|             `keySet()`            |     将 `this` 中所有元素的键作为集合返回    |
+| `put(Integer key, Integer value)` |   Inserts `<key, value>` into `this`  |
+|              `size()`             |         Returns the size of `this`         |
+|     `containsKey(Integer key)`    | Determines whether `this` contains an element whose key is `key` |
+|         `get(Integer key)`        |  Returns the value corresponding to the element whose key is `key` in `this`  |
+|             `keySet()`            |     Returns the keys of all elements in `this` as a set    |
 
-使用案例：
+Example usage:
 
 ```java
 import java.io.PrintWriter;
@@ -1313,13 +1313,13 @@ public class Main {
     static Map<Integer, Integer> map3 = new TreeMap<>();
     static Map<Integer, Integer> map4 = new TreeMap<>((x,y)->{return y-x;});
     
-    static void put(){  // 将 key 为 1、value 为 1 的元素返回
+    static void put(){  // Inserts the element whose key is 1 and value is 1
         map1.put(1, 1);
     }
-    static void get(){  // 将 key 为 1 的 value 返回
+    static void get(){  // Returns the value whose key is 1
         map1.get(1);
     }
-    static void containsKey(){  // 判断是否有 key 为 1 的键值对
+    static void containsKey(){  // Checks whether there is a key-value pair whose key is 1
         map1.containsKey(1);
     }
     static void KeySet(){
@@ -1328,7 +1328,7 @@ public class Main {
 }
 ```
 
-#### 遍历
+#### Traversal
 
 ```java
 import java.io.PrintWriter;
@@ -1348,7 +1348,7 @@ public class Main {
 }
 ```
 
-当然，键值的类型也可以更改．例如 `Map` 也可以定义为：
+Of course, the key and value types can also be changed. For example, `Map` can also be defined as:
 
 ```java
 Map<String, Set<Integer>> map = new HashMap<>();
@@ -1356,11 +1356,11 @@ Map<String, Set<Integer>> map = new HashMap<>();
 
 ## Arrays
 
-`Arrays` 是 `java.util` 中对数组操作的一个工具类．方法均为静态方法，可使用类名直接调用．
+`Arrays` is a utility class in `java.util` for array operations. Its methods are all static and can be called directly with the class name.
 
 ### Arrays.sort()
 
-`Arrays.sort()` 是对数组进行的排序的方法，主要重载方法如下：
+`Arrays.sort()` is a method for sorting arrays. Its main overloaded methods are as follows:
 
 ```java
 import java.util.Arrays;
@@ -1386,7 +1386,7 @@ public class Main {
                 return o2 - o1;
             }
         });
-        // 由于 Java 8 后有 Lambda 表达式，第三个重载及第四个重载亦可写为 
+        // Since Java 8 supports lambda expressions, the third and fourth overloads can also be written as 
         Arrays.sort(b, (x, y) -> {  // 5 
             return y - x;
         });
@@ -1397,25 +1397,25 @@ public class Main {
 }
 ```
 
-序号所对应的重载方法含义：
+Meanings of the numbered overloads:
 
-1.  对数组 `a` 进行排序，默认升序．
-2.  对数组 `a` 的指定位置进行排序，默认升序，排序区间为左闭右开 `[firstIdx, lastIdx)`．
-3.  对数组 `a` 以自定义的形式排序，第二个参数 `-` 第一个参数为降序，第一个参数 `-` 第二个参数为升序，当自定义排序比较器时，数组元素类型必须为对象类型．
-4.  对数组 `a` 的指定位置进行自定义排序，排序区间为左闭右开 `[firstIdx, lastIdx)`，当自定义排序比较器时，数组元素类型必须为对象类型．
-5.  和 3 同理，用 Lambda 表达式优化了代码长度．
-6.  和 4 同理，用 Lambda 表达式优化了代码长度．
+1.  Sorts array `a` in ascending order by default.
+2.  Sorts the specified range of array `a` in ascending order by default. The sorting interval is left-closed and right-open: `[firstIdx, lastIdx)`.
+3.  Sorts array `a` with a custom order. The second parameter minus the first parameter gives descending order, and the first parameter minus the second parameter gives ascending order. When using a custom comparator, the array element type must be an object type.
+4.  Sorts the specified range of array `a` with a custom order. The sorting interval is left-closed and right-open: `[firstIdx, lastIdx)`. When using a custom comparator, the array element type must be an object type.
+5.  Same as 3, using a lambda expression to shorten the code.
+6.  Same as 4, using a lambda expression to shorten the code.
 
-???+ note "`Arrays.sort()` 底层函数"
-    1.  当 `Arrays.sort` 的参数数组元素类型为基本数据类型（`byte`、`short`、`char`、`int`、`long`、`double`、`float`）时，默认为 `DualPivotQuicksort`（双轴快排），复杂度最坏可以达到 $O(n^2)$．
-    2.  当 `Arrays.sort` 的参数数组元素类型为非基本数据类型时，则默认为 `legacyMergeSort` 和 `TimSort`（归并排序），复杂度为 $O(n\log n)$．
+???+ note "Underlying Function of `Arrays.sort()`"
+    1.  When the array element type passed to `Arrays.sort` is a primitive type (`byte`, `short`, `char`, `int`, `long`, `double`, `float`), it uses `DualPivotQuicksort` by default, whose worst-case complexity can reach $O(n^2)$.
+    2.  When the array element type passed to `Arrays.sort` is not a primitive type, it uses `legacyMergeSort` and `TimSort` (merge sort) by default, with complexity $O(n\log n)$.
 
-可以通过如下代码验证：
+This can be verified with the following code:
 
 ???+ example "[Codeforces 1646B - Quality vs Quantity](https://codeforces.com/problemset/problem/1646/B)"
-    有 $n$ 个整数，你需要将其分为两组，是否能存在某一组的长度小于另一组，同时和大于它．
+    There are $n$ integers. You need to divide them into two groups and determine whether one group can have a smaller size than the other while having a larger sum.
 
-??? note "例题代码"
+??? note "Example Code"
     ```java
     import java.io.BufferedReader;
     import java.io.IOException;
@@ -1472,7 +1472,7 @@ public class Main {
         
         static void solve() {
             int n = in.nextInt();
-            // 此处数组类型由 Integer 修改为 int 会导致 TLE
+            // Changing the array type from Integer to int here will cause TLE
             Integer[] a = new Integer[n + 10];
             for (int i = 1; i <= n; i++) {
                 a[i] = in.nextInt();
@@ -1504,7 +1504,7 @@ public class Main {
 
 ### Arrays.binarySearch()
 
-`Arrays.binarySearch()` 是对数组连续区间进行二分搜索的方法，前提是数组必须有序，时间复杂度为 $O(\log_n)$，主要重载方法如下：
+`Arrays.binarySearch()` performs binary search on a contiguous interval of an array. The array must be sorted first. Its time complexity is $O(\log_n)$. The main overloaded methods are as follows:
 
 ```java
 import java.util.Arrays;
@@ -1522,7 +1522,7 @@ public class Main {
 }
 ```
 
-源码如下：
+Source code:
 
 ```java
 private static int binarySearch0(int[] a, int fromIndex, int toIndex, int key) {
@@ -1544,26 +1544,26 @@ private static int binarySearch0(int[] a, int fromIndex, int toIndex, int key) {
 }
 ```
 
-序号所对应的重载方法含义：
+Meanings of the numbered overloads:
 
-1.  从数组 a 中二分查找是否存在 `key`，如果存在，便返回其下标．若不存在，则返回一个负数．
-2.  从数组 a 中二分查找是否存在 `key`，如果存在，便返回其下标，搜索区间为左闭右开 `[firstIdx,lastIdx)`．若不存在，则返回一个负数．
+1.  Binary-searches array `a` for `key`. If it exists, returns its index; otherwise, returns a negative number.
+2.  Binary-searches array `a` for `key`. If it exists, returns its index. The search interval is left-closed and right-open: `[firstIdx,lastIdx)`. If it does not exist, returns a negative number.
 
 ### Arrays.fill()
 
-`Arrays.fill()` 方法将数组中连续位置的元素赋值为统一元素．其接受的参数为数组、`fromIndex`、`toIndex` 和需要填充的数．方法执行后，数组左闭右开区间 `[firstIdx,lastIdx)` 内的所有元素的值均为需要填充的数．
+`Arrays.fill()` assigns the same value to elements in a contiguous range of an array. It accepts the array, `fromIndex`, `toIndex`, and the value to fill. After execution, all elements in the left-closed, right-open interval `[firstIdx,lastIdx)` have the filled value.
 
 ## Collections
 
-`Collections` 是 `java.util` 中对集合操作的一个工具类．方法均为静态方法，可使用类名直接调用．
+`Collections` is a utility class in `java.util` for collection operations. Its methods are all static and can be called directly with the class name.
 
 ### Collections.sort()
 
-`Collections.sort()` 底层原理为将其中所有元素转化为数组调用 `Arrays.sort()`，完成排序后再赋值给原本的集合．又因为 Java 中 `Collection` 的元素类型均为对象类型，所以始终是归并排序去处理．
+The underlying principle of `Collections.sort()` is to convert all elements into an array, call `Arrays.sort()`, and then assign the sorted values back to the original collection. Because `Collection` element types in Java are object types, merge sort is always used.
 
-该方法无法对集合指定区间排序．
+This method cannot sort a specified interval of a collection.
 
-底层源码：
+Underlying source code:
 
 ```java
 default void sort(Comparator<? super E> c) {
@@ -1579,27 +1579,27 @@ default void sort(Comparator<? super E> c) {
 
 ### Collections.binarySearch()
 
-`Collections.binarySearch()` 是对集合中指定区间进行二分搜索，功能与 `Arrays.binarySearch()` 相同．
+`Collections.binarySearch()` performs binary search on a collection, with the same function as `Arrays.binarySearch()`.
 
 ```java
 Collections.binarySearch(list, key);
 ```
 
-该方法无法对指定区间进行搜索．
+This method cannot search a specified interval.
 
 ### Collections.swap()
 
-`Collections.swap()` 的功能是交换集合中指定二个位置的元素．
+`Collections.swap()` swaps the elements at two specified positions in a collection.
 
 ```java
  Collections.swap(list, i, j);
 ```
 
-## 其他
+## Others
 
-### 数值比较问题
+### Numeric Comparison Issue
 
-在 Java 中，如果单纯是数值类型，`-0.0 = 0.0`．若是对象类型，则 `-0.0 != 0.0`．如果尝试用 `Set` 统计斜率数量时，这个问题就会带来麻烦．提供的解决方式是在所有的斜率加入 `Set` 前将值增加 `0.0`．
+In Java, for pure numeric types, `-0.0 = 0.0`. For object types, `-0.0 != 0.0`. If you try to use a `Set` to count the number of slopes, this issue can cause trouble. The provided solution is to add `0.0` to every slope before adding it to the `Set`.
 
 ```java
 import java.io.PrintWriter;
@@ -1635,6 +1635,6 @@ public class Main {
 }
 ```
 
-## 参考资料
+## References
 
 [^ref1]: [Input & Output - USACO Guide](https://usaco.guide/general/input-output?lang=java#method-3---io-template)

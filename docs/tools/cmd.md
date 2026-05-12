@@ -1,65 +1,65 @@
 author: StudyingFather, ayalhw, qinyihao, CoderOJ, mcendu, Libaray
 
-虽然图形界面能做的事情越来越多，但有很多高阶操作仍然需要使用命令行来解决．
+Although graphical interfaces can do more and more things, there are still many advanced operations that require the command line to solve.
 
-本页面将简要介绍命令行的一些使用方法．
+This page will briefly introduce some usage methods of the command line.
 
-## 基础
+## Basics
 
-Windows 自带的命令行界面有两个．「命令提示符」（`cmd`）是其中较为古老的一个，功能也相对简单．PowerShell 是较新的一个命令行界面，自带的功能丰富，但相对臃肿．两个界面都可以在开始菜单中找到．
+Windows has two built-in command line interfaces. "Command Prompt" (`cmd`) is the older one with relatively simple functions. PowerShell is a newer command line interface with rich built-in features but is relatively bloated. Both interfaces can be found in the Start menu.
 
-类 Unix 系统（包含 macOS 和 Linux，以下称为 Unix）分为有图形界面和无图形界面两种情况．如果系统有图形界面（如使用 macOS 或者在 Linux 下安装了 GNOME、KDE 等图形界面），则命令行一般可以通过名为「终端」（Terminal 或 Console）的程序打开．没有图形界面的系统会在启动完成后自动进入命令行．
+Unix-like systems (including macOS and Linux, referred to as Unix below) are divided into two cases: with and without a graphical interface. If the system has a graphical interface (such as using macOS or having GNOME, KDE, etc. installed on Linux), the command line can generally be opened through a program called "Terminal" or "Console". For systems without a graphical interface, the command line is automatically entered after startup.
 
-Windows 下的命令行长这样：
+The command line on Windows looks like this:
 
 ```doscon
 C:\Users\chtholly>
 ```
 
-在命令行上输入的指令会显示在 `>` 以后．
+The instructions entered on the command line are displayed after `>`.
 
 ```doscon
 C:\Users\chtholly>echo "Hello World!"
 ```
 
-Unix 下的命令行长这样（以 Debian/Ubuntu 为例，其它系统的命令行大体类似）：
+The command line on Unix looks like this (using Debian/Ubuntu as an example, other systems' command lines are similar):
 
 ```console
 chtholly@seniorious:~$
 ```
 
-在命令行上输入的指令会显示在 `$` 以后．
+The instructions entered on the command line are displayed after `$`.
 
 ```console
 chtholly@seniorious:~$ echo "Hello World!"
 ```
 
-如果在 Unix 下使用 `root` 登录命令行，那么 `$` 会被替换成 `#`：
+If you log in to the command line as `root` on Unix, then `$` will be replaced by `#`:
 
 ```console
 root@seniorious:~# apt-get install gcc
 ```
 
-命令行的 `>`，`$` 或 `#` 之前会显示一个路径，这个路径就是工作目录（working directory），或者当前目录．在 Unix 下当前目录有时会显示成类似 `~/folder` 的形式，最开头的 `~` 就是当前登录的用户的主目录．用户 `chtholly` 的主目录在不同系统下的位置是不同的；在 Linux 下，其主目录位于 `/home/chtholly`，而在 macOS 下，其主目录位于 `/Users/chtholly`．
+Before the `>`, `$`, or `#` on the command line, a path is displayed. This path is the working directory, or current directory. On Unix, the current directory is sometimes displayed in a form like `~/folder`, where the leading `~` is the home directory of the currently logged-in user. The home directory of user `chtholly` is different on different systems: on Linux, it is located at `/home/chtholly`, while on macOS, it is located at `/Users/chtholly`.
 
-## 语法和常用命令[^1]
+## Syntax and Common Commands[^1]
 
-### 文件系统相关
+### File System Related
 
-先介绍文件系统里描述位置的两种方式，相对路径和绝对路径．
+First, let's introduce two ways to describe positions in the file system: relative paths and absolute paths.
 
--   相对路径：用相对当前路径的位置关系来描述位置．例如当前路径为 `~/folder`，则 `./a.cpp` 实际上指的就是 `~/folder/a.cpp` 这个文件．**随着当前路径的变化，相对路径描述的位置也可能发生改变**．
+-   Relative path: Uses a position relationship relative to the current path. For example, if the current path is `~/folder`, then `./a.cpp` actually refers to the file `~/folder/a.cpp`. **As the current path changes, the position described by a relative path may also change**.
 
--   绝对路径：用完整的路径来描述位置．例如 `~/folder/a.cpp` 就是一个绝对路径的例子．**绝对路径描述的位置不随当前路径的变化而改变**．
+-   Absolute path: Uses a complete path to describe a position. For example, `~/folder/a.cpp` is an example of an absolute path. **The position described by an absolute path does not change with the current path**.
 
-    Windows/Unix 用 `.` 代表当前目录，`..` 代表当前目录的父目录．特别地，在 Unix 下，用 `~` 表示用户主目录（注意 `~` 由 shell 展开，因此在其他地方可能不可用）．
+    Windows/Unix uses `.` to represent the current directory, and `..` to represent the parent directory of the current directory. Specifically, on Unix, `~` represents the user's home directory (note that `~` is expanded by the shell, so it may not work in other places).
 
-在 Unix 下，使用 `pwd` 命令可以打印当前的目录（在 Windows PowerShell 中也有此命令，但在 Windows 命令提示符中无此命令，详情见下面的提示）．在 Windows/Unix 中，`cd <目录>` 命令都可以切换当前的目录．例如，`cd folder` 会切换到当前目录的 `folder` 子目录；`cd ..` 会切换到当前目录的父目录．
+On Unix, you can use the `pwd` command to print the current directory (this command also exists in Windows PowerShell, but not in Windows Command Prompt; see the note below for details). In Windows/Unix, the `cd <directory>` command can change the current directory. For example, `cd folder` will change to the `folder` subdirectory of the current directory; `cd ..` will change to the parent directory of the current directory.
 
-???+ note "对 Windows 命令提示符的特别提示"
-    在 Windows 命令提示符中并没有 `pwd` 命令，但可以用没有任何参数的 `cd` 命令近似代替．
-    
-    同时，需要注意的是，在 Windows 命令提示符下使用 `cd` 命令切换目录，如果 **切换到的目录的盘符与当前目录的盘符不同**，则当前目录不会改变．你可以再敲一遍切换到的路径的盘符，也可以使用 `cd /d <目录>` 命令来同时切换盘符．两种方法对应的命令行界面如下：
+???+ note "Special Note for Windows Command Prompt"
+    There is no `pwd` command in Windows Command Prompt, but you can use the `cd` command without any parameters as an approximation.
+
+    Also, note that when using the `cd` command to change directories in Windows Command Prompt, if **the drive letter of the directory to change to is different from the current directory's drive letter**, the current directory will not change. You can type the drive letter of the path you want to change to again, or you can use the `cd /d <directory>` command to change the drive letter at the same time. The command line interfaces for the two methods are as follows:
     
     ```doscon
     C:\Users\Libaray>cd D:\Codes
@@ -72,36 +72,36 @@ root@seniorious:~# apt-get install gcc
     D:\Codes>
     ```
 
-在 Windows 下，使用 `dir` 命令可以列出当前目录的文件列表．在 Unix 下，列出文件列表的命令是 `ls`．特别的，在 PowerShell 下，可以使用与 Unix 相同的 `ls` 命令．
+On Windows, you can use the `dir` command to list the files in the current directory. On Unix, the command to list files is `ls`. Specifically, on PowerShell, you can use the same `ls` command as Unix.
 
-在 Windows 下，使用 `md <目录>` 或者 `mkdir <目录>` 命令创建一个新目录，使用 `rd <目录>` 或者 `rmdir <目录>` 命令删除一个目录．在 Unix 下，这两个命令分别是 `mkdir` 和 `rmdir`．需要注意的是，**使用 `rd` 或是 `rmdir` 删除一个目录前，这个目录必须是空的**．如果想要删除非空目录（和该目录下的所有文件）的话，Unix 下可以执行 `rm -r <目录>` 命令，Windows 下可以执行 `rd /s <目录>` 命令．
+On Windows, you can use `md <directory>` or `mkdir <directory>` to create a new directory, and use `rd <directory>` or `rmdir <directory>` to delete a directory. On Unix, these two commands are `mkdir` and `rmdir` respectively. Note that **before using `rd` or `rmdir` to delete a directory, the directory must be empty**. If you want to delete a non-empty directory (and all files under that directory), you can execute `rm -r <directory>` on Unix, and `rd /s <directory>` on Windows.
 
-### 重定向机制
+### Redirection Mechanism
 
-> 我编译了一个程序，它从标准输入读入，并输出到标准输出．然而输入文件和输出文件都很大，这时候能不能想办法把输入重定向到指定的输入文件，输出重定向到指定的输出文件呢？
+> I compiled a program that reads from standard input and outputs to standard output. However, both the input file and output file are very large. Is there a way to redirect the input to a specified input file and redirect the output to a specified output file?
 
-使用如下命令即可实现．
+You can achieve this with the following command:
 
 ```console
 $ command < input > output
 ```
 
-例如，`./prog < 1.in > 1.out` 这个命令就将让 `prog` 这个程序从当前目录下的 `1.in` 中读入数据，并将程序输出覆盖写入到 `1.out`．
+For example, the command `./prog < 1.in > 1.out` will make `prog` read data from `1.in` in the current directory and overwrite the program output to `1.out`.
 
 ???+ warning "Warning"
-    `1.out` 原本的内容会被覆盖，如果想要在原输出文件末尾追加写入，请使用 `>>`，即 `./prog >> 1.out` 的方式做输出重定向
+    The original content of `1.out` will be overwritten. If you want to append to the original output file, use `>>`, i.e., use `./prog >> 1.out` for output redirection.
 
-注意，PowerShell 只支持输出重定向，不支持输入重定向．
+Note that PowerShell only supports output redirection, not input redirection.
 
-事实上，大多数 OJ 都采用了这样的重定向机制．选手提交的程序采用标准输入输出，通过重定向机制，就可以让选手的程序从给定的输入文件读入数据，输出到指定的输出文件，再进行文件比较就可以评测了．
+In fact, most OJs use such a redirection mechanism. The program submitted by the contestants uses standard input/output. Through the redirection mechanism, the contestant's program can read from the given input file, output to the specified output file, and then file comparison can be used for evaluation.
 
-### 执行程序
+### Executing Programs
 
-对于一个可执行程序或是批处理脚本，只需在命令行里直接输入它的文件名即可执行它．
+For an executable program or batch script, you can simply enter its filename on the command line to execute it.
 
-当然，执行一个文件时，命令行并不会把所有目录下的文件都找一遍．环境变量 `PATH` 描述了命令行搜索路径的范围，命令行会在 `PATH` 中的路径寻找目标文件．
+Of course, when executing a file, the command line does not search all files in every directory. The environment variable `PATH` describes the scope of the command line's search path, and the command line will look for the target file in the paths in `PATH`.
 
-对于 Windows 系统，**当前目录也在命令行的默认搜索范围内**．例如 Windows 系统中，输入 `hello` 命令就可以执行当前目录下的 `hello.exe`．但是在 PowerShell 中，PowerShell 默认不会从当前目录寻找可执行文件（这与在 Unix 的行为一致），因而在 PowerShell 中需要使用相对路径或绝对路径调用当前目录下的可执行文件，例如 `.\hello.exe`，否则，你将看到以下报错：
+For Windows systems, **the current directory is also in the command line's default search scope**. For example, in Windows, entering the `hello` command can execute `hello.exe` in the current directory. However, in PowerShell, PowerShell by default does not look for executable files in the current directory (this is consistent with Unix behavior). Therefore, in PowerShell, you need to use a relative or absolute path to call executables in the current directory, for example `.\hello.exe`. Otherwise, you will see the following error:
 
 ```ps1con
 PS> hello
@@ -116,7 +116,7 @@ current location by default. If you trust this command, instead type:
 ".\hello". See "get-help about_Command_Precedence" for more details.
 ```
 
-在 Unix 系统中，**当前目录并不在命令行的默认搜索范围内**，所以执行当前目录下的 `hello` 程序的命令就变成了 `./hello`:
+In Unix systems, **the current directory is not in the command line's default search scope**, so the command to execute the `hello` program in the current directory becomes `./hello`:
 
 ```console
 $ hello
@@ -125,111 +125,111 @@ $ ./hello
 Hello World!
 ```
 
-### 总结
+### Summary
 
-上面介绍的用法只是命令行命令的一小部分，还有很多命令没有涉及到．在命令行里输入帮助命令 `help`，可以查询所有基本命令以及它们的用途．
+The usage introduced above is only a small part of command line commands. There are many commands not covered. Enter the help command `help` on the command line to query all basic commands and their purposes.
 
-下面给出 Windows 系统和 Unix 系统的命令对照表，以供参考．
+Below is a comparison table of Windows and Unix commands for reference.
 
-| 分类   | Windows 系统 | Unix 系统 |
+| Category   | Windows System | Unix System |
 | ---- | ---------- | ------- |
-| 文件列表 | `dir`      | `ls`    |
-| 切换目录 | `cd`       | `cd`    |
-| 建立目录 | `md`       | `mkdir` |
-| 删除目录 | `rd`       | `rmdir` |
-| 比较文件 | `fc`       | `diff`  |
-| 复制文件 | `copy`     | `cp`    |
-| 移动文件 | `move`     | `mv`    |
-| 文件改名 | `ren`      | `mv`    |
-| 删除文件 | `del`      | `rm`    |
+| List files | `dir`      | `ls`    |
+| Change directory | `cd`       | `cd`    |
+| Create directory | `md`       | `mkdir` |
+| Remove directory | `rd`       | `rmdir` |
+| Compare files | `fc`       | `diff`  |
+| Copy files | `copy`     | `cp`    |
+| Move files | `move`     | `mv`    |
+| Rename files | `ren`      | `mv`    |
+| Delete files | `del`      | `rm`    |
 
-## 使用命令行编译/调试
+## Compiling/Debugging from Command Line
 
-参见：[命令行编译与调试](compile-debug.md)．
+See: [Command Line Compilation and Debugging](compile-debug.md).
 
-## 命令行使用技巧
+## Command Line Tips
 
-### 自动补全
+### Auto-completion
 
-补全是 Shell 提供的基本功能之一，主要用于减少命令行使用中的输入量和 typo 概率．
+Completion is one of the basic features provided by Shell, mainly used to reduce the amount of input and probability of typos during command line usage.
 
-一般情况下，使用补全的快捷键一般是<kbd>Tab</kbd>，按下后 Shell 会根据已输入的字符补全信息．
+Generally, the shortcut key for completion is <kbd>Tab</kbd>. After pressing it, Shell will complete the information based on the characters already entered.
 
-不同的 Shell 提供了能力不尽相同的补全能力．
+Different Shells provide completion capabilities of varying quality.
 
-以下是常见 Shell 的补全能力[^autocomplete]：
+Below is the completion capability of common Shells[^autocomplete]:
 
-| Shell               | 补全能力（补全范围）                                               |
+| Shell               | Completion Capability (Scope)                                            |
 | ------------------- | -------------------------------------------------------- |
-| cmd（Windows 的传统控制台） | 文件路径                                                     |
-| PowerShell          | 文件路径、PATH 中的命令名、内建命令名、函数名、命令参数，支持模糊匹配，自动纠错               |
-| Bash                | 文件路径、PATH 中的命令名、内建命令名、函数名、命令参数                           |
-| Zsh                 | 文件路径、PATH 中的命令名、内建命令名、函数名、命令参数，支持模糊匹配，自动纠错和建议            |
-| Fish                | 文件路径、PATH 中的命令名、内建命令名、函数名、命令参数，支持模糊匹配，补全时可显示参数功能，自动纠错和建议 |
+| cmd (Windows traditional console) | File paths                                             |
+| PowerShell          | File paths, command names in PATH, built-in command names, function names, command parameters, supports fuzzy matching, auto-correction |
+| Bash                | File paths, command names in PATH, built-in command names, function names, command parameters |
+| Zsh                 | File paths, command names in PATH, built-in command names, function names, command parameters, supports fuzzy matching, auto-correction and suggestions |
+| Fish                | File paths, command names in PATH, built-in command names, function names, command parameters, supports fuzzy matching, can display parameter functions during completion, auto-correction and suggestions |
 
 ???+ note "Note"
-    PowerShell 的部分功能需要 PSReadline Module 载入或者位于 PowerShell ISE 中．  
-    Bash 的补全功能一般需要一个名为 `bash-completions` 的包才能获得完整功能，部分软件的补全文件由软件包自带．  
-    Zsh 完整的补全功能需要配合用户预定义的文件（一般随 Zsh 包或对应软件包安装）．  
-    Fish 在默认配置下提供良好完整的补全功能，但仍有部分官方未覆盖到的软件的补全文件由软件自行提供．
+    Some PowerShell features require the PSReadline Module to be loaded or be in PowerShell ISE.  
+    Bash's completion functionality generally requires a package named `bash-completions` to get full functionality. Completion files for some software are provided by the software package itself.  
+    Zsh's complete completion functionality needs to work with user-defined files (generally installed with the Zsh package or corresponding software package).  
+    Fish provides good and complete completion functionality in default configuration, but completion files for some software not covered by officials are provided by the software itself.
 
-### 帮助文档
+### Help Documentation
 
-一般来说，命令行下的程序都附有「帮助」，Windows 下一般使用 `command /?` 或者 `command -?` 获取，Unix-like（例如 Linux）上一般使用 `command --help` 或者 `command -h` 获取（但是 BSD 下的「帮助」往往过分简略而难以使用）．
+Generally, programs on the command line come with "help". On Windows, you can usually get it via `command /?` or `command -?`. On Unix-like (e.g., Linux), you can usually get it via `command --help` or `command -h` (but "help" under BSD is often too brief to be useful).
 
-此外，在 Unix-like 系统上，还有可通过 `man command` 获取的「手册」(manual)，相比「帮助」一般更为详细．
+Additionally, on Unix-like systems, there is also a "manual" that can be obtained via `man command`, which is generally more detailed than "help".
 
-### built-in time 和 GNU time
+### built-in time and GNU time
 
-测试程序运行时间时，我们通常可以使用 `time` 命令．
+When testing program runtime, we can usually use the `time` command.
 
-但是这个命令实际上在系统中有两个对应的命令：一个是部分 Shell（例如 Bash）内建的命令，一个是 GNU time（是一个单独的软件）．这两个之间存在一些差异．
+But this command actually corresponds to two commands in the system: one is a built-in command in some Shells (such as Bash), and the other is GNU time (a separate software). There are some differences between them.
 
-一般在 Bash 中直接使用 `time` 调用的是 Bash 内建的版本，我们可以使用 `TIMEFORMAT` 环境变量控制其输出格式，例如将其设为 `%3lR` 即可输出三位精度的实际运行时间，`%3lU` 即可输出三位精度的用户空间运行时间．[^bash-time-format]
+Generally, using `time` directly in Bash calls the Bash built-in version. We can use the `TIMEFORMAT` environment variable to control its output format. For example, setting it to `%3lR` will output the actual running time with three-digit precision, and `%3lU` will output the user-space running time with three-digit precision.[^bash-time-format]
 
-如果想要调用 GNU 版本的 time，则需使用 `\time` 或者 `/usr/bin/time` 调用，但是它的输出格式并不易读，我们可以附加 `-p` 参数（即为 `\time -p`）来获得易读的输出．
+If you want to call the GNU version of time, you need to use `\time` or `/usr/bin/time`. However, its output format is not easy to read. We can add the `-p` parameter (i.e., `\time -p`) to get readable output.
 
-## 管道
+## Pipes
 
-假设我们现在有两个程序 A 和 B，都用标准输入输出，如何让 A 的输出重定向到 B 的输入？
+Suppose we now have two programs A and B, both using standard input/output. How to redirect A's output to B's input?
 
-我们可以使用上文中提到的重定向的方式，先把 A 的输出重定向到一个临时文件，在把 B 的输入重定向到这个临时文件上．
+We can use the redirection method mentioned above, first redirect A's output to a temporary file, then redirect B's input to this temporary file.
 
-但这个方法很低效，不仅需要创建新的文件，磁盘 IO 的操作也可能成为瓶颈，而且两个程序不能同时运行，必须等 A 跑完了才能开始跑 B．有没有更好的方法？
+But this method is very inefficient. It not only requires creating new files, but disk IO operations may also become a bottleneck, and the two programs cannot run at the same time; B can only start after A finishes. Is there a better way?
 
-有，那就是 **管道**，使用起来也非常简单，如下操作即可：
+Yes, that's **pipes**, which are also very simple to use, as follows:
 
 ```console
 $ A | B
 ```
 
-这会在内存创建一个管道，然后两个程序被同时启动．程序 A 每次要输出被重定向到这个管道中，而这个管道本身不会存储数据（其实有一个很小的缓冲区）．在 B 读取之前，A 的输出操作会被阻塞，等到 B 把数据读入以后，A 的输出才能继续进行．这样优美地解决了上述的问题，没有磁盘 IO 操作，两份代码同时运行，也没有额外消耗很多的内存储存中间结果．
+This creates a pipe in memory, and then both programs are started simultaneously. Each time program A's output is redirected to this pipe, and this pipe itself does not store data (there is actually a very small buffer). Before B reads the data, A's output operation will be blocked. After B reads the data, A's output can continue. This elegantly solves the above problem: no disk IO operations, both programs run simultaneously, and no extra memory consumption to store intermediate results.
 
-### 命名管道
+### Named Pipes
 
-有时候我们不只是要把一个程序的输出重定向到另一个的输入．比如在做 IO 交互题的时候，经常需要将 A 的输出重定向到 B 的输入，B 的输出重定向到 A 的输出，这个时候用上文提到的普通管道就无能为力了．而重定向到文件，有无法让两个程序同时运行．这个时候就需要一个长得像文件的管道——命名管道．
+Sometimes we don't just want to redirect one program's output to another's input. For example, when doing IO interaction problems, we often need to redirect A's output to B's input and B's output to A's input. In this case, the ordinary pipe mentioned above is helpless. And redirecting to files makes it impossible for the two programs to run at the same time. At this point, we need a pipe that looks like a file—named pipe.
 
-在 Unix 系统中，可以使用如下命令创建命名管道（以命名为 `my_pipe` 举例）：
+On Unix systems, you can use the following command to create a named pipe (using `my_pipe` as the name):
 
 ```console
 $ mkfifo my_pipe
 ```
 
-这个时候使用 `ls` 命令列出当前目录下的文件，会发现多了一个 `my_pipe|` 的文件．这就创建了一个命名管道，文件名后的 `|` 代表这是一个管道文件．然后就可以像文件的重定向一样向这个管道中读写了．
+At this time, using the `ls` command to list files in the current directory, you will find an additional file named `my_pipe|`. This creates a named pipe. The `|` after the filename indicates that this is a pipe file. Then you can read from and write to this pipe just like file redirection.
 
-通过命名管道，我们可以通过这样的方式让两个程序交互：
+Through named pipes, we can make two programs interact in this way:
 
 ```console
 $ mkfifo input output
-$ ./checker > input < output # 这里一定要把 > input 写在前面，不然 shell 会先打开 output 管道，而这个管道现在并没有东西，会阻塞 checker 的运行．
+$ ./checker > input < output # Here you must write > input first, otherwise the shell will open the output pipe first, and since this pipe has nothing in it now, it will block checker's execution.
 $ ./my_code < input > output
 ```
 
-使用完后，可以像普通文件一样用 `rm` 命令删除命名管道．
+After use, you can delete the named pipe with the `rm` command just like a regular file.
 
-## 参考资料与注释
+## References and Notes
 
-[^1]: 刘汝佳《算法竞赛入门经典（第 2 版）》附录 A 开发环境与方法
+[^1]: Liu Rujia "Introduction to Algorithms (2nd Edition)" Appendix A Development Environment and Methods
 
 [^autocomplete]: [Comparison\_of\_command\_shells#Interactive\_features](https://en.wikipedia.org/wiki/Comparison_of_command_shells#Interactive_features)
 

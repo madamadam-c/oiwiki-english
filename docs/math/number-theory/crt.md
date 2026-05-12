@@ -1,18 +1,18 @@
-## 引入
+## Introduction
 
-> 「物不知数」问题：有物不知其数，三三数之剩二，五五数之剩三，七七数之剩二．问物几何？
+> The "Counting Objects" problem: There are objects of unknown number, when counted by 3, the remainder is 2; when counted by 5, the remainder is 3; when counted by 7, the remainder is 2. What is the number of objects?
 
-即求满足以下条件的整数：除以 $3$ 余 $2$，除以 $5$ 余 $3$，除以 $7$ 余 $2$．
+That is, find an integer satisfying: leave remainder 2 when divided by 3, leave remainder 3 when divided by 5, leave remainder 2 when divided by 7.
 
-该问题最早见于《孙子算经》中，并有该问题的具体解法．宋朝数学家秦九韶于 1247 年《数书九章》卷一、二《大衍类》对「物不知数」问题做出了完整系统的解答．上面具体问题的解答口诀由明朝数学家程大位在《算法统宗》中给出：
+This problem first appeared in Sunzi's Arithmetic, and there was a specific solution method. In the Song Dynasty, mathematician Qin Jiushao gave a complete and systematic solution to the "Counting Objects" problem in 1247 in the first and second volumes of "Mathematical Treatise in Nine Chapters" ("Shushu Jiuzhang"). The solution rhyme for the specific problem was given by mathematician Cheng Dawei in the Ming Dynasty in "General Meaning of Algorithms" ("Suanfa Tongzong"):
 
-> 三人同行七十希，五树梅花廿一支，七子团圆正半月，除百零五便得知．
+> Three people together get seventy, five plum blossoms make twenty-one, seven sons reunite for half a month, subtract one hundred and five to get it.
 
-$2\times 70+3\times 21+2\times 15=233=2\times 105+23$，故答案为 $23$．
+$2\times 70+3\times 21+2\times 15=233=2\times 105+23$, so the answer is $23$.
 
-## 定义
+## Definition
 
-中国剩余定理 (Chinese Remainder Theorem, CRT) 可求解如下形式的一元线性同余方程组（其中 $n_1, n_2, \cdots, n_k$ 两两互质）：
+The Chinese Remainder Theorem (CRT) can solve systems of linear congruences in the following form (where $n_1, n_2, \cdots, n_k$ are pairwise coprime):
 
 $$
 \begin{cases}
@@ -23,18 +23,18 @@ x &\equiv a_k \pmod {n_k} \\
 \end{cases}
 $$
 
-上面的「物不知数」问题就是一元线性同余方程组的一个实例．
+The above "Counting Objects" problem is an example of a system of linear congruences.
 
-## 过程
+## Process
 
-1.  计算所有模数的积 $n$；
-2.  对于第 $i$ 个方程：
-    1.  计算 $m_i=\frac{n}{n_i}$；
-    2.  计算 $m_i$ 在模 $n_i$ 意义下的 [逆元](./inverse.md)  $m_i^{-1}$；
-    3.  计算 $c_i=m_im_i^{-1}$（**不要对 $n_i$ 取模**）．
-3.  方程组在模 $n$ 意义下的唯一解为：$x=\sum_{i=1}^k a_ic_i \pmod n$．
+1.  Calculate the product $n$ of all moduli;
+2.  For the $i$-th equation:
+    1.  Calculate $m_i=\frac{n}{n_i}$;
+    2.  Calculate the [inverse](./inverse.md) $m_i^{-1}$ of $m_i$ modulo $n_i$;
+    3.  Calculate $c_i=m_im_i^{-1}$ (**do not take modulo with $n_i$**).
+3.  The unique solution modulo $n$ is: $x=\sum_{i=1}^k a_ic_i \pmod n$.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
@@ -65,40 +65,40 @@ $$
         return (ans % n + n) % n
     ```
 
-## 证明
+## Proof
 
-我们需要证明上面算法计算所得的 $x$ 对于任意 $i=1,2,\cdots,k$ 满足 $x\equiv a_i \pmod {n_i}$．
+We need to prove that the $x$ calculated by the above algorithm satisfies $x\equiv a_i \pmod {n_i}$ for any $i=1,2,\cdots,k$.
 
-当 $i\neq j$ 时，有 $m_j \equiv 0 \pmod {n_i}$，故 $c_j \equiv m_j \equiv 0 \pmod {n_i}$．又有 $c_i \equiv m_i \cdot (m_i^{-1} \bmod {n_i}) \equiv 1 \pmod {n_i}$，所以我们有：
+When $i\neq j$, we have $m_j \equiv 0 \pmod {n_i}$, so $c_j \equiv m_j \equiv 0 \pmod {n_i}$. Also, $c_i \equiv m_i \cdot (m_i^{-1} \bmod {n_i}) \equiv 1 \pmod {n_i}$. So we have:
 
 $$
 \begin{aligned}
 x&\equiv \sum_{j=1}^k a_jc_j                      &\pmod {n_i} \\
- &\equiv a_ic_i                                   &\pmod {n_i} \\
- &\equiv a_i \cdot m_i \cdot (m^{-1}_i \bmod n_i) &\pmod {n_i} \\
- &\equiv a_i                                      &\pmod {n_i}
+  &\equiv a_ic_i                                   &\pmod {n_i} \\
+  &\equiv a_i \cdot m_i \cdot (m^{-1}_i \bmod n_i) &\pmod {n_i} \\
+  &\equiv a_i                                      &\pmod {n_i}
 \end{aligned}
 $$
 
-即对于任意 $i=1,2,\cdots,k$，上面算法得到的 $x$ 总是满足 $x\equiv a_i \pmod{n_i}$，即证明了解同余方程组的算法的正确性．
+That is, for any $i=1,2,\cdots,k$, the $x$ obtained from the above algorithm always satisfies $x\equiv a_i \pmod{n_i}$, which proves the correctness of the algorithm for solving the system of congruences.
 
-因为我们没有对输入的 $a_i$ 作特殊限制，所以任何一组输入 $\{a_i\}$ 都对应一个解 $x$．另外，若 $x\neq y$，则总存在 $i$ 使得 $x$ 和 $y$ 在模 $n_i$ 下不同余．故系数列表 $\{a_i\}$ 与解 $x$ 之间是一一映射关系，方程组总是有唯一解．
+Since we did not impose special restrictions on the inputs $a_i$, any set of inputs $\{a_i\}$ corresponds to a solution $x$. Furthermore, if $x\neq y$, then there always exists an $i$ such that $x$ and $y$ are not congruent modulo $n_i$. Therefore, there is a one-to-one correspondence between the coefficient list $\{a_i\}$ and the solution $x$, and the system always has a unique solution.
 
-## 解释
+## Explanation
 
-下面演示 CRT 如何解「物不知数」问题．
+Below is a demonstration of how CRT solves the "Counting Objects" problem.
 
-1.  $n=3\times 5\times 7=105$；
-2.  三人同行 **七十** 希：$n_1=3, m_1=n/n_1=35, m_1^{-1}\equiv 2\pmod 3$，故 $c_1=35\times 2=70$；
-3.  五树梅花 **廿一** 支：$n_2=5, m_2=n/n_2=21, m_2^{-1}\equiv 1\pmod 5$，故 $c_2=21\times 1=21$；
-4.  七子团圆正 **半月**：$n_3=7, m_3=n/n_3=15, m_3^{-1}\equiv 1\pmod 7$，故 $c_3=15\times 1=15$；
-5.  所以方程组的唯一解为 $x\equiv 2\times 70+3\times 21+2\times 15\equiv 233\equiv 23 \pmod {105}$．（除 **百零五** 便得知）
+1.  $n=3\times 5\times 7=105$;
+2.  Three people together get **seventy**: $n_1=3, m_1=n/n_1=35, m_1^{-1}\equiv 2\pmod 3$, so $c_1=35\times 2=70$;
+3.  Five plum blossoms make **twenty-one**: $n_2=5, m_2=n/n_2=21, m_2^{-1}\equiv 1\pmod 5$, so $c_2=21\times 1=21$;
+4.  Seven sons reunite for **half a month**: $n_3=7, m_3=n/n_3=15, m_3^{-1}\equiv 1\pmod 7$, so $c_3=15\times 1=15$;
+5.  So the unique solution of the system is $x\equiv 2\times 70+3\times 21+2\times 15\equiv 233\equiv 23 \pmod {105}$. (Subtract **one hundred and five** to get it)
 
-## Garner 算法
+## Garner Algorithm
 
-CRT 的另一个用途是用一组比较小的质数表示一个大的整数．
+Another use of CRT is to represent a large integer using a set of relatively small prime numbers.
 
-例如，若 $a$ 满足如下线性方程组，且 $a < \prod_{i=1}^k p_i$（其中 $p_i$ 为质数）：
+For example, if $a$ satisfies the following system of linear equations, and $a < \prod_{i=1}^k p_i$ (where $p_i$ are prime numbers):
 
 $$
 \begin{cases}
@@ -109,33 +109,33 @@ a &\equiv a_k \pmod {p_k} \\
 \end{cases}
 $$
 
-我们可以用以下形式的式子（称作 $a$ 的混合基数表示）表示 $a$：
+We can represent $a$ in the following form (called the mixed radix representation of $a$):
 
 $$
 a = x_1 + x_2 p_1 + x_3 p_1 p_2 + \ldots + x_k p_1 \ldots p_{k-1}
 $$
 
-**Garner 算法** 将用来计算系数 $x_1, \ldots, x_k$．
+The **Garner algorithm** will be used to compute the coefficients $x_1, \ldots, x_k$.
 
-令 $r_{ij}$ 为 $p_i$ 在模 $p_j$ 意义下的 [逆](./inverse.md)：
+Let $r_{ij}$ be the [inverse](./inverse.md) of $p_i$ modulo $p_j$:
 
 $$
 p_i \cdot r_{i,j} \equiv 1 \pmod{p_j}
 $$
 
-把 $a$ 代入我们得到的第一个方程：
+Substituting $a$ into the first equation we obtained:
 
 $$
 a_1 \equiv x_1 \pmod{p_1}
 $$
 
-代入第二个方程得出：
+Substituting into the second equation gives:
 
 $$
 a_2 \equiv x_1 + x_2 p_1 \pmod{p_2}
 $$
 
-方程两边减 $x_1$，除 $p_1$ 后得
+Subtracting $x_1$ from both sides and dividing by $p_1$:
 
 $$
 \begin{aligned}
@@ -145,13 +145,13 @@ $$
 \end{aligned}
 $$
 
-类似地，我们可以得到：
+Similarly, we can get:
 
 $$
 x_k=(\dots((a_k-x_1)r_{1,k}-x_2)r_{2,k})-\dots)r_{k-1,k} \bmod p_k
 $$
 
-??? note "实现"
+??? note "Implementation"
     === "C++"
         ```cpp
         for (int i = 0; i < k; ++i) {
@@ -175,7 +175,7 @@ $$
                     x[i] = x[i] + p[i]
         ```
 
-该算法的时间复杂度为 $O(k^2)$．实际上 Garner 算法并不要求模数为质数，只要求模数两两互质，我们有如下伪代码：
+The time complexity of this algorithm is $O(k^2)$. In fact, Garner algorithm does not require the moduli to be prime; it only requires them to be pairwise coprime. We have the following pseudocode:
 
 $$
 \begin{array}{ll}
@@ -188,49 +188,49 @@ $$
 3&\qquad x\gets v_0 \\
 4&\qquad \textbf{for }i\text{ from }1\text{ to }(n-1)\textbf{ do} \\
 5&\qquad \qquad u\gets (v_i-x)\cdot C_i\bmod{m_i} \\
-6&\qquad \qquad x\gets x+u\prod_{j=0}^{i-1}m_j \\
+6&\qquad x\gets x+u\prod_{j=0}^{i-1}m_j \\
 7&\qquad \textbf{return }(x)
 \end{array}
 $$
 
-可以发现在第六行中的计算过程对应上述混合基数的表示．
+It can be found that the computation process in line six corresponds to the representation of the mixed radix mentioned above.
 
-## 应用
+## Applications
 
-某些计数问题或数论问题出于加长代码、增加难度、或者是一些其他原因，给出的模数：**不是质数**！
+Some counting problems or number theory problems, for the purposes of making the code longer, increasing the difficulty, or for other reasons, give moduli that are **not prime**!
 
-但是对其质因数分解会发现它没有平方因子，也就是该模数是由一些不重复的质数相乘得到．
+However, upon factorizing it, we find that it has no square factors, that is, the modulus is composed of several distinct prime numbers multiplied together.
 
-那么我们可以分别对这些模数进行计算，最后用 CRT 合并答案．
+Then we can compute for each of these moduli separately and finally merge the answers using CRT.
 
-下面这道题就是一个不错的例子．
+The following problem is a good example.
 
-???+ note "[洛谷 P2480 \[SDOI2010\] 古代猪文](https://www.luogu.com.cn/problem/P2480)"
-    给出 $G,n$（$1 \leq G,n \leq 10^9$），求：
+???+ note "[Luogu P2480 [SDOI2010] Ancient Pig Documents](https://www.luogu.com.cn/problem/P2480)"
+    Given $G,n$ ($1 \leq G,n \leq 10^9$), find:
     
     $$
     G^{\sum_{k\mid n}\binom{n}{k}} \bmod 999~911~659
     $$
 
-首先，当 $G=999~911~659$ 时，所求显然为 $0$．
+First, when $G=999~911~659$, the answer is obviously $0$.
 
-否则，根据 [欧拉定理](./fermat.md)，可知所求为：
+Otherwise, according to [Euler's Theorem](./fermat.md), the answer is:
 
 $$
 G^{\sum_{k\mid n}\binom{n}{k} \bmod 999~911~658} \bmod 999~911~659
 $$
 
-现在考虑如何计算：
+Now consider how to compute:
 
 $$
 \sum_{k\mid n}\binom{n}{k} \bmod 999~911~658
 $$
 
-因为 $999~911~658$ 不是质数，无法保证 $\forall x \in [1,999~911~657]$，$x$ 都有逆元存在，上面这个式子我们无法直接计算．
+Since $999~911~658$ is not prime, it cannot be guaranteed that for all $x \in [1,999~911~657]$, $x$ has an inverse. This expression cannot be computed directly.
 
-注意到 $999~911~658=2 \times 3 \times 4679 \times 35617$，其中每个质因子的最高次数均为一，我们可以考虑分别求出 $\sum_{k\mid n}\binom{n}{k}$ 在模 $2$，$3$，$4679$，$35617$ 这几个质数下的结果，最后用中国剩余定理来合并答案．
+Note that $999~911~658=2 \times 3 \times 4679 \times 35617$, where each prime factor appears at most once. We can consider computing $\sum_{k\mid n}\binom{n}{k}$ modulo $2$, $3$, $4679$, and $35617$ respectively, and finally merge the answers using the Chinese Remainder Theorem.
 
-也就是说，我们实际上要求下面一个线性方程组的解：
+That is, we actually need to find the solution to the following system of linear equations:
 
 $$
 \begin{cases}
@@ -241,31 +241,31 @@ x \equiv a_4 \pmod {35617}
 \end{cases}
 $$
 
-而计算一个组合数对较小的质数取模后的结果，可以利用 [卢卡斯定理](./lucas.md)．
+And computing a binomial coefficient modulo a relatively small prime can use [Lucas' Theorem](./lucas.md).
 
-## 扩展：模数不互质的情况
+## Extension: Non-coprime Moduli
 
-### 两个方程
+### Two Equations
 
-设两个方程分别是 $x\equiv a_1 \pmod {m_1}$、$x\equiv a_2 \pmod {m_2}$；
+Let the two equations be $x\equiv a_1 \pmod {m_1}$, $x\equiv a_2 \pmod {m_2`;
 
-将它们转化为不定方程：$x=m_1p+a_1=m_2q+a_2$，其中 $p, q$ 是整数，则有 $m_1p-m_2q=a_2-a_1$．
+Converting them to Diophantine equations: $x=m_1p+a_1=m_2q+a_2$, where $p, q$ are integers. Then we have $m_1p-m_2q=a_2-a_1$.
 
-由 [裴蜀定理](./bezouts.md)，当 $a_2-a_1$ 不能被 $\gcd(m_1,m_2)$ 整除时，无解；
+By [Bézout's Theorem](./bezouts.md), when $a_2-a_1$ cannot be divided by $\gcd(m_1,m_2)$, there is no solution;
 
-其他情况下，可以通过 [扩展欧几里得算法](./gcd.md) 解出来一组可行解 $(p, q)$；
+In other cases, we can solve a feasible solution $(p, q)$ using the [Extended Euclidean Algorithm](./gcd.md);
 
-则原来的两方程组成的模方程组的解为 $x\equiv b\pmod M$，其中 $b=m_1p+a_1$，$M=\text{lcm}(m_1, m_2)$．
+Then the solution to the system of modular equations composed of the two original equations is $x\equiv b\pmod M$, where $b=m_1p+a_1$, $M=\text{lcm}(m_1, m_2)$.
 
-### 多个方程
+### Multiple Equations
 
-用上面的方法两两合并即可．
+Merge them pairwise using the above method.
 
-## 习题
+## Practice Problems
 
--   [【模板】中国剩余定理（CRT）/曹冲养猪](https://www.luogu.com.cn/problem/P1495)
--   [【模板】扩展中国剩余定理](https://www.luogu.com.cn/problem/P4777)
--   [「NOI2018」屠龙勇士](https://uoj.ac/problem/396)
--   [「TJOI2009」猜数字](https://www.luogu.com.cn/problem/P3868)
+-   [Template: Chinese Remainder Theorem (CRT)/Chao Cong Pig Raising](https://www.luogu.com.cn/problem/P1495)
+-   [Template: Extended Chinese Remainder Theorem](https://www.luogu.com.cn/problem/P4777)
+-   [NOI2018] Dragon Slayer](https://uoj.ac/problem/396)
+-   [TJOI2009] Guess the Number](https://www.luogu.com.cn/problem/P3868)
 
-    **本页面部分内容译自博文 [Китайская теорема об остатках](http://e-maxx.ru/algo/chinese_theorem) 与其英文翻译版 [Chinese Remainder Theorem](https://cp-algorithms.com/algebra/chinese-remainder-theorem.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+    **Part of this page is translated from [Китайская теорема об остатках](http://e-maxx.ru/algo/chinese_theorem) and its English translation [Chinese Remainder Theorem](https://cp-algorithms.com/algebra/chinese-remainder-theorem.html). The Russian version is in the Public Domain + Leave a Link; the English version is in CC-BY-SA 4.0.**

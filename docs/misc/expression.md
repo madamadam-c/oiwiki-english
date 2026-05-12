@@ -1,64 +1,64 @@
 author: Ir1d, Anguei, hsfzLZH1, siger-young, HeRaNO, c8ef
 
-表达式求值要解决的问题一般是输入一个字符串表示的表达式，要求输出它的值．当然也有变种比如表达式中是否包含括号，指数运算，含多少变量，判断多个表达式是否等价，等等．
+Expression evaluation generally solves the problem of inputting an expression represented as a string and outputting its value. Of course, there are also variants, such as whether the expression contains parentheses, exponentiation, how many variables it contains, determining whether multiple expressions are equivalent, and so on.
 
-表达式一般需要先进行语法分析（grammer parsing）再求值，也可以边分析边求值，语法分析的作用是检查输入的字符串是否是一个合法的表达式，一般使用语法分析器（parser）解决．
+Expressions usually need to be parsed (grammar parsing) before evaluation, though they can also be parsed and evaluated at the same time. The role of parsing is to check whether the input string is a valid expression, and this is usually handled by a parser.
 
-表达式包含两类字符：运算数和运算符．对于长度为 $n$ 的表达式，借助合适的分析方法，可以在 $O(n)$ 的时间复杂度内完成分析与求值．
+An expression contains two types of characters: operands and operators. For an expression of length $n$, with a suitable parsing method, parsing and evaluation can be completed in $O(n)$ time complexity.
 
-## 表达式树与逆波兰表达式
+## Expression Trees and Reverse Polish Notation
 
-一种递归分析表达式的方法是，将表达式当成普通的语法规则进行分析，分析后拆分成如图所示的表达式树，然后在树结构上自底向上进行运算．![](./images/bet.png)
+One recursive way to parse an expression is to analyze it as ordinary grammar rules, split it into an expression tree as shown in the figure, and then compute on the tree structure from bottom to top. ![](./images/bet.png)
 
-表达式树上进行 [树的遍历](../graph/tree-basic.md#树的遍历) 可以得到不同类型的表达式．算术表达式分为三种，分别是前缀表达式、中缀表达式、后缀表达式．中缀表达式是日常生活中最常用的表达式；后缀表达式是计算机容易理解的表达式．
+Performing [tree traversal](../graph/tree-basic.md#树的遍历) on an expression tree can produce different types of expressions. Arithmetic expressions are divided into three types: prefix expressions, infix expressions, and postfix expressions. Infix expressions are the most commonly used expressions in daily life; postfix expressions are easier for computers to understand.
 
--   前序遍历对应前缀表达式（波兰式）
--   中序遍历对应中缀表达式
--   后序遍历对应后缀表达式（逆波兰式）
+-   Preorder traversal corresponds to prefix notation (Polish notation)
+-   Inorder traversal corresponds to infix notation
+-   Postorder traversal corresponds to postfix notation (Reverse Polish notation)
 
-逆波兰表达式（后缀表达式）是书写数学表达式的一种形式，其中运算符位于其操作数之后．例如，以下表达式：
+Reverse Polish notation (postfix notation) is a form of writing mathematical expressions in which an operator is placed after its operands. For example, the following expression:
 
 $$
 a+b*c*d+(e-f)*(g*h+i)
 $$
 
-可以用逆波兰表达式书写：
+can be written in Reverse Polish notation as:
 
 $$
 abc*d*+ef-gh*i+*+
 $$
 
-因此，逆波兰表达式与表达式树一一对应．逆波兰表达式不需要括号表示，它的运算顺序是唯一确定的．
+Therefore, Reverse Polish notation corresponds one-to-one with expression trees. Reverse Polish notation does not need parentheses, and its order of operations is uniquely determined.
 
-逆波兰表达式的方便之处在于很容易在线性时间内计算．举个例子：在逆波兰表达式 $3~2~*~1~-$ 中，首先计算 $3 \times 2 = 6$（使用最后一个运算符，即栈顶运算符），然后计算 $6 - 1 = 5$．可以看到：对于一个逆波兰表达式，只需要 **维护一个数字栈，每次遇到一个运算符，就取出两个栈顶元素，将运算结果重新压入栈中**．最后，栈中唯一一个元素就是该逆波兰表达式的运算结果．该算法拥有 $O(n)$ 的时间复杂度．
+The convenience of Reverse Polish notation is that it is easy to evaluate in linear time. For example, in the Reverse Polish expression $3~2~*~1~-$, first compute $3 \times 2 = 6$ (using the last operator, that is, the top operator on the stack), then compute $6 - 1 = 5$. We can see that for a Reverse Polish expression, we only need to **maintain a stack of numbers; whenever an operator is encountered, take the top two stack elements, compute the result, and push the result back onto the stack**. Finally, the only element in the stack is the value of the Reverse Polish expression. This algorithm has $O(n)$ time complexity.
 
-采用递归的办法分析表达式是否成功，依赖于语法规则的设计是否合理，即，是否能够成功地得到指定的表达式树．例如：
+Whether recursive parsing of an expression succeeds depends on whether the grammar rules are reasonably designed, that is, whether they can successfully produce the specified expression tree. For example:
 
 $$
 a+b*c
 $$
 
-根据加号与乘号的运算优先级不同，该中缀表达式可能转化为两种不同的表达式树．可见，语法规则的设计高度依赖于运算符的优先级．借助运算符的优先级设计相应递归的语法规则，事实上是一件不容易的事情．
+Depending on the different precedence of addition and multiplication, this infix expression may be transformed into two different expression trees. It can be seen that the design of grammar rules depends heavily on operator precedence. Designing corresponding recursive grammar rules with the help of operator precedence is in fact not easy.
 
-下文介绍的办法将运算符与它的优先级视为一个整体，采用非递归的办法，直接根据运算符的优先级来分析与计算表达式．
+The method introduced below treats each operator together with its precedence as a whole, and uses a non-recursive approach to parse and evaluate expressions directly according to operator precedence.
 
-## 只含左结合的二元运算符的含括号表达式
+## Parenthesized Expressions with Only Left-Associative Binary Operators
 
-考虑简化的问题．假设所有运算符都是二元的：所有运算符都有两个参数．并且所有运算符都是左结合的：如果运算符的优先级相等，则从左到右执行．允许使用括号．
+Consider a simplified problem. Suppose all operators are binary: every operator has two arguments. Also suppose all operators are left-associative: if operators have equal precedence, they are evaluated from left to right. Parentheses are allowed.
 
-对于这种类型的中缀表达式的计算，可以将其转化为后缀表达式再进行计算．定义两个 [栈](../ds/stack.md) 来分别存储运算符和运算数，每当遇到一个数直接放进运算数栈．每个运算符块对应于一对括号，运算符栈只对于运算符块的内部单调．每当遇到一个操作符时，要查找运算符栈中最顶部运算符块中的元素，在运算符块的内部保持运算符按照优先级降序进行适当的弹出操作，弹出的同时求出对应的子表达式的值．
+To evaluate this type of infix expression, we can convert it to a postfix expression and then evaluate it. Define two [stacks](../ds/stack.md) to store operators and operands respectively. Whenever a number is encountered, put it directly onto the operand stack. Each operator block corresponds to a pair of parentheses, and the operator stack is monotonic only inside an operator block. Whenever an operator is encountered, look at the elements in the topmost operator block of the operator stack. Within the operator block, pop operators appropriately in descending order of precedence, and compute the value of the corresponding subexpression while popping.
 
-以下部分用「输出」表示输出到后缀表达式，即将该数字放在运算数栈上，或者弹出运算符和两个操作数，运算后再将结果压回运算数栈上．从左到右扫描该中缀表达式：
+In the following, "output" means outputting to the postfix expression: either put the number onto the operand stack, or pop an operator and two operands, compute the result, and push it back onto the operand stack. Scan the infix expression from left to right:
 
-1.  如果遇到数字，直接输出该数字．
-2.  如果遇到左括号，那么将其放在运算符栈上．
-3.  如果遇到右括号，不断输出栈顶元素，直至遇到左括号，左括号出栈．换句话说，执行一对括号内的所有运算符．
-4.  如果遇到其他运算符，不断输出所有运算优先级大于等于当前运算符的运算符．最后，新的运算符入运算符栈．
-5.  在处理完整个字符串之后，一些运算符可能仍然在堆栈中，因此把栈中剩下的符号依次输出，表达式转换结束．
+1.  If a number is encountered, output it directly.
+2.  If a left parenthesis is encountered, put it onto the operator stack.
+3.  If a right parenthesis is encountered, keep outputting the top stack element until a left parenthesis is encountered, then pop the left parenthesis. In other words, execute all operators inside the pair of parentheses.
+4.  If another operator is encountered, keep outputting all operators whose precedence is greater than or equal to that of the current operator. Finally, push the new operator onto the operator stack.
+5.  After the whole string has been processed, some operators may still remain in the stack, so output the remaining symbols in the stack in order. The expression conversion is then complete.
 
-以下是四个运算符 $+$、$-$、$*$、$/$ 的此方法的实现：
+The following is an implementation of this method for the four operators $+$, $-$, $*$, and $/$:
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     
     bool delim(char c) { return c == ' '; }
@@ -71,8 +71,8 @@ $$
       return -1;
     }
     
-    void process_op(stack<int>& st, char op) {  // 也可以用于计算后缀表达式
-      int r = st.top();                         // 取出栈顶元素，注意顺序
+    void process_op(stack<int>& st, char op) {  // Can also be used to evaluate postfix expressions
+      int r = st.top();                         // Take the top stack element; note the order
       st.pop();
       int l = st.top();
       st.pop();
@@ -92,28 +92,28 @@ $$
       }
     }
     
-    int evaluate(string& s) {  // 也可以改造为中缀表达式转换后缀表达式
+    int evaluate(string& s) {  // Can also be adapted to convert infix expressions to postfix expressions
       stack<int> st;
       stack<char> op;
       for (int i = 0; i < (int)s.size(); i++) {
         if (delim(s[i])) continue;
     
         if (s[i] == '(') {
-          op.push('(');  // 2. 如果遇到左括号，那么将其放在运算符栈上
-        } else if (s[i] == ')') {  // 3. 如果遇到右括号，执行一对括号内的所有运算符
+          op.push('(');  // 2. If a left parenthesis is encountered, put it onto the operator stack
+        } else if (s[i] == ')') {  // 3. If a right parenthesis is encountered, execute all operators inside the pair
           while (op.top() != '(') {
             process_op(st, op.top());
-            op.pop();  // 不断输出栈顶元素，直至遇到左括号
+            op.pop();  // Keep outputting the top stack element until a left parenthesis is encountered
           }
-          op.pop();                // 左括号出栈
-        } else if (is_op(s[i])) {  // 4. 如果遇到其他运算符
+          op.pop();                // Pop the left parenthesis
+        } else if (is_op(s[i])) {  // 4. If another operator is encountered
           char cur_op = s[i];
           while (!op.empty() && priority(op.top()) >= priority(cur_op)) {
             process_op(st, op.top());
-            op.pop();  // 不断输出所有运算优先级大于等于当前运算符的运算符
+            op.pop();  // Keep outputting all operators whose precedence is at least that of the current operator
           }
-          op.push(cur_op);  // 新的运算符入运算符栈
-        } else {            // 1. 如果遇到数字，直接输出该数字
+          op.push(cur_op);  // Push the new operator onto the operator stack
+        } else {            // 1. If a number is encountered, output it directly
           int number = 0;
           while (i < (int)s.size() && isalnum(s[i]))
             number = number * 10 + s[i++] - '0';
@@ -131,32 +131,32 @@ $$
     
     ```
 
-这种隐式使用逆波兰表达式计算表达式的值的算法的时间复杂度为 $O(n)$．通过稍微修改上述实现，还可以以显式形式获得逆波兰表达式．
+The time complexity of this algorithm, which implicitly uses Reverse Polish notation to compute the expression value, is $O(n)$. With slight modifications to the above implementation, the Reverse Polish expression can also be obtained explicitly.
 
-### 一元运算符与右结合的运算符
+### Unary Operators and Right-Associative Operators
 
-现在假设表达式还包含一元运算符，即只有一个参数的运算符．一元加号和一元减号是一元运算符的常见示例．
+Now suppose the expression also contains unary operators, that is, operators with only one argument. Unary plus and unary minus are common examples of unary operators.
 
-这种情况的一个区别是，需要确定当前运算符是一元运算符还是二元运算符．
+One difference in this case is that we need to determine whether the current operator is unary or binary.
 
-注意到，在一元运算符之前一般有另一个运算符或开括号，如果一元运算符位于表达式的最开头则没有．在二元运算符之前，总是有一个运算数或右括号．因此，可以标记下一个运算符是否一元运算符．
+Notice that before a unary operator there is usually another operator or an opening parenthesis, unless the unary operator is at the very beginning of the expression. Before a binary operator, there is always an operand or a closing parenthesis. Therefore, we can mark whether the next operator may be unary.
 
-此外，需要以不同的方式执行一元运算符和二元运算符，让一元运算符的优先级高于所有二元运算符．应注意，一些一元运算符，例如一元加号和一元减号，实际上是右结合的．
+In addition, unary and binary operators need to be executed differently, and unary operators should have higher precedence than all binary operators. Note that some unary operators, such as unary plus and unary minus, are actually right-associative.
 
-右结合意味着，每当优先级相等时，必须从右到左计算运算符．
+Right-associativity means that whenever precedence is equal, operators must be evaluated from right to left.
 
-如上所述，一元运算符通常是右结合的．右结合运算符的另一个示例是求幂运算符．对于 $a \wedge b \wedge c$，通常被视为 $a^{b^c}$，而不是 $(a^b)^c$．
+As mentioned above, unary operators are usually right-associative. Another example of a right-associative operator is exponentiation. For $a \wedge b \wedge c$, it is usually regarded as $a^{b^c}$ rather than $(a^b)^c$.
 
-为了正确地处理这类运算符，相应的改动是，如果优先级相等，将推迟运算符的出栈操作．
+To handle this type of operator correctly, the corresponding change is to postpone popping the operator when precedence is equal.
 
-需要改动的代码如下．将：
+The code that needs to be changed is as follows. Replace:
 
 ```cpp
 
 while (!op.empty() && priority(op.top()) >= priority(cur_op)) 
 ```
 
-换成
+with
 
 ```cpp
 
@@ -166,11 +166,11 @@ while (!op.empty() &&
 
 ```
 
-其中 left\_assoc 是一个函数，它决定运算符是否为左结合的．
+where left\_assoc is a function that determines whether an operator is left-associative.
 
-这里是二进制运算符 $+$、$-$、$*$、$/$ 和一元运算符 $+$ 和 $-$ 的实现：
+Here is an implementation for the binary operators $+$, $-$, $*$, and $/$, and the unary operators $+$ and $-$:
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     
     bool delim(char c) { return c == ' '; }
@@ -199,7 +199,7 @@ while (!op.empty() &&
             st.push(-l);
             break;
         }
-      } else {  // 取出栈顶元素，注意顺序
+      } else {  // Take the top stack element; note the order
         int r = st.top();
         st.pop();
         int l = st.top();
@@ -229,27 +229,27 @@ while (!op.empty() &&
         if (delim(s[i])) continue;
     
         if (s[i] == '(') {
-          op.push('(');  // 2. 如果遇到左括号，那么将其放在运算符栈上
+          op.push('(');  // 2. If a left parenthesis is encountered, put it onto the operator stack
           may_be_unary = true;
-        } else if (s[i] == ')') {  // 3. 如果遇到右括号，执行一对括号内的所有运算符
+        } else if (s[i] == ')') {  // 3. If a right parenthesis is encountered, execute all operators inside the pair
           while (op.top() != '(') {
             process_op(st, op.top());
-            op.pop();  // 不断输出栈顶元素，直至遇到左括号
+            op.pop();  // Keep outputting the top stack element until a left parenthesis is encountered
           }
-          op.pop();  // 左括号出栈
+          op.pop();  // Pop the left parenthesis
           may_be_unary = false;
-        } else if (is_op(s[i])) {  // 4. 如果遇到其他运算符
+        } else if (is_op(s[i])) {  // 4. If another operator is encountered
           char cur_op = s[i];
           if (may_be_unary && is_unary(cur_op)) cur_op = -cur_op;
           while (!op.empty() &&
                  ((cur_op >= 0 && priority(op.top()) >= priority(cur_op)) ||
                   (cur_op < 0 && priority(op.top()) > priority(cur_op)))) {
             process_op(st, op.top());
-            op.pop();  // 不断输出所有运算优先级大于等于当前运算符的运算符
+            op.pop();  // Keep outputting all operators whose precedence is at least that of the current operator
           }
-          op.push(cur_op);  // 新的运算符入运算符栈
+          op.push(cur_op);  // Push the new operator onto the operator stack
           may_be_unary = true;
-        } else {  // 1. 如果遇到数字，直接输出该数字
+        } else {  // 1. If a number is encountered, output it directly
           int number = 0;
           while (i < (int)s.size() && isalnum(s[i]))
             number = number * 10 + s[i++] - '0';
@@ -268,17 +268,17 @@ while (!op.empty() &&
     
     ```
 
-## 参考资料
+## References
 
-**本页面主要译自博文 [Разбор выражений. Обратная польская нотация](https://e-maxx.ru/algo/expressions_parsing) 与其英文翻译版 [Expression parsing](https://cp-algorithms.com/string/expression_parsing.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the blog post [Разбор выражений. Обратная польская нотация](https://e-maxx.ru/algo/expressions_parsing) and its English translation [Expression parsing](https://cp-algorithms.com/string/expression_parsing.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**
 
-## 延申阅读
+## Further reading
 
 1.  [Operator-precedence\_parser](https://en.wikipedia.org/wiki/Operator-precedence_parser)
 2.  [Shunting yard algorithm](https://en.wikipedia.org/wiki/Shunting_yard_algorithm)
 
-## 习题
+## Practice
 
-1.  [NOIP2013 普及组 表达式求值](https://www.luogu.com.cn/problem/P1981)
-2.  [后缀表达式](https://www.luogu.com.cn/problem/P1449)
+1.  [NOIP2013 Junior Expression Evaluation](https://www.luogu.com.cn/problem/P1981)
+2.  [Postfix Expression](https://www.luogu.com.cn/problem/P1449)
 3.  [Transform the Expression](https://www.spoj.com/problems/ONP/)

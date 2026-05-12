@@ -1,91 +1,91 @@
-## 定义
+## Definition
 
-后缀之间的大小由字典序定义，后缀平衡树就是一个维护这些后缀顺序的平衡树，即字符串 $T$ 的后缀平衡树是 $T$ 所有后缀的有序集合．后缀平衡树上的一个节点相当于原字符串的一个后缀．
+The order between suffixes is defined by lexicographic order. A suffix balanced tree is a balanced tree that maintains the order of these suffixes, i.e., the suffix balanced tree of string $T$ is the ordered set of all suffixes of $T$. Each node on the suffix balanced tree corresponds to a suffix of the original string.
 
-特别地，后缀平衡树的中序遍历即为后缀数组．
+In particular, the inorder traversal of the suffix balanced tree is the suffix array.
 
-## 构造过程
+## Construction Process
 
-对长度为 $n$ 的字符串 $T$ 建立其后缀平衡树，考虑逆序将其后缀加入后缀平衡树．
+To build a suffix balanced tree for a string $T$ of length $n$, consider adding its suffixes to the suffix balanced tree in reverse order.
 
-记后缀平衡树维护的集合为 $X$，当前添加的后缀为 $S$，则添加下一个后缀就是向 $X$ 中加入 $\texttt{c}S$（亦可理解为后缀平衡树维护的字符串为 $S$，下一步往 $S$ 前加入一个字符 $\texttt{c}$）．这一操作其实就是向平衡树中插入节点．
+Let the set maintained by the suffix balanced tree be $X$, and the current suffix being added be $S$. Then adding the next suffix is adding $\texttt{c}S$ to $X$ (which can also be understood as the string maintained by the suffix balanced tree being $S$, and next we add a character $\texttt{c}$ in front of $S$). This operation is essentially inserting a node into the balanced tree.
 
-这里使用期望树高为 $O(\log n)$ 的平衡树，例如替罪羊树或 Treap 等．
+Here we use a balanced tree with expected height $O(\log n)$, such as Scapegoat tree or Treap.
 
-### 做法 1
+### Method 1
 
-插入时，暴力比较两个后缀之间的大小关系，从而判断之后是往哪一个子树添加．这样子，单次插入至多比较 $O(\log n)$ 次，单次比较的时间复杂度至多为 $O(n)$，一共 $O(n\log n)$．
+When inserting, we brute-force compare the sizes of two suffixes to determine which subtree to add to. Thus, a single insertion requires at most $O(\log n)$ comparisons, and each comparison takes $O(n)$ time in the worst case, for a total of $O(n \log n)$.
 
-一共会插入 $n$ 次，所以该做法的时间复杂度存在上界 $O(n^2 \log n)$．
+A total of $n$ insertions will be performed, so this method has time complexity $O(n^2 \log n)$.
 
-### 做法 2
+### Method 2
 
-注意到 $\texttt{c}S$ 与 $S$ 的区别仅在于 $\texttt{c}$，且 $S$ 已经属于 $X$ 了，可以利用这一点来优化插入操作．
+Note that the difference between $\texttt{c}S$ and $S$ is only $\texttt{c}$, and $S$ already belongs to $X$. We can use this to optimize the insertion.
 
-假设当前要比较 $\texttt{c}S$ 与 $A$ 两个字符串的大小，且 $A, S \in X$．每次比较时，首先比较两串的首字符．若首字符不等，则两串的大小关系就已经确定了；若首字符相等，那么就只需要判断去除首字符后两字符串的大小关系．而两串去除首字符后都已经属于 $X$ 了，这时候可以借助平衡树 $O(\log n)$ 求排名的操作来完成后续的比较．这样，单次插入的操作至多 $O(\log^2 n)$．
+Suppose we need to compare the sizes of $\texttt{c}S$ and $A$, where $A, S \in X$. When comparing, we first compare the first characters of both strings. If the first characters are not equal, the relationship between the strings is already determined; if the first characters are equal, we only need to determine the relationship between the strings after removing the first character. After removing the first character, both strings already belong to $X$, so we can use the $O(\log n)$ ranking operation of the balanced tree to complete the subsequent comparison. Thus, a single insertion takes at most $O(\log^2 n)$.
 
-一共会插入 $n$ 次，所以该做法的时间复杂度存在上界 $O(n \log^2 n)$．
+A total of $n$ insertions will be performed, so this method has time complexity $O(n \log^2 n)$.
 
-### 做法 3
+### Method 3
 
-根据做法 2，如果能够 $O(1)$ 判断平衡树中两个节点之间的大小关系，那么就可以在 $O(n \log n)$ 的时间内完成后缀平衡树的构造．
+Based on Method 2, if we can determine the size relationship between two nodes in the balanced tree in $O(1)$, then the suffix balanced tree can be constructed in $O(n \log n)$.
 
-记 $val_i$ 表示节点 $i$ 的值．如果在建平衡树时，每个节点多维护一个标记 $tag_i$，使得若 $tag_i > tag_j \iff val_i > val_j$，那么就可以根据 $tag_i$ 的大小 $O(1)$ 判断平衡树中两个节点的大小．
+Let $val_i$ be the value of node $i$. If, when building the balanced tree, each node maintains an additional tag $tag_i$, such that $tag_i > tag_j \iff val_i > val_j$, then we can determine the size of two nodes in the balanced tree in $O(1)$ based on the size of $tag_i$.
 
-不妨令平衡树中每个节点对应一个实数区间，令根节点对应 $(0, 1)$．对于节点 $i$，记其对应的实数区间为 $(l, r)$，则 $tag_i = \frac{l + r}{2}$，其左子树对应实数区间 $(l, tag_i)$，其右子树对应实数区间 $(tag_i, r)$．易证 $tag_i$ 满足上述要求．
+Let each node in the balanced tree correspond to a real interval, and let the root correspond to $(0, 1)$. For node $i$, let its corresponding real interval be $(l, r)$, then $tag_i = \frac{l + r}{2}$, its left subtree corresponds to the real interval $(l, tag_i)$, and its right subtree corresponds to the real interval $(tag_i, r)$. It is easy to verify that $tag_i$ satisfies the above requirement.
 
-由于使用了期望树高为 $O(\log n)$ 的平衡树，所以精度是有一定保证的．实际实现时也可以用一个较大的区间来做，例如让根对应 $(0, 10^{18})$．
+Since we use a balanced tree with expected height $O(\log n)$, the precision is guaranteed to some extent. In actual implementation, we can also use a larger interval, for example, let the root correspond to $(0, 10^{18})$.
 
-### 做法 4
+### Method 4
 
-其实可以先构建出后缀数组，然后再根据后缀数组构建后缀平衡树．这样做的复杂度瓶颈在于后缀数组的构建复杂度或者所用平衡树一次性插入 $n$ 个元素的复杂度．
+In fact, we can first construct the suffix array, and then construct the suffix balanced tree based on the suffix array. The complexity bottleneck of this method lies in the construction complexity of the suffix array or the complexity of inserting $n$ elements into the balanced tree at once.
 
-## 删除操作
+## Delete Operation
 
-假设当前添加的后缀为 $\texttt{c}S$，上一个添加的后缀为 $S$．后缀平衡树还支持删除后缀 $\texttt{c}S$ 的操作（亦可理解为后缀平衡树维护的字符串为 $\texttt{c}S$，将开头的 $\texttt{c}$ 删除）．
+Suppose the current suffix being added is $\texttt{c}S$, and the previous suffix added was $S$. The suffix balanced tree also supports deleting the suffix $\texttt{c}S$ (which can also be understood as the string maintained by the suffix balanced tree being $\texttt{c}S$, deleting the leading $\texttt{c}$).
 
-类似于插入操作，借助平衡树的删除节点操作可以完成删除 $\texttt{c}S$ 的操作．
+Similar to the insertion operation, we can complete the deletion of $\texttt{c}S$ by using the delete node operation of the balanced tree.
 
-## 后缀平衡树的优点
+## Advantages of Suffix Balanced Tree
 
--   后缀平衡树的思路比较清晰，相比后缀自动机等后缀结构更好理解，会写平衡树就能写．
--   后缀平衡树的复杂度不依赖于字符集的大小
--   后缀平衡树支持在字符串开头删除一个字符
--   如果使用支持可持久化的平衡树，那么后缀平衡树也能可持久化
+-   The idea of suffix balanced tree is relatively clear, easier to understand compared to suffix automaton and other suffix structures; if you can write a balanced tree, you can write this.
+-   The complexity of suffix balanced tree does not depend on the size of the character set.
+-   Suffix balanced tree supports deleting a character at the beginning of the string.
+-   If a persistent balanced tree is used, then the suffix balanced tree can also be persistent.
 
-## 例题
+## Problems
 
-### [P3809【模板】后缀排序](https://www.luogu.com.cn/problem/P3809)
+### [P3809 [Template] Suffix Sorting](https://www.luogu.com.cn/problem/P3809)
 
-后缀数组的模板题，建出后缀平衡树之后，通过中序遍历得到后缀数组．
+This is a template problem for suffix array. After building the suffix balanced tree, obtain the suffix array through inorder traversal.
 
-??? note "SGT 版本的参考代码"
+??? note "Reference code for SGT version"
     ```cpp
     --8<-- "docs/string/code/suffix-bst/suffix-bst_1.cpp"
     ```
 
-### [P6164【模板】后缀平衡树](https://www.luogu.com.cn/problem/P6164)
+### [P6164 [Template] Suffix Balanced Tree](https://www.luogu.com.cn/problem/P6164)
 
-???+ note "题意"
-    给定初始字符串 $s$ 和 $q$ 个操作：
+???+ note "Problem statement"
+    Given an initial string $s$ and $q$ operations:
     
-    1.  在当前字符串的后面插入若干个字符．
-    2.  在当前字符串的后面删除若干个字符．
-    3.  询问字符串 $t$ 作为连续子串在当前字符串中出现了几次？
+    1.  Insert several characters at the end of the current string.
+    2.  Delete several characters at the end of the current string.
+    3.  Query how many times the string $t$ appears as a contiguous substring in the current string.
     
-    题目 **强制在线**，字符串变化长度以及初始长度 $\le 8 \times 10^5$，$q \le 10^5$，询问的总长度 $\le 3 \times 10^6$．
+    The problem **requires online processing**, the length of string changes and the initial length $\le 8 \times 10^5$, $q \le 10^5$, and the total length of all queries $\le 3 \times 10^6$.
 
-对于操作 1 和操作 2，由于后缀平衡树维护头插和头删操作比较方便，所以想到把尾插和尾删操作搞成头插和头删．这里如果维护 $s$ 的反串的后缀平衡树，而非 $s$ 的后缀平衡树，就可以完成上述转换．平衡树的添加和删除都是 $O(\log n)$ 的，所以添加或者删除一个字符的时间复杂度为 $O(\log n)$．记添加和删除的总字符数为 $N$，那么这一部分总的时间复杂度为 $O(N \log n)$．
+For operations 1 and 2, since the suffix balanced tree conveniently supports head-insertion and head-deletion, we can convert tail-insertion and tail-deletion to head-insertion and head-deletion. Here, if we maintain the suffix balanced tree of the reversed string of $s$ instead of $s$, we can complete the above conversion. Both insertion and deletion in the balanced tree are $O(\log n)$, so the time complexity of inserting or deleting a character is $O(\log n)$. Let $N$ be the total number of characters inserted and deleted, then this part has total time complexity $O(N \log n)$.
 
-对于操作 3，$t$ 的出现次数等于以 $t$ 为前缀的后缀数量，而以 $t$ 为前缀的后缀数量等于其后继的排名减去其前驱的排名．在 $t$ 后面加入一个极大的字符，就可以构造出 $t$ 的一个后继．将 $t$ 的最后一个字符减小 1，就可以构造出 $t$ 的一个前驱．
+For operation 3, the occurrence count of $t$ equals the number of suffixes with prefix $t$, and the number of suffixes with prefix $t$ equals the rank of its successor minus the rank of its predecessor. By adding a very large character after $t$, we can construct a successor of $t$. By decrementing the last character of $t$ by 1, we can construct a predecessor of $t$.
 
-现在要查询某一个串 $t$ 在后缀平衡树中排名，由于不能保证 $t$ 在后缀平衡树中出现过，所以每次只能暴力比较字符串大小．单次比较的时间复杂度为 $O(|t|)$，每次查询至多比较 $O(\log n)$ 次，所以单次查询的复杂度为 $O(|t|\log n)$．记所有询问串的长度和为 $L$，那么这一部分总的时间复杂度为 $O(L \log n)$．
+Now to query the rank of a string $t$ in the suffix balanced tree, since we cannot guarantee that $t$ has appeared in the suffix balanced tree, we can only brute-force compare the sizes of strings each time. Each comparison takes $O(|t|)$ time, and each query requires at most $O(\log n)$ comparisons, so the complexity of each query is $O(|t|\log n)$. Let $L$ be the sum of lengths of all query strings, then this part has total time complexity $O(L \log n)$.
 
-??? note "SGT 版本的参考代码"
+??? note "Reference code for SGT version"
     ```cpp
     --8<-- "docs/string/code/suffix-bst/suffix-bst_2.cpp"
     ```
 
-## 参考资料
+## References
 
--   陈立杰 -《重量平衡树和后缀平衡树在信息学奥赛中的应用》
+-   Liu Jiazhe - "Applications of Weight-balanced Trees and Suffix Balanced Trees in Olympiad Informatics"

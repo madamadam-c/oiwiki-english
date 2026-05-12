@@ -27,17 +27,17 @@ void get_root(int u, int f) {
 
 ll ans[N], sum;
 int cnt[N], v[N];
-// sum实时统计的是cnt[i]的和
+// sum maintains the sum of cnt[i] in real time
 int nowrt;
 
-void get_dis(int u, int f, int now) {  // now为当前树链上的颜色数量(不含u)
+void get_dis(int u, int f, int now) {  // now is the number of colors on the current tree chain, excluding u
   siz[u] = 1;
   if (!v[c[u]]) {
-    sum -= cnt[c[u]];  // 减去在之前子树中已经出现过的颜色信息
+    sum -= cnt[c[u]];  // Subtract color information that already appeared in previous subtrees
     now++;
   }
   v[c[u]]++;
-  ans[u] += sum + now * siz[nowrt];  // 统计过u点的路径对u的贡献
+  ans[u] += sum + now * siz[nowrt];  // Count contributions to u from paths passing through u
   for (int i = h[u]; i; i = nxt[i]) {
     int d = to[i];
     if (d == f || vis[d]) continue;
@@ -46,14 +46,14 @@ void get_dis(int u, int f, int now) {  // now为当前树链上的颜色数量(�
   }
   v[c[u]]--;
   if (!v[c[u]]) {
-    sum += cnt[c[u]];  // 回溯
+    sum += cnt[c[u]];  // Backtrack
   }
 }
 
 void get_cnt(int u, int f) {
   if (!v[c[u]]) {
     cnt[c[u]] += siz[u];
-    sum += siz[u];  // 将刚遍历过的子树的信息整合到cnt[i]和sum上去
+    sum += siz[u];  // Merge information from the subtree just traversed into cnt[i] and sum
   }
   v[c[u]]++;
   for (int i = h[u]; i; i = nxt[i]) {
@@ -100,7 +100,7 @@ void divid(int u) {
   }
   siz[u] = sum = cnt[c[u]] = 1;
   v[c[u]]++;
-  rep(i, 1, tot) {  // 统计每个子树和它之前的所有子树中节点组合产生的贡献
+  rep(i, 1, tot) {  // Count contributions from node pairs between each subtree and all previous subtrees
     int d = son[i];
     get_dis(d, u, 0);
     get_cnt(d, u);
@@ -108,10 +108,10 @@ void divid(int u) {
     cnt[c[u]] += siz[d];
     sum += siz[d];
   }
-  clear2(u, 0);  // 清空数组，记得不可以用memset
+  clear2(u, 0);  // Clear arrays; remember not to use memset
   siz[u] = sum = cnt[c[u]] = 1;
   for (int i = tot; i >= 1;
-       --i) {  // 统计每个子树和它之后的所有子树中节点组合产生的贡献
+       --i) {  // Count contributions from node pairs between each subtree and all later subtrees
     int d = son[i];
     get_dis(d, u, 0);
     get_cnt(d, u);
@@ -120,8 +120,8 @@ void divid(int u) {
     sum += siz[d];
   }
   v[c[u]]--;
-  clear(u, 0, 0);                      // 清空的同时统计答案
-  for (int i = h[u]; i; i = nxt[i]) {  // 继续向下进行点分治
+  clear(u, 0, 0);                      // Clear while counting answers
+  for (int i = h[u]; i; i = nxt[i]) {  // Continue centroid decomposition downward
     int d = to[i];
     if (vis[d]) continue;
     nn = siz[d], mn = n + 1, rt = 0;

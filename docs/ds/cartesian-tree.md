@@ -1,71 +1,71 @@
 author: sshwy, zhouyuyang2002, StudyingFather, Ir1d, ouuan, Enter-tainer
 
-## 引入
+## Introduction
 
-笛卡尔树是一种二叉树，每一个节点由一个键值二元组 $(k,w)$ 构成．要求 $k$ 满足二叉搜索树（BST）的性质，而 $w$ 满足堆的性质．如果笛卡尔树的 $k,w$ 键值确定，且 $k$ 互不相同，$w$ 也互不相同，那么这棵笛卡尔树的结构是唯一的．如下图：
+A Cartesian tree is a binary tree where each node consists of a key-value pair $(k,w)$. The key $k$ is required to satisfy the binary search tree (BST) property, while $w$ satisfies the heap property. If the keys $k,w$ of a Cartesian tree are fixed, and all $k$ values are distinct and all $w$ values are distinct, then the structure of this Cartesian tree is unique. For example:
 
 ![eg](./images/cartesian-tree1.png)
 
-（图源自维基百科）
+(Image source: Wikipedia)
 
-上面这棵笛卡尔树相当于把数组元素值当作键值 $w$，而把数组下标当作键值 $k$．可以发现，这棵树的键值 $k$ 满足 BST 的性质，而键值 $w$ 满足小根堆的性质．同时根据二叉搜索树的性质，可以发现这种特殊的笛卡尔树满足一棵子树内的下标是一个连续区间．
+The Cartesian tree above is equivalent to treating array values as the key $w$ and array indices as the key $k$. We can see that the key $k$ satisfies the BST property, while the key $w$ satisfies the min-heap property. At the same time, by the property of binary search trees, this special Cartesian tree has the property that the indices inside any subtree form a contiguous interval.
 
-竞赛中使用笛卡尔树时，常用数组下标作为二元组的键值 $k$，数组下标 $k$ 满足 BST 性质．
+In competitions, Cartesian trees commonly use array indices as the key $k$ in the pair, and the array index $k$ satisfies the BST property.
 
-下文使用 $k,w$ 时，默认 $k$ 满足 BST 性质，$w$ 满足堆的性质．
+Below, when using $k,w$, we assume by default that $k$ satisfies the BST property and $w$ satisfies the heap property.
 
-## 单调栈构建笛卡尔树
+## Building a Cartesian Tree with a Monotonic Stack
 
-### 过程
+### Process
 
-我们考虑将元素按 $k$ 升序依次插入到当前的笛卡尔树中．
+Consider inserting elements into the current Cartesian tree in ascending order of $k$.
 
-对于一棵笛卡尔树，定义「右链」为从根节点开始一直走右儿子，走到叶节点形成的链．则插入节点后，这个节点一定在右链上．因为是按照满足 BST 性质的 $k$ 升序插入，那么这个新插入的节点必然在树的 **最右端**．这个节点不可能是一个左儿子，也没有右儿子．
+For a Cartesian tree, define the "right chain" as the chain obtained by starting from the root and repeatedly taking the right child until reaching a leaf. After inserting a node, this node must lie on the right chain. Since insertion is performed in increasing order of $k$, which satisfies the BST property, the newly inserted node must be at the **rightmost end** of the tree. This node cannot be a left child and has no right child.
 
-于是我们执行这样一个过程，从下往上比较右链节点与当前节点 $u$ 的 $w$，如果找到了一个右链上的节点 $x$ 满足 $w_x<w_u$，就把 $u$ 接到 $x$ 的右儿子上，而 $x$ 原本的右子树就变成 $u$ 的左子树．
+Therefore, we perform the following process: compare nodes on the right chain with the current node $u$ by their $w$ values from bottom to top. If we find a node $x$ on the right chain such that $w_x<w_u$, attach $u$ as the right child of $x$, and the original right subtree of $x$ becomes the left subtree of $u$.
 
-图中红框部分就是我们始终维护的右链：
+The red-boxed part in the figure is the right chain we maintain throughout:
 
 ![build](./images/cartesian-tree2.png)
 
-显然每个数最多进出右链一次（或者说每个点在右链中存在的是一段连续的时间）．这个过程可以用单调栈维护，栈中维护当前笛卡尔树的右链上的节点．一个点不在右链上了就把它弹掉．这样每个点最多进出一次，复杂度 $O(n)$．
+Clearly, each element enters and leaves the right chain at most once (equivalently, each point stays on the right chain for one contiguous period of time). This process can be maintained with a monotonic stack. The stack stores the nodes currently on the Cartesian tree's right chain; when a point is no longer on the right chain, pop it. Thus each point is pushed and popped at most once, giving complexity $O(n)$.
 
-???+ note "笛卡尔树与 Treap"
-    实际上，Treap 是笛卡尔树的一种，只不过 Treap 中 $w$ 的值完全随机．Treap 有线性的构建算法，如果提前将键值 $k$ 排好序，是可以使用上述单调栈算法完成构建过程的，只不过很少会这么用．
+???+ note "Cartesian Tree and Treap"
+    In fact, a Treap is a kind of Cartesian tree, except that the value of $w$ in a Treap is completely random. Treaps have a linear construction algorithm: if the keys $k$ are sorted in advance, the monotonic-stack algorithm above can be used to build the tree, although it is rarely used this way.
 
-### C++ 实现
+### C++ Implementation
 
 ```cpp
-// stk 维护笛卡尔树中节点对应到序列中的下标
+// stk maintains the indices in the sequence corresponding to Cartesian-tree nodes
 for (int i = 1; i <= n; i++) {
-  int k = top;  // top 表示操作前的栈顶，k 表示当前栈顶
-  while (k > 0 && w[stk[k]] > w[i]) k--;  // 维护右链上的节点
-  if (k) rs[stk[k]] = i;  // 栈顶元素.右儿子 := 当前元素
-  if (k < top) ls[i] = stk[k + 1];  // 当前元素.左儿子 := 上一个被弹出的元素
-  stk[++k] = i;                     // 当前元素入栈
+  int k = top;  // top is the stack top before the operation; k is the current stack top
+  while (k > 0 && w[stk[k]] > w[i]) k--;  // maintain nodes on the right chain
+  if (k) rs[stk[k]] = i;  // top element.right child := current element
+  if (k < top) ls[i] = stk[k + 1];  // current element.left child := last popped element
+  stk[++k] = i;                     // push current element
   top = k;
 }
 ```
 
-## 例题
+## Example
 
 ???+ note "[HDU 1506. Largest Rectangle in a Histogram](https://acm.hdu.edu.cn/showproblem.php?pid=1506)"
-    $n$ 个位置，每个位置上的高度是 $h_i$，求最大子矩形．如下图：
+    There are $n$ positions, and the height at each position is $h_i$. Find the largest sub-rectangle, as shown below:
     
     ![eg](./images/cartesian-tree3.png)
     
-    阴影部分就是图中的最大子矩阵．
+    The shaded part is the largest sub-rectangle in the figure.
 
-??? note "解题思路"
-    具体地，我们把下标作为键值 $k$，$h_i$ 作为键值 $w$ 满足小根堆性质，构建一棵 $(i,h_i)$ 的笛卡尔树．
+??? note "Solution"
+    Specifically, use the index as the key $k$ and $h_i$ as the key $w$, satisfying the min-heap property, to build a Cartesian tree over $(i,h_i)$.
     
-    这样我们枚举每个节点 $u$，把 $w_u$（即节点 $u$ 的高度 $h$）作为最大子矩阵的高度．由于我们建立的笛卡尔树满足小根堆性质，因此 $u$ 的子树内的节点的高度都大于等于 $u$．而我们又知道 $u$ 子树内的下标是一段连续的区间．于是我们只需要知道子树的大小，然后就可以算这个区间的最大子矩阵的面积了．用每一个点计算出来的值更新答案即可．显然这个可以一次 DFS 完成，因此复杂度是 $O(n)$ 的．
+    Then enumerate every node $u$ and use $w_u$ (that is, node $u$'s height $h$) as the height of the largest sub-rectangle. Since the Cartesian tree we build satisfies the min-heap property, every node in $u$'s subtree has height at least $u$'s height. Also, the indices inside $u$'s subtree form a contiguous interval. Therefore, we only need to know the size of the subtree to compute the area of the largest sub-rectangle for this interval. Use the value computed for every point to update the answer. Clearly, this can be completed with one DFS, so the complexity is $O(n)$.
 
-??? note "参考实现"
+??? note "Reference Implementation"
     ```cpp
     --8<-- "docs/ds/code/cartesian-tree/cartesian-tree_1.cpp"
     ```
 
-## 参考资料
+## References
 
-[笛卡尔树 - 维基百科](https://zh.wikipedia.org/wiki/%E7%AC%9B%E5%8D%A1%E5%B0%94%E6%A0%91)
+[Cartesian tree - Wikipedia](https://en.wikipedia.org/wiki/Cartesian_tree)

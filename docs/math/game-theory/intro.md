@@ -1,73 +1,73 @@
 author: cutekibry, woruo27, Backl1ght, c-forrest
 
-**博弈论**（game theory）是经济学的一个分支，主要研究具有竞争或对抗性质的个体，在特定规则下所产生的各种行为．博弈论关注博弈中个体的预期行为与实际行为，并研究其最优策略．
+**Game theory** is a branch of economics that primarily studies the behaviors of individuals with competitive or antagonistic properties under specific rules. Game theory focuses on the expected and actual behaviors of individuals in a game and studies their optimal strategies.
 
-通俗地讲，博弈论主要研究的是：在一个游戏中，进行游戏的多位玩家如何选择策略．
+In layman's terms, game theory mainly studies how multiple players in a game choose their strategies.
 
-## 基础概念
+## Basic Concepts
 
-本节将简要介绍博弈论中的一些常见概念．
+This section briefly introduces some common concepts in game theory.
 
-### 合作/非合作博弈
+### Cooperative / Non-cooperative Games
 
-**合作博弈**（cooperative game）是指参与者可以结成联盟、相互合作的博弈．在这类博弈中，个体的不合作行为往往会受到某种外部机制的惩罚．与之相对，**非合作博弈**（noncooperative game）中并不存在这样的机制，因此，参与者要么无法结成联盟，要么只能依赖可信的威胁机制维持合作．
+A **cooperative game** is one in which participants can form alliances and cooperate. In such games, individual non-cooperative behavior is often punished by some external mechanism. In contrast, in a **non-cooperative game**, no such mechanism exists, so participants either cannot form alliances or can only maintain cooperation through credible threat mechanisms.
 
-相比合作博弈，非合作博弈的研究更为系统和成熟．本文讨论的所有博弈均为非合作博弈．
+Compared to cooperative games, non-cooperative game research is more systematic and mature. All games discussed in this article are non-cooperative games.
 
-### 对称/非对称博弈
+### Symmetric / Asymmetric Games
 
-在 **对称博弈**（symmetric game）中，不同参与者在做出相同行为时获得的收益是相同的，也就是说，收益只取决于行为本身，而与行为者的身份无关．不满足这一条件的博弈称为 **非对称博弈**（asymmetric game）．
+In a **symmetric game**, different participants receive the same payoff when making the same move, meaning the payoff depends only on the move itself and not on the identity of the player. Games that do not satisfy this condition are called **asymmetric games**.
 
-### 零和/非零和博弈
+### Zero-sum / Non-zero-sum Games
 
-主页面：[零和博弈](./zero-sum-game.md)
+Main page: [Zero-sum Games](./zero-sum-game.md)
 
-**零和博弈**（zero-sum game）指的是无论各方采取何种行为，所有参与者的收益总和始终为零．通常讨论的零和博弈涉及两名参与者，此时，一方的收益必然是另一方的损失．相对地，**非零和博弈**（non-zero-sum game）允许多方共赢或共输，包括 **正和博弈**（positive-sum game）和 **负和博弈**（negative-sum game）等．
+A **zero-sum game** is one in which the sum of payoffs for all participants is always zero, regardless of what actions each participant takes. Typically, zero-sum games involve two participants, where one participant's gain is necessarily the other participant's loss. Conversely, **non-zero-sum games** allow multi-party win-win or lose-lose scenarios, including **positive-sum games** and **negative-sum games**.
 
-### 同时/序贯博弈
+### Simultaneous / Sequential Games
 
-在 **同时博弈**（simulatenous game）中，所有参与者在不知道他人选择的前提下同时做出决策．例如剪刀石头布就是一个典型的同时博弈．这类博弈常用收益矩阵表示，并通常不涉及时间的概念．
+In a **simultaneous game**, all participants make decisions simultaneously without knowing others' choices. Rock-paper-scissors is a typical example of a simultaneous game. Such games are often represented with payoff matrices and usually do not involve the concept of time.
 
-与此相对的是 **序贯博弈**（sequential game），即参与者依次行动．需要注意的是，后行动者至少能够观察到部分先行动者的行为，否则先后顺序将毫无意义．序贯博弈通常借助博弈树来刻画．
+The opposite is a **sequential game**, where participants act in turn. Note that later players must be able to observe at least part of the earlier players' actions; otherwise, the order of play would be meaningless. Sequential games are typically represented using game trees.
 
-### 完美/不完美信息博弈
+### Perfect / Imperfect Information Games
 
-**完美信息**（perfect information）指参与者在任意时刻做出决策时，完全了解此前所有事件的发生情况，包括游戏初始状态．例如象棋、围棋等属于完美信息博弈；而麻将、扑克则是不完美信息博弈，因为玩家无法获知他人的手牌．完美信息通常用于描述序贯博弈；由于在同时博弈中玩家彼此无法得知对方即将采取的行动，因此通常认为同时博弈不是完美信息博弈．
+**Perfect information** means that at any point when a participant makes a decision, they have complete knowledge of all previous events, including the game's initial state. Games like chess and go are examples of perfect information games; mahjong and poker are imperfect information games because players cannot see others' hands. Perfect information is typically used to describe sequential games; since players in simultaneous games cannot know each other's upcoming moves, simultaneous games are generally considered imperfect information games.
 
-### 完全/不完全信息博弈
+### Complete / Incomplete Information Games
 
-**完全信息**（complete information）是指所有参与者对博弈结构本身（包括各方可选决策和最终收益）有完全了解，且这些信息为公共知识（common knowledge）．与之相对的是不完全信息博弈，其中某些博弈要素（如对手的可选决策或收益函数）对参与者来说是未知的．
+**Complete information** means that all participants have complete knowledge of the game's structure itself (including each player's available actions and final payoffs), and this information is common knowledge. The opposite is incomplete information games, where some elements of the game (such as the opponent's available actions or payoff function) are unknown to the participants.
 
-值得注意的是，「完全信息」和「完美信息」是两个独立概念，互不包含．例如，麻将是一种完全信息但不完美信息的博弈，因其规则和收益是公开的，但牌面信息并不透明；而某些具有隐藏目标、但行为全程公开的游戏，则属于完美信息但不完全信息的博弈．
+It is worth noting that "complete information" and "perfect information" are two independent concepts and neither subsumes the other. For example, mahjong is a complete information but imperfect information game because its rules and payoffs are public, but card information is not transparent; whereas some games with hidden objectives but fully observable actions belong to perfect information but incomplete information games.
 
-## 组合博弈论
+## Combinatorial Game Theory
 
-在算法竞赛中，最常见的博弈类型是 **组合博弈**（combinatorial game）．该术语通常指那些因状态数量巨大而难以求解的博弈．正因为一般的组合博弈相当复杂，组合博弈论主要关注以下类型：两人轮流行动的、完美信息、无随机因素的博弈．象棋、围棋等都是典型的组合博弈．
+In algorithm competitions, the most common type of game is a **combinatorial game**. This term usually refers to games that are difficult to solve due to their enormous state spaces. Because general combinatorial games are quite complex, combinatorial game theory mainly focuses on the following types: two-player turn-based games with perfect information and no random elements. Chess and go are typical combinatorial games.
 
-### 公平组合博弈
+### Impartial Combinatorial Games
 
-主页面：[公平组合博弈](./impartial-game.md)
+Main page: [Impartial Combinatorial Games](./impartial-game.md)
 
-**公平博弈**（impartial game）指满足如下条件的组合博弈：
+An **impartial game** is a combinatorial game satisfying the following conditions:
 
--   在任意确定状态下，所有参与者可选择的行动完全相同，仅取决于当前状态，与身份无关；
--   博弈中的同一个状态不可能多次抵达，博弈以参与者无法行动为结束，且博弈一定会在有限步后以非平局结束．
+-   In any given state, all participants have exactly the same available moves, which depend only on the current state and not on the player's identity;
+-   The same state in the game cannot be reached more than once, the game ends when a player cannot make a move, and the game must end in a finite number of moves without a draw.
 
-公平博弈总是对称博弈．
+Impartial games are always symmetric games.
 
-### 非公平组合博弈
+### Partizan Combinatorial Games
 
-主页面：[非公平组合博弈](./partizan-game.md)
+Main page: [Partizan Combinatorial Games](./partizan-game.md)
 
-与公平博弈相对的概念是 **非公平博弈**（partizan game），即参与者在某一状态下可采取的行动依赖其身份．大多数棋类游戏（如国际象棋、中国象棋、围棋、五子棋等）都是非公平博弈，因为参与者只能操作自己的棋子．
+The opposite concept to impartial games is **partizan games**, where the available moves for a participant in a given state depend on their identity. Most board games (such as chess, Chinese chess, go, Gomoku, etc.) are partizan games because participants can only move their own pieces.
 
-### 正常/反常博弈
+### Normal / Misère Games
 
-组合博弈中，通常的胜利者是博弈结束前，最后一名采取行动的参与者．这称为 **正常博弈**（normal game）．与之相对应的是 **反常博弈**（misère game），即博弈结束前，最后一名采取行动的参与者是失败者．
+In combinatorial games, the usual winner is the last player to take an action before the game ends. This is called a **normal game**. The opposite is a **misère game**, where the last player to take an action before the game ends is the loser.
 
-公平和非公平组合博弈都可以是正常或反常博弈．
+Both impartial and partizan combinatorial games can be normal or misère games.
 
-## 参考资料
+## References
 
 -   [Game theory - Wikipedia](https://en.wikipedia.org/wiki/Game_theory)
 -   [Combinatorial game theory - Wikipedia](https://en.wikipedia.org/wiki/Combinatorial_game_theory)

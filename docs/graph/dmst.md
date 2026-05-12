@@ -1,15 +1,15 @@
-## 定义
+## Definition
 
-有向图上的最小生成树（Directed Minimum Spanning Tree）称为最小树形图．
+The minimum spanning tree on a directed graph is called the Minimum Branching (or Directed Minimum Spanning Tree, DMST).
 
-常用的算法是朱刘算法（也称 Edmonds 算法），可以在 $O(nm)$ 时间内解决最小树形图问题．
+The commonly used algorithm is Chu-Liu/Edmonds' algorithm (also known as Edmonds' algorithm), which can solve the minimum branching problem in $O(nm)$ time.
 
-## 过程
+## Algorithm
 
-1.  对于每个点，选择指向它的边权最小的那条边．
-2.  如果没有环，算法终止；否则进行缩环并更新其他点到环的距离．
+1.  For each node, select the incoming edge with the minimum weight.
+2.  If there are no cycles, the algorithm terminates; otherwise, contract the cycles and update distances.
 
-## 实现
+## Implementation
 
 ```cpp
 bool solve() {
@@ -58,37 +58,37 @@ bool solve() {
 }
 ```
 
-## Tarjan 的 DMST 算法
+## Tarjan's DMST Algorithm
 
-Tarjan 提出了一种能够在 $O(m+n\log n)$ 时间内解决最小树形图问题的算法．
+Tarjan proposed an algorithm that can solve the minimum branching problem in $O(m+n\log n)$ time.
 
-这里的算法描述以及参考代码基于 Uri Zwick 教授的课堂讲义，更多的细节可以参考原文．
+The algorithm description and reference code below are based on Professor Uri Zwick's lecture notes. See the original paper for more details.
 
-### 过程
+### Algorithm
 
-Tarjan 的算法分为 **收缩** 与 **伸展** 两个过程．接下来先介绍 **收缩** 的过程．
+Tarjan's algorithm consists of two phases: **contraction** and **expansion**. Let us first describe the **contraction** phase.
 
-我们需要假设输入的图是满足强连通的，如果不满足那么就加入 $O(n)$ 条边使其满足，并且这些边的边权是无穷大的．
+We assume the input graph is strongly connected. If it is not, we add $O(n)$ edges with infinite weight to make it strongly connected.
 
-我们需要一个堆存储结点的入边编号，入边权值，结点总代价等相关信息，由于后续过程中会有堆的合并操作，这里采用 [左偏树](../ds/leftist-tree.md) 与 [并查集](../ds/dsu.md) 实现．算法的每一步都选择一个任意结点 $v$，需要保证 $v$ 不是根节点，并且在堆中没有它的入边．再将 $v$ 的最小入边加入到堆中，如果新加入的这条边使堆中的边形成了环，那么将构成环的那些结点收缩，我们不妨将这些已经收缩的结点命名为 **超级结点**，再继续这个过程，如果所有的顶点都缩成了一个超级结点，那么收缩过程就结束了．整个收缩过程结束后会得到一棵收缩树，之后将对它进行伸展操作．
+We need a heap to store incoming edge indices, incoming edge weights, and total node costs. Since the algorithm requires heap merging operations, we use [Leftist Trees](../ds/leftist-tree.md) with [Disjoint Set Union](../ds/dsu.md). At each step, the algorithm selects an arbitrary node $v$ that is not a root and has no incoming edges in the heap. We add the minimum incoming edge of $v$ to the heap. If this new edge forms a cycle in the heap, we contract the nodes in that cycle into a **super node**. Continue this process until all vertices have been contracted into one super node. The contraction phase produces a contracted tree, which will then be expanded.
 
-堆中的边总是会形成一条路径 $v_0\leftarrow v_1\leftarrow \dots\leftarrow v_k$，由于图是强连通的，这个路径必然存在，并且其中的 $v_i$ 可能是最初的单一结点，也可能是压缩后的超级结点．
+Edges in the heap always form a path $v_0\leftarrow v_1\leftarrow \dots\leftarrow v_k$. Since the graph is strongly connected, this path must exist, and each $v_i$ can be either an original single node or a contracted super node.
 
-最初有 $v_o=a$，其中 $a$ 是图中任意的一个结点，每一次选择一条最小入边 $v_k\leftarrow u$，如果 $u$ 不是 $v_0,v_1,\dots,v_k$ 中的一个结点，那么就将结点扩展到 $v_{k+1}=u$．如果 $u$ 是他们其中的一个结点 $v_i$，那么就找到了一个关于 $v_i\leftarrow\dots\leftarrow v_k\leftarrow v_i$ 的环，再将他们收缩为一个超级结点 $c$．
+Initially, let $v_0=a$, where $a$ is an arbitrary node in the graph. Each time, select a minimum incoming edge $v_k\leftarrow u$. If $u$ is not one of $v_0,v_1,\dots,v_k$, extend the path to $v_{k+1}=u$. If $u$ is one of them, say $v_i$, we have found a cycle $v_i\leftarrow\dots\leftarrow v_k\leftarrow v_i$, and contract them into a super node $c$.
 
-向队列 $P$ 中放入所有的结点或超级结点，并初始选择任意一节点 $a$，只要队列不为空，就进行以下步骤：
+Enqueue all nodes and super nodes into a queue $P$, and initially select an arbitrary node $a$. While the queue is not empty, perform the following steps:
 
-1.  选择 $a$ 的最小入边，保证不存在自环，并找到另一头的结点 $b$．如果结点 $b$ 没有被记录过说明未形成环，令 $a\leftarrow b$，继续当前操作寻找环．
+1.  Select the minimum incoming edge of $a$, ensuring no self-loop, and find the other endpoint $b$. If $b$ has not been recorded, no cycle has formed, so set $a\leftarrow b$ and continue searching.
 
-2.  如果 $b$ 被记录过了，就说明出现了环．总结点数加一，并将环上的所有结点重新编号，对堆进行合并，以及结点/超级结点的总权值的更新．更新权值操作就是将环上所有结点的入边都收集起来，并减去环上入边的边权．
+2.  If $b$ has been recorded, a cycle has been found. Increment the total node count, renumber all nodes on the cycle, merge the heaps, and update the total weights. The weight update collects all incoming edges of nodes on the cycle and subtracts the cycle's incoming edge weights.
 
 ![dmst1](./images/dmst1.png)
 
-以图片为例，左边的强连通图在收缩后就形成了右边的一棵收缩树，其中 $a$ 是结点 1 与结点 2 收缩后的超级结点，$b$ 是结点 3，结点 4，结点 5 收缩后的超级结点，$A$ 是两个超级结点 $a$ 与 $b$ 收缩后形成的．
+As shown in the figure, the strongly connected graph on the left becomes the contracted tree on the right after contraction. Here, $a$ is the super node formed by contracting vertices 1 and 2; $b$ is the super node formed by contracting vertices 3, 4, and 5; and $A$ is the super node formed by contracting the two super nodes $a$ and $b$.
 
-伸展过程是相对简单的，以原先要求的根节点 $r$ 为起始点，对 $r$ 到收缩树的根上的每一个环进行伸展．再以 $r$ 的祖先结点 $f_r$ 为起始点，将其到根的环展开，直到遍历完所有的结点．
+The expansion phase is relatively simple. Starting from the original root $r$, expand each cycle on the path from $r$ to the root of the contracted tree. Then, starting from $r$'s ancestor $f_r$, expand cycles along the path to the root, until all nodes have been traversed.
 
-### 实现
+### Implementation
 
 ```cpp
 #include <cstdio>
@@ -161,7 +161,7 @@ UnionFind id;
 
 void contract() {
   bool mark[MAXN << 1];
-  // 将图上的每一个结点与其相连的那些结点进行记录．
+  // Record all nodes connected to each node in the graph.
   for (int i = 1; i <= n; i++) {
     queue<Heap *> q;
     for (int j = 0; j < in[i].size(); j++) q.push(new Heap(&in[i][j]));
@@ -176,14 +176,14 @@ void contract() {
   }
   mark[1] = true;
   for (int a = 1, b = 1, p; Q[a]; b = a, mark[b] = true) {
-    // 寻找最小入边以及其端点，保证无环．
+    // Find minimum incoming edge and its endpoint, ensuring no cycles.
     do {
       ed[a] = extract(Q[a]);
       a = id[ed[a]->u];
     } while (a == b && Q[a]);
     if (a == b) break;
     if (!mark[a]) continue;
-    // 对发现的环进行收缩，以及环内的结点重新编号，总权值更新．
+    // Contract the discovered cycle, renumber nodes, update total weights.
     for (a = b, n++; a != n; a = p) {
       id.fa[a] = fa[a] = n;
       if (Q[a]) Q[a]->constant -= ed[a]->w;
@@ -226,7 +226,7 @@ int main() {
     scanf("%d %d %d", &u, &v, &w);
     link(u, v, w);
   }
-  // 保证强连通
+  // Ensure strong connectivity
   for (int i = 1; i <= n; i++) link(i > 1 ? i - 1 : n, i, INF);
   contract();
   ll ans = expand(rt, n);
@@ -238,8 +238,8 @@ int main() {
 }
 ```
 
-## 参考文献
+## References
 
-Uri Zwick. (2013),[Directed Minimum Spanning Trees](http://www.cs.tau.ac.il/~zwick/grad-algo-13/directed-mst.pdf), Lecture notes on "Analysis of Algorithms"
+Uri Zwick. (2013), [Directed Minimum Spanning Trees](http://www.cs.tau.ac.il/~zwick/grad-algo-13/directed-mst.pdf), Lecture notes on "Analysis of Algorithms"
 
 <https://riteme.site/blog/2018-6-18/mdst.html#_3>

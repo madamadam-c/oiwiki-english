@@ -1,108 +1,108 @@
-## 点分治
+## Tree Divide and Conquer
 
-点分治适合处理大规模的树上路径信息问题．
+Tree divide and conquer is suitable for handling large-scale tree path information problems.
 
-??? note "例题 1 [Luogu P3806【模板】点分治 1](https://www.luogu.com.cn/problem/P3806)"
-    给定一棵有 $n$ 个点的带边权树，$m$ 次询问，每次询问给出 $k$，询问树上距离为 $k$ 的点对是否存在．
+??? note "Example 1: [Luogu P3806 Template: Tree Divide and Conquer 1](https://www.luogu.com.cn/problem/P3806)"
+    Given a tree with $n$ nodes and weighted edges, there are $m$ queries. For each query, a number $k$ is given, asking whether there exists a pair of nodes with distance equal to $k$.
     
     $n\le 10000,m\le 100,k\le 10000000$
 
-我们先随意选择一个节点作为根节点 $\mathit{rt}$，所有完全位于其子树中的路径可以分为两种，一种是经过当前根节点的路径，一种是不经过当前根节点的路径．对于经过当前根节点的路径，又可以分为两种，一种是以根节点为一个端点的路径，另一种是两个端点都不为根节点的路径．而后者又可以由两条属于前者链合并得到．所以，对于枚举的根节点 $rt$，我们先计算在其子树中且经过该节点的路径对答案的贡献，再递归其子树对不经过该节点的路径进行求解．
+    We first randomly select a node as the root $\mathit{rt}$. All paths completely contained in its subtrees can be divided into two types: those passing through the current root, and those not passing through the current root. For paths passing through the current root, they can be further divided into two types: paths with the root as one endpoint, and paths with neither endpoint being the root. The latter type can be formed by merging two paths of the first type. Therefore, for the enumerated root $rt$, we first compute the contribution to the answer from paths in its subtrees that pass through this node, then recursively solve for paths not passing through this node in its subtrees.
 
-在本题中，对于经过根节点 $\mathit{rt}$ 的路径，我们先枚举其所有子节点 $\mathit{ch}$，以 $\mathit{ch}$ 为根计算 $\mathit{ch}$ 子树中所有节点到 $\mathit{rt}$ 的距离．记节点 $i$ 到当前根节点 $rt$ 的距离为 $\mathit{dist}_i$，$\mathit{tf}_{d}$ 表示之前处理过的子树中是否存在一个节点 $v$ 使得 $\mathit{dist}_v=d$．若一个询问的 $k$ 满足 $tf_{k-\mathit{dist}_i}=true$，则存在一条长度为 $k$ 的路径．在计算完 $\mathit{ch}$ 子树中所连的边能否成为答案后，我们将这些新的距离加入 $\mathit{tf}$ 数组中．
+    In this problem, for paths passing through the root $\mathit{rt}$, we first enumerate all its children $\mathit{ch}$, and compute the distances from all nodes in $\mathit{ch}$'s subtree to $\mathit{rt}$, using $\mathit{ch}$ as the root. Let the distance from node $i$ to the current root $rt$ be $\mathit{dist}_i$. Let $\mathit{tf}_{d}$ indicate whether there exists a node $v$ in previously processed subtrees such that $\mathit{dist}_v=d$. If a query's $k$ satisfies $tf_{k-\mathit{dist}_i}=true$, then there exists a path of length $k$. After determining whether edges in $\mathit{ch}$'s subtree can form a valid answer, we add these new distances to the $\mathit{tf}$ array.
 
-注意在清空 $\mathit{tf}$ 数组的时候不能直接用 `memset`，而应将之前占用过的 $\mathit{tf}$ 位置加入一个队列中，进行清空，这样才能保证时间复杂度．
+    Note that when clearing the $\mathit{tf}$ array, we should not use `memset` directly. Instead, we should add the positions that were used to a queue and clear them through the queue. This ensures the correct time complexity.
 
-点分治过程中，每一层的所有递归过程合计对每个点处理一次，假设共递归 $h$ 层，则总时间复杂度为 $O(hn)$．
+    During tree divide and conquer, each layer's recursive processes handle each node once. If there are $h$ recursive layers, the total time complexity is $O(hn)$.
 
-若我们每次选择子树的 [重心](./tree-centroid.md) 作为根节点，可以保证递归层数最少，时间复杂度为 $O(n\log n)$．因此，点分治在国外竞赛圈也常称为树的 **重心分解**（centroid decomposition）．
+    If we always select the [centroid](./tree-centroid.md) of the subtree as the root, we can guarantee the minimum number of recursive layers, giving time complexity $O(n\log n)$. Therefore, tree divide and conquer is also called **centroid decomposition** in international competitive programming circles.
 
-请注意在重新选择根节点之后一定要重新计算子树的大小，否则一点看似微小的改动就可能会使时间复杂度错误或正确性难以保证．
+    Please note that after selecting a new root, you must recalculate the subtree sizes. Even a seemingly minor oversight can lead to incorrect time complexity or incorrectness.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/tree-divide/tree-divide_1.cpp"
     ```
 
-??? note "例题 2 [Luogu P4178 Tree](https://www.luogu.com.cn/problem/P4178)"
-    给定一棵有 $n$ 个点的带权树，给出 $k$，询问树上距离小于等于 $k$ 的点对数量．
+??? note "Example 2: [Luogu P4178 Tree](https://www.luogu.com.cn/problem/P4178)"
+    Given a tree with $n$ nodes and weighted edges, and a number $k$, count the number of pairs of nodes with distance less than or equal to $k$.
     
     $n\le 40000,k\le 20000,w_i\le 1000$
 
-由于这里查询的是树上距离为 $[0,k]$ 的点对数量，所以我们用线段树来支持维护和查询．
+    Since the query asks for the number of pairs with distance in $[0,k]$, we use a segment tree to support updates and queries.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/tree-divide/tree-divide_2.cpp"
     ```
 
-??? note "例题 3 [Luogu P2664 树上游戏](https://www.luogu.com.cn/problem/P2664)"
-    一棵每个节点都给定颜色的树，定义 $s(i,j)$ 为 $\mathit{i}$ 到 $\mathit{j}$ 的颜色数量，$\mathit{sum_{i}}=\sum_{j=1}^n s(i,j)$．对所有的 $1\leq i\leq n$，求 $sum_i$．（$1 \le n, c_i \le 10^5$）
+??? note "Example 3: [Luogu P2664 Tree Game](https://www.luogu.com.cn/problem/P2664)"
+    A tree where each node has a given color. Define $s(i,j)$ as the number of colors on the path from $\mathit{i}$ to $\mathit{j}$, and $\mathit{sum_{i}}=\sum_{j=1}^n s(i,j)$. For all $1\leq i\leq n$, compute $sum_i$. ($1 \le n, c_i \le 10^5$)
 
-这道题很考验对点分治思想的理解和应用，适合作为点分治的难度较高的例题和练习题．
+    This problem is a good test of understanding and application of tree divide and conquer, making it a challenging example and practice problem.
 
-首先，我们需要想明白一个转化．题目定义 $\mathit{sum_i}$ 是 $i$ 到所有节点路径上的颜色数量之和，可是如果用这个方法，在点分治中是不好统计答案的，因为这样很难合并从当前根出发的两棵子树的信息．所以我们想到将 $\mathit{sum_i}$ 的意义转化．对于每个颜色 $j$, 其中一个端点为 $i$ 且含有颜色 $j$ 的路径数量记为 $\mathit{cnt_j}$，$\mathit{sum_i}$ 其实就是 $\sum \mathit{cnt_j}$．这一步转化其实就是换了个观察对象，考虑的是每个颜色对 $\mathit{sum_i}$ 的 贡献．而 $\mathit{cnt_j}$ 其实很好处理出来，只需要每遇到一个新颜色，就 $\mathit{cnt_{col_u}}+=\mathit{size_u}$ 即可，其中 $\mathit{size_u}$ 为 u 的子树大小，意味着这个子树里的所有节点都在这个颜色上对 $u$ 的答案有一个贡献．
+    First, we need to understand a transformation. The problem defines $\mathit{sum_i}$ as the sum of the number of colors on paths from $i$ to all other nodes. However, using this definition directly in tree divide and conquer, it's difficult to count the answer, because it would be hard to merge information from two subtrees when the current root is involved. So we think of transforming the meaning of $\mathit{sum_i}$. For each color $j$, let $\mathit{cnt_j}$ be the number of paths with one endpoint being $i$ that contain color $j$. Then $\mathit{sum_i}$ is actually $\sum \mathit{cnt_j}$. This transformation changes the perspective: we consider the contribution of each color to $\mathit{sum_i}$. $\mathit{cnt_j}$ is easy to compute: whenever we encounter a new color, we do $\mathit{cnt_{col_u}}+=\mathit{size_u}$, where $\mathit{size_u}$ is the subtree size of $u$. This means all nodes in this subtree contribute one to the answer for $u$ on this color.
 
-考虑到点分治过程中，我们只需要分别考虑统计：
+    Considering the tree divide and conquer process, we only need to consider two types of statistics separately:
 
-1.  子树中以当前根节点为端点的路径对根的贡献
-2.  lca 为当前根节点的路径对子树内每个点的贡献
+    1.  Paths in the subtree with the current root as an endpoint, and their contribution to the root
+    2.  Paths whose LCA is the current root, and their contribution to each node in the subtree
 
-1 部分比较好办，由于点分治中，递归层数不超过 $\log{n}$，每一层我们都可以遍历全部子树，这个时候就可以使用 $\mathit{sum_i}$ 的定义式来在遍历子树的过程中顺便统计了．
+    Part 1 is relatively easy: since in tree divide and conquer, the number of recursive layers is at most $\log n$, at each layer we can traverse all subtrees, so we can use the definition of $\mathit{sum_i}$ to count while traversing.
 
-而针对 2 部分，设当前根节点 $u$ 的一个子节点为 $d$,$d$ 的子树里任取一个点为 $v$，那么 $v$ 的答案可以分为两部分：
+    For part 2, let the current root be $u$, and let one of its child nodes be $d$. For any node $v$ in $d$'s subtree, the answer for $v$ can be divided into two parts:
 
-1.  $(u, v)$ 路径上出现过的颜色，数量设为 $\mathit{num}$，$u$ 除了 $d$ 以外的其他所有子树的总大小设为 $\mathit{siz1}$, 那么这些出现过的颜色对 $v$ 的答案贡献为 $\mathit{num}\times \mathit{siz1}$．
-2.  $(u, v)$ 路径上没有出现过的颜色 $j$，它们的贡献来自于 $u$ 除了 $d$ 以外的其他所有子树的 $\mathit{cnt_j}$，这部分答案为 $\sum_{j \notin (u, v)} \mathit{cnt_j}$．
+    1.  Colors that appear on the path $(u, v)$, with count $\mathit{num}$. Let $\mathit{siz1}$ be the total size of all other subtrees of $u$ except $d$. Then the contribution of these colors to $v$'s answer is $\mathit{num}\times \mathit{siz1}$.
+    2.  Colors $j$ that do not appear on the path $(u, v)$. Their contribution comes from $\mathit{cnt_j}$ of all other subtrees of $u$ except $d$, giving the answer $\sum_{j \notin (u, v)} \mathit{cnt_j}$.
 
-以上是全部统计思路，实现细节详见参考代码．
+    The above is the complete statistical approach. See the reference code for implementation details.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/tree-divide/tree-divide_3.cpp"
     ```
 
-## 边分治
+## Edge Divide and Conquer
 
-与上面的点分治类似，我们选取一条边，把树尽量均匀地分成两部分（使边连接的两个子树的 $\mathit{size}$ 尽量接近）．然后递归处理左右子树，统计信息．
+Similar to tree divide and conquer above, we select an edge that divides the tree into two parts as evenly as possible (so that the $\mathit{size}$ of the two subtrees connected by the edge are as close as possible). Then we recursively process the left and right subtrees and compute information.
 
-但是这是不行的，考虑一个菊花图：
+However, this doesn't work well. Consider a star graph:
 
-![菊花图](./images/tree-divide1.svg)
+![Star graph](./images/tree-divide1.svg)
 
-我们发现当一个点下有多个 $\mathit{size}$ 接近的儿子时，应用边分治的时间复杂度是无法接受的．
+When a node has multiple children with similar $\mathit{size}$, the time complexity of edge divide and conquer becomes unacceptable.
 
-如果这个图是个二叉树，就可以避免上面菊花图中应用边分治的弊端．因此我们考虑把一个多叉树转化成二叉树．
+If the graph is a binary tree, we can avoid the problem with star graphs. Therefore, we consider converting a multi-way tree into a binary tree.
 
-显然，我们只需像线段树那样建树就可以了．就像这样
+Clearly, we can build this like a segment tree. Like this:
 
-![建树](./images/tree-divide2.svg)
+![Building the tree](./images/tree-divide2.svg)
 
-新建出来的点根据题目要求给予恰当的信息即可．例如：统计路径长度时，将原边边权赋为 $1$, 将新建的边边权赋为 $0$ 即可．
+Newly created nodes can be given appropriate information according to the problem requirements. For example, when counting path lengths, set the weight of original edges to $1$ and the weight of newly created edges to $0$.
 
-分析复杂度，发现最多会增加 $O(n)$ 个点，则总复杂度为 $O(n\log n)$
+Analyzing the complexity, we find that at most $O(n)$ additional nodes are created, so the total complexity is $O(n\log n)$.
 
-几乎所有点分治的题边分都能做（常数上有差距，但是不卡），所以就不放例题了．
+Almost all problems solvable with tree divide and conquer can also be solved with edge divide and conquer (there are constant factor differences, but usually not tight), so no example problems are provided.
 
-## 点分树
+## Centroid Tree
 
-点分树是通过更改原树形态使树的层数变为稳定 $\log n$ 的一种重构树．
+A centroid tree is a reconstructed tree formed by changing the structure of the original tree to have a stable $\log n$ depth.
 
-常用于解决与树原形态无关的带修改问题．
+It is commonly used for problems with modifications that are independent of the original tree structure.
 
-### 算法分析
+### Algorithm Analysis
 
-我们通过点分治每次找重心的方式来对原树进行重构．
+We reconstruct the original tree by finding the centroid at each step of divide and conquer.
 
-将每次找到的重心与上一层的重心缔结父子关系，这样就可以形成一棵 $\log n$ 层的树．
+We connect the centroid found each time as a child of the centroid from the previous level. This forms a tree with $\log n$ layers.
 
-由于树是 $\log n$ 层的，很多原来并不对劲的暴力在点分树上均有正确的复杂度．
+Since the tree has $\log n$ layers, many originally problematic brute-force solutions have correct complexity on the centroid tree.
 
-### 代码实现
+### Code Implementation
 
-有一个小技巧：每次用递归上一层的总大小 $\mathit{tot}$ 减去上一层的点的重儿子大小，得到的就是这一层的总大小．这样求重心就只需一次 DFS 了．
+A small trick: each time, subtract the heavy child size of the previous layer's node from the previous layer's total size $\mathit{tot}$, which gives the total size of the current layer. This way, finding the centroid requires only one DFS.
 
-???+ note "参考代码"
+???+ note "Reference Code"
     ```cpp
     #include <algorithm>
     #include <iostream>

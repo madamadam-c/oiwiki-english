@@ -1,10 +1,10 @@
 author: AtomAlpaca, billchenchina, caibyte, Chrogeek, Early0v0, EndlessCheng, Enter-tainer, Henry-ZHR, hly1204, hsfzLZH1, Ir1d, Ghastlcon, kenlig, Marcythm, megakite, Peanut-Tang, qwqAutomaton, qz-cqy, StudyingFather, swift-zym, swiftqwq, Tiphereth-A, TrisolarisHD, Watersail2005, x4Cx58x54, Xeonacid, xiaopangfeiyu, YanWQ-monad
 
-## 引入
+## Introduction
 
-插值是一种通过已知的、离散的数据点推算一定范围内的新数据点的方法．插值法常用于函数拟合中．
+Interpolation is a method for calculating new data points within a certain range based on known, discrete data points. Interpolation methods are commonly used in function fitting.
 
-例如对数据点：
+For example, for data points:
 
 | $x$    | $0$ | $1$      | $2$      | $3$      | $4$       | $5$       | $6$       |
 | ------ | --- | -------- | -------- | -------- | --------- | --------- | --------- |
@@ -12,77 +12,77 @@ author: AtomAlpaca, billchenchina, caibyte, Chrogeek, Early0v0, EndlessCheng, En
 
 ![](../images/interp-1.svg)
 
-其中 $f(x)$ 未知，插值法可以通过按一定形式拟合 $f(x)$ 的方式估算未知的数据点．
+Here $f(x)$ is unknown. Interpolation methods can estimate unknown data points by fitting $f(x)$ in a certain form.
 
-例如，我们可以用分段线性函数拟合 $f(x)$：
+For example, we can fit $f(x)$ with a piecewise linear function:
 
 ![](../images/interp-2.svg)
 
-这种插值方式叫做 [线性插值](https://en.wikipedia.org/wiki/Linear_interpolation)．
+This interpolation method is called [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation).
 
-我们也可以用多项式拟合 $f(x)$：
+We can also fit $f(x)$ with a polynomial:
 
 ![](../images/interp-3.svg)
 
-这种插值方式叫做 [多项式插值](https://en.wikipedia.org/wiki/Polynomial_interpolation)．
+This interpolation method is called [polynomial interpolation](https://en.wikipedia.org/wiki/Polynomial_interpolation).
 
-多项式插值的一般形式如下：
+The general form of polynomial interpolation is as follows:
 
-???+ note "多项式插值"
-    对已知的 $n+1$ 的点 $(x_0,y_0),(x_1,y_1),\dots,(x_n,y_n)$，求形如 $f(x)=\sum_{i=0}^n a_ix^i$ 且满足
+???+ note "Polynomial Interpolation"
+    Given known $n+1$ points $(x_0,y_0),(x_1,y_1),\dots,(x_n,y_n)$, find a polynomial $f(x)=\sum_{i=0}^n a_ix^i$ such that
     
     $$
     f(x_i)=y_i,\qquad\forall i=0,1,\dots,n
     $$
     
-    的多项式 $f(x)$．
+    is satisfied.
 
-下面介绍多项式插值中的两种方式：Lagrange 插值法与 Newton 插值法．不难证明这两种方法得到的结果是相等的．
+Below we introduce two methods in polynomial interpolation: Lagrange interpolation and Newton interpolation. It is easy to prove that these two methods yield the same result.
 
-## Lagrange 插值法
+## Lagrange Interpolation
 
-由于要求构造一个函数 $f(x)$ 过点 $P_1(x_1, y_1), P_2(x_2,y_2),\cdots,P_n(x_n,y_n)$. 首先设第 $i$ 个点在 $x$ 轴上的投影为 $P_i^{\prime}(x_i,0)$.
+Since we need to construct a function $f(x)$ passing through points $P_1(x_1, y_1), P_2(x_2,y_2),\cdots,P_n(x_n,y_n)$. First, let the projection of the $i$-th point on the x-axis be $P_i^{\prime}(x_i,0)$.
 
-考虑构造 $n$ 个函数 $f_1(x), f_2(x), \cdots, f_n(x)$，使得对于第 $i$ 个函数 $f_i(x)$，其图像过 $\begin{cases}P_j^{\prime}(x_j,0),(j\neq i)\\P_i(x_i,y_i)\end{cases}$，则可知题目所求的函数 $f(x)=\sum\limits_{i=1}^nf_i(x)$.
+Consider constructing $n$ functions $f_1(x), f_2(x), \cdots, f_n(x)$ such that for the $i$-th function $f_i(x)$, its graph passes through $\begin{cases}P_j^{\prime}(x_j,0),(j\neq i)\\P_i(x_i,y_i)\end{cases}$. Then we know that the function we seek is $f(x)=\sum\limits_{i=1}^nf_i(x)$.
 
-那么可以设 $f_i(x)=a\cdot\prod_{j\neq i}(x-x_j)$，将点 $P_i(x_i,y_i)$ 代入可以知道 $a=\dfrac{y_i}{\prod_{j\neq i} (x_i-x_j)}$，所以
+We can set $f_i(x)=a\cdot\prod_{j\neq i}(x-x_j)$. Substituting point $P_i(x_i,y_i)$ gives $a=\dfrac{y_i}{\prod_{j\neq i} (x_i-x_j)}$. Therefore:
 
 $$
 f_i(x)=y_i\cdot\dfrac{\prod_{j\neq i} (x-x_j)}{\prod_{j\neq i} (x_i-x_j)}=y_i\cdot\prod_{j\neq i}\dfrac{x-x_j}{x_i-x_j}
 $$
 
-那么我们就可以得出 Lagrange 插值的形式为：
+Thus, the form of Lagrange interpolation is:
 
 $$
 f(x)=\sum_{i=1}^ny_i\cdot\prod_{j\neq i}\dfrac{x-x_j}{x_i-x_j}
 $$
 
-朴素实现的时间复杂度为 $O(n^2)$，可以优化到 $O(n\log^2 n)$，参见 [多项式快速插值](../poly/multipoint-eval-interpolation.md#多项式的快速插值)．
+The naive implementation has time complexity $O(n^2)$, which can be optimized to $O(n\log^2 n)$, see [Fast Polynomial Interpolation](../poly/multipoint-eval-interpolation.md#polynomial-fast-interpolation).
 
-???+ note "[Luogu P4781【模板】拉格朗日插值](https://www.luogu.com.cn/problem/P4781)"
-    给出 $n$ 个点对 $(x_i,y_i)$ 和 $k$，且 $\forall i,j$ 有 $i\neq j \iff x_i\neq x_j$ 且 $f(x_i)\equiv y_i\pmod{998244353}$ 和 $\deg(f(x)) < n$（定义 $\deg(0)=-\infty$），求 $f(k)\bmod{998244353}$.
+???+ note "[Luogu P4781【Template】Lagrange Interpolation](https://www.luogu.com.cn/problem/P4781)"
+    Given $n$ point pairs $(x_i,y_i)$ and $k$, where $\forall i,j$, $i\neq j \iff x_i\neq x_j$, and $f(x_i)\equiv y_i\pmod{998244353}$ and $\deg(f(x)) < n$ (define $\deg(0)=-\infty$), find $f(k)\bmod{998244353}$.
     
-    ??? note "题解"
-        本题中只用求出 $f(k)$ 的值，所以在计算上式的过程中直接将 $k$ 代入即可；有时候则需要进行多次求值等等更为复杂的操作，这时候需要求出 $f$ 的各项系数．代码给出了一种求出系数的实现．
+    ??? note "Solution"
+        In this problem, we only need to compute $f(k)$, so we can directly substitute $k$ into the above formula during calculation. Sometimes we need to perform more complex operations like multiple evaluations; in those cases we need to find all coefficients of $f$. The code provides an implementation for finding the coefficients.
         
         $$
         f(k)=\sum_{i=1}^{n}y_i\prod_{j\neq i }\frac{k-x_j}{x_i-x_j}
         $$
         
-        本题中，还需要求解逆元．如果先分别计算出分子和分母，再将分子乘进分母的逆元，累加进最后的答案，时间复杂度的瓶颈就不会在求逆元上，时间复杂度为 $O(n^2)$．
+        In this problem, we also need to compute modular inverses. If we compute the numerators and denominators separately first, then multiply the numerator by the modular inverse of the denominator and add to the final answer, the bottleneck will not be in computing inverses, and the time complexity is $O(n^2)$.
         
-        因为在固定模 $998244353$ 意义下运算，计算乘法逆元的时间复杂度我们在这里暂且认为是常数时间．
+        Since we are computing under a fixed modulus $998244353$, we can consider the time complexity of computing modular inverses to be constant time here.
     
-    ??? note "代码实现"
+    ??? note "Code Implementation"
         ```cpp
         --8<-- "docs/math/code/numerical/interp/interp_1.cpp"
         ```
 
-### 横坐标是连续整数的 Lagrange 插值
+### Lagrange Interpolation with Consecutive Integer x-coordinates
 
-如果已知点的横坐标是连续整数，我们可以做到 $O(n)$ 插值．
+If the x-coordinates of the known points are consecutive integers, we can achieve $O(n)$ interpolation.
 
-设要求的多项式为 $f(x)$，我们已知 $f(1),\cdots,f(n+1)$（$1\le i\le n+1$），考虑代入上面的插值公式：
+Let the polynomial we want be $f(x)$. We know $f(1),\cdots,f(n+1)$ ($1\le i\le n+1$). Substituting into the interpolation formula above:
 
 $$
 \begin{aligned}
@@ -91,56 +91,56 @@ f(x)&=\sum\limits_{i=1}^{n+1}y_i\prod\limits_{j\ne i}\frac{x-x_j}{x_i-x_j}\\
 \end{aligned}
 $$
 
-后面的累乘可以分子分母分别考虑，不难得到分子为：
+The product can be considered separately for numerator and denominator. The numerator is:
 
 $$
 \dfrac{\prod\limits_{j=1}^{n+1}(x-j)}{x-i}
 $$
 
-分母的 $i-j$ 累乘可以拆成两段阶乘来算：
+The denominator product $i-j$ can be split into two factorials:
 
 $$
 (-1)^{n+1-i}\cdot(i-1)!\cdot(n+1-i)!
 $$
 
-于是横坐标为 $1,\cdots,n+1$ 的插值公式：
+Thus the interpolation formula for x-coordinates $1,\cdots,n+1$:
 
 $$
 f(x)=\sum\limits_{i=1}^{n+1}(-1)^{n+1-i}y_i\cdot\frac{\prod\limits_{j=1}^{n+1}(x-j)}{(i-1)!(n+1-i)!(x-i)}
 $$
 
-预处理 $(x-i)$ 前后缀积、阶乘阶乘逆，然后代入这个式子，复杂度为 $O(n)$.
+Precompute prefix and suffix products of $(x-i)$ and factorial inverses, then substitute into this formula, achieving $O(n)$ complexity.
 
-???+ note "例题 [CF622F The Sum of the k-th Powers](https://codeforces.com/contest/622/problem/F)"
-    给出 $n,k$，求 $\sum\limits_{i=1}^ni^k$ 对 $10^9+7$ 取模的值．
+???+ note "Example Problem [CF622F The Sum of the k-th Powers](https://codeforces.com/contest/622/problem/F)"
+    Given $n,k$, compute $\sum\limits_{i=1}^ni^k$ modulo $10^9+7$.
     
-    ??? note "题解"
-        本题中，答案是一个 $k+1$ 次多项式，因此我们可以线性筛出 $1^i,\cdots,(k+2)^i$ 的值然后进行 $O(n)$ 插值．
+    ??? note "Solution"
+        In this problem, the answer is a polynomial of degree $k+1$. So we can use a linear sieve to compute $1^i,\cdots,(k+2)^i$ and then perform $O(n)$ interpolation.
         
-        也可以通过组合数学相关知识由差分法的公式推得下式：
+        It can also be derived from the formula of the difference method using combinatorial mathematics:
         
         $$
         f(x)=\sum_{i=1}^{n+1}\binom{x-1}{i-1}\sum_{j=1}^{i}(-1)^{i+j}\binom{i-1}{j-1}y_{j}=\sum\limits_{i=1}^{n+1}y_i\cdot\frac{\prod\limits_{j=1}^{n+1}(x-j)}{(x-i)\cdot(-1)^{n+1-i}\cdot(i-1)!\cdot(n+1-i)!}
         $$
     
-    ??? note "代码实现"
+    ??? note "Code Implementation"
         ```cpp
         --8<-- "docs/math/code/numerical/interp/interp_2.cpp"
         ```
 
-## Newton 插值法
+## Newton Interpolation
 
-Newton 插值法是基于高阶差分来插值的方法，优点是支持 $O(n)$ 插入新数据点．
+Newton interpolation is a method based on higher-order divided differences, with the advantage of supporting $O(n)$ insertion of new data points.
 
-为了实现 $O(n)$ 插入新数据点，我们令：
+To achieve $O(n)$ insertion of new data points, we let:
 
 $$
 f(x)=\sum_{j=0}^n a_jn_j(x)
 $$
 
-其中 $n_j(x):=\prod_{i=0}^{j-1}(x-x_i)$ 称为 **Newton 基**（Newton basis）．
+where $n_j(x):=\prod_{i=0}^{j-1}(x-x_i)$ is called the **Newton basis**.
 
-若解出 $a_j$，则可得到 $f(x)$ 的插值多项式．我们按如下方式定义 **前向差商**（forward divided differences）：
+If we solve for $a_j$, we obtain the interpolation polynomial of $f(x)$. We define **forward divided differences** as follows:
 
 $$
 \begin{aligned}
@@ -149,7 +149,7 @@ $$
 \end{aligned}
 $$
 
-则：
+Then:
 
 $$
 \begin{aligned}
@@ -158,15 +158,15 @@ $$
 \end{aligned}
 $$
 
-此即 Newton 插值的形式．朴素实现的时间复杂度为 $O(n^2)$.
+This is the form of Newton interpolation. The naive implementation has time complexity $O(n^2)$.
 
-若样本点是等距的（即 $x_i=x_0+ih$，$i=1,\dots,n$），我们可以推出
+If the sample points are equally spaced (i.e., $x_i=x_0+ih$, $i=1,\dots,n$), we can derive:
 
 $$
 [y_k,\dots,y_{k+j}]=\frac{1}{j!h^j}\Delta^{(j)}y_k,
 $$
 
-其中 $\Delta^{(j)}y_k$ 为 **前向差分**（forward differences），定义如下：
+where $\Delta^{(j)}y_k$ is the **forward difference**, defined as:
 
 $$
 \begin{aligned}
@@ -175,20 +175,20 @@ $$
 \end{aligned}
 $$
 
-令 $x=x_0+sh$，则 Newton 插值的公式可化为
+Let $x=x_0+sh$. Then Newton interpolation formula becomes:
 
 $$
 f(x)=\sum_{j=0}^n \binom{s}{j}j!h^j[y_0,\dots,y_j]=\sum_{j=0}^n \binom{s}{j}\Delta^{(j)}y_0.
 $$
 
-??? note "代码实现（[Luogu P4781【模板】拉格朗日插值](https://www.luogu.com.cn/problem/P4781)）"
+??? note "Code Implementation ([Luogu P4781【Template】Lagrange Interpolation](https://www.luogu.com.cn/problem/P4781))"
     ```cpp
     --8<-- "docs/math/code/numerical/interp/interp_3.cpp"
     ```
 
-### 横坐标是连续整数的 Newton 插值
+### Newton Interpolation with Consecutive Integer x-coordinates
 
-例如：求多项式 $f(x)=\sum_{i=0}^{3} a_ix^i$ 的系数，已知 $f(1)$ 至 $f(6)$ 的值分别为 $1, 5, 14, 30, 55, 91$．
+For example: Find the coefficients of polynomial $f(x)=\sum_{i=0}^{3} a_ix^i$, given that values of $f(1)$ to $f(6)$ are $1, 5, 14, 30, 55, 91$ respectively.
 
 $$
 \begin{array}{cccccccccccc}
@@ -199,27 +199,27 @@ $$
 \end{array}
 $$
 
-第一行为 $f(x)$ 的连续的前 $n$ 项；之后的每一行为之前一行中对应的相邻两项之差．观察到，如果这样操作的次数足够多（前提是 $f(x)$ 为多项式），最终总会返回一个定值．
+The first row contains the first $n$ consecutive values of $f(x)$; each subsequent row contains the differences between corresponding adjacent terms in the previous row. It can be observed that if this operation is performed enough times (provided $f(x)$ is a polynomial), it will eventually return a constant value.
 
-计算出第 $i-1$ 阶差分的首项为 $\sum_{j=1}^{i}(-1)^{i+j}\binom{i-1}{j-1}f(j)$，第 $i-1$ 阶差分的首项对 $f(k)$ 的贡献为 $\binom{k-1}{i-1}$ 次．
+The first term of the $i-1$-th order difference is $\sum_{j=1}^{i}(-1)^{i+j}\binom{i-1}{j-1}f(j)$. The contribution of the first term of the $i-1$-th order difference to $f(k)$ is $\binom{k-1}{i-1}$.
 
 $$
 f(k)=\sum_{i=1}^n\binom{k-1}{i-1}\sum_{j=1}^{i}(-1)^{i+j}\binom{i-1}{j-1}f(j)
 $$
 
-时间复杂度为 $O(n^2)$.
+The time complexity is $O(n^2)$.
 
-## C++ 中的实现
+## Implementation in C++
 
-自 C++ 20 起，标准库添加了 [`std::midpoint`](https://en.cppreference.com/w/cpp/numeric/midpoint) 和 [`std::lerp`](https://en.cppreference.com/w/cpp/numeric/lerp) 函数，分别用于求中点和线性插值．
+Since C++20, the standard library has added [`std::midpoint`](https://en.cppreference.com/w/cpp/numeric/midpoint) and [`std::lerp`](https://en.cppreference.com/w/cpp/numeric/lerp) functions, used for computing midpoints and linear interpolation respectively.
 
-## 习题
+## Exercises
 
--   [「NOIP2020」微信步数](https://loj.ac/p/3389)
--   [「联合省选 2022」填树](https://loj.ac/p/3701)
--   [「NOI2019」机器人](https://loj.ac/p/3157)
+-   ["NOIP2020" WeChat Steps](https://loj.ac/p/3389)
+-   ["United Provincial Selection 2022" Tree Filling](https://loj.ac/p/3701)
+-   ["NOI2019" Robot](https://loj.ac/p/3157)
 
-## 参考资料
+## References
 
 1.  [Interpolation - Wikipedia](https://en.wikipedia.org/wiki/Interpolation)
 2.  [Newton polynomial - Wikipedia](https://en.wikipedia.org/wiki/Newton_polynomial)

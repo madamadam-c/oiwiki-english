@@ -1,63 +1,59 @@
-AA 树是一种用于高效存储和检索有序数据的平衡树形结构，Arne Andersson 教授于 1993 年在他的论文 "Balanced search trees made simple" 中介绍，设计的目的是减少红黑树考虑的不同情况．AA 树可以在 $O(\log N)$ 的时间内做查找，插入和删除．下面是一个 AA 树的例子．
+AA tree is a balanced tree structure for efficient storage and retrieval of ordered data, introduced by Professor Arne Andersson in his 1993 paper "Balanced search trees made simple". The design aims to reduce the number of cases considered in red-black trees. AA trees can perform search, insertion, and deletion in $O(\log N)$ time. Below is an example of an AA tree.
 
 ![aa-tree-1](images/aa-tree-1.jpg)
 
-AA 树是红黑树的一种变体，与红黑树不同，AA 树上的红色节点只能作为右子节点．这导致 AA 树模拟了 2-3 树而不是 2-3-4 树，从而极大地简化了维护操作．红黑树的维护算法需要考虑七种不同的情况来正确平衡树．
+AA trees are a variant of red-black trees where red nodes can only be right children (unlike red-black trees). This causes AA trees to simulate 2-3 trees instead of 2-3-4 trees, greatly simplifying maintenance operations. Red-black tree maintenance algorithms need to consider seven different cases to properly balance the tree.
 
 ![red-black tree](images/aa-tree-2.svg)
 
-因为红色节点只能作为右子节点，AA 树只需要考虑两种情况．
+Since red nodes can only be right children, AA trees only need to consider two cases.
 
 ![aa-tree](images/aa-tree-3.svg)
 
-## 定义
+## Definition
 
-AA 树遵循与红黑树相同的规则，但添加了一条新规则，**即红色节点不能作为左孩子出现**．
+AA trees follow the same rules as red-black trees but add one new rule: **red nodes cannot appear as left children**.
 
-1.  每个节点都可以是红色或黑色．
-2.  根节点总是黑色．
-3.  叶节点（NULL）总是黑色．
-4.  红色节点的两个子节点必须都是黑色，即没有两个相邻的红色节点．
-5.  从根节点到 NULL 节点的每条路径都有相同数量的黑色节点．
-6.  红色节点只能作为右子节点．
+1.  Each node can be red or black.
+2.  The root is always black.
+3.  Leaves (NULL) are always black.
+4.  Both children of a red node must be black (i.e., no two adjacent red nodes).
+5.  Every path from root to NULL contains the same number of black nodes.
+6.  Red nodes can only be right children.
 
-## 平衡维护
+## Balance Maintenance
 
-AA 树的每个节点维护一个 **level** 字段，类似红黑树的每个节点维护一个 color 字段 ("RED" or "BLACK")．level 的规定满足以下 5 个条件：
+Each AA tree node maintains a **level** field, similar to how red-black tree nodes maintain a color field ("RED" or "BLACK"). Level must satisfy the following 5 conditions:
 
-1、每个叶节点的 level 是 1．
-
-2、每个左孩子的 level 是其父节点的 level 减 1．
-
-3、每个右孩子的 level 等于其父节点的 level 或等于其父节点的 level 减 1．
-
-4、每个右孙子的 level 严格小于其祖父节点的 level．
-
-5、每个 level 大于 1 的节点有两个孩子．
+1.  Every leaf node has level 1.
+2.  Every left child has level equal to its parent's level minus 1.
+3.  Every right child has level equal to its parent's level or parent's level minus 1.
+4.  Every right grandchild has level strictly less than its grandparent's level.
+5.  Every node with level greater than 1 has two children.
 
 ![aa-tree-4](images/aa-tree-4.jpg)
 
-### 水平链接（Horizontal Link）
+### Horizontal Link
 
-子节点的 level 等于父节点的 level 的链接被称为 **水平链接**，类似于红黑树中的红链接．允许单独的右水平链接，但不允许连续的右水平链接；不允许左水平链接．这些限制比红黑树的限制更加严格，因此 AA 树的平衡过程比红黑树的平衡过程在程序上要简单得多．
+A link where a child's level equals its parent's level is called a **horizontal link**, analogous to red links in red-black trees. Single right horizontal links are allowed, but consecutive right horizontal links are not; left horizontal links are not allowed. These restrictions are stricter than those in red-black trees, making the balancing process in AA trees much simpler programmatically than in red-black trees.
 
 ![aa-tree-5](images/aa-tree-5.jpg)
 
-插入和删除操作可能会暂时导致 AA 树失去平衡（即违反 AA 树的不变性）．恢复平衡只需要两种不同的操作："**skew**"（斜化）和"**split**"（分裂）．"Skew"是将一个包含左水平链接的子树进行右旋转，以替换为一个包含右水平链接的子树．"Split"是进行左旋转并增加 level，以替换一个包含两个或更多连续的右水平链接的子树，使其变为一个包含两个较少连续的右水平链接的子树．保持平衡的插入和删除的实现通过依赖"skew"和"split"操作来仅在需要时修改树，而不是由调用者决定是否进行"skew"或"split"，从而变得更加简化．
+Insertion and deletion operations may temporarily cause AA trees to lose balance (i.e., violate AA tree invariants). Restoring balance requires only two different operations: "**skew**" and "**split**". "Skew" performs a right rotation on a subtree containing a left horizontal link to replace it with a subtree containing a right horizontal link. "Split" performs a left rotation and increases level to replace a subtree with two or more consecutive right horizontal links with a subtree having fewer consecutive right horizontal links. Balanced insertion and deletion implementations become simpler by relying on "skew" and "split" operations to modify the tree only when necessary, rather than letting the caller decide whether to perform "skew" or "split".
 
-### split（左旋）
+### split (Left Rotation)
 
-出现连续向右的水平方向链（连续三个向右的孩子属于同一 level，节点 R 和节点 X 都是红色节点）．
+A continuous rightward horizontal link (three consecutive right children at the same level, nodes R and X being red nodes).
 
-此时向左旋转节点*T*，把小于等于此 level 的节点看做一个子树．
+At this point, left-rotate node *T*, treating nodes less than or equal to this level as a subtree.
 
-1.  子树的根的右孩子变为新的子树根；
-2.  原来的子树根变为新子树根的左孩子；
-3.  新的子树根 level+1．
+1.  The root of the subtree's right child becomes the new subtree root;
+2.  The original subtree root becomes the new subtree root's left child;
+3.  New subtree root level increases by 1.
 
 ![aa-tree-split](images/aa-tree-split.svg)
 
-???+ note "伪代码实现"
+???+ note "Pseudocode Implementation"
     $$
     \begin{array}{ll}
     1 & \textbf{function } \text{split}(\text{root}) \\
@@ -67,18 +63,18 @@ AA 树的每个节点维护一个 **level** 字段，类似红黑树的每个节
     \end{array}
     $$
 
-### skew（右旋）
+### skew (Right Rotation)
 
-出现向左的水平方向链（连续两个向左的孩子属于同一 level）
+A leftward horizontal link (two consecutive left children at the same level).
 
-向右旋转节点*T*，把小于等于此 level 的节点看做一个子树．
+Right-rotate node *T*, treating nodes less than or equal to this level as a subtree.
 
-1.  子树的根的左孩子变为新的子树根；
-2.  原来的子树根变为新子树根的右孩子．
+1.  The root of the subtree's left child becomes the new subtree root;
+2.  The original subtree root becomes the new subtree root's right child.
 
 ![aa-tree-skew](images/aa-tree-skew.svg)
 
-???+ note "伪代码实现"
+???+ note "Pseudocode Implementation"
     $$
     \begin{array}{ll}
     1 & \textbf{function } \text{skew}(\text{root}) \\
@@ -88,13 +84,13 @@ AA 树的每个节点维护一个 **level** 字段，类似红黑树的每个节
     \end{array}
     $$
 
-## AA 树的操作
+## AA Tree Operations
 
-AA 树本身是一棵二叉搜索树，所以搜索操作与其他二叉搜索树相同．插入和删除操作与*AVL*树相同，首先在树中将 key 插入或删除，然后沿着搜索路径回退到根，并在此过程中重构树．
+An AA tree is itself a binary search tree, so search operations are identical to those in other binary search trees. Insertion and deletion operations are similar to *AVL* trees: first insert or delete the key in the tree, then retreat along the search path to the root, reconstructing the tree during this process.
 
-### 插入
+### Insertion
 
-???+ note "伪代码实现"
+???+ note "Pseudocode Implementation"
     $$
     \begin{array}{ll}
     1 & \textbf{function } \text{insert}(\text{root}, \text{add}) \\
@@ -112,11 +108,11 @@ AA 树本身是一棵二叉搜索树，所以搜索操作与其他二叉搜索�
     \end{array}
     $$
 
-### 删除
+### Deletion
 
-删除过程与其他二叉平衡树类似，首先将内部节点的删除转换为叶子节点的删除．具体方法是将内部节点与它最接近的前驱或后继节点替换．由于 AA 树的所有 level 大于 1 的节点都有两个子节点，前驱或后继节点将位于 level 1，删除 level 1 的节点较为简单．
+The deletion process is similar to other binary balanced trees: first convert internal node deletion to leaf node deletion by replacing the internal node with its closest predecessor or successor node. Since all AA tree nodes with level greater than 1 have two children, predecessor or successor nodes will be at level 1, making deletion of level 1 nodes relatively simple.
 
-???+ note "伪代码实现"
+???+ note "Pseudocode Implementation"
     $$
     \begin{array}{ll}
     1 &  \text{//To rebalance the tree} \\
@@ -135,11 +131,11 @@ AA 树本身是一棵二叉搜索树，所以搜索操作与其他二叉搜索�
     \end{array}
     $$
 
-## 性能
+## Performance
 
-AA 树的性能与红黑树的性能相当．尽管 AA 树进行的旋转操作比红黑树多，但 AA 树的算法更简单，最终导致相近的性能．红黑树的性能在各种情况下更加一致，而 AA 树往往更扁平，这使 AA 树有稍快的搜索速度．
+AA tree performance is comparable to red-black tree performance. Although AA trees perform more rotation operations than red-black trees, AA tree algorithms are simpler, ultimately resulting in similar performance. Red-black tree performance is more consistent across various situations, while AA trees tend to be flatter, giving AA trees slightly faster search speed.
 
-## 参考资料
+## References
 
 1.  [AA tree - Wikipedia](https://en.wikipedia.org/wiki/AA_tree)
 2.  [Introduction to AA trees](https://iq.opengenus.org/aa-trees/)

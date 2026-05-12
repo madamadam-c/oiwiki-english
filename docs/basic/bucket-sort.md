@@ -1,33 +1,33 @@
-本页面将简要介绍桶排序．
+This page gives a brief introduction to bucket sort.
 
-## 定义
+## Definition
 
-桶排序（英文：Bucket sort）是排序算法的一种，适用于待排序数据值域较大但分布比较均匀的情况．
+Bucket sort (English: Bucket sort) is a sorting algorithm, suitable for cases where the range of values to be sorted is large but the distribution is relatively uniform.
 
-## 过程
+## Process
 
-桶排序按下列步骤进行：
+Bucket sort proceeds in the following steps:
 
-1.  设置一个定量的数组当作空桶；
-2.  遍历序列，并将元素一个个放到对应的桶中；
-3.  对每个不是空的桶进行排序；
-4.  从不是空的桶里把元素再放回原来的序列中．
+1.  Set up a fixed number of arrays as empty buckets;
+2.  Iterate through the sequence and place each element into its corresponding bucket;
+3.  Sort each non-empty bucket;
+4.  Put the elements back from the non-empty buckets into the original sequence.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-如果使用稳定的内层排序，并且将元素插入桶中时不改变元素间的相对顺序，那么桶排序就是一种稳定的排序算法．
+If a stable inner sorting algorithm is used, and placing elements into buckets does not change the relative order of elements, then bucket sort is a stable sorting algorithm.
 
-由于每块元素不多，一般使用插入排序．此时桶排序是一种稳定的排序算法．
+Since there are typically few elements per bucket, insertion sort is generally used. In this case, bucket sort is a stable sorting algorithm.
 
-### 时间复杂度
+### Time Complexity
 
-桶排序的平均时间复杂度为 $O(n + n^2/k + k)$（将值域平均分成 $n$ 块 + 排序 + 重新合并元素），当 $k\approx n$ 时为 $O(n)$．[^ref1]
+The average time complexity of bucket sort is $O(n + n^2/k + k)$ (dividing the value range into $n$ buckets + sorting + recombining elements), which becomes $O(n)$ when $k\approx n$.[^ref1]
 
-桶排序的最坏时间复杂度为 $O(n^2)$．
+The worst-case time complexity of bucket sort is $O(n^2)$.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
@@ -98,6 +98,6 @@
                 p += 1
     ```
 
-## 参考资料与注释
+## References and Footnotes
 
-[^ref1]: [（英文）Bucket sort - Wikipedia](https://en.wikipedia.org/wiki/Bucket_sort#Average-case_analysis)
+[^ref1]: [(English) Bucket sort - Wikipedia](https://en.wikipedia.org/wiki/Bucket_sort#Average-case_analysis)

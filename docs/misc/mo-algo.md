@@ -1,18 +1,18 @@
 author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouuan
 
-## 形式
+## Form
 
-假设 $n=m$，那么对于序列上的区间询问问题，如果从 $[l,r]$ 的答案能够 $O(1)$ 扩展到 $[l-1,r],[l+1,r],[l,r+1],[l,r-1]$（即与 $[l,r]$ 相邻的区间）的答案，那么可以在 $O(n\sqrt{n})$ 的复杂度内求出所有询问的答案．
+Assume $n=m$. For range query problems on a sequence, if the answer for $[l,r]$ can be extended in $O(1)$ to the answers for $[l-1,r],[l+1,r],[l,r+1],[l,r-1]$ (that is, intervals adjacent to $[l,r]$), then all query answers can be found in $O(n\sqrt{n})$ time.
 
-## 解释
+## Explanation
 
-离线后排序，顺序处理每个询问，暴力从上一个区间的答案转移到下一个区间答案（一步一步移动即可）．
+After processing offline, sort the queries and handle them in order. Brute-force transition from the previous interval's answer to the next interval's answer by moving one step at a time.
 
-## 排序方法
+## Sorting Method
 
-对于区间 $[l,r]$, 以 $l$ 所在块的编号为第一关键字，$r$ 为第二关键字从小到大排序．
+For interval $[l,r]$, sort in increasing order by the block number containing $l$ as the first key, and by $r$ as the second key.
 
-## 实现
+## Implementation
 
 ```cpp
 void move(int pos, int sign) {
@@ -33,30 +33,30 @@ void solve() {
 }
 ```
 
-## 复杂度分析
+## Complexity Analysis
 
-以下的情况在 $n$ 和 $m$ 同阶的前提下讨论．
+The following discussion assumes $n$ and $m$ are of the same order.
 
-首先是分块这一步，这一步的时间复杂度是 $O(\sqrt{n}\cdot\sqrt{n}\log\sqrt{n}+n\log n)=O(n\log n)$．
+First, consider the blocking step. Its time complexity is $O(\sqrt{n}\cdot\sqrt{n}\log\sqrt{n}+n\log n)=O(n\log n)$.
 
-接着就到了莫队算法的精髓了，下面我们用通俗易懂的初中方法来证明它的时间复杂度是 $O(n\sqrt{n})$．
+Next comes the essence of Mo's algorithm. We will prove its time complexity is $O(n\sqrt{n})$ using an intuitive elementary method.
 
-???+ note "证明"
-    证：令每一块中 $L$ 的最大值为 $\max_1,\max_2,\max_3, \cdots , \max_{\lceil\sqrt{n}\rceil}$．
+???+ note "Proof"
+    Proof: Let the maximum value of $L$ in each block be $\max_1,\max_2,\max_3, \cdots , \max_{\lceil\sqrt{n}\rceil}$.
     
-    由第一次排序可知，$\max_1 \le \max_2 \le \cdots \le \max_{\lceil\sqrt{n}\rceil}$．
+    From the first sorting key, we know $\max_1 \le \max_2 \le \cdots \le \max_{\lceil\sqrt{n}\rceil}$.
     
-    显然，对于每一块暴力求出第一个询问的时间复杂度为 $O(n)$．
+    Clearly, brute-forcing the first query in each block costs $O(n)$ time.
     
-    考虑最坏的情况，在每一块中，$R$ 的最大值均为 $n$，每次修改操作均要将 $L$ 由 $\max_{i - 1}$ 修改至 $\max_i$ 或由 $\max_i$ 修改至 $\max_{i - 1}$．
+    Consider the worst case. In every block, the maximum value of $R$ is $n$, and each modification operation changes $L$ from $\max_{i - 1}$ to $\max_i$ or from $\max_i$ to $\max_{i - 1}$.
     
-    考虑 $R$：因为 $R$ 在块中已经排好序，所以在同一块修改完它的时间复杂度为 $O(n)$．对于所有块就是 $O(n\sqrt{n})$．
+    Consider $R$: since $R$ has already been sorted within a block, modifying it throughout the same block costs $O(n)$ time. Across all blocks, this is $O(n\sqrt{n})$.
     
-    重点分析 $L$：因为每一次改变的时间复杂度都是 $O(\max_i-\max_{i-1})$ 的，所以在同一块中时间复杂度为 $O(\sqrt{n}\cdot(\max_i-\max_{i-1}))$．
+    Now focus on $L$: since each change costs $O(\max_i-\max_{i-1})$, the time complexity within the same block is $O(\sqrt{n}\cdot(\max_i-\max_{i-1}))$.
     
-    将每一块 $L$ 的时间复杂度合在一起，可以得到：
+    Combining the time complexity of $L$ over all blocks gives:
     
-    对于 $L$ 的总时间复杂度为
+    The total time complexity for $L$ is
     
     $$
     \begin{aligned}
@@ -66,123 +66,123 @@ void solve() {
     \end{aligned}
     $$
     
-    （裂项求和）
+    (telescoping sum)
     
-    由题可知 $\max_{\lceil\sqrt{n}\rceil}$ 最大为 $n$，所以 $L$ 的总时间复杂度最坏情况下为 $O(n\sqrt{n})$．
+    From the problem, $\max_{\lceil\sqrt{n}\rceil}$ is at most $n$, so the total time complexity for $L$ is $O(n\sqrt{n})$ in the worst case.
 
-综上所述，莫队算法的时间复杂度为 $O(n\sqrt{n})$．
+In summary, the time complexity of Mo's algorithm is $O(n\sqrt{n})$.
 
-但是对于 $m$ 的其他取值，如 $m<n$，分块方式需要改变才能变的更优．
+However, for other values of $m$, such as $m<n$, the blocking method needs to change to become more optimal.
 
-怎么分块呢？
+How should we choose the block size?
 
-我们设块长度为 $S$，那么对于任意多个在同一块内的询问，挪动的距离就是 $n$，一共 $\displaystyle \frac{n}{S}$ 个块，移动的总次数就是 $\displaystyle \frac{n^2}{S}$，移动可能跨越块，所以还要加上一个 $mS$ 的复杂度，总复杂度为 $\displaystyle O\left(\frac{n^2}{S}+mS\right)$，我们要让这个值尽量小，那么就要将这两个项尽量相等，发现 $S$ 取 $\displaystyle \frac{n}{\sqrt{m}}$ 是最优的，此时复杂度为 $\displaystyle O\left(\frac{n^2}{\displaystyle \frac{n}{\sqrt{m}}}+m\left(\frac{n}{\sqrt{m}}\right)\right)=O(n\sqrt{m})$．
+Let the block length be $S$. For any number of queries in the same block, the movement distance is $n$. There are $\displaystyle \frac{n}{S}$ blocks, so the total number of moves is $\displaystyle \frac{n^2}{S}$. Since movement may cross blocks, we also add a complexity of $mS$. The total complexity is $\displaystyle O\left(\frac{n^2}{S}+mS\right)$. To minimize this value, make the two terms as equal as possible. We find that choosing $S$ as $\displaystyle \frac{n}{\sqrt{m}}$ is optimal, giving complexity $\displaystyle O\left(\frac{n^2}{\displaystyle \frac{n}{\sqrt{m}}}+m\left(\frac{n}{\sqrt{m}}\right)\right)=O(n\sqrt{m})$.
 
-事实上，如果块长度的设定不准确，则莫队的时间复杂度会受到很大影响．例如，如果 $m$ 与 $\sqrt n$ 同阶，并且块长误设为 $\sqrt n$，则可以很容易构造出一组数据使其时间复杂度为 $O(n \sqrt n)$ 而不是正确的 $O(n^{5/4})$．
+In fact, if the block length is set inaccurately, the time complexity of Mo's algorithm can be greatly affected. For example, if $m$ is of the same order as $\sqrt n$ and the block length is mistakenly set to $\sqrt n$, it is easy to construct data that makes the time complexity $O(n \sqrt n)$ instead of the correct $O(n^{5/4})$.
 
-莫队算法看起来十分暴力，很大程度上是因为莫队算法的分块排序方法看起来很粗糙．我们会想到通过看上去更精细的排序方法对所有区间排序．一种方法是把所有区间 $[l, r]$ 看成平面上的点 $(l, r)$，并对所有点建立曼哈顿最小生成树，每次沿着曼哈顿最小生成树的边在询问之间转移答案．这样看起来可以改善莫队算法的时间复杂度，但是实际上对询问分块排序的方法的时间复杂度上界已经是最优的了．
+Mo's algorithm looks very brute-force largely because its block-based sorting method appears crude. One might think of sorting all intervals using a seemingly more refined method. For example, treat all intervals $[l, r]$ as points $(l, r)$ on a plane, build a Manhattan minimum spanning tree over all points, and transfer answers between queries along edges of this tree. This seems able to improve the time complexity of Mo's algorithm, but in fact the upper bound of the block-sorting method for queries is already optimal.
 
-假设 $n, m$ 同阶且 $n$ 是完全平方数．我们考虑形如 $[a \sqrt n, b \sqrt n](1 \le a, b \le \sqrt n)$ 的区间，这样的区间一共有 $n$ 个．如果把所有的区间看成平面上的点，则两点之间的曼哈顿距离恰好为两区间的转移代价，并且任意两个区间之间的最小曼哈顿距离为 $\sqrt n$，所以处理所有询问的时间复杂度最小为 $O(n \sqrt n)$．其它情况的数据构造方法与之类似．
+Assume $n, m$ are of the same order and $n$ is a perfect square. Consider intervals of the form $[a \sqrt n, b \sqrt n](1 \le a, b \le \sqrt n)$; there are $n$ such intervals. If all intervals are viewed as points on a plane, the Manhattan distance between two points is exactly the transition cost between the two intervals, and the minimum Manhattan distance between any two intervals is $\sqrt n$. Therefore, the minimum time complexity for processing all queries is $O(n \sqrt n)$. Data constructions for other cases are similar.
 
-莫队算法还有一个特点：当 $n$ 不变时，$m$ 越大，处理每次询问的平均转移代价就越小．一些其他的离线算法也具有同样的特点（如求 LCA 的 Tarjan 算法），但是莫队算法的平均转移代价随 $m$ 的变化最明显．
+Mo's algorithm has another feature: when $n$ is fixed, the larger $m$ is, the smaller the average transition cost per query becomes. Some other offline algorithms also have this feature, such as Tarjan's algorithm for LCA, but Mo's algorithm has the most obvious change in average transition cost as $m$ changes.
 
-## 例题 & 代码
+## Examples and Code
 
-???+ note "例题 [「国家集训队」小 Z 的袜子](https://www.luogu.com.cn/problem/P1494)"
-    题目大意：
+???+ note "Example [「国家集训队」小 Z 的袜子](https://www.luogu.com.cn/problem/P1494)"
+    Problem summary:
     
-    有一个长度为 $n$ 的序列 $\{c_i\}$．现在给出 $m$ 个询问，每次给出两个数 $l,r$，从编号在 $l$ 到 $r$ 之间的数中随机选出两个不同的数，求两个数相等的概率．
+    There is a sequence $\{c_i\}$ of length $n$. Given $m$ queries, each query gives two numbers $l,r$. Randomly choose two different numbers whose indices are between $l$ and $r$, and find the probability that the two numbers are equal.
 
-### 过程
+### Process
 
-思路：莫队算法模板题．
+Idea: this is a template problem for Mo's algorithm.
 
-对于区间 $[l,r]$，以 $l$ 所在块的编号为第一关键字，$r$ 为第二关键字从小到大排序．
+For interval $[l,r]$, sort in increasing order by the block number containing $l$ as the first key, and by $r$ as the second key.
 
-然后从序列的第一个询问开始计算答案，第一个询问通过直接暴力算出，复杂度为 $O(n)$，后面的询问在前一个询问的基础上得到答案．
+Then compute answers starting from the first query in the sequence. The first query is computed directly by brute force in $O(n)$ time, and later queries are answered based on the previous query.
 
-具体做法：
+Detailed method:
 
-对于区间 $[i,i]$，由于区间只有一个元素，我们很容易就能知道答案．然后一步一步从当前区间（已知答案）向下一个区间靠近．
+For interval $[i,i]$, since it has only one element, the answer is easy to know. Then move step by step from the current interval (whose answer is known) toward the next interval.
 
-我们设 $col[i]$ 表示当前颜色 $i$ 出现了多少次，$ans$ 表示当前共有多少种可行的配对方案（有多少种可以选到一双颜色相同的袜子）．然后每次移动的时候更新答案：设当前颜色为 $k$，如果是增长区间就是 $ans$ 加上 $\dbinom{col[k]+1}{2}-\dbinom{col[k]}{2}$；如果是缩短就是 $ans$ 减去 $\dbinom{col[k]}{2}-\dbinom{col[k]-1}{2}$．这个询问的答案就是 $\displaystyle \frac{ans}{\dbinom{r-l+1}{2}}$．
+Let $col[i]$ denote how many times color $i$ appears currently, and let $ans$ denote the current number of feasible pairing schemes, i.e. the number of ways to choose a pair of socks with the same color. Then update the answer whenever moving: suppose the current color is $k$. If the interval is expanded, add $\dbinom{col[k]+1}{2}-\dbinom{col[k]}{2}$ to $ans$; if it is shrunk, subtract $\dbinom{col[k]}{2}-\dbinom{col[k]-1}{2}$ from $ans$. The answer to this query is $\displaystyle \frac{ans}{\dbinom{r-l+1}{2}}$.
 
-这里有个优化：$\displaystyle \dbinom{a}{2}=\frac{a (a-1)}{2}$．
+There is an optimization here: $\displaystyle \dbinom{a}{2}=\frac{a (a-1)}{2}$.
 
-所以 $\displaystyle \dbinom{a+1}{2}-\dbinom{a}{2}=\frac{(a+1) a}{2}-\frac{a (a-1)}{2}=\frac{a}{2}\cdot (a+1-a+1)=\frac{a}{2}\cdot 2=a$．
+Therefore $\displaystyle \dbinom{a+1}{2}-\dbinom{a}{2}=\frac{(a+1) a}{2}-\frac{a (a-1)}{2}=\frac{a}{2}\cdot (a+1-a+1)=\frac{a}{2}\cdot 2=a$.
 
-所以 $\dbinom{col[k]+1}{2}-\dbinom{col[k]}{2}=col[k]$．
+So $\dbinom{col[k]+1}{2}-\dbinom{col[k]}{2}=col[k]$.
 
-算法总复杂度：$O(n\sqrt{n} )$
+Overall algorithm complexity: $O(n\sqrt{n} )$.
 
-下面的代码中 `deno` 表示答案的分母 (denominator)，`nume` 表示分子 (numerator)，`sqn` 表示块的大小：$\sqrt{n}$，`arr` 是输入的数组，`node` 是存储询问的结构体，`tab` 是询问序列（排序后的），`col` 同上所述．
+In the code below, `deno` denotes the denominator of the answer, `nume` denotes the numerator, `sqn` denotes the block size $\sqrt{n}$, `arr` is the input array, `node` is the structure storing queries, `tab` is the query sequence after sorting, and `col` is as described above.
 
-**注意：由于 `++l` 和 `--r` 的存在，下面代码中的移动区间的 4 个 while 循环的位置很关键，不能随意改变它们之间的位置关系．**
+**Note: because of `++l` and `--r`, the positions of the four while loops that move the interval in the code below are critical. Their relative order must not be changed arbitrarily.**
 
-??? note "关于四个循环位置的讨论"
-    莫队区间的移动过程，就相当于加入了 $[1,r]$ 的元素，并删除了 $[1,l-1]$ 的元素．因此，
+??? note "Discussion of the positions of the four loops"
+    Moving an interval in Mo's algorithm is equivalent to adding the elements of $[1,r]$ and deleting the elements of $[1,l-1]$. Therefore,
     
-    -   对于 $l\le r$ 的情况，$[1,l-1]$ 的元素相当于被加入了一次又被删除了一次，$[l,r]$ 的元素被加入一次，$[r+1,+\infty)$ 的元素没有被加入．这个区间是合法区间．
-    -   对于 $l=r+1$ 的情况，$[1,r]$ 的元素相当于被加入了一次又被删除了一次，$[r+1,+\infty)$ 的元素没有被加入．这时这个区间表示空区间．
-    -   对于 $l>r+1$ 的情况，那么 $[r+1,l-1]$（这个区间非空）的元素被删除了一次但没有被加入，因此这个元素被加入的次数是负数．
+    -   When $l\le r$, the elements of $[1,l-1]$ are effectively added once and deleted once, the elements of $[l,r]$ are added once, and the elements of $[r+1,+\infty)$ are not added. This is a valid interval.
+    -   When $l=r+1$, the elements of $[1,r]$ are effectively added once and deleted once, and the elements of $[r+1,+\infty)$ are not added. This interval represents the empty interval.
+    -   When $l>r+1$, the elements of $[r+1,l-1]$ (a nonempty interval) are deleted once but not added, so the number of times such an element has been added is negative.
     
-    因此，如果某时刻出现 $l>r+1$ 的情况，那么会存在一个元素，它的加入次数是负数．这在某些题目会出现问题，例如我们如果用一个 `set` 维护区间中的所有数，就会出现「需要删除 `set` 中不存在的元素」的问题．
+    Therefore, if $l>r+1$ occurs at some moment, there will be an element whose addition count is negative. This causes problems in some tasks. For example, if we use a `set` to maintain all numbers in the interval, we may need to delete an element that does not exist in the `set`.
     
-    代码中的四个 while 循环一共有 $4!=24$ 种排列顺序．不妨设第一个循环用于操作左端点，就有以下 $12$ 种排列（另外 $12$ 种是对称的）．下表列出了这 12 种写法的正确性，还给出了错误写法的反例．
+    The four while loops in the code have $4!=24$ possible orders. Suppose the first loop operates on the left endpoint; then there are the following $12$ orders (the other $12$ are symmetric). The table lists the correctness of these 12 orders and gives counterexamples for incorrect ones.
     
-    | 循环顺序              | 正确性 | 反例或注释       |
-    | ----------------- | --- | ----------- |
-    | `l--,l++,r--,r++` | 错误  | $l<r<l'<r'$ |
-    | `l--,l++,r++,r--` | 错误  | $l<r<l'<r'$ |
-    | `l--,r--,l++,r++` | 错误  | $l<r<l'<r'$ |
-    | `l--,r--,r++,l++` | 正确  | 证明较繁琐       |
-    | `l--,r++,l++,r--` | 正确  |             |
-    | `l--,r++,r--,l++` | 正确  |             |
-    | `l++,l--,r--,r++` | 错误  | $l<r<l'<r'$ |
-    | `l++,l--,r++,r--` | 错误  | $l<r<l'<r'$ |
-    | `l++,r++,l--,r--` | 错误  | $l<r<l'<r'$ |
-    | `l++,r++,r--,l--` | 错误  | $l<r<l'<r'$ |
-    | `l++,r--,l--,r++` | 错误  | $l<r<l'<r'$ |
-    | `l++,r--,r++,l--` | 错误  | $l<r<l'<r'$ |
+    | Loop order        | Correctness | Counterexample or note |
+    | ----------------- | ----------- | ---------------------- |
+    | `l--,l++,r--,r++` | Incorrect   | $l<r<l'<r'$            |
+    | `l--,l++,r++,r--` | Incorrect   | $l<r<l'<r'$            |
+    | `l--,r--,l++,r++` | Incorrect   | $l<r<l'<r'$            |
+    | `l--,r--,r++,l++` | Correct     | Proof is tedious       |
+    | `l--,r++,l++,r--` | Correct     |                        |
+    | `l--,r++,r--,l++` | Correct     |                        |
+    | `l++,l--,r--,r++` | Incorrect   | $l<r<l'<r'$            |
+    | `l++,l--,r++,r--` | Incorrect   | $l<r<l'<r'$            |
+    | `l++,r++,l--,r--` | Incorrect   | $l<r<l'<r'$            |
+    | `l++,r++,r--,l--` | Incorrect   | $l<r<l'<r'$            |
+    | `l++,r--,l--,r++` | Incorrect   | $l<r<l'<r'$            |
+    | `l++,r--,r++,l--` | Incorrect   | $l<r<l'<r'$            |
     
-    全部 24 种排列中只有 6 种是正确的，其中有 2 种的证明较繁琐，这里只给出其中 4 种的证明．
+    Among all 24 orders, only 6 are correct, and the proofs for 2 of them are tedious. Here we only give the proof for 4 of them.
     
-    这 4 种正确写法的共同特点是，前两步先扩大区间（`l--` 或 `r++`），后两步再缩小区间（`l++` 或 `r--`）．这样写，前两步是扩大区间，可以保持 $l\le r+1$；执行完前两步后，$l\le l'\le r'\le r$ 一定成立，再执行后两步只会把区间缩小到 $[l',r']$，依然有 $l\le r+1$，因此这样写是正确的．
+    The common feature of these 4 correct orders is that the first two steps expand the interval (`l--` or `r++`), and the last two steps shrink it (`l++` or `r--`). With this order, the first two steps expand the interval and keep $l\le r+1$. After the first two steps, $l\le l'\le r'\le r$ must hold. The last two steps only shrink the interval to $[l',r']$, and still maintain $l\le r+1$, so this order is correct.
 
-### 实现
+### Implementation
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/misc/code/mo-algo/mo-algo_1.cpp"
     ```
 
-## 普通莫队的优化
+## Optimization of Ordinary Mo's Algorithm
 
-### 过程
+### Process
 
-我们看一下下面这组数据
+Consider the following data:
 
 ```text
-// 设块的大小为 2 (假设)
+// Assume the block size is 2
 1 1
 2 100
 3 1
 4 100
 ```
 
-手动模拟一下可以发现，r 指针的移动次数大概为 300 次，我们处理完第一个块之后，$l = 2, r = 100$，此时只需要移动两次 l 指针就可以得到第四个询问的答案，但是我们却将 r 指针移动到 1 来获取第三个询问的答案，再移动到 100 获取第四个询问的答案，这样多了九十几次的指针移动．我们怎么优化这个地方呢？这里我们就要用到奇偶化排序．
+By simulating manually, we find that the r pointer moves about 300 times. After processing the first block, $l = 2, r = 100$. At this point, only moving the l pointer twice would obtain the answer to the fourth query, but instead we move the r pointer to 1 to answer the third query, then move it back to 100 to answer the fourth query. This adds more than ninety pointer moves. How can we optimize this? Use odd-even sorting.
 
-什么是奇偶化排序？奇偶化排序即对于属于奇数块的询问，r 按从小到大排序，对于属于偶数块的排序，r 从大到小排序，这样我们的 r 指针在处理完这个奇数块的问题后，将在返回的途中处理偶数块的问题，再向 n 移动处理下一个奇数块的问题，优化了 r 指针的移动次数，一般情况下，这种优化能让程序快 30% 左右．
+What is odd-even sorting? For queries in odd-numbered blocks, sort r in increasing order; for queries in even-numbered blocks, sort r in decreasing order. Then after the r pointer finishes an odd block, it processes the even block on the way back, and then moves toward n to process the next odd block. This optimizes the number of moves of the r pointer. In general, this optimization can make the program about 30% faster.
 
-### 实现
+### Implementation
 
-排序代码：
+Sorting code:
 
-=== "压行"
+=== "One-line Style"
     ```cpp
     // clang-format off
-    // 这里有个小细节等下会讲
-    int unit; // 块的大小
+    // There is a small detail here, explained later
+    int unit; // Block size
     struct node {
       int l, r, id;
       bool operator < (const node &x) const {
@@ -191,25 +191,25 @@ void solve() {
     };
     ```
 
-=== "不压行"
+=== "Expanded Style"
     ```cpp
     struct node {
       int l, r, id;
     
       bool operator<(const node &x) const {
         if (l / unit != x.l / unit) return l < x.l;
-        // 注意下面两行不能写小于（大于）等于，否则会出错（详见下面的小细节）
+        // Note: the following two lines must not use <= or >=, otherwise errors occur
         if ((l / unit) & 1) return r < x.r;
         return r > x.r;
       }
     };
     ```
 
-???+ warning "小细节"
-    如果使用 `sort` 比较两个结构体，不能出现 $a < b$ 和 $b < a$ 同时为真的情况，否则会运行错误，详见 [常见错误](../contest/common-mistakes.md#会导致-re)．
+???+ warning "Small Detail"
+    When using `sort` to compare two structures, it must not be possible for both $a < b$ and $b < a$ to be true at the same time; otherwise a runtime error may occur. See [common mistakes](../contest/common-mistakes.md#会导致-re).
 
-对于压行版，如果没有 `r == x.r` 的特判，当 l 属于同一奇数块且 r 相等时，会出现上面小细节中的问题（自己手动模拟一下），对于不压行版，如果写成小于（大于）等于，则也会出现同样的问题．
+For the one-line version, without the special case `r == x.r`, when l belongs to the same odd block and r is equal, the issue described above occurs (try simulating it manually). For the expanded version, the same issue occurs if less-than-or-equal or greater-than-or-equal is used.
 
-## 参考资料
+## References
 
 -   [莫队算法学习笔记 | Sengxian's Blog](https://blog.sengxian.com/algorithms/mo-s-algorithm)

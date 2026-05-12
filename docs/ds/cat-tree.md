@@ -1,67 +1,67 @@
 author: ChungZH, billchenchina, Chrogeek, Early0v0, ethan-enhe, HeRaNO, hsfzLZH1, iamtwz, Ir1d, konnyakuxzy, luoguojie, Marcythm, orzAtalod, StudyingFather, wy-luke, Xeonacid, CCXXXI, chenryang, chenzheAya, CJSoft, cjsoft, countercurrent-time, DawnMagnet, Enter-tainer, GavinZhengOI, Haohu Shen, Henry-ZHR, hjsjhn, hly1204, jaxvanyang, Jebearssica, kenlig, ksyx, megakite, Menci, moon-dim, NachtgeistW, onelittlechildawa, ouuan, shadowice1984, shawlleyw, shuzhouliu, SukkaW, Tiphereth-A, x2e6, Ycrpro, yifan0305, zeningc, hcx2012Git
 
-## 引入
+## Introduction
 
-众所周知线段树可以支持高速查询某一段区间的信息和，比如区间最大子段和，区间和，区间矩阵的连乘积等等．
+It is well known that segment trees can support fast queries for information over a certain interval, such as maximum subarray sum, interval sum, and matrix chain multiplication, etc.
 
-但是有一个问题在于普通线段树的区间询问在某些毒瘤的眼里可能还是有些慢了．
+However, there is a problem: the interval query of a regular segment tree may still be too slow in some problematic scenarios.
 
-简单来说就是线段树建树的时候需要做 $O(n)$ 次合并操作，而每一次区间询问需要做 $O(\log{n})$ 次合并操作，询问区间和这种东西的时候还可以忍受，但是当我们需要询问区间线性基这种合并复杂度高达 $O(\log^2{w})$ 的信息的话，此时就算是做 $O(\log{n})$ 次合并有些时候在时间上也是不可接受的．
+Simply put, when building a segment tree, we need to perform $O(n)$ merge operations, and each interval query requires $O(\log{n})$ merge operations. For queries like interval sum, this is acceptable, but when we need to query information with high merge complexity such as linear basis ($O(\log^2{w})$), even doing $O(\log{n})$ merge operations may sometimes be unacceptable in terms of time.
 
-而所谓「猫树」就是一种不支持修改，仅仅支持快速区间询问的一种静态线段树．
+The so-called "Cat Tree" is a static segment tree that does not support modifications but supports fast interval queries.
 
-构造一棵这样的静态线段树需要 $O(n\log{n})$ 次合并操作，但是此时的查询复杂度被加速至 $O(1)$ 次合并操作．
+Constructing such a static segment tree requires $O(n\log{n})$ merge operations, but the query complexity is accelerated to $O(1)$ merge operations.
 
-在处理线性基这样特殊的信息的时候甚至可以将复杂度降至 $O(n\log^2{w})$．
+When processing special information like linear basis, the complexity can even be reduced to $O(n\log^2{w})$.
 
-## 原理
+## Principle
 
-在查询 $[l,r]$ 这段区间的信息和的时候，将线段树树上代表 $[l,l]$ 的节点和代表 $[r,r]$ 这段区间的节点在线段树上的 LCA 求出来，设这个节点 $p$ 代表的区间为 $[L,R]$，我们会发现一些非常有趣的性质：
+When querying the sum of information over the interval $[l,r]$, we find the LCA (Lowest Common Ancestor) of the nodes representing $[l,l]$ and $[r,r]$ on the segment tree. Let this node $p$ represent the interval $[L,R]$. We will discover some very interesting properties:
 
-1.  $[L,R]$ 这个区间一定包含 $[l,r]$．显然，因为它既是 $l$ 的祖先又是 $r$ 的祖先．
+1. The interval $[L,R]$ must contain $[l,r]$. Obviously, because it is both an ancestor of $l$ and an ancestor of $r$.
 
-2.  $[l,r]$ 这个区间一定跨越 $[L,R]$ 的中点．由于 $p$ 是 $l$ 和 $r$ 的 LCA，这意味着 $p$ 的左儿子是 $l$ 的祖先而不是 $r$ 的祖先，$p$ 的右儿子是 $r$ 的祖先而不是 $l$ 的祖先．因此，$l$ 一定在 $[L,\mathit{mid}]$ 这个区间内，$r$ 一定在 $(\mathit{mid},R]$ 这个区间内．
+2. The interval $[l,r]$ must cross the midpoint of $[L,R]$. Since $p$ is the LCA of $l$ and $r$, this means $p$'s left child is an ancestor of $l$ but not $r$, and $p$'s right child is an ancestor of $r$ but not $l$. Therefore, $l$ must lie in the interval $[L,\mathit{mid}]$, and $r$ must lie in $(\mathit{mid},R]$.
 
-有了这两个性质，我们就可以将询问的复杂度降至 $O(1)$ 了．
+With these two properties, we can reduce the query complexity to $O(1)$.
 
-## 实现
+## Implementation
 
-具体来讲我们建树的时候对于线段树树上的一个节点，设它代表的区间为 $(l,r]$．
+Specifically, when building the tree, for a node on the segment tree representing the interval $(l,r]$:
 
-不同于传统线段树在这个节点里只保留 $[l,r]$ 的和，我们在这个节点里面额外保存 $(l,\mathit{mid}]$ 的后缀和数组和 $(\mathit{mid},r]$ 的前缀和数组．
+Unlike a traditional segment tree that only stores the sum of $[l,r]$ in this node, we additionally store the suffix sum array of $(l,\mathit{mid}]$ and the prefix sum array of $(\mathit{mid},r]$.
 
-这样的话建树的复杂度为 $T(n)=2T(n/2)+O(n)=O(n\log{n})$ 同理空间复杂度也从原来的 $O(n)$ 变成了 $O(n\log{n})$．
+This way, the construction complexity becomes $T(n)=2T(n/2)+O(n)=O(n\log{n})$, and similarly, the space complexity increases from the original $O(n)$ to $O(n\log{n})$.
 
-下面是最关键的询问了．
+Now comes the key part: the query.
 
-如果我们询问的区间是 $[l,r]$ 那么我们把代表 $[l,l]$ 的节点和代表 $[r,r]$ 的节点的 LCA 求出来，记为 $p$．
+If we query the interval $[l,r]$, we find the LCA of the nodes representing $[l,l]$ and $[r,r]$, denoted as $p$.
 
-根据刚才的两个性质，$l,r$ 在 $p$ 所包含的区间之内并且一定跨越了 $p$ 的中点．
+Based on the two properties above, $l,r$ lie within the interval contained by $p$ and must cross $p$'s midpoint.
 
-这意味这一个非常关键的事实是我们可以使用 $p$ 里面的前缀和数组和后缀和数组，将 $[l,r]$ 拆成 $[l,\mathit{mid}]+(\mathit{mid},r]$ 从而拼出来 $[l,r]$ 这个区间．
+This implies a very important fact: we can use the prefix and suffix sum arrays stored in $p$ to split $[l,r]$ into $[l,\mathit{mid}]+(\mathit{mid},r]$ and thus assemble $[l,r]$.
 
-而这个过程仅仅需要 $O(1)$ 次合并操作！
+This process requires only $O(1)$ merge operations!
 
-不过我们好像忽略了点什么？
+But it seems we have overlooked something?
 
-似乎求 LCA 的复杂度似乎还不是 $O(1)$，暴力求是 $O(\log{n})$ 的，倍增法则是 $O(\log{\log{n}})$ 的，转 ST 表的代价又太大……
+It seems that the complexity of finding the LCA is still not $O(1)$; brute force is $O(\log{n})$, binary lifting is $O(\log{\log{n}})$, and converting to an Sparse Table is too costly...
 
-## 堆式建树
+## Heap-style Construction
 
-具体来将我们将这个序列补成 $2$ 的整次幂，然后建线段树．
+Specifically, we extend this sequence to a power of $2$, then build a segment tree.
 
-此时我们发现线段树上两个节点的 LCA 编号，就是两个节点二进制编号的最长公共前缀 LCP．
+At this point, we find that the LCA index of two nodes on the segment tree is exactly the longest common prefix (LCP) of their binary representations.
 
-稍作思考即可发现发现在 $x$ 和 $y$ 的二进制下 `lcp(x,y)=x>>digits[x^y]`．（其中 `digits[x]` 表示二进制下 $x$ 的位数，即 $\lfloor \log_2 x \rfloor+1$）
+After a little thought, we can discover that in binary, for $x$ and $y$, `lcp(x,y)=x>>digits[x^y]` (where `digits[x]` represents the number of bits in $x$'s binary representation, i.e., $\lfloor \log_2 x \rfloor+1$).
 
-所以我们预处理一个 `digits` 数组即可轻松完成求 LCA 的工作．
+Thus, we can preprocess a `digits` array to easily accomplish the LCA task.
 
-这样我们就构建了一个猫树．
+In this way, we have constructed a Cat Tree.
 
-由于建树的时候涉及到求前缀和和求后缀和，所以对于线性基这种虽然合并是 $O(\log^2{w})$ 但是求前缀和却是 $O(n\log{n})$ 的信息，使用猫树可以将静态区间线性基从 $O(n\log^2{w}+m\log^2{w}\log{n})$ 优化至 $O(n\log{n}\log{w}+m\log^2{w})$ 的复杂度．
+Since building the tree involves computing prefix and suffix sums, for linear basis information where merging is $O(\log^2{w})$ but prefix/suffix sum computation is $O(n\log{n})$, using a Cat Tree can optimize static interval linear basis from $O(n\log^2{w}+m\log^2{w}\log{n})$ to $O(n\log{n}\log{w}+m\log^2{w})$.
 
-### 参考
+### References
 
--   [immortalCO 的博客](https://immortalco.blog.uoj.ac/blog/2102)
+-   [immortalCO's blog](https://immortalco.blog.uoj.ac/blog/2102)
 -   [\[Kle77\]](http://ieeexplore.ieee.org/document/1675628/) V. Klee, "Can the Measure of be Computed in Less than O (n log n) Steps?," Am. Math. Mon., vol. 84, no. 4, pp. 284–285, Apr. 1977.
 -   [\[BeW80\]](https://www.tandfonline.com/doi/full/10.1080/00029890.1977.11994336) Bentley and Wood, "An Optimal Worst Case Algorithm for Reporting Intersections of Rectangles," IEEE Trans. Comput., vol. C–29, no. 7, pp. 571–577, Jul. 1980.

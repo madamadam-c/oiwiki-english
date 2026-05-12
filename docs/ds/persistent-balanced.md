@@ -1,69 +1,69 @@
-## 可持久化无旋转 Treap
+## Persistent FHQ Treap
 
-### 前置知识
+### Prerequisites
 
-**OI 常用的可持久化平衡树** 一般就是 **可持久化无旋转 Treap** 所以推荐首先学习 [**无旋转 Treap**](./treap.md)．
+The **persistent balanced tree commonly used in OI** is generally the **persistent FHQ Treap**, so it is recommended to first learn [**FHQ Treap**](./treap.md).
 
-### 思想/做法
+### Idea/Approach
 
-对于非旋转 Treap，可通过 **Merge** 和 **Split** 操作过程中复制路径上经过的节点（一般在 **Split** 操作中复制，确保不影响以前的版本）就可完成可持久化．
+For a non-rotating Treap, persistence can be achieved by copying the nodes encountered on the path during **Merge** and **Split** operations. Usually this copying is done in **Split**, ensuring that previous versions are not affected.
 
-对于旋转 Treap，在复制路径上经过的节点同时，还需复制受旋转影响的节点（若其已为这次操作中复制的节点，则无需再复制），对于一次旋转一般只影响两个节点，那么不会增加其时间复杂度．
+For a rotating Treap, besides copying the nodes encountered on the path, you also need to copy the nodes affected by rotations. If such a node has already been copied during this operation, it does not need to be copied again. Since one rotation usually affects only two nodes, this does not increase the time complexity.
 
-上述方法一般被称为 path copying．
+The method above is generally called path copying.
 
-「一切可支持操作都可以通过 **Merge Split Newnode Build** 完成」，而 **Build** 操作只用于建造无需理会，**Newnode**（新建节点）就是用来可持久化的工具．
+"All supported operations can be completed through **Merge Split Newnode Build**." The **Build** operation is only used for construction and does not need special attention; **Newnode** creates a new node and is the tool used for persistence.
 
-我们来观察一下 **Merge** 和 **Split**，我们会发现它们都是由上而下的操作！
+Observe **Merge** and **Split**: both are top-down operations.
 
-因此我们完全可以 **参考线段树的可持久化操作** 对它进行可持久化．
+Therefore, we can make them persistent by **following the persistent segment tree approach**.
 
-### 可持久化操作
+### Persistent Operations
 
-**可持久化** 是对 **数据结构** 的一种操作，即保留历史信息，使得在后面可以调用之前的历史版本．
+**Persistence** is an operation on a **data structure**: it preserves historical information so that earlier versions can be accessed later.
 
-对于 **可持久化线段树** 来说，每一次新建历史版本就是把 **沿途的修改路径** 复制出来
+For a **persistent segment tree**, creating a new historical version means copying the **modified path**.
 
-那么对可持久化 Treap（目前国内 OI 常用的版本）来说：
+For a persistent Treap, the version currently commonly used in domestic OI:
 
-在复制一个节点 $X_{a}$（$X$ 节点的第 $a$ 个版本）的新版本 $X_{a+1}$（$X$ 节点的第 $a+1$ 个版本）以后：
+After copying a node $X_{a}$, the $X$ node's $a$-th version, into a new version $X_{a+1}$, the $X$ node's $a+1$-th version:
 
--   如果某个儿子节点 $Y$ 不用修改信息，那么就把 $X_{a+1}$ 的指针直接指向 $Y_{a}$（$Y$ 节点的第 $a$ 个版本）即可．
--   反之，如果要修改 $Y$，那么就在 **递归到下层** 时 **新建**  $Y_{a+1}$（$Y$ 节点的第 $a+1$ 个版本）这个新节点用于 **存储新的信息**，同时把 $X_{a+1}$ 的指针指向 $Y_{a+1}$（$Y$ 节点的第 $a+1$ 个版本）．
+-   If some child node $Y$ does not need its information modified, directly make the pointer of $X_{a+1}$ point to $Y_{a}$, the $Y$ node's $a$-th version.
+-   Otherwise, if $Y$ must be modified, then when **recursing to the lower level**, **create** the new node $Y_{a+1}$, the $Y$ node's $a+1$-th version, to **store the new information**, and make the pointer of $X_{a+1}$ point to $Y_{a+1}$, the $Y$ node's $a+1$-th version.
 
-### 可持久化
+### Persistence
 
-需要的东西：
+Required components:
 
--   一个 `struct` 数组 存 **每个节点** 的信息（一般叫做 `tree` 数组）；（当然写 **指针版** 平衡树的大佬就可以考虑不用这个数组了）
+-   A `struct` array storing information for **each node**; it is usually called the `tree` array. Of course, if you write a **pointer-based** balanced tree, you can consider not using this array.
 
--   一个 **根节点数组**，存每个版本的*树根*，每次查询版本信息时就从 **根数组存的节点** 开始；
+-   A **root array** storing the *tree root* of each version. Each query on a version starts from the node stored in this root array.
 
--   `split()` 分裂 **从树中分裂出两棵树**
+-   `split()` splits **one tree into two trees**.
 
--   `merge()` 合并 **把两棵树按照随机权值合并**
+-   `merge()` merges **two trees according to random priorities**.
 
--   `newNode()` 新建一个节点
+-   `newNode()` creates a new node.
 
--   `build()` 建树
+-   `build()` builds the tree.
 
 #### Split
 
-对于 **分裂操作**，每次分裂路径时 **新建节点** 指向分出来的路径，用 `std::pair` 存新分裂出来的两棵树的根．
+For the **split operation**, create new nodes along the split path and point them to the separated paths. Use `std::pair` to store the roots of the two newly split trees.
 
-`split(x,k)` 返回一个 `std::pair`;
+`split(x,k)` returns a `std::pair`.
 
-表示把 $_x$ 为根的树的前 $k$ 个元素放在 **一棵树** 中，剩下的节点构成在另一棵树中，返回这两棵树的根（first 是第一棵树的根，second 是第二棵树的）．
+It means putting, from the tree rooted at $_x$, the first $k$ elements into **one tree**, while the remaining nodes form another tree, and returning the roots of the two trees. `first` is the root of the first tree, and `second` is the root of the second.
 
--   如果 $x$ 的 **左子树** 的 $key \geq k$，那么 **直接递归进左子树**，把左子树分出来的第二颗树和当前的 $x$  **右子树** 合并．
--   否则递归 **右子树**．
+-   If the **left subtree** of $x$ has $key \geq k$, recursively enter the left subtree, and merge the second tree split from the left subtree with the current **right subtree** of $x$.
+-   Otherwise, recurse into the **right subtree**.
 
 ```cpp
 static std::pair<int, int> _split(int _x, int k) {
   if (_x == 0)
     return std::make_pair(0, 0);
   else {
-    int _vs = ++_cnt;  // 新建节点（可持久化的精髓）
+    int _vs = ++_cnt;  // Create a new node, the essence of persistence
     _trp[_vs] = _trp[_x];
     std::pair<int, int> _y;
     if (_trp[_vs].key <= k) {
@@ -83,9 +83,9 @@ static std::pair<int, int> _split(int _x, int k) {
 
 #### Merge
 
-`merge(x,y)` 返回 merge 出的树的根．
+`merge(x,y)` returns the root of the merged tree.
 
-同样递归实现．如果 **x 的随机权值**>**y 的随机权值**，则 `merge(x_{rc},y)`，否则 `merge(x,y_{lc})`．
+It is also implemented recursively. If **x's random priority** > **y's random priority**, call `merge(x_{rc},y)`; otherwise call `merge(x,y_{lc})`.
 
 ```cpp
 static int _merge(int _x, int _y) {
@@ -105,63 +105,63 @@ static int _merge(int _x, int _y) {
 }
 ```
 
-## 可持久化 WBLT
+## Persistent WBLT
 
-### 前置知识
+### Prerequisites
 
-可持久化 WBLT 由 WBLT 改动而来，所以首先学习 [WBLT](./wblt.md)．
+Persistent WBLT is modified from WBLT, so first learn [WBLT](./wblt.md).
 
-### 思想/做法
+### Idea/Approach
 
-使用 **路径复制** 的方法，将一次操作中 **修改过** 的节点复制下来，不能影响之前的节点．
+Use **path copying**: copy all nodes **modified** during an operation, so previous nodes are not affected.
 
-### 处理懒标记
+### Handling Lazy Tags
 
-为了处理懒标记，我们这样考虑：在一棵持久化的 WBLT 上，一个点可能有多个父亲，但是儿子数量只能是 $0$ 或 $2$ 个．pushdown 的下放懒标记的操作，只会影响它的儿子，我们对一个点进行 pushdown，是没有影响的；反而是它的儿子，它的儿子可能不止它一个父亲，将它的标记下放到儿子，可能导致在别的父亲的版本上，多了一个不属于那个版本的懒标记，这就错了；除非它的儿子只有它一个父亲．所以我们应该在 pushdown 的时候，复制一遍儿子，把懒标记打到新的儿子上．
+To handle lazy tags, consider this: in a persistent WBLT, a node may have multiple parents, but it can only have $0$ or $2$ children. A `pushdown` operation only affects its children. Calling `pushdown` on a node itself has no harmful effect; the issue is with its children. A child may have more than one parent, and pushing the tag down to that child may add a lazy tag that does not belong to another parent's version, which is incorrect, unless the child has only this one parent. Therefore, during `pushdown`, we should copy the children once and apply the lazy tags to the new children.
 
-### 实现路径复制
+### Implementing Path Copying
 
-在进行路径复制的时候，我们可以定义一个 refresh 函数，它接受一个节点 $p$ 的引用，表示把节点 $p$ 复制一下，产生一个新的节点，重新赋值给 $p$．使用 refresh 函数的原则是，如果它将要被修改，或者它拥有的儿子即将发生变动（而不是它的儿子的信息将要被修改），那么就 refresh 它，否则不需要．
+When doing path copying, define a `refresh` function that takes a reference to a node $p$, meaning: copy node $p$, produce a new node, and assign the new node back to $p$. The rule for using `refresh` is: if the node is about to be modified, or if the children it owns are about to change (not merely that information inside its children will change), then refresh it; otherwise it is unnecessary.
 
-对于静态的查询，除了 pushdown 之外都不用 refresh．如果保证什么操作都做路径复制，那么 pushdown 和 refresh 的顺序是无所谓的．
+For static queries, no refresh is needed except for `pushdown`. If every operation is guaranteed to use path copying, then the order of `pushdown` and `refresh` does not matter.
 
-### 针对持久化 WBLT 的小优化
+### A Small Optimization for Persistent WBLT
 
-这里有一个优化．观察到 pushdown 的时候要复制两个节点，可以写标记永久化，但是刚才说了，如果它的儿子只有它一个父亲，可以不用复制．针对这一个性质，可以进行优化，以减少复制多余的节点．
+Here is an optimization. We observed that `pushdown` copies two nodes. Tag permanence can be used, but as mentioned above, if a child has only this one parent, there is no need to copy it. This property can be used to reduce unnecessary node copies.
 
-考虑记录每个节点有多少个父亲（认为每个版本的根都有一个父亲），记为 $use$．每次 refresh 的时候，如果 $use\leq 1$ 则不需要重新复制节点，否则新建节点，并且 $use$ 自减 $1$，表示父亲带着这个儿子跑了，这样父亲就可以随意修改新的节点而不影响其它版本．另外每次复制节点的时候，如果节点有儿子，那么两个儿子的 $use$ 自增 $1$；合并两个子树时，返回的节点对两个儿子也有一个父亲的 $use$；删除节点时，两个子节点都丢失一个父亲：这样能优化一些时空．
+Record how many parents each node has, counting each version root as having one parent; denote this by $use$. During each `refresh`, if $use\leq 1$, there is no need to copy the node again. Otherwise, create a new node and decrement $use$ by $1$, indicating that the parent has taken this child away; then the parent may freely modify the new node without affecting other versions. In addition, each time a node is copied, if it has children, increment both children's $use$ by $1$. When two subtrees are merged, the returned node also contributes one parent's $use$ to each of its two children. When a node is deleted, both child nodes lose one parent. This can optimize time and space somewhat.
 
-### 代码实现
+### Code Implementation
 
-??? note "完整代码（可持久化文艺平衡树）"
+??? note "Full Code (Persistent Splay-Like Balanced Sequence Tree)"
     ```cpp
     --8<-- "docs/ds/code/persistent-balanced/persistent-wblt.cpp"
     ```
 
-## 例题
+## Examples
 
-???+ note "[洛谷 P3835【模版】可持久化平衡树](https://www.luogu.com.cn/problem/P3835)"
-    你需要实现一个数据结构，要求提供如下操作（最开始时数据结构内无数据）：
+???+ note "[Luogu P3835 [Template] Persistent Balanced Tree](https://www.luogu.com.cn/problem/P3835)"
+    You need to implement a data structure supporting the following operations. Initially, the data structure is empty.
     
-    1.  插入 $x$ 数；
-    2.  删除 $x$ 数（若有多个相同的数，应只删除一个，如果没有请忽略该操作）；
-    3.  查询 $x$ 数的排名（排名定义为比当前数小的数的个数 + 1）；
-    4.  查询排名为 $x$ 的数；
-    5.  求 $x$ 的前驱（前驱定义为小于 $x$，且最大的数，如不存在输出 $-2\,147\,483\,647$）；
-    6.  求 $x$ 的后继（后继定义为大于 $x$，且最小的数，如不存在输出 $2\,147\,483\,647$）．
+    1.  Insert number $x$.
+    2.  Delete number $x$. If there are multiple equal numbers, delete only one; if there is none, ignore the operation.
+    3.  Query the rank of number $x$. The rank is defined as the number of elements smaller than the current number plus 1.
+    4.  Query the number whose rank is $x$.
+    5.  Find the predecessor of $x$. The predecessor is the greatest number less than $x$; if it does not exist, output $-2\,147\,483\,647$.
+    6.  Find the successor of $x$. The successor is the smallest number greater than $x$; if it does not exist, output $2\,147\,483\,647$.
     
-    以上操作均基于某一个历史版本，同时生成一个新的版本（操作 3, 4, 5, 6 即保持原版本无变化）．而每个版本的编号则为操作的序号．特别地，最初的版本编号为 0．
+    All operations are based on some historical version and generate a new version. Operations 3, 4, 5, and 6 keep the original version unchanged. The number of each version is the index of the operation. In particular, the initial version is numbered 0.
 
-就是 **普通平衡树** 一题的可持久化版，操作和该题类似．
+This is the persistent version of the **ordinary balanced tree** problem, and the operations are similar.
 
-只是使用了可持久化的 merge 和 split 操作．
+It just uses persistent `merge` and `split` operations.
 
-## 推荐的练手题
+## Recommended Practice Problems
 
-1.  [「Luogu P3919」可持久化数组（模板题）](https://www.luogu.com.cn/problem/P3919)
+1.  [「Luogu P3919」Persistent Array (Template)](https://www.luogu.com.cn/problem/P3919)
 
 2.  [「Codeforces 702F」T-shirt](http://codeforces.com/problemset/problem/702/F)
 
-3.  [「Luogu P5055」可持久化文艺平衡树](https://www.luogu.com.cn/problem/P5055)
+3.  [「Luogu P5055」Persistent Implicit Balanced Tree](https://www.luogu.com.cn/problem/P5055)
 
-4.  [「Luogu P5350」序列](https://www.luogu.com.cn/problem/P5350)
+4.  [「Luogu P5350」Sequence](https://www.luogu.com.cn/problem/P5350)

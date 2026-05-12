@@ -1,12 +1,12 @@
 author: hydingsy, hyp1231, ranwen, 383494
 
-前置知识：[数论分块](./sqrt-decomposition.md)、[狄利克雷卷积](./dirichlet.md#dirichlet-卷积)
+Prerequisites: [Number Theoretic Blocks](./sqrt-decomposition.md), [Dirichlet Convolution](./dirichlet.md#dirichlet-convolution)
 
-莫比乌斯反演是数论中的重要内容．对于一些函数 $f(n)$，如果很难直接求出它的值，而容易求出其倍数和或约数和 $g(n)$，那么可以通过莫比乌斯反演简化运算，求得 $f(n)$ 的值．
+Möbius inversion is an important technique in number theory. For some functions $f(n)$, if it is difficult to directly compute their values, but it is easy to compute their multiple sums or divisor sums $g(n)$, then Möbius inversion can be used to simplify the computation and obtain the value of $f(n)$.
 
-## 莫比乌斯函数
+## The Möbius Function
 
-莫比乌斯函数（Möbius 函数）定义为
+The Möbius function is defined as
 
 $$
 \mu(n)=
@@ -17,18 +17,18 @@ $$
 \end{cases}
 $$
 
-具体地，假设正整数 $n$ 有素因数分解 $n=\prod_{i=1}^kp_i^{e_i}$，其中，$p_i$ 是素数，$e_i$ 是正整数．那么，三种情形分别对应：
+Specifically, suppose the positive integer $n$ has the prime factorization $n=\prod_{i=1}^kp_i^{e_i}$, where $p_i$ are primes and $e_i$ are positive integers. Then the three cases correspond to:
 
-1.  $\mu(1) = 1$；
-2.  当存在 $i$ 使得 $e_i > 1$，即存在任何素因数出现超过一次时，$\mu(n)=0$；
-3.  否则，对于所有 $i$ 都有 $e_i = 1$，即任何素因数都只出现一次时，$\mu(n)=(-1)^k$，其中，$k$ 就是互异素因子的个数．
+1.  $\mu(1) = 1$;
+2.  When there exists $i$ such that $e_i > 1$, i.e., any prime factor appears more than once, $\mu(n)=0$;
+3.  Otherwise, for all $i$ we have $e_i = 1$, i.e., every prime factor appears exactly once, then $\mu(n)=(-1)^k$, where $k$ is the number of distinct prime factors.
 
-### 性质
+### Properties
 
-根据定义容易验证，莫比乌斯函数 $\mu(n)$ 是积性函数，但不是完全积性函数．除此之外，最为重要的性质是下述恒等式：
+According to the definition, it is easy to verify that the Möbius function $\mu(n)$ is a multiplicative function, but not a completely multiplicative function. Beyond this, the most important property is the following identity:
 
-???+ note "性质"
-    对于正整数 $n$，有
+???+ note "Property"
+    For a positive integer $n$, we have
     
     $$
     \sum_{d\mid n}\mu(d) = [n = 1] =
@@ -38,30 +38,30 @@ $$
     \end{cases}
     $$
     
-    其中 $[\cdot]$ 是 Iverson 括号．
+    Here $[\cdot]$ is the Iverson bracket.
 
-??? note "证明"
-    令 $n=\prod_{i=1}^kp_i^{e_i}$，设 $n' = \prod_{i=1}^kp_i$．根据 [二项式定理](../combinatorics/combination.md#二项式定理)，有
+??? note "Proof"
+    Let $n=\prod_{i=1}^kp_i^{e_i}$, and let $n' = \prod_{i=1}^kp_i$. According to the [Binomial Theorem](../combinatorics/combination.md#binomial-theorem), we have
     
     $$
     \sum_{d\mid n}\mu(d) = \sum_{d\mid n'}\mu(d) = \sum_{i=0}^k\binom{k}{i}(-1)^i = (1 + (-1))^k = [k = 0] = [n = 1].
     $$
 
-利用 Dirichlet 卷积，该表达式可以写作 $\varepsilon = 1 * \mu$．也就是说，莫比乌斯函数是常值函数 $1$ 的 Dirichlet 逆．
+Using Dirichlet convolution, this expression can be written as $\varepsilon = 1 * \mu$. That is, the Möbius function is the Dirichlet inverse of the constant function $1$.
 
-这一性质有一个很常见的应用：
+This property has a very common application:
 
 $$
 [i\perp j] = [\gcd(i,j) = 1] = \sum_{d\mid\gcd(i,j)} \mu(d) = \sum_{d}[d\mid i][d\mid j]\mu(d).
 $$
 
-它将互素的条件转化为关于莫比乌斯函数的求和式，方便进一步推导．
+This transforms the coprimality condition into a sum involving the Möbius function, facilitating further derivation.
 
-### 求法
+### Computation Methods
 
-如果需要对单个 $n$ 计算莫比乌斯函数 $\mu(n)$ 的值，可以利用它的 [质因数分解](./pollard-rho.md)．例如，在 $n$ 不太大时，可以在 $O(\sqrt{n})$ 时间内求出 $\mu(n)$ 的值．
+If we need to compute the Möbius function $\mu(n)$ for a single $n$, we can use its [prime factorization](./pollard-rho.md). For example, when $n$ is not too large, we can compute $\mu(n)$ in $O(\sqrt{n})$ time.
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/mobius/mobius-func-1.cpp:core"
@@ -72,9 +72,9 @@ $$
         --8<-- "docs/math/code/mobius/mobius-func-1.py:core"
         ```
 
-如果需要对前 $n$ 个正整数预处理出 $\mu(n)$ 的值，可以利用它是积性函数，通过 [线性筛](./sieve.md#筛法求莫比乌斯函数) 在 $O(n)$ 时间内计算．
+If we need to precompute $\mu(n)$ for the first $n$ positive integers, we can use the fact that it is a multiplicative function and compute it in $O(n)$ time using the [linear sieve](./sieve.md#sieving-for-mobius-function).
 
-???+ example "参考实现"
+???+ example "Reference Implementation"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/mobius/mobius-func-2.cpp:core"
@@ -85,19 +85,19 @@ $$
         --8<-- "docs/math/code/mobius/mobius-func-2.py:core"
         ```
 
-## 莫比乌斯反演
+## Möbius Inversion
 
-莫比乌斯函数最重要的应用就是莫比乌斯反演．
+The most important application of the Möbius function is Möbius inversion.
 
-???+ note "莫比乌斯反演"
-    设 $f(n),g(n)$ 是两个数论函数．那么，有
+???+ note "Möbius Inversion"
+    Let $f(n),g(n)$ be two number-theoretic functions. Then we have
     
     $$
     f(n) = \sum_{d\mid n}g(d) \iff g(n) = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)f(d).
     $$
 
-??? note "证明一"
-    直接验证，有：
+??? note "Proof One"
+    Direct verification:
     
     $$
     \begin{aligned}
@@ -110,41 +110,41 @@ $$
     \end{aligned}
     $$
     
-    式子变形的关键在于交换求和次序，并注意到 $k\mid d\mid n$ 就等价于 $\dfrac{n}{d}\mid\dfrac{n}{k}$．倒数第二个等号相当于对 $\dfrac{n}{k}$ 的因子 $\dfrac{n}{d}$ 处的莫比乌斯函数求和，所以就等于 $\left[\dfrac{n}{k} = 1\right]$．这一表达式仅在 $n=k$ 处不是 $0$，最后就会得到 $g(n)$．
+    The key to the transformation is swapping the order of summation and noting that $k\mid d\mid n$ is equivalent to $\dfrac{n}{d}\mid\dfrac{n}{k}$. The second-to-last equality corresponds to summing the Möbius function at $\dfrac{n}{d}$ over all divisors $\dfrac{n}{d}$ of $\dfrac{n}{k}$, which equals $\left[\dfrac{n}{k} = 1\right]$. This expression is nonzero only at $n=k$, and finally we obtain $g(n)$.
 
-??? note "证明二"
-    利用 Dirichlet 卷积，命题等价于
+??? note "Proof Two"
+    Using Dirichlet convolution, the proposition is equivalent to
     
     $$
     f = 1 * g \iff g = \mu * f.
     $$
     
-    利用 $1 * \mu = \varepsilon$，在左式的等号两侧同时对 $\mu$ 做卷积，就得到
+    Using $1 * \mu = \varepsilon$, convolving both sides of the left equation with $\mu$ gives
     
     $$
     f * \mu = (1 * g) * \mu = (1 * \mu) * g = \varepsilon * g = g.
     $$
 
-在涉及各种整除关系的数论函数求和中，莫比乌斯反演是有力的变形工具．
+Möbius inversion is a powerful transformation tool for sums involving various divisibility relations of number-theoretic functions.
 
-???+ example "例子"
-    1.  [欧拉函数](./euler-totient.md) $\varphi(n)$ 满足关系式 $n = \sum_{d\mid n}\varphi(d)$，亦即 $\mathrm{id}=1*\varphi$．对它进行反演，就得到 $\varphi = \mu * \mathrm{id}$，亦即
-    
+???+ example "Examples"
+    1.  Euler's totient function $\varphi(n)$ satisfies $n = \sum_{d\mid n}\varphi(d)$, i.e., $\mathrm{id}=1*\varphi$. Applying inversion gives $\varphi = \mu * \mathrm{id}$, i.e.,
+        
         $$
         \varphi(n) = \sum_{d\mid n}d\mu\left(\dfrac{n}{d}\right).
         $$
-    2.  除数函数 $\sigma_k(n) = \sum_{d\mid n}d^k$，亦即 $\sigma_k = 1 * \mathrm{id}_k$．对它进行反演，就得到 $\mathrm{id}_k = \mu * \sigma_k$，亦即
-    
+    2.  The divisor function $\sigma_k(n) = \sum_{d\mid n}d^k$, i.e., $\sigma_k = 1 * \mathrm{id}_k$. Applying inversion gives $\mathrm{id}_k = \mu * \sigma_k$, i.e.,
+        
         $$
         n^k = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)\sigma_k(d).
         $$
-    3.  互异素因子数目函数 $\omega(n)=\sum_{d\mid n}[d\in\mathbf P]$，亦即 $\omega = 1* \mathbf{1}_{\mathbf P}$，其中 $\mathbf{1}_{\mathbf P}$ 是素数集 $\mathbf P$ 的指示函数．对它进行反演，就得到 $\mathbf{1}_{\mathbf P} = \mu * \omega$，亦即
-    
+    3.  The number of distinct prime factors function $\omega(n)=\sum_{d\mid n}[d\in\mathbf P]$, i.e., $\omega = 1* \mathbf{1}_{\mathbf P}$, where $\mathbf{1}_{\mathbf P}$ is the indicator function of the prime set $\mathbf P$. Applying inversion gives $\mathbf{1}_{\mathbf P} = \mu * \omega$, i.e.,
+        
         $$
         [n\in\mathbf P] = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)\omega(d).
         $$
-    4.  考察满足 $\log n = \sum_{d\mid n}\Lambda(d)$ 的数论函数 $\Lambda(n)$．它就是对数函数的莫比乌斯反演，也称为 von Mangoldt 函数：
-    
+    4.  Consider the number-theoretic function $\Lambda(n)$ satisfying $\log n = \sum_{d\mid n}\Lambda(d)$. This is the Möbius inversion of the logarithm function, also called the von Mangoldt function:
+        
         $$
         \Lambda(n) = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)\log d = 
         \begin{cases}
@@ -153,40 +153,40 @@ $$
         \end{cases}
         $$
 
-??? note "附：$\Lambda(n)$ 表达式的证明"
-    对于素数幂 $n=p^e~(e\in\mathbf N_+)$，有
+??? note "Proof of the expression for $\Lambda(n)$"
+    For prime powers $n=p^e~(e\in\mathbf N_+)$, we have
     
     $$
     \Lambda(n) = \sum_{i=0}^e\mu(p^{e-i})\log p^i = \log p^{e} - \log p^{e-1} = \log p.
     $$
     
-    对于 $n=1$，显然有 $\Lambda(n)=\log 1=0$．对于其他合数 $n$，有
+    For $n=1$, we obviously have $\Lambda(n)=\log 1=0$. For other composite numbers $n$, we have
     
     $$
     \Lambda(n) = \sum_{d\mid n}\mu(d)(\log n-\log d) = \left(\sum_{d\mid n}\mu(d)\right)\log n-\sum_{d\mid n}\mu(d)\log d.
     $$
     
-    根据莫比乌斯函数的性质，$\log n$ 一项的系数为 $[n=1]=0$．对于后面的一项，可以进一步将 $d$ 分解为素因数之积．对于任何素数 $p\mid n$，考察 $\log p$ 的系数，都有：
+    According to the property of the Möbius function, the coefficient of $\log n$ is $[n=1]=0$. For the latter term, we can further decompose $d$ into the product of prime factors. For any prime $p\mid n$, consider the coefficient of $\log p$:
     
     $$
     -\sum_{p\mid d\mid n}\mu(d) = \sum_{(d/p)\mid(n/p)}\mu\left(\dfrac{d}{p}\right) = \left[\dfrac{n}{p}=1\right]=0.
     $$
     
-    由此，对于不止一个素因子的合数 $n$，都有 $\Lambda(n)=0$．
+    Thus, for composite numbers $n$ with more than one prime factor, we have $\Lambda(n)=0$.
 
-### 拓展形式
+### Extended Forms
 
-除了上述基本形式外，莫比乌斯反演还有一些常见的拓展形式．首先，可以考虑它的倍数和形式．
+In addition to the basic form above, there are some common extended forms of Möbius inversion. First, consider its multiple sum form.
 
-???+ note "拓展一"
-    设 $f(n),g(n)$ 是两个数论函数．那么，有
+???+ note "Extension One"
+    Let $f(n),g(n)$ be two number-theoretic functions. Then we have
     
     $$
     f(n) = \sum_{n\mid d}g(d) \iff g(n) = \sum_{n\mid d}\mu\left(\dfrac{d}{n}\right)f(d).
     $$
 
-??? note "证明"
-    直接验证，有：
+??? note "Proof"
+    Direct verification:
     
     $$
     \begin{aligned}
@@ -199,19 +199,19 @@ $$
     \end{aligned}
     $$
     
-    这和基本形式的推导完全对偶．
+    This is completely symmetric to the derivation of the basic form.
 
-其次，莫比乌斯反演并不仅限于加法，它实际上对于任何 [Abel 群](../algebra/basic.md#群) 中的运算都成立．例如，它有如下的乘法形式：
+Next, Möbius inversion is not limited to addition; in fact, it works for any operation in any [Abel group](../algebra/basic.md#group). For example, it has the following multiplicative form:
 
-???+ note "拓展二"
-    设 $f(n),g(n)$ 是两个数论函数．那么，有
+???+ note "Extension Two"
+    Let $f(n),g(n)$ be two number-theoretic functions. Then we have
     
     $$
     f(n) = \prod_{d\mid n}g(d) \iff g(n) = \prod_{d\mid n}f(d)^{\mu(n/d)}.
     $$
 
-??? note "证明"
-    直接验证，有：
+??? note "Proof"
+    Direct verification:
     
     $$
     \begin{aligned}
@@ -224,25 +224,25 @@ $$
     \end{aligned}
     $$
     
-    其中，$a\uparrow b = a^b$ 是 Knuth 箭头．对比基本形式的证明可以发现，唯一的区别就是加法换成了乘法，且乘法换成了取幂．
+    Here, $a\uparrow b = a^b$ is Knuth's up-arrow notation. Comparing with the proof of the basic form, the only difference is that addition is replaced by multiplication, and multiplication is replaced by exponentiation.
 
-从 Dirichlet 卷积的角度看，莫比乌斯反演只是利用了「莫比乌斯函数是常值函数的 Dirichlet 逆」这一点．容易想象，类似莫比乌斯反演的关系对于一般的 [Dirichlet 逆](./dirichlet.md#dirichlet-卷积) 同样成立．
+From the perspective of Dirichlet convolution, Möbius inversion only uses the fact that "the Möbius function is the Dirichlet inverse of the constant function". It is easy to imagine that similar inversion relationships hold for general [Dirichlet inverses](./dirichlet.md#dirichlet-convolution) as well.
 
-???+ note "拓展三"
-    设 $f(n),g(n),\alpha(n)$ 都是数论函数，且 $\alpha^{-1}(n)$ 是 $\alpha(n)$ 的 Dirichlet 逆，即
+???+ note "Extension Three"
+    Let $f(n),g(n),\alpha(n)$ all be number-theoretic functions, and $\alpha^{-1}(n)$ is the Dirichlet inverse of $\alpha(n)$, i.e.,
     
     $$
     [n=1] = \sum_{d\mid n}\alpha\left(\dfrac{n}{d}\right)\alpha^{-1}(d).
     $$
     
-    那么，有
+    Then we have
     
     $$
     f(n) = \sum_{d\mid n}\alpha\left(\dfrac{n}{d}\right)g(d) \iff g(n) = \sum_{d\mid n}\alpha^{-1}\left(\dfrac{n}{d}\right)f(d).
     $$
 
-??? note "证明"
-    直接验证，有：
+??? note "Proof"
+    Direct verification:
     
     $$
     \begin{aligned}
@@ -255,37 +255,37 @@ $$
     \end{aligned}
     $$
     
-    和基本形式的证明相比较，只需要将倒数第二个等号替换成 Dirichlet 逆的定义式．
+    Compared with the proof of the basic form, we only need to replace the second-to-last equality with the definition of the Dirichlet inverse.
 
-???+ note "推论"
-    设 $f(n),g(n)$ 是数论函数，且 $t(n)$ 是完全积性函数．那么，有
+???+ note "Corollary"
+    Let $f(n),g(n)$ be number-theoretic functions, and $t(n)$ is a completely multiplicative function. Then we have
     
     $$
     f(n) = \sum_{d\mid n}t\left(\dfrac{n}{d}\right)g(d) \iff g(n) = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)t\left(\dfrac{n}{d}\right)f(d).
     $$
 
-??? note "证明"
-    由 Dirichlet 卷积的 [性质](./dirichlet.md#性质) 可知，对于完全积性函数 $t(n)$，它的 Dirichlet 逆就是 $\mu(n)t(n)$．
+??? note "Proof"
+    According to the properties of Dirichlet convolution, for a completely multiplicative function $t(n)$, its Dirichlet inverse is $\mu(n)t(n)$.
 
-最后，莫比乌斯反演还可以推广到 $[1,+\infty)$ 上的复值函数，而不仅仅局限于数论函数．基本形式的莫比乌斯反演可以看作是复值函数在所有非整数点处均取零值的特殊情形．
+Finally, Möbius inversion can also be extended to complex-valued functions on $[1,+\infty)$, not limited to number-theoretic functions. The basic form of Möbius inversion can be seen as a special case of complex-valued functions that take zero at all non-integer points.
 
-???+ note "拓展四"
-    设 $F(x)$ 和 $G(x)$ 都是 $[1,+\infty)$ 上的复值函数．那么，有
+???+ note "Extension Four"
+    Let $F(x)$ and $G(x)$ both be complex-valued functions on $[1,+\infty)$. Then we have
     
     $$
     F(x) = \sum_{n = 1}^{\lfloor x\rfloor}G\left(\dfrac{x}{n}\right) \iff G(x) = \sum_{n = 1}^{\lfloor x\rfloor}\mu(n)F\left(\dfrac{x}{n}\right).
     $$
 
-??? note "证明"
-    不妨对 $F$ 和 $G$ 补充定义，设当 $x < 1$ 时，恒有 $F(x)=G(x)=0$．那么，命题就等价于：
+??? note "Proof"
+    We can extend the definitions of $F$ and $G$. Let $F(x)=G(x)=0$ when $x < 1$. Then the proposition is equivalent to:
     
     $$
     F(x) = \sum_n G\left(\dfrac{x}{n}\right) \iff G(x) = \sum_n \mu(n)F\left(\dfrac{x}{n}\right).
     $$
     
-    这些求和式都是对 $n\in\mathbf N_+$ 求和．
+    These sums are over $n\in\mathbf N_+$.
     
-    直接验证，有：
+    Direct verification:
     
     $$
     \begin{aligned}
@@ -297,131 +297,131 @@ $$
     \end{aligned}
     $$
     
-    其中，为得到第二个等号，需要令 $k = nd$．
+    Here, to get the second equality, we let $k = nd$.
 
-???+ note "推论"
-    设 $f(n),g(n)$ 是数论函数．那么，有
+???+ note "Corollary"
+    Let $f(n),g(n)$ be number-theoretic functions. Then we have
     
     $$
     f(n) = \sum_{k=1}^ng\left(\left\lfloor\dfrac{n}{k}\right\rfloor\right) \iff g(n)=\sum_{k=1}^n\mu(k)f\left(\left\lfloor\dfrac{n}{k}\right\rfloor\right).
     $$
 
-??? note "证明"
-    只需要取 $F(x)=f(\lfloor x\rfloor)$ 和 $G(x)=g(\lfloor x\rfloor)$ 即可．
+??? note "Proof"
+    We only need to take $F(x)=f(\lfloor x\rfloor)$ and $G(x)=g(\lfloor x\rfloor)$.
 
-这些拓展形式之间可以互相组合，进而得到更为复杂的反演关系．
+These extended forms can be combined with each other to obtain more complex inversion relationships.
 
-### Dirichlet 前缀和
+### Dirichlet Prefix Sum
 
-前置知识：[前缀和与差分](../../basic/prefix-sum.md)
+Prerequisites: [Prefix Sums and Differences](../../basic/prefix-sum.md)
 
-考虑基本形式的莫比乌斯反演关系：
+Consider the basic form of Möbius inversion:
 
 $$
 f(n) = \sum_{d\mid n}g(d) \iff g(n) = \sum_{d\mid n}\mu\left(\dfrac{n}{d}\right)f(d).
 $$
 
-左侧等式中，$f(n)$ 的值是 $n$ 的所有因数处 $g(n)$ 的值之和．如果将 $a\mid b$ 理解为 $a$ 排在 $b$ 之前，那么 $f(n)$ 就可以理解为某种意义下 $g(n)$ 的前缀和．因此，在国内竞赛圈，由 $\{g(k)\}_{k=1}^n$ 求出 $\{f(k)\}_{k=1}^n$ 的过程也称为 **Dirichlet 前缀和**，相应的逆过程则称为 Dirichlet 差分．这些方法大多出现在需要预处理某个数论函数在前 $N$ 个点处取值的情形．
+In the left equation, the value $f(n)$ is the sum of $g(n)$ at all divisors of $n$. If we understand $a\mid b$ as $a$ comes before $b$, then $f(n)$ can be understood as a kind of prefix sum of $g(n)$ in some sense. Therefore, in domestic competition circles, the process of obtaining $\{f(k)\}_{k=1}^n$ from $\{g(k)\}_{k=1}^n$ is also called **Dirichlet prefix sum**, and the inverse process is called Dirichlet difference. These methods mostly appear when precomputing some number-theoretic function at the first $N$ points.
 
-接下来，讨论 Dirichlet 前缀和的计算．如果将每一个素数都看作一个维度，这就是一种高维前缀和．回忆高维前缀和的 [逐维前缀和算法](../../basic/prefix-sum.md#逐维前缀和)：逐个遍历所有的维度，并将每个位置的值都累加到该位置在该维度上的后继位置．对于数论函数，这相当于说，从小到大遍历所有素数 $p$，并将 $n$ 处的函数值累加到 $np$ 处．这和 [Eratosthenes 筛法](./sieve.md#埃拉托斯特尼筛法) 的遍历顺序是一致的．因此，这一算法可以在 $O(n\log\log n)$ 时间内计算出长度为 $n$ 的数列的 Dirichlet 前缀和．类似地，利用逐维差分就可以在相同时间复杂度内求出数列的 Dirichlet 差分．
+Next, we discuss the computation of Dirichlet prefix sums. If we treat each prime as a dimension, this is a kind of high-dimensional prefix sum. Recall the [dimension-by-dimension prefix sum algorithm](../../basic/prefix-sum.md#dimension-by-dimension-prefix-sum): iterate through all dimensions one by one, and accumulate each position's value to its successor in that dimension. For number-theoretic functions, this is equivalent to iterating through all primes in increasing order and accumulating the function value at $n$ to $np$. This traversal order is consistent with the [Eratosthenes sieve](./sieve.md#eratosthenes-sieve). Therefore, this algorithm can compute the Dirichlet prefix sum of a sequence of length $n$ in $O(n\log\log n)$ time. Similarly, using dimension-by-dimension differences, we can compute the Dirichlet difference of the sequence in the same time complexity.
 
-???+ example "参考实现"
-    === "Dirichlet 前缀和"
+???+ example "Reference Implementation"
+    === "Dirichlet Prefix Sum"
         ```cpp
         --8<-- "docs/math/code/mobius/mobius-func-3.cpp:presum"
         ```
     
-    === "Dirichlet 差分"
+    === "Dirichlet Difference"
         ```cpp
         --8<-- "docs/math/code/mobius/mobius-func-3.cpp:diff"
         ```
 
-这一计算方法可以推广到倍数和（拓展一）、乘积形式（拓展二）、利用完全积性函数代替常值函数（拓展三的推论）等拓展形式中．
+This computation method can be extended to the multiple sum form (Extension One), the product form (Extension Two), and using a completely multiplicative function instead of the constant function (the corollary of Extension Three).
 
-## 例题
+## Example Problems
 
-本节通过例题展示莫比乌斯反演的应用方法以及一些常见变形技巧．首先，通过一道例题熟悉处理求和式中最大公因数条件的基本技巧．
+This section demonstrates the application methods of Möbius inversion and some common transformation techniques through example problems. First, let's get familiar with the basic technique for handling gcd conditions in sums through an example.
 
-???+ example "[Luogu P2522 \[HAOI 2011\] Problem b](https://www.luogu.com.cn/problem/P2522)"
-    $T$ 组数据．对每组数据，求值：
+???+ example "[Luogu P2522 [HAOI 2011] Problem b](https://www.luogu.com.cn/problem/P2522)"
+    $T$ test cases. For each test case, compute:
     
     $$
     \sum_{i=x}^{n}\sum_{j=y}^{m}[\gcd(i,j)=k].
     $$
     
-    数据范围：$1\le T,x,y,n,m,k\le 5\times 10^4$．
+    Constraints: $1\le T,x,y,n,m,k\le 5\times 10^4$.
 
-??? note "解答"
-    根据容斥原理，原式可以分成 $4$ 块来处理，且每一块的式子都具有形式
+??? note "Solution"
+    According to the principle of inclusion-exclusion, the original expression can be divided into $4$ blocks, and each block has the form
     
     $$
     f(n,m,k)=\sum_{i=1}^{n}\sum_{j=1}^{m}[\gcd(i,j)=k].
     $$
     
-    对于这类式子，接下来是一段标准的推导流程：提取公因数，应用莫比乌斯函数性质，交换求和次序．
+    For this type of expression, the following is a standard derivation process: extract the common factor, apply the Möbius function property, and swap the order of summation.
     
-    首先，由于 $i,j$ 都只能取 $k$ 的倍数，可以先将这个因子提出来——这相当于代入 $i=ki'$ 和 $j=kj'$，就得到：
+    First, since $i$ and $j$ can only take multiples of $k$, we can factor this out first—this is equivalent to substituting $i=ki'$ and $j=kj'$:
     
     $$
     f(n,m,k)=\sum_{i=1}^{\lfloor n/k\rfloor}\sum_{j=1}^{\lfloor m/k\rfloor}[\gcd(i,j)=1].
     $$
     
-    再利用莫比乌斯函数的性质可知：
+    Then, using the property of the Möbius function:
     
     $$
     [\gcd(i,j)=1] = \sum_{d\mid\gcd(i,j)}\mu(d) = \sum_d[d\mid i][d\mid j]\mu(d).
     $$
     
-    将它代入表达式，并交换求和次序，就得到：
+    Substitute it into the expression and swap the order of summation:
     
     $$
     f(n,m,k)=\sum_d\mu(d)\left(\sum_{i=1}^{\lfloor n/k\rfloor}[d\mid i]\right)\left(\sum_{j=1}^{\lfloor m/k\rfloor}[d\mid j]\right).
     $$
     
-    这样一段操作的好处是，固定 $d$ 时，求和式中关于 $i$ 和 $j$ 的项相互分离，可以分别求和．接下来，因为
+    The benefit of this transformation is that when $d$ is fixed, the terms involving $i$ and $j$ in the sum are separated and can be summed separately. Next, because
     
     $$
     \sum_{i=1}^{\lfloor n/k\rfloor}[d\mid i] = \left\lfloor\dfrac{\lfloor n/k\rfloor}{d}\right\rfloor,~\sum_{j=1}^{\lfloor m/k\rfloor}[d\mid j]=\left\lfloor\dfrac{\lfloor m/k\rfloor}{d}\right\rfloor,
     $$
     
-    所以，有
+    we have
     
     $$
     f(n,m,k)=\sum_d\mu(d)\left\lfloor\dfrac{\lfloor n/k\rfloor}{d}\right\rfloor\left\lfloor\dfrac{\lfloor m/k\rfloor}{d}\right\rfloor.
     $$
     
-    用线性筛预处理完 $\mu(d)$，并预处理其前缀和后，就可以通过数论分块求解．总的时间复杂度为 $O(N + T\sqrt{N})$，其中，$N$ 为 $n,m$ 的上界，$T$ 为数据组数．
+    After preprocessing $\mu(d)$ with a linear sieve and its prefix sums, we can solve it using number theoretic blocks. The total time complexity is $O(N + T\sqrt{N})$, where $N$ is the upper bound of $n,m$, and $T$ is the number of test cases.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/math/code/mobius/mobius_1.cpp"
     ```
 
-接下来的两道例题展示了枚举公因数的处理方法，并利用 [筛法](./sieve.md#一般的积性函数) 计算一般积性函数的值．
+The next two example problems demonstrate the method of enumerating common divisors and using the [sieve](./sieve.md#general-multiplicative-function) to compute general multiplicative function values.
 
 ???+ example "[SPOJ LCMSUM](https://www.spoj.com/problems/LCMSUM/)"
-    $T$ 组数据．对每组数据，求值：
+    $T$ test cases. For each test case, compute:
     
     $$
     \sum_{i=1}^n \operatorname{lcm}(i,n).
     $$
     
-    数据范围：$1\le T\le 3\times 10^5,~1\le n\le 10^6$．
+    Constraints: $1\le T\le 3\times 10^5,~1\le n\le 10^6$.
 
-??? note "解答一"
-    题目提供的是最小公倍数，但往往最大公因数更容易处理．所以，首先做变形：
+??? note "Solution One"
+    The problem provides the least common multiple, but the greatest common divisor is often easier to handle. So first, transform:
     
     $$
     f(n)=\sum_{i=1}^n \operatorname{lcm}(i,n) = \sum_{i=1}^n \frac{i\cdot n}{\gcd(i,n)}.
     $$
     
-    将 $n$ 提出，并枚举最大公因数 $k$：
+    Factor out $n$, and enumerate the greatest common divisor $k$:
     
     $$
     f(n)=n\sum_{k\mid n}\sum_{i=1}^n\dfrac{i}{k}[\gcd(i,n)=k].
     $$
     
-    对于内层的求和式，这是最常见的含有最大公因数的情形，重复标准的处理流程，就有：
+    For the inner sum, this is the most common case involving the greatest common divisor. Following the standard processing:
     
     $$
     \begin{aligned}
@@ -431,43 +431,43 @@ $$
     \end{aligned}
     $$
     
-    再次地，关于 $i$ 的求和式与其他部分分离，可以单独处理．最后的求和式实际上是一个等差数列求和：（取 $i=di'$）
+    Again, the sum involving $i$ is separated from the other parts and can be handled separately. The final sum is actually an arithmetic series sum: (taking $i=di'$)
     
     $$
     \sum_{i=1}^{n/k}i[d\mid i] = d\frac{1}{2}\left(\dfrac{n}{kd}+1\right)\dfrac{n}{kd}=:dG\left(\dfrac{n}{kd}\right).
     $$
     
-    由此，就得到如下表达式：
+    From this, we obtain:
     
     $$
     f(n) = n\sum_{k\mid n}\sum_d\mu(d)\left[d\mid \dfrac{n}{k}\right]dG\left(\dfrac{n}{kd}\right).
     $$
     
-    在枚举公因数之后，这样形式的二重求和式很常见．对于它，同样有固定的处理方法：将乘积设为新变量 $\ell=kd$，然后再次交换求和次序．因为 $d\mid(n/k)$ 就相当于 $d\mid\ell\mid n$，所以，原式变形为：
+    After enumerating common divisors, such double sums are very common. For them, there is also a standard method: set the product as a new variable $\ell=kd$, then swap the order of summation again. Since $d\mid(n/k)$ is equivalent to $d\mid\ell\mid n$, the original expression becomes:
     
     $$
     f(n) = n\sum_{\ell\mid n}G\left(\dfrac{n}{\ell}\right)\sum_{d\mid\ell}\mu(d)d.
     $$
     
-    设 $F(\ell)=\sum_{d\mid\ell}\mu(d)d$，则原式具有形式：
+    Let $F(\ell)=\sum_{d\mid\ell}\mu(d)d$, then the original expression has the form:
     
     $$
     f(n) = n\sum_{\ell\mid n}G\left(\dfrac{n}{\ell}\right)F(\ell).
     $$
     
-    因为 $\mu(d)d$ 是积性函数，所以它和常值函数 $1$ 的卷积 $F(n)$ 也是积性函数．尽管上述表达式中，求和式呈现 Dirichlet 卷积的形式，但是 $G(n)$ 并非积性函数，所以这一求和式的整体并非积性函数．但是，$G(n)$ 是多项式，所以它其实是若干完全积性函数的线性组合．所以，有
+    Since $\mu(d)d$ is a multiplicative function, its convolution with the constant function $1$, $F(n)$, is also a multiplicative function. Although the sum in the above expression has the form of Dirichlet convolution, $G(n)$ is not a multiplicative function, so the whole sum is not a multiplicative function. However, $G(n)$ is a polynomial, so it is actually a linear combination of several completely multiplicative functions. Therefore, we have
     
     $$
     f(n) = \dfrac{1}{2}n\left(\sum_{\ell}\left(\dfrac{n}{\ell}\right)^2F(\ell) + \sum_{\ell}\dfrac{n}{\ell}F(\ell)\right).
     $$
     
-    这两项（不包含系数）都是积性函数，可以直接通过线性筛预处理（或者也可以线性筛出内层函数后，用 Dirichlet 前缀和在 $O(N\log\log N)$ 时间内预处理）．具体地，设
+    These two terms (excluding the coefficient) are multiplicative functions and can be directly precomputed with a linear sieve (or after computing the inner function with linear sieve, precomputed with Dirichlet prefix sum in $O(N\log\log N)$ time). Specifically, let
     
     $$
     H_s(n) = \sum_{\ell}\left(\dfrac{n}{\ell}\right)^sF(\ell),~s=1,2.
     $$
     
-    要推导它们的表达式，只需要确定它们在素数幂处的取值即可．为此，对于素数 $p$ 和正指数 $e$，有
+    To derive their expressions, we only need to determine their values at prime powers. For a prime $p$ and positive exponent $e$, we have
     
     $$
     \begin{aligned}
@@ -476,62 +476,62 @@ $$
     \end{aligned}
     $$
     
-    特别地，$H_1(p^e)\equiv 1$ 是常值函数，而
+    In particular, $H_1(p^e)\equiv 1$ is a constant function, and
     
     $$
     H_2(p^e) = p^{2e} + (1-p)\dfrac{1-p^{2e}}{1-p^2} = H_2(p^{e-1}) + p^{2e} - p^{2e-1}.
     $$
     
-    这就很容易通过线性筛求解．在线性筛预处理出 $H_2(n)$ 后，单次询问可以通过表达式 $f(n)=(n/2)(H_2(n)+1)$ 在 $O(1)$ 时间内求解．总的时间复杂度为 $O(N+T)$，其中，$N$ 为 $n$ 的上界，$T$ 为数据组数．
+    This can be easily solved with a linear sieve. After precomputing $H_2(n)$ with a linear sieve, a single query can be solved in $O(1)$ time using the expression $f(n)=(n/2)(H_2(n)+1)$. The total time complexity is $O(N+T)$, where $N$ is the upper bound of $n$, and $T$ is the number of test cases.
     
-    参考实现中，利用本题表达式的特殊性，对线性筛部分做了进一步推导，这并非必须的．仅利用素数幂处的取值，仍然可以在 $O(N)$ 时间内完成预处理．这些推导详见解答二．
+    In the reference implementation, due to the special nature of this problem's expression, further derivation is done for the linear sieve part, which is not required. Using only the values at prime powers, preprocessing can still be done in $O(N)$ time. These derivations are detailed in Solution Two.
 
-??? note "解答二"
-    就本题而言，有着更为灵活的处理方法．从解答一可以看出
+??? note "Solution Two"
+    For this problem, there is a more flexible approach. As can be seen from Solution One,
     
     $$
     f(n) = n\sum_{k\mid n}\sum_{i=1}^{n/k}i\left[\gcd\left(i,\dfrac{n}{k}\right)=1\right] = n\sum_{k\mid n}F\left(\dfrac{n}{k}\right).
     $$
     
-    如果在这一步不继续做莫比乌斯反演，而是观察后面的求和式实际上是不超过 $d=n/k$ 且与之互素的整数之和．对于 $d>1$，因为与 $d$ 互素的整数成对出现，即 $i$ 和 $d-i$ 必定同时与 $d$ 互素，所以，有
+    If at this step we do not continue with Möbius inversion, but observe that the following sum is actually the sum of integers not exceeding $d=n/k$ that are coprime to $d$. For $d>1$, since integers coprime to $d$ appear in pairs, i.e., $i$ and $d-i$ must both be coprime to $d$, we have
     
     $$
     F(d)=\sum_{i=1}^{n'}i[i\perp d] = \sum_{i=1}^{d}(d-i)[i\perp d] = \dfrac{1}{2}d\sum_{i=1}^{d}[i\perp d] = \dfrac{1}{2}d\varphi(d).
     $$
     
-    对于 $d=1$，则有
+    For $d=1$, we have
     
     $$
     F(d)=1=\dfrac{1}{2}+\dfrac{1}{2}d\varphi(d).
     $$
     
-    进而，原式可以表示为
+    Therefore, the original expression can be written as
     
     $$
     f(n) = \dfrac{1}{2}n\left(\sum_{d\mid n}d\varphi(d) + 1\right).
     $$
     
-    由于 $G(n)=\sum_{d\mid n}d\varphi(d)$ 是积性函数 $n\varphi(n)$ 与常值函数 $1$ 的 Dirichlet 卷积，所以它也是积性函数，可以通过线性筛预处理．为此，只需要确定它在素数幂处的取值．对于素数 $p$ 和正指数 $e$，有
+    Since $G(n)=\sum_{d\mid n}d\varphi(d)$ is the Dirichlet convolution of the multiplicative function $n\varphi(n)$ and the constant function $1$, it is also a multiplicative function and can be precomputed with a linear sieve. For this, we only need to determine its value at prime powers. For a prime $p$ and positive exponent $e$, we have
     
     $$
     G(p^e) = 1 + \sum_{i=1}^ep^e(p^e-1) = G(p^{e-1}) + p^{2e} - p^{2e-1}.
     $$
     
-    可以看出，这一表达式和解答一推导的结果是一致的．这一方法的总时间复杂度仍然是 $O(N+T)$．
+    It can be seen that this expression is consistent with the result derived in Solution One. The total time complexity of this method is still $O(N+T)$.
     
-    最后，利用本题积性函数的表达式，可以进一步优化线性筛的计算过程．对于素数 $p$，有
+    Finally, using the multiplicative function expression of this problem, we can further optimize the linear sieve computation. For a prime $p$, we have
     
     $$
     G(p) = 1 - p + p^2.
     $$
     
-    线性筛的关键在于对于一般的 $n$，需要求出 $G(pn)$ 的取值．这进一步分为两种情形．当 $p\perp n$ 时，因为 $G$ 是积性函数，所以
+    The key for the linear sieve for general $n$ is to compute $G(pn)$. This further divides into two cases. When $p\perp n$, since $G$ is multiplicative,
     
     $$
     G(pn) = G(p)G(n).
     $$
     
-    否则，当 $p\mid n$ 时，设 $n=p^em$ 且 $p\perp m$，就有
+    Otherwise, when $p\mid n$, let $n=p^em$ with $p\perp m$, then
     
     $$
     \begin{aligned}
@@ -541,42 +541,42 @@ $$
     \end{aligned}
     $$
     
-    直接验证可知，这一表达式对于 $p\perp n$ 的情形也成立．因此，就有
+    Direct verification shows that this expression also holds for the case $p\perp n$. Therefore, we have
     
     $$
     G(n) - G\left(\dfrac{n}{p}\right) = (p^{2e}-p^{2e-1})G(m).
     $$
     
-    代入上式，就得到
+    Substituting into the above gives
     
     $$
     G(pn) = G(n) + p^2\left(G(n) - G\left(\dfrac{n}{p}\right)\right).
     $$
     
-    这简化了线性筛部分的计算．当然，这一推导并非必需，对于没有特殊性质的积性函数，直接利用 $G(pn)=G(p^{e+1})G(m)$ 就可以完成线性筛的计算．
+    This simplifies the computation in the linear sieve part. Of course, this derivation is not necessary; for multiplicative functions without special properties, we can directly use $G(pn)=G(p^{e+1})G(m)$ to complete the linear sieve computation.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/math/code/mobius/mobius_2.cpp"
     ```
 
-???+ example "[BZOJ 2154 \[国家集训队\] Crash 的数字表格](https://hydro.ac/p/bzoj-P2154)"
-    求值：
+???+ example "[BZOJ 2154 [National Team Training] Crash's Number Table](https://hydro.ac/p/bzoj-P2154)"
+    Compute:
     
     $$
     \sum_{i=1}^n\sum_{j=1}^m\operatorname{lcm}(i,j)\mod{20101009}.
     $$
     
-    数据范围：$1\le n,m\le 10^7$．
+    Constraints: $1\le n,m\le 10^7$.
 
-??? note "解答"
-    推导过程中忽略模数．设
+??? note "Solution"
+    Ignore the modulus during derivation. Let
     
     $$
     f(n,m) = \sum_{i=1}^n\sum_{j=1}^m\operatorname{lcm}(i,j).
     $$
     
-    依然是将最小公倍数转换为最大公因数，枚举公因数，并应用标准的处理流程，就得到
+    Still converting the least common multiple to the greatest common divisor, enumerating common divisors, and applying the standard processing:
     
     $$
     \begin{aligned}
@@ -588,72 +588,72 @@ $$
     \end{aligned}
     $$
     
-    再次地，求和式对于 $i$ 和 $j$ 分离．首先计算这些内层的求和式，提取因数（即取 $i=di'$），就有
+    Again, the sum separates $i$ and $j$. First compute these inner sums, extract the factor (i.e., take $i=di'$):
     
     $$
     \sum_{i=1}^{\lfloor n/k\rfloor}i[d\mid i] = d\sum_{i=1}^{\lfloor\lfloor n/k\rfloor/d\rfloor}i = dG\left(\left\lfloor\dfrac{\lfloor n/k\rfloor}{d}\right\rfloor\right) = dG\left(\left\lfloor\dfrac{n}{kd}\right\rfloor\right).
     $$
     
-    其中，$G(n)=\dfrac{1}{2}n(n+1)$ 就是等差数列求和，最后一个等号利用了 [下取整函数](./basic.md#取整函数) 的性质．对称地，对于另一个和式可以类似计算．代回前文表达式，就有
+    Here, $G(n)=\dfrac{1}{2}n(n+1)$ is the arithmetic series sum, and the last equality uses the property of the [floor function](./basic.md#floor-function). Similarly, the other sum can be computed. Substituting back into the earlier expression:
     
     $$
     f(n,m) = \sum_k k\sum_{d}\mu(d)d^2G\left(\left\lfloor\dfrac{n}{kd}\right\rfloor\right)G\left(\left\lfloor\dfrac{m}{kd}\right\rfloor\right).
     $$
     
-    和前文的情形一致，对于这类枚举公因数的式子，往往都需要枚举乘积 $\ell = kd$，再次交换求和次序：
+    Consistent with the previous case, for such expressions enumerating common divisors, we often need to enumerate the product $\ell = kd$ and swap the order of summation again:
     
     $$
     f(n,m) = \sum_{\ell}\left(\sum_{d\mid\ell}\mu(d)d\ell\right)G\left(\left\lfloor\dfrac{n}{\ell}\right\rfloor\right)G\left(\left\lfloor\dfrac{m}{\ell}\right\rfloor\right).
     $$
     
-    设
+    Let
     
     $$
     F(\ell) = \sum_{d\mid\ell}\mu(d)d\ell.
     $$
     
-    这是积性函数 $\ell$ 与积性函数 $\sum_{d\mid\ell}\mu(d)d$ 的乘积，所以也是积性函数，可以直接用线性筛预处理，并预处理出它的前缀和．然后，就可以用数论分块计算 $f(n,m)$ 的值．总的时间复杂度为 $O(\min\{n,m\})$．
+    This is the product of the multiplicative function $\ell$ and the multiplicative function $\sum_{d\mid\ell}\mu(d)d$, so it is also a multiplicative function. It can be directly precomputed with a linear sieve, and its prefix sums can also be precomputed. Then $f(n,m)$ can be computed using number theoretic blocks. The total time complexity is $O(\min\{n,m\})$.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/math/code/mobius/mobius_3.cpp"
     ```
 
-接下来的一道例题较为特殊，需要对乘积的约数个数函数进行转换．
+The next example problem is special and requires transforming the divisor count function for products.
 
-???+ example "[LOJ 2185. \[SDOI2015\] 约数个数和](https://loj.ac/problem/2185)"
-    $T$ 组数据．对每组数据，求值：
+???+ example "[LOJ 2185. [SDOI2015] Sum of Number of Divisors](https://loj.ac/problem/2185)"
+    $T$ test cases. For each test case, compute:
     
     $$
     \sum_{i=1}^n\sum_{j=1}^m\sigma_0(ij).
     $$
     
-    其中，$\sigma_0(n)=\sum_{d \mid n}1$ 表示 $n$ 的约数个数．
+    Here, $\sigma_0(n)=\sum_{d \mid n}1$ represents the number of divisors of $n$.
     
-    数据范围：$1\le n,m,T\le 5\times 10^4$．
+    Constraints: $1\le n,m,T\le 5\times 10^4$.
 
-??? note "解答"
-    这道题目的难点在于将 $\sigma_0(ij)$ 转换为关于最大公因数的表达式．由于 $\sigma_0$ 是积性函数，可以首先考虑素数幂的情形．对于素数 $p$ 和非负指数 $e_1,e_2$，设 $i=p^{e_1},~j=p^{e_2}$，就有
+??? note "Solution"
+    The difficulty of this problem is transforming $\sigma_0(ij)$ into an expression in terms of the greatest common divisor. Since $\sigma_0$ is a multiplicative function, we first consider the case of prime powers. For a prime $p$ and non-negative exponents $e_1,e_2$, let $i=p^{e_1},~j=p^{e_2}$, then
     
     $$
     \sigma_0(ij) = 1 + e_1 + e_2 = \sum_{x\mid i}\sum_{y\mid j}[x\perp y].
     $$
     
-    对于一般情形，不妨设 $i=\prod_p i_p$ 且 $j=\prod_p j_p$，其中，$i_p,j_p$ 分别是 $i,j$ 的素因数分解中 $p$ 的幂次．进而，有
+    For the general case, let $i=\prod_p i_p$ and $j=\prod_p j_p$, where $i_p,j_p$ are respectively the powers of $p$ in the prime factorizations of $i,j$. Then
     
     $$
     \sigma_0(ij) = \prod_p\sigma_0(i_pj_p)= \prod_p\sum_{x_p\mid i_p}\sum_{y_p\mid j_p}[x_p\perp y_p].
     $$
     
-    注意到，对于 $i$ 的每个素数幂因子 $i_p$ 都枚举它的因数 $x_p$，就相当于对 $i$ 枚举它的因数 $x$ 再分解出所有素数幂因子 $x_p$；对 $j$ 同理．因此，利用乘法分配律，该式就有
+    Note that enumerating all divisors $x_p$ of each prime power factor $i_p$ of $i$ is equivalent to enumerating all divisors $x$ of $i$ and then decomposing into all prime power factors $x_p$; similarly for $j$. Therefore, using the distributive law of multiplication, we have
     
     $$
     \sigma_0(ij) = \sum_{x\mid i}\sum_{y\mid j}\prod_p[x_p\perp y_p] = \sum_{x\mid i}\sum_{y\mid j}[x\perp y].
     $$
     
-    最后一步用到了结论：$x\perp y$，当且仅当对于每个素因子 $p$，都有 $x_p\perp y_p$ 成立．
+    The last step uses the conclusion: $x\perp y$ if and only if for each prime factor $p$, we have $x_p\perp y_p$.
     
-    得到这一表达式后，就可以应用标准的处理流程：
+    After obtaining this expression, we can apply the standard processing:
     
     $$
     \begin{aligned}
@@ -665,9 +665,9 @@ $$
     \end{aligned}
     $$
     
-    最后一步推导的含义是：函数只有在 $d\mid i$ 且 $d\mid j$ 时才取非零值，且此时，枚举满足 $d\mid x\mid i$ 的 $x$ 就相当于枚举 $\dfrac{i}{d}$ 的因数 $\dfrac{x}{d}$，枚举满足 $d\mid y\mid j$ 的 $y$ 同理．
+    The meaning of the last step of derivation is: the function is nonzero only when $d\mid i$ and $d\mid j$. At this time, enumerating $x$ satisfying $d\mid x\mid i$ is equivalent to enumerating divisors $\dfrac{x}{d}$ of $\dfrac{i}{d}$; similarly for $y$ and $j$.
     
-    将这一表达式再代回原式，并交换求和次序：
+    Substitute this expression back into the original expression and swap the order of summation:
     
     $$
     \begin{aligned}
@@ -679,56 +679,56 @@ $$
     \end{aligned}
     $$
     
-    令 $G(n)=\sum_{i=1}^n\sigma_0(i)$，就有
+    Let $G(n)=\sum_{i=1}^n\sigma_0(i)$, then
     
     $$
     f(n,m)=\sum_{d}\mu(d)G\left(\left\lfloor\dfrac{n}{d}\right\rfloor\right)G\left(\left\lfloor\dfrac{m}{d}\right\rfloor\right).
     $$
     
-    这可以通过数论分块求解．只需要预处理出 $\mu(n)$ 和 $\sigma_0(n)$ 的前缀和即可．总时间复杂度为 $O(N+T\sqrt{N})$，其中，$N$ 为 $n,m$ 的上界，$T$ 为数据组数．
+    This can be solved using number theoretic blocks. We only need to precompute the prefix sums of $\mu(n)$ and $\sigma_0(n)$. The total time complexity is $O(N+T\sqrt{N})$, where $N$ is the upper bound of $n,m$, and $T$ is the number of test cases.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/math/code/mobius/mobius_4.cpp"
     ```
 
-最后一道例题展示了如何应用乘法版本的莫比乌斯反演．
+The final example problem demonstrates how to apply the multiplicative version of Möbius inversion.
 
 ???+ example "[Luogu P5221 Product](https://www.luogu.com.cn/problem/P5221)"
-    求值：
+    Compute:
     
     $$
     \prod_{i=1}^n\prod_{j=1}^n\dfrac{\operatorname{lcm}(i,j)}{\gcd(i,j)}\pmod{104857601}.
     $$
     
-    数据范围：$1\le n\le 1\times 10^6$．
+    Constraints: $1\le n\le 1\times 10^6$.
 
-??? note "解答一"
-    推导过程中忽略模数．设
+??? note "Solution One"
+    Ignore the modulus during derivation. Let
     
     $$
     f(n) = \prod_{i=1}^n\prod_{j=1}^n\dfrac{\operatorname{lcm}(i,j)}{\gcd(i,j)}.
     $$
     
-    依然是将最小公倍数转换为最大公因数：
+    Still converting the least common multiple to the greatest common divisor:
     
     $$
     f(n) = \prod_{i=1}^n\prod_{j=1}^n\dfrac{ij}{(\gcd(i,j))^2}.
     $$
     
-    注意，对这些因子的乘积是相互独立的，可以分别计算．令
+    Note that the product of these factors is independent of each other and can be computed separately. Let
     
     $$
     g(n) = \prod_{i=1}^n\prod_{j=1}^n\gcd(i,j).
     $$
     
-    原式就等于：
+    Then the original expression equals:
     
     $$
     f(n) = \dfrac{(n!)^{2n}}{g(n)^2}.
     $$
     
-    重点是解决 $g(n)$ 的计算问题．对它的处理流程和前文描述的相仿，但是需要换成相应的乘法版本．首先，枚举并提取公因数：
+    The key is to solve the computation problem of $g(n)$. The processing flow is similar to that described earlier, but we need to switch to the corresponding multiplicative version. First, enumerate and extract the common divisor:
     
     $$
     \begin{aligned}
@@ -737,25 +737,25 @@ $$
     \end{aligned}
     $$
     
-    其中，$a\uparrow b=a^b$ 是 Knuth 箭头．然后，代入 $[\gcd(i,j)=1]=\sum_d\mu(d)[d\mid i][d\mid j]$，并将指数上的和式转换为幂的乘积式，得到：
+    Here, $a\uparrow b=a^b$ is Knuth's up-arrow notation. Then substitute $[\gcd(i,j)=1]=\sum_d\mu(d)[d\mid i][d\mid j]$, and convert the sum in the exponent to a product of powers:
     
     $$
     g(n) = \prod_k\prod_d\prod_{i=1}^{\lfloor n/k\rfloor}\prod_{j=1}^{\lfloor n/k\rfloor}k\uparrow(\mu(d)[d\mid i][d\mid j]).
     $$
     
-    进一步地提取因数（即令 $i=di'$，$j=dj'$），并应用 [下取整函数](./basic.md#取整函数) 的性质，就得到：
+    Further extract the factor (i.e., let $i=di'$, $j=dj'$), and apply the property of the [floor function](./basic.md#floor-function):
     
     $$
     g(n) = \prod_k\prod_d\prod_{i=1}^{\lfloor n/(kd)\rfloor}\prod_{j=1}^{\lfloor n/(kd)\rfloor}k\uparrow\mu(d).
     $$
     
-    然后分离关于 $i,j$ 的乘积，就发现乘式中并不含有 $i,j$，因此它就相当于对乘式取幂：
+    Then separate the product regarding $i,j$, and we find the product does not contain $i,j$, so it is equivalent to raising the product to a power:
     
     $$
     g(n) = \prod_k\prod_d k\uparrow\left(\mu(d)\left\lfloor\dfrac{n}{kd}\right\rfloor^2\right).
     $$
     
-    因为前面枚举了公因数，所以对于这个式子需要再次交换求乘积的次序．令 $\ell = kd$，有：
+    Since we enumerated common divisors earlier, for this expression we need to swap the order of multiplication again. Let $\ell = kd$:
     
     $$
     \begin{aligned}
@@ -764,13 +764,13 @@ $$
     \end{aligned}
     $$
     
-    设
+    Let
     
     $$
     F(n) = \prod_{d\mid n}\left(\dfrac{n}{d}\right)\uparrow\mu(d).
     $$
     
-    容易发现这是关于 $\tilde F(n)=n$ 的乘积形式莫比乌斯反演．即使不知道它的表达式，也可以应用 [Dirichlet 差分](#dirichlet-前缀和) 方法在 $O(n\log\log n)$ 时间内预处理．当然，由于 $\tilde F(n)$ 的形式非常简单，$F(n)$ 的表达式可以直接求出：
+    This is easily seen to be the Möbius inversion in product form for $\tilde F(n)=n$. Even without knowing its expression, we can apply the [Dirichlet difference](#dirichlet-prefix-sum) method to preprocess in $O(n\log\log n)$ time. Of course, since the form of $\tilde F(n)$ is very simple, the expression for $F(n)$ can be directly obtained:
     
     $$
     F(n) = 
@@ -780,18 +780,18 @@ $$
     \end{cases}
     $$
     
-    [von Mangoldt 函数](#莫比乌斯反演) 就是它的自然对数．得到 $F(n)$ 的取值后，直接应用乘积版本的数论分块就可以在 $O(\sqrt{n})$ 时间内求出 $g(n)$ 的取值，进而得到 $f(n)$ 的取值．总的时间复杂度为 $O(n)$．
+    The [von Mangoldt function](#mobius-inversion) is its natural logarithm. After obtaining the values of $F(n)$, we can directly apply the product version of number theoretic blocks to compute $g(n)$ in $O(\sqrt{n})$ time, and then obtain $f(n)$. The total time complexity is $O(n)$.
     
-    值得注意的是，涉及乘积的计算时，往往需要用到 [欧拉定理](./fermat.md)，因此指数部分取模用到的模数与题目所给的模数并不相同．
+    It is worth noting that when computations involving products are involved, [Euler's theorem](./fermat.md) is often needed, so the modulus used for the exponent part is different from the modulus given in the problem.
 
-??? note "解答二"
-    乘积版本推导的难点在于对乘积和幂次的处理相对陌生，因此，对于这类问题，也可以取对数后再推导．对于本题，仅考虑 $g(n)$ 的推导．将它取对数后，有：
+??? note "Solution Two"
+    The difficulty of the product version derivation is that the handling of products and exponents is relatively unfamiliar. Therefore, for such problems, we can also take the logarithm first and then derive. For this problem, consider only the derivation of $g(n)$. After taking its logarithm:
     
     $$
     \log g(n) = \sum_{i=1}^n\sum_{j=1}^n\log\gcd(i,j).
     $$
     
-    对于这类含有最大公因数的式子，直接应用标准的推导流程，就得到：
+    For such expressions involving the greatest common divisor, directly applying the standard derivation process gives:
     
     $$
     \begin{aligned}
@@ -805,31 +805,31 @@ $$
     \end{aligned}
     $$
     
-    其中，$\Lambda(n)$ 是 [von Mangoldt 函数](#莫比乌斯反演)．将这一推导结果取幂，就得到解答一的结果．
+    Here, $\Lambda(n)$ is the [von Mangoldt function](#mobius-inversion). Taking the exponent of this derivation result gives the result in Solution One.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/math/code/mobius/mobius_5.cpp"
     ```
 
-## 习题
+## Practice Problems
 
--   [Luogu P3312 \[SDOI2014\] 数表](https://www.luogu.com.cn/problem/P3312)
--   [Luogu P3700 \[CQOI2017\] 小 Q 的表格](https://www.luogu.com.cn/problem/P3700)
--   [Luogu P3704 \[SDOI2017\] 数字表格](https://www.luogu.com.cn/problem/P3704)
--   [Luogu P3768 简单的数学题](https://www.luogu.com.cn/problem/P3768)
--   [Luogu P4464 \[国家集训队\] JZPKIL](https://www.luogu.com.cn/problem/P4464)
--   [Luogu P4619 \[SDOI2018\] 旧试题](https://www.luogu.com.cn/problem/P4619)
--   [Luogu P5518 \[MtOI2019\] 幽灵乐团](https://www.luogu.com.cn/problem/P5518)
--   [Luogu P6222 简单题 加强版](https://www.luogu.com.cn/problem/P6222)
--   [Luogu P6825「EZEC-4」求和](https://www.luogu.com.cn/problem/P6825)
--   [Luogu P7486「Stoi2031」彩虹](https://www.luogu.com.cn/problem/P7486)
+-   [Luogu P3312 [SDOI2014] Number Table](https://www.luogu.com.cn/problem/P3312)
+-   [Luogu P3700 [CQOI2017] Little Q's Table](https://www.luogu.com.cn/problem/P3700)
+-   [Luogu P3704 [SDOI2017] Number Table](https://www.luogu.com.cn/problem/P3704)
+-   [Luogu P3768 Simple Math Problem](https://www.luogu.com.cn/problem/P3768)
+-   [Luogu P4464 [National Training Team] JZPKIL](https://www.luogu.com.cn/problem/P4464)
+-   [Luogu P4619 [SDOI2018] Old Problems](https://www.luogu.com.cn/problem/P4619)
+-   [Luogu P5518 [MtOI2019] Ghost Orchestra](https://www.luogu.com.cn/problem/P5518)
+-   [Luogu P6222 Simple Problem Enhanced Version](https://www.luogu.com.cn/problem/P6222)
+-   [Luogu P6825「EZEC-4」Sum](https://www.luogu.com.cn/problem/P6825)
+-   [Luogu P7486「Stoi2031」Rainbow](https://www.luogu.com.cn/problem/P7486)
 -   [AtCoder Grand Contest 038 C - LCMs](https://atcoder.jp/contests/agc038/tasks/agc038_c)
 -   [Codeforeces 1139 D. Steps to One](https://codeforces.com/problemset/problem/1139/D)
 
-## 参考文献
+## References
 
 -   [Möbius function - Wikipedia](https://en.wikipedia.org/wiki/M%C3%B6bius_function)
 -   [Möbius inversion formula - Wikipedia](https://en.wikipedia.org/wiki/M%C3%B6bius_inversion_formula)
 -   [Von Mangoldt function - Wikipedia](https://en.wikipedia.org/wiki/Von_Mangoldt_function)
--   [algocode 算法博客](https://web.archive.org/web/20190523150159/https://algocode.net/2018/04/18/20180418-KB-Mobius-Inversion-Formula/)
+-   [algocode Algorithm Blog](https://web.archive.org/web/20190523150159/https://algocode.net/2018/04/18/20180418-KB-Mobius-Inversion-Formula/)

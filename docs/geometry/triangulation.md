@@ -1,82 +1,82 @@
 author: xehoth
 
-在几何中，三角剖分是指将平面对象细分为三角形，并且通过扩展将高维几何对象细分为单纯形．
-对于一个给定的点集，有很多种三角剖分，如：
+In geometry, triangulation means subdividing a planar object into triangles and, by extension, subdividing higher-dimensional geometric objects into simplices.
+For a given point set, there are many possible triangulations, for example:
 
-![三种三角剖分](./images/triangulation-0.svg)
+![Three triangulations](./images/triangulation-0.svg)
 
-OI 中的三角剖分主要指二维几何中的完美三角剖分（二维 Delaunay 三角剖分，简称 DT）．
+In OI, triangulation mainly refers to perfect triangulation in two-dimensional geometry, namely two-dimensional Delaunay triangulation, abbreviated as DT.
 
-## Delaunay 三角剖分
+## Delaunay Triangulation
 
-### 定义
+### Definition
 
-在数学和计算几何中，对于给定的平面中的离散点集 $P$，其 Delaunay 三角剖分 DT($P$) 满足：
+In mathematics and computational geometry, for a given discrete point set $P$ in the plane, its Delaunay triangulation DT($P$) satisfies:
 
-1.  空圆性：DT($P$) 是 **唯一** 的（任意四点不能共圆），在 DT($P$) 中，**任意** 三角形的外接圆范围内不会有其它点存在．
-2.  最大化最小角：在点集 $P$ 可能形成的三角剖分中，DT($P$) 所形成的三角形的最小角最大．从这个意义上讲，DT($P$) 是 **最接近于规则化** 的三角剖分．具体的说是在两个相邻的三角形构成凸四边形的对角线，在相互交换后，两个内角的最小角不再增大．
+1.  Empty circumcircle property: DT($P$) is **unique** if no four points are concyclic. In DT($P$), there is no other point inside the circumcircle of **any** triangle.
+2.  Maximization of the minimum angle: among all possible triangulations of point set $P$, the minimum angle among the triangles formed by DT($P$) is maximized. In this sense, DT($P$) is the triangulation **closest to regular**. More specifically, for the diagonal of the convex quadrilateral formed by two adjacent triangles, after swapping the diagonal, the smaller of the two relevant interior angles no longer increases.
 
-![一个显示了外接圆的 Delaunay 三角剖分](./images/triangulation-1.png)
+![A Delaunay triangulation showing circumcircles](./images/triangulation-1.png)
 
-### 性质
+### Properties
 
-1.  最接近：以最接近的三点形成三角形，且各线段（三角形的边）皆不相交．
-2.  唯一性：不论从区域何处开始构建，最终都将得到一致的结果（点集中任意四点不能共圆）．
-3.  最优性：任意两个相邻三角形构成的凸四边形的对角线如果可以互换的话，那么两个三角形六个内角中最小角度不会变化．
-4.  最规则：如果将三角剖分中的每个三角形的最小角进行升序排列，则 Delaunay 三角剖分的排列得到的数值最大．
-5.  区域性：新增、删除、移动某一个顶点只会影响邻近的三角形．
-6.  具有凸边形的外壳：三角剖分最外层的边界形成一个凸多边形的外壳．
+1.  Nearest: triangles are formed by the nearest three points, and all segments, that is, triangle edges, do not intersect.
+2.  Uniqueness: no matter where construction starts in the region, the final result is the same, assuming no four points in the point set are concyclic.
+3.  Optimality: if the diagonal of the convex quadrilateral formed by any two adjacent triangles can be swapped, then the smallest angle among the six interior angles of the two triangles will not change.
+4.  Most regular: if the minimum angle of each triangle in a triangulation is sorted in ascending order, the sequence obtained from the Delaunay triangulation is lexicographically largest.
+5.  Locality: adding, deleting, or moving a vertex only affects nearby triangles.
+6.  Convex hull boundary: the outermost boundary of the triangulation forms the hull of a convex polygon.
 
-## 构造 DT 的分治算法
+## Divide-and-Conquer Algorithm for Constructing DT
 
-DT 有很多种构造算法，在 $O(n \log n)$ 的构造算法中，分治算法是最易于理解和实现的．
+There are many algorithms for constructing DT. Among the $O(n \log n)$ construction algorithms, divide and conquer is the easiest to understand and implement.
 
-分治构造 DT 的第一步是将给定点集按照 $x$ 坐标 **升序** 排列，如下图是排好序的大小为 $10$ 的点集．
+The first step in constructing DT by divide and conquer is to sort the given point set by $x$ coordinate in **ascending** order. The figure below shows a sorted point set of size $10$.
 
-![排好序的大小为 10 的点集](./images/triangulation-2.svg)
+![A sorted point set of size 10](./images/triangulation-2.svg)
 
-一旦点集有序，我们就可以不断地将其分成两个部分（分治），直到子点集大小不超过 $3$．然后这些子点集可以立刻剖分为一个三角形或线段．
+Once the point set is ordered, we can repeatedly split it into two parts, using divide and conquer, until each subset has size at most $3$. These subsets can then be triangulated immediately as a triangle or a segment.
 
-![分治为包含 2 或 3 个点的点集](./images/triangulation-3.svg)
+![Divide and conquer into point sets containing 2 or 3 points](./images/triangulation-3.svg)
 
-然后在分治回溯的过程中，已经剖分好的左右子点集可以依次合并．合并后的剖分包含 LL-edge（左侧子点集的边）．RR-edge（右侧子点集的边），LR-edge（连接左右剖分产生的新的边），如图 LL-edge（灰色），RR-edge（红色），LR-edge（蓝色）．对于合并后的剖分，为了维持 DT 性质，我们 **可能** 需要删除部分 LL-edge 和 RR-edge，但我们在合并时 **不会** 增加 LL-edge 和 RR-edge．
+Then, during the divide-and-conquer backtracking process, the already triangulated left and right subsets can be merged in order. The merged triangulation contains LL-edges, edges of the left subset; RR-edges, edges of the right subset; and LR-edges, new edges created by connecting the left and right triangulations. In the figure, LL-edges are gray, RR-edges are red, and LR-edges are blue. For the merged triangulation, to maintain the DT properties, we **may** need to delete some LL-edges and RR-edges, but during merging we **will not** add LL-edges or RR-edges.
 
 ![edge](./images/triangulation-4.svg)
 
-合并左右两个剖分的第一步是插入 base LR-edge，base LR-edge 是 **最底部** 的不与 **任何** LL-edge 及 RR-edge 相交的 LR-edge．
+The first step in merging the left and right triangulations is to insert the base LR-edge. The base LR-edge is the **bottommost** LR-edge that does not intersect **any** LL-edge or RR-edge.
 
-![合并左右剖分](./images/triangulation-5.svg)
+![Merging left and right triangulations](./images/triangulation-5.svg)
 
-然后，我们需要确定下一条 **紧接在** base LR-edge 之上的 LR-edge．比如对于右侧点集，下一条 LR-edge 的可能端点（右端点）为与 base LR-edge 右端点相连的 RR-edge 的另一端点（$6, 7, 9$ 号点），左端点即为 $2$ 号点．
+Next, we need to determine the LR-edge **immediately above** the base LR-edge. For example, for the right point set, the possible endpoints of the next LR-edge, its right endpoint, are the other endpoints of RR-edges connected to the right endpoint of the base LR-edge, namely points $6, 7, 9$; the left endpoint is point $2$.
 
-![下一条 LR-edge](./images/triangulation-6.svg)
+![Next LR-edge](./images/triangulation-6.svg)
 
-对于可能的端点，我们需要按以下两个标准检验：
+For possible endpoints, we need to test them by the following two criteria:
 
-1.  其对应 RR-edge 与 base LR-edge 的夹角小于 $180$ 度．
-2.  base LR-edge 两端点和这个可能点三点构成的圆内不包含任何其它 **可能点**．
+1.  The angle between its corresponding RR-edge and the base LR-edge is less than $180$ degrees.
+2.  The circle determined by the two endpoints of the base LR-edge and this possible point contains no other **possible point**.
 
-![检验可能点](./images/triangulation-7.svg)
+![Testing possible points](./images/triangulation-7.svg)
 
-如上图，$6$ 号可能点所对应的绿色圆包含了 $9$ 号可能点，而 $7$ 号可能点对应的紫色圆则不包含任何其它可能点，故 $7$ 号点为下一条 LR-edge 的右端点．
+As shown above, the green circle corresponding to possible point $6$ contains possible point $9$, while the purple circle corresponding to possible point $7$ contains no other possible point. Therefore, point $7$ is the right endpoint of the next LR-edge.
 
-对于左侧点集，我们做镜像处理即可．
+For the left point set, handle it symmetrically.
 
-![检验左侧可能点](./images/triangulation-8.svg)
+![Testing possible points on the left](./images/triangulation-8.svg)
 
-当左右点集都不再含有符合标准的可能点时，合并即完成．当一个可能点符合标准，一条 LR-edge 就需要被添加，对于与需要添加的 LR-edge 相交的 LL-edge 和 RR-edge，将其删除．
+When neither the left nor right point set contains any possible point satisfying the criteria, the merge is complete. When a possible point satisfies the criteria, an LR-edge needs to be added. Delete any LL-edge or RR-edge that intersects the LR-edge being added.
 
-当左右点集均存在可能点时，判断左边点所对应圆是否包含右边点，若包含则不符合；对于右边点也是同样的判断．一般只有一个可能点符合标准（除非四点共圆）．
+When both the left and right point sets have possible points, check whether the circle corresponding to the left point contains the right point; if it does, it is invalid. Do the same check for the right point. Usually only one possible point satisfies the criteria, unless four points are concyclic.
 
-![下一条 LR-edge](./images/triangulation-9.svg)
+![Next LR-edge](./images/triangulation-9.svg)
 
-当这条 LR-edge 添加好后，将其作为 base LR-edge 重复以上步骤，继续添加下一条，直到合并完成．
+After this LR-edge is added, use it as the base LR-edge and repeat the steps above, adding the next edge until merging is complete.
 
-![合并](./images/triangulation-10.svg)
+![Merging](./images/triangulation-10.svg)
 
-## 代码
+## Code
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cmath>
@@ -270,21 +270,21 @@ DT 有很多种构造算法，在 $O(n \log n)$ 的构造算法中，分治算�
     };
     ```
 
-## Voronoi 图
+## Voronoi Diagram
 
-Voronoi 图由一组由连接两邻点直线的垂直平分线组成的连续多边形组成，根据 $n$ 个在平面上不重合种子点，把平面分成 $n$ 个区域，使得每个区域内的点到它所在区域的种子点的距离比到其它区域种子点的距离近．
+A Voronoi diagram consists of continuous polygons formed by perpendicular bisectors of the lines connecting neighboring points. Given $n$ distinct seed points on the plane, it divides the plane into $n$ regions such that every point in a region is closer to that region's seed point than to any other region's seed point.
 
-Voronoi 图是 Delaunay 三角剖分的对偶图，可以使用构造 Delaunay 三角剖分的分治算法求出三角网，再使用最左转线算法求出其对偶图实现在 $O(n \log n)$ 的时间复杂度下构造 Voronoi 图．
+The Voronoi diagram is the dual graph of the Delaunay triangulation. We can use the divide-and-conquer algorithm for constructing Delaunay triangulation to obtain the triangulation, then use the leftmost-turn line algorithm to obtain its dual graph, constructing the Voronoi diagram in $O(n \log n)$ time.
 
-## 题目
+## Problems
 
-[SGU 383 Caravans](https://codeforces.com/problemsets/acmsguru/problem/99999/383) 三角剖分 + 倍增
+[SGU 383 Caravans](https://codeforces.com/problemsets/acmsguru/problem/99999/383) triangulation + binary lifting
 
-[ContestHunter. 无尽的毁灭](http://noi-test.zzstep.com/contest/Beta%20Round%20%EF%BC%832%20%28%E6%96%B0%E7%96%86%E7%9C%81%E9%98%9F%E4%BA%92%E6%B5%8BWeek1-Day2%29/%E6%97%A0%E5%B0%BD%E7%9A%84%E6%AF%81%E7%81%AD) 三角剖分求对偶图建 Voronoi 图
+[ContestHunter. Endless Destruction](http://noi-test.zzstep.com/contest/Beta%20Round%20%EF%BC%832%20%28%E6%96%B0%E7%96%86%E7%9C%81%E9%98%9F%E4%BA%92%E6%B5%8BWeek1-Day2%29/%E6%97%A0%E5%B0%BD%E7%9A%84%E6%AF%81%E7%81%AD) build the dual graph from triangulation to construct a Voronoi diagram
 
-[Codeforces Gym 103485M. Constellation collection](https://codeforces.com/gym/103485/problem/M) 三角剖分之后建图进行 Floodfill
+[Codeforces Gym 103485M. Constellation collection](https://codeforces.com/gym/103485/problem/M) build a graph after triangulation and run flood fill
 
-## 参考资料与拓展阅读
+## References and Further Reading
 
 1.  [Wikipedia - Triangulation (geometry)](https://en.wikipedia.org/wiki/Triangulation_%28geometry%29)
 2.  [Wikipedia - Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation)

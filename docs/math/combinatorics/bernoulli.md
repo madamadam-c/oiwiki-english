@@ -1,246 +1,243 @@
-伯努利数 $B_n$ 是一个与数论有密切关联的有理数序列．前几项被发现的伯努利数分别为：
+Bernoulli numbers $B_n$ are a rational number sequence closely related to number theory. The first few Bernoulli numbers that have been discovered are:
 
-$B_0=1,B_1=-\frac{1}{2},B_2=\frac{1}{6},B_3=0,B_4=-\frac{1}{30},\dots$
+$B_0 = 1, B_1 = -\frac{1}{2}, B_2 = \frac{1}{6}, B_3 = 0, B_4 = -\frac{1}{30}, \dots$
 
-## 等幂求和
+## Power Sums
 
-伯努利数是由雅各布·伯努利的名字命名的，他在研究 $m$ 次幂和的公式时发现了奇妙的关系．我们记
-
-$$
-S_{m}(n)=\sum_{k=0}^{n-1}k^m=0^m+1^m+\dots+(n-1)^m
-$$
-
-伯努利观察了如下一列公式，勾画出一种模式：
+Bernoulli numbers are named after Jacob Bernoulli, who discovered a remarkable relationship when studying the formula for the sum of $m$-th powers. We denote:
 
 $$
-\begin{aligned}
-S_0(n)&=n\\
-S_1(n)&=\frac{1}{2}n^2-\frac{1}{2}n\\
-S_2(n)&=\frac{1}{3}n^3-\frac{1}{2}n^2+\frac{1}{6}n\\
-S_3(n)&=\frac{1}{4}n^4-\frac{1}{2}n^3+\frac{1}{4}n^2\\
-S_4(n)&=\frac{1}{5}n^5-\frac{1}{2}n^4+\frac{1}{3}n^3-\frac{1}{30}n
-\end{aligned}
+S_m(n) = \sum_{k=0}^{n-1} k^m = 0^m + 1^m + \dots + (n-1)^m
 $$
 
-可以发现，在 $S_m(n)$ 中 $n^{m+1}$ 的系数总是 $\frac{1}{m+1}$，$n^m$ 的系数总是 $-\frac{1}{2}$，$n^{m-1}$ 的系数总是 $\frac{m}{12}$，$n^{m-3}$ 的系数是 $-\frac{m(m-1)(m-2)}{720}$，$n^{m-4}$ 的系数总是零等．
-
-而 $n^{m-k}$ 的系数总是某个常数乘以 $m^{\underline{k}}$，$m^{\underline{k}}$ 表示下降阶乘幂，即 $\frac{m!}{(m-k)!}$．
-
-## 递推公式
+Bernoulli observed the following series of formulas, outlining a pattern:
 
 $$
 \begin{aligned}
-S_m{(n)}&=\frac{1}{m+1}(B_0n^{m+1}+\binom{m+1}{1}B_1 n^m+\dots+\binom{m+1}{m}B_m n) \\
-&=\frac{1}{m+1}\sum_{k=0}^{m}\binom{m+1}{k}B_kn^{m+1-k}
+S_0(n) &= n\\
+S_1(n) &= \frac{1}{2}n^2 - \frac{1}{2}n\\
+S_2(n) &= \frac{1}{3}n^3 - \frac{1}{2}n^2 + \frac{1}{6}n\\
+S_3(n) &= \frac{1}{4}n^4 - \frac{1}{2}n^3 + \frac{1}{4}n^2\\
+S_4(n) &= \frac{1}{5}n^5 - \frac{1}{2}n^4 + \frac{1}{3}n^3 - \frac{1}{30}n
 \end{aligned}
 $$
 
-伯努利数由隐含的递推关系定义：
+It can be found that in $S_m(n)$, the coefficient of $n^{m+1}$ is always $\frac{1}{m+1}$, the coefficient of $n^m$ is always $-\frac{1}{2}$, the coefficient of $n^{m-1}$ is always $\frac{m}{12}$, the coefficient of $n^{m-3}$ is $-\frac{m(m-1)(m-2)}{720}$, the coefficient of $n^{m-4}$ is always 0, etc.
+
+And the coefficient of $n^{m-k}$ is always some constant multiplied by $m^{\underline{k}}$, where $m^{\underline{k}}$ represents the falling factorial, i.e., $\frac{m!}{(m-k)!}$.
+
+## Recurrence Formula
 
 $$
 \begin{aligned}
-\sum_{j=0}^{m}\binom{m+1}{j}B_j&=0,(m>0)\\
-B_0&=1
+S_m(n) &= \frac{1}{m+1}(B_0 n^{m+1} + \binom{m+1}{1} B_1 n^m + \dots + \binom{m+1}{m} B_m n) \\
+&= \frac{1}{m+1}\sum_{k=0}^{m} \binom{m+1}{k} B_k n^{m+1-k}
 \end{aligned}
 $$
 
-例如，$\binom{2}{0}B_0+\binom{2}{1}B_1=0$，前几个值显然是
+Bernoulli numbers are defined by an implicit recurrence relation:
+
+$$
+\begin{aligned}
+\sum_{j=0}^{m} \binom{m+1}{j} B_j &= 0, \quad (m > 0)\\
+B_0 &= 1
+\end{aligned}
+$$
+
+For example, $\binom{2}{0} B_0 + \binom{2}{1} B_1 = 0$. The first few values are clearly:
 
 |  $n$  | $0$ |       $1$      |      $2$      | $3$ |       $4$       | $5$ |       $6$      | $7$ |       $8$       | $\dots$ |
 | :---: | :-: | :------------: | :-----------: | :-: | :-------------: | :-: | :------------: | :-: | :-------------: | :-----: |
 | $B_n$ | $1$ | $-\frac{1}{2}$ | $\frac{1}{6}$ | $0$ | $-\frac{1}{30}$ | $0$ | $\frac{1}{42}$ | $0$ | $-\frac{1}{30}$ | $\dots$ |
 
-### 证明
+### Proof
 
-#### 利用归纳法证明
+#### Proof using Induction
 
-这个证明方法来自 Concrete Mathematics 6.5 BERNOULLI NUMBER．
+This proof method comes from Concrete Mathematics 6.5 BERNOULLI NUMBER.
 
-运用二项式系数的恒等变换和归纳法进行证明：
-
-$$
-\begin{aligned}
-S_{m+1}(n)+n^{m+1}&= \sum_{k=0}^{n-1}(k+1)^{m+1}\\
-&=\sum_{k=0}^{n-1}\sum_{j=0}^{m+1}\binom{m+1}{j}k^j\\
-&=\sum_{j=0}^{m+1}\binom{m+1}{j}S_j(n)
-\end{aligned}
-$$
-
-令 $\hat{S}_{m}(n)=\frac{1}{m+1} \sum_{k=0}^{m} \binom{m+1}{k}B_kn^{m+1-k}$，我们希望证明 $S_m(n)=\hat{S}_m(n)$，假设对 $j\in[0,m)$，有 $S_j(n)=\hat{S}_j(n)$．
-
-将原式中两边都减去 $S_{m+1}(n)$ 后可以得到：
+We prove using binomial coefficient identities and induction:
 
 $$
 \begin{aligned}
-S_{m+1}(n)+n^{m+1}&=\sum_{j=0}^{m+1}\binom{m+1}{j}S_j(n)\\
-n^{m+1}&=\sum_{j=0}^{m}\binom{m+1}{j}S_j(n)\\
-&=\sum_{j=0}^{m-1}\binom{m+1}{j}\hat{S}_j(n)+\binom{m+1}{m}S_m(n)
+S_{m+1}(n) + n^{m+1} &= \sum_{k=0}^{n-1} (k+1)^{m+1}\\
+&= \sum_{k=0}^{n-1} \sum_{j=0}^{m+1} \binom{m+1}{j} k^j\\
+&= \sum_{j=0}^{m+1} \binom{m+1}{j} S_j(n)
 \end{aligned}
 $$
 
-尝试在式子的右边加上 $\binom{m+1}{m}\hat{S}_m(n)-\binom{m+1}{m}\hat{S}_m(n)$ 再进行化简，可以得到：
+Let $\hat{S}_m(n) = \frac{1}{m+1} \sum_{k=0}^{m} \binom{m+1}{k} B_k n^{m+1-k}$. We want to prove $S_m(n) = \hat{S}_m(n)$. Assume for $j \in [0, m)$, we have $S_j(n) = \hat{S}_j(n)$.
 
-$$
-n^{m+1}=\sum_{j=0}^{m}\binom{m+1}{j}\hat{S}_j(n)+(m+1)(S_m(n)-\hat{S}_m(n))
-$$
-
-不妨设 $\Delta = S_m(n)-\hat{S}_m(n)$，并且将 $\hat{S}_j(n)$ 展开，那么有
+Subtract $S_{m+1}(n)$ from both sides of the original formula:
 
 $$
 \begin{aligned}
-n^{m+1}&=\sum_{j=0}^{m}\binom{m+1}{j}\hat{S}_j(n)+(m+1)\Delta\\
-&=\sum_{j=0}^{m}\binom{m+1}{j}\frac{1}{j+1}\sum_{k=0}^{j}\binom{j+1}{k}B_kn^{j+1-k}+(m+1)\Delta\\
+S_{m+1}(n) + n^{m+1} &= \sum_{j=0}^{m+1} \binom{m+1}{j} S_j(n)\\
+n^{m+1} &= \sum_{j=0}^{m} \binom{m+1}{j} S_j(n)\\
+&= \sum_{j=0}^{m-1} \binom{m+1}{j} \hat{S}_j(n) + \binom{m+1}{m} S_m(n)
 \end{aligned}
 $$
 
-将第二个 $\sum$ 中的求和顺序改为逆向，再将组合数的写法恒等变换可以得到：
+Try adding $\binom{m+1}{m} \hat{S}_m(n) - \binom{m+1}{m} \hat{S}_m(n)$ to the right side and simplify:
+
+$$
+n^{m+1} = \sum_{j=0}^{m} \binom{m+1}{j} \hat{S}_j(n) + (m+1)(S_m(n) - \hat{S}_m(n))
+$$
+
+Let $\Delta = S_m(n) - \hat{S}_m(n)$. Expand $\hat{S}_j(n)$:
 
 $$
 \begin{aligned}
-n^{m+1}&=\sum_{j=0}^{m}\binom{m+1}{j}\frac{1}{j+1}\sum_{k=0}^{j}\binom{j+1}{j-k}B_{j-k}n^{k+1}+(m+1)\Delta\\
-&=\sum_{j=0}^{m}\binom{m+1}{j}\frac{1}{j+1}\sum_{k=0}^{j}\binom{j+1}{k+1}B_{j-k}n^{k+1}+(m+1)\Delta\\
-&=\sum_{j=0}^{m}\binom{m+1}{j}\frac{1}{j+1}\sum_{k=0}^{j}\frac{j+1}{k+1}\binom{j}{k}B_{j-k}n^{k+1}+(m+1)\Delta\\
-&=\sum_{j=0}^{m}\binom{m+1}{j}\sum_{k=0}^{j}\binom{j}{k}\frac{B_{j-k}}{k+1}n^{k+1}+(m+1)\Delta
+n^{m+1} &= \sum_{j=0}^{m} \binom{m+1}{j} \frac{1}{j+1} \sum_{k=0}^{j} \binom{j+1}{k} B_k n^{j+1-k} + (m+1)\Delta
 \end{aligned}
 $$
 
-对两个求和符号进行交换，可以得到：
-
-$$
-n^{m+1}=\sum_{k=0}^{m}\frac{n^{k+1}}{k+1}\sum_{j=k}^{m}\binom{m+1}{j}\binom{j}{k}B_{j-k}+(m+1)\Delta
-$$
-
-对 $\binom{m+1}{j}\binom{j}{k}$ 进行恒等变换：
-
-$$
-\binom{m+1}{j}\binom{j}{k}＝\binom{m+1}{k}\binom{m-k+1}{j-k}
-$$
-
-那么式子就变成了：
+Swap the order of summation in the second sum and transform binomial coefficient notation:
 
 $$
 \begin{aligned}
-n^{m+1}&=\sum_{k=0}^{m}\frac{n^{k+1}}{k+1}\sum_{j=k}^{m}\binom{m+1}{k}\binom{m-k+1}{j-k}B_{j-k}+(m+1)\Delta\\
-&=\sum_{k=0}^{m}\frac{n^{k+1}}{k+1}\binom{m+1}{k}\sum_{j=k}^{m}\binom{m-k+1}{j-k}B_{j-k}+(m+1)\Delta\\
+n^{m+1} &= \sum_{j=0}^{m} \binom{m+1}{j} \frac{1}{j+1} \sum_{k=0}^{j} \binom{j+1}{j-k} B_{j-k} n^{k+1} + (m+1)\Delta\\
+&= \sum_{j=0}^{m} \binom{m+1}{j} \frac{1}{j+1} \sum_{k=0}^{j} \binom{j+1}{k+1} B_{j-k} n^{k+1} + (m+1)\Delta\\
+&= \sum_{j=0}^{m} \binom{m+1}{j} \frac{1}{j+1} \sum_{k=0}^{j} \frac{j+1}{k+1} \binom{j}{k} B_{j-k} n^{k+1} + (m+1)\Delta\\
+&= \sum_{j=0}^{m} \binom{m+1}{j} \sum_{k=0}^{j} \binom{j}{k} \frac{B_{j-k}}{k+1} n^{k+1} + (m+1)\Delta
 \end{aligned}
 $$
 
-将所有的 $j-k$ 用 $j$ 代替，那么就可以得到：
+Swap the two summation symbols:
 
 $$
-n^{m+1}=\sum_{k=0}^{m}\frac{n^{k+1}}{k+1}\binom{m+1}{k}\sum_{j=0}^{m-k}\binom{m-k+1}{j}B_{j}+(m+1)\Delta
+n^{m+1} = \sum_{k=0}^{m} \frac{n^{k+1}}{k+1} \sum_{j=k}^{m} \binom{m+1}{j} \binom{j}{k} B_{j-k} + (m+1)\Delta
 $$
 
-考虑我们前面提到过的递归关系
+Transform $\binom{m+1}{j} \binom{j}{k}$:
+
+$$
+\binom{m+1}{j}\binom{j}{k} = \binom{m+1}{k}\binom{m-k+1}{j-k}
+$$
+
+Then the formula becomes:
 
 $$
 \begin{aligned}
-\sum_{j=0}^{m}\binom{m+1}{j}B_j&=0,(m>0)\\
-B_0&=1\\
-\sum_{j=0}^{m}\binom{m+1}{j}B_j&=[m = 0]
+n^{m+1} &= \sum_{k=0}^{m} \frac{n^{k+1}}{k+1} \binom{m+1}{k} \sum_{j=k}^{m} \binom{m-k+1}{j-k} B_{j-k} + (m+1)\Delta\\
+&= \sum_{k=0}^{m} \frac{n^{k+1}}{k+1} \binom{m+1}{k} \sum_{j=0}^{m-k} \binom{m-k+1}{j} B_j + (m+1)\Delta
 \end{aligned}
 $$
 
-代入后可以得到：
+Replace all $j-k$ with $j$:
+
+$$
+n^{m+1} = \sum_{k=0}^{m} \frac{n^{k+1}}{k+1} \binom{m+1}{k} \sum_{j=0}^{m-k} \binom{m-k+1}{j} B_j + (m+1)\Delta
+$$
+
+Consider the recurrence relation we mentioned earlier:
 
 $$
 \begin{aligned}
-n^{m+1}&=\sum_{k=0}^{m}\frac{n^{k+1}}{k+1}\binom{m+1}{k}[m - k = 0]+(m+1)\Delta\\
-&=\frac{n^{m+1}}{m+1}\binom{m+1}{m}+(m+1)\Delta\\
-&=n^{m+1}+(m+1)\Delta
+\sum_{j=0}^{m} \binom{m+1}{j} B_j &= 0, \quad (m > 0)\\
+B_0 &= 1\\
+\sum_{j=0}^{m} \binom{m+1}{j} B_j &= [m = 0]
 \end{aligned}
 $$
 
-于是 $\Delta=0$，且有 $S_m(n)=\hat{S}_m(n)$．
-
-#### 利用指数生成函数证明
-
-对递推式 $\sum_{j=0}^{m}\binom{m+1}{j}B_j=[m=0]$
-
-两边都加上 $B_{m + 1}$，即得到：
+Substituting gives:
 
 $$
 \begin{aligned}
-\sum_{j=0}^{m+1}\binom{m+1}{j}B_j&=[m=0]+B_{m+1}\\
-\sum_{j=0}^{m}\binom{m}{j}B_j&=[m=1]+B_{m}\\
-\sum_{j=0}^{m}\dfrac{B_j}{j!}\cdot\dfrac{1}{(m-j)!}&=[m=1]+\dfrac{B_{m}}{m!}
+n^{m+1} &= \sum_{k=0}^{m} \frac{n^{k+1}}{k+1} \binom{m+1}{k} [m - k = 0] + (m+1)\Delta\\
+&= \frac{n^{m+1}}{m+1} \binom{m+1}{m} + (m+1)\Delta\\
+&= n^{m+1} + (m+1)\Delta
 \end{aligned}
 $$
 
-设 $B(z) = \sum\limits_{i\ge 0}\dfrac{B_i}{i!}z^i$，注意到左边为卷积形式，故：
+Thus $\Delta = 0$, and $S_m(n) = \hat{S}_m(n)$.
+
+#### Proof using Exponential Generating Functions
+
+For the recurrence $\sum_{j=0}^{m} \binom{m+1}{j} B_j = [m = 0]$, add $B_{m+1}$ to both sides:
 
 $$
 \begin{aligned}
-B(z)\mathrm{e}^z &= z+B(z)\\
-B(z)&=\dfrac{z}{\mathrm{e}^z - 1}
+\sum_{j=0}^{m+1} \binom{m+1}{j} B_j &= [m = 0] + B_{m+1}\\
+\sum_{j=0}^{m} \binom{m}{j} B_j &= [m = 1] + B_{m}\\
+\sum_{j=0}^{m} \frac{B_j}{j!} \cdot \frac{1}{(m-j)!} &= [m = 1] + \frac{B_{m}}{m!}
 \end{aligned}
 $$
 
-设 $F_n(z) = \sum_{m\ge 0}\dfrac{S_m(n)}{m!}z^m$，则：
+Let $B(z) = \sum\limits_{i \ge 0} \dfrac{B_i}{i!} z^i$. Note that the left side is a convolution form:
 
 $$
 \begin{aligned}
-F_n(z) &= \sum_{m\ge 0}\dfrac{S_m(n)}{m!}z^m\\
-&= \sum_{m\ge 0}\sum_{i=0}^{n-1}\dfrac{i^mz^m}{m!}\\
+B(z) \mathrm{e}^z &= z + B(z)\\
+B(z) &= \dfrac{z}{\mathrm{e}^z - 1}
 \end{aligned}
 $$
 
-调换求和顺序：
+Let $F_n(z) = \sum_{m \ge 0} \dfrac{S_m(n)}{m!} z^m$. Then:
 
 $$
 \begin{aligned}
-F_n(z) &=\sum_{i=0}^{n-1}\sum_{m\ge 0}\dfrac{i^mz^m}{m!}\\
-       &=\sum_{i=0}^{n-1}\mathrm{e}^{iz}\\
-       &=\dfrac{\mathrm{e}^{nz} - 1}{\mathrm{e}^z - 1}\\
-       &=\dfrac{z}{\mathrm{e}^z - 1}\cdot\dfrac{\mathrm{e}^{nz} - 1}{z}
+F_n(z) &= \sum_{m \ge 0} \dfrac{S_m(n)}{m!} z^m\\
+&= \sum_{m \ge 0} \sum_{i=0}^{n-1} \dfrac{i^m z^m}{m!}\\
 \end{aligned}
 $$
 
-代入 $B(z)=\dfrac{z}{\mathrm{e}^z - 1}$：
+Swap the order of summation:
 
 $$
 \begin{aligned}
-F_n(z) &= B(z)\cdot\dfrac{\mathrm{e}^{nz} - 1}{z}\\
-&= \left(\sum_{i\ge 0}\dfrac{B_i}{i!} \right)\left(\sum_{i\ge 1}\dfrac{n^i z^{i - 1}}{i!}\right)\\
-&= \left(\sum_{i\ge 0}\dfrac{B_i}{i!} \right)\left(\sum_{i\ge 0}\dfrac{n^{i+1} z^{i}}{(i+1)!}\right)
+F_n(z) &= \sum_{i=0}^{n-1} \sum_{m \ge 0} \dfrac{i^m z^m}{m!}\\
+       &= \sum_{i=0}^{n-1} \mathrm{e}^{i z}\\
+       &= \dfrac{\mathrm{e}^{n z} - 1}{\mathrm{e}^z - 1}\\
+       &= \dfrac{z}{\mathrm{e}^z - 1} \cdot \dfrac{\mathrm{e}^{n z} - 1}{z}
 \end{aligned}
 $$
 
-由于 $F_n(z) = \sum_{m\ge 0}\dfrac{S_m(n)}{m!}z^m$，即 $S_m(n)=m![z^m]F_n(z)$：
+Substitute $B(z) = \dfrac{z}{\mathrm{e}^z - 1}$:
 
 $$
 \begin{aligned}
-S \times m(n)&=m![z^m]F_n(z)\\
-             &= m!\sum_{i=0}^{m}\dfrac{B \times i}{i!}\cdot\dfrac{n^{m-i+1}}{(m-i+1)!}\\
-             &=\dfrac{1}{m+1}\sum_{i=0}^{m}\binom{m+1}{i}B_in^{m-i+1}
+F_n(z) &= B(z) \cdot \dfrac{\mathrm{e}^{n z} - 1}{z}\\
+&= \left(\sum_{i \ge 0} \dfrac{B_i}{i!} \right) \left(\sum_{i \ge 1} \dfrac{n^i z^{i - 1}}{i!}\right)\\
+&= \left(\sum_{i \ge 0} \dfrac{B_i}{i!} \right) \left(\sum_{i \ge 0} \dfrac{n^{i+1} z^{i}}{(i+1)!}\right)
 \end{aligned}
 $$
 
-故得证．
+Since $F_n(z) = \sum_{m \ge 0} \dfrac{S_m(n)}{m!} z^m$, i.e., $S_m(n) = m! [z^m] F_n(z)$:
 
-??? note "参考实现"
+$$
+\begin{aligned}
+S_m(n) &= m! [z^m] F_n(z)\\
+       &= m! \sum_{i=0}^{m} \dfrac{B_i}{i!} \cdot \dfrac{n^{m-i+1}}{(m-i+1)!}\\
+       &= \dfrac{1}{m+1} \sum_{i=0}^{m} \binom{m+1}{i} B_i n^{m-i+1}
+\end{aligned}
+$$
+
+Q.E.D.
+
+??? note "Reference implementation"
     ```cpp
     using ll = long long;
     constexpr int MAXN = 10000;
     constexpr int mod = 1e9 + 7;
-    ll B[MAXN];        // 伯努利数
-    ll C[MAXN][MAXN];  // 组合数
-    ll inv[MAXN];      // 逆元（计算伯努利数）
+    ll B[MAXN];        // Bernoulli numbers
+    ll C[MAXN][MAXN];  // Binomial coefficients
+    ll inv[MAXN];      // Inverses (for calculating Bernoulli numbers)
     
     void init() {
-      // 预处理组合数
+      // Preprocess binomial coefficients
       for (int i = 0; i < MAXN; i++) {
         C[i][0] = C[i][i] = 1;
         for (int k = 1; k < i; k++) {
           C[i][k] = (C[i - 1][k] % mod + C[i - 1][k - 1] % mod) % mod;
         }
       }
-      // 预处理逆元
+      // Preprocess inverses
       inv[1] = 1;
       for (int i = 2; i < MAXN; i++) {
         inv[i] = (mod - mod / i) * inv[mod % i] % mod;
       }
-      // 预处理伯努利数
+      // Preprocess Bernoulli numbers
       B[0] = 1;
       for (int i = 1; i < MAXN; i++) {
         ll ans = 0;

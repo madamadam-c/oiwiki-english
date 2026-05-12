@@ -1,188 +1,188 @@
 author: NachtgeistW, Ir1d, ouuan, Enter-tainer, Xeonacid, ChungZH, keepthethink, abc1763613206, partychicken, Chrogeek, xkww3n, HeliumOI, Pinghigh, xiaofu-15191, Sekakou, fuxianhu
 
-## 简介
+## Introduction
 
-Visual Studio Code（以下简称 VS Code）是一个由微软开发，同时支持 Windows、Linux 和 macOS 等操作系统且开放源代码的代码编辑器．它是用 TypeScript 编写的，并且采用 Electron 架构．它带有对 JavaScript、TypeScript 和 Node.js 的内置支持，并为其他语言（如 C、C++、Java、Python、PHP、Go）提供了丰富的扩展生态系统．
+Visual Studio Code (hereinafter VS Code) is a code editor developed by Microsoft that supports Windows, Linux, and macOS operating systems and is open source. It is written in TypeScript and uses the Electron architecture. It has built-in support for JavaScript, TypeScript and Node.js, and provides a rich extension ecosystem for other languages (such as C, C++, Java, Python, PHP, Go).
 
-官网：[Visual Studio Code - The open source AI code editor](https://code.visualstudio.com/)
+Official website: [Visual Studio Code - The open source AI code editor](https://code.visualstudio.com/)
 
-在阅读以下内容前，建议你先简单了解 VS Code 的基本使用方法：[开始使用 Get started](https://code.visualstudio.com/docs/getstarted/getting-started)．
+Before reading the following content, it is recommended that you first briefly understand the basic usage of VS Code: [Get started](https://code.visualstudio.com/docs/getstarted/getting-started)
 
-## 使用 C/C++ Compile Run 扩展运行代码
+## Running Code Using C/C++ Compile Run Extension
 
-C/C++ Compile Run 是一个专注于 C/C++ 单文件编译与运行的插件．它免去了传统 C/C++ 插件中繁琐的配置步骤，非常适合编程竞赛的需要，上手迅速，操作简单．
+C/C++ Compile Run is a plugin focused on compiling and running single C/C++ files. It eliminates the cumbersome configuration steps in traditional C/C++ plugins, making it very suitable for competitive programming needs, quick to get started, and simple to operate.
 
-打开 VS Code，点击左侧边栏的「扩展」图标（或按下<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>），在搜索框中输入 `C++`，找到 C/C++ Compile Run，点击「安装/Install」即可．
+Open VS Code, click the "Extensions" icon on the left sidebar (or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>), enter `C++` in the search box, find C/C++ Compile Run, and click "Install".
 
 ![](./images/vscode-14.png)
 
-安装完成后，无需额外配置，插件会根据环境变量自动适配已配置好的 MinGW 编译器．
+After installation, no additional configuration is needed. The plugin will automatically adapt to the configured MinGW compiler based on environment variables.
 
-打开需要运行的文件，点击右上角的三角图标即可运行代码．
+Open the file you need to run, click the triangle icon in the upper right corner to run the code.
 
-快捷键：
+Shortcuts:
 
--   <kbd>F6</kbd>- 编译并在 VS Code 内置集成终端中运行
--   <kbd>F7</kbd>- 以自定义参数编译并以自定义参数在 VS Code 内置集成终端运行
--   <kbd>F8</kbd>- 编译并在外部终端中运行
+-   <kbd>F6</kbd>- Compile and run in VS Code's built-in integrated terminal
+-   <kbd>F7</kbd>- Compile with custom parameters and run in VS Code's built-in integrated terminal
+-   <kbd>F8</kbd>- Compile and run in external terminal
 
-## 使用 Code Runner 扩展运行代码
+## Running Code Using Code Runner Extension
 
-VS Code 安装并配置扩展后可实现对 C/C++ 的支持，但配置过程比较复杂．一个简单的编译与运行 C++ 程序的方案是安装 Code Runner 扩展．
+VS Code can be configured with extensions to support C/C++, but the configuration process is relatively complex. A simple solution for compiling and running C++ programs is to install the Code Runner extension.
 
-Code Runner 是一个可以一键运行代码的扩展，在工程上一般用来验证代码片段，支持 Node.js、Python、C、C++、Java、PHP、Perl、Ruby、Go 等 40 多种语言．
+Code Runner is an extension that can run code with one click. It is generally used in projects to verify code snippets, supporting more than 40 languages such as Node.js, Python, C, C++, Java, PHP, Perl, Ruby, Go, etc.
 
-安装的方式是在扩展商店搜索 Code Runner 并点击 Install；或者前往 [Marketplace](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) 并点击 Install，浏览器会自动打开 VS Code 并进行安装．
+The installation method is to search for Code Runner in the extension store and click Install; or go to [Marketplace](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) and click Install. The browser will automatically open VS Code and perform the installation.
 
 ![](./images/vscode-1.jpg)
 
-安装完成后，打开需要运行的文件，点击右上角的小三角图标即可运行代码；按下快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>N</kbd>（在 macOS 下是<kbd>Control</kbd>+<kbd>Option</kbd>+<kbd>N</kbd>）也可以得到同样的效果．
+After installation, open the file you need to run, click the small triangle icon in the upper right corner to run the code; you can also press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>N</kbd> (on macOS it's <kbd>Control</kbd>+<kbd>Option</kbd>+<kbd>N</kbd>) to get the same result.
 
 ???+ warning "Warning"
-    如果安装了 VS Code 与 Code Runner 后，代码仍然无法运行，很有可能是因为系统尚未安装 C/C++ 的运行环境，参考 [Hello, World! 页面](../../lang/helloworld.md) 以安装．
+    If after installing VS Code and Code Runner, the code still cannot run, it is very likely because the system has not installed the C/C++ runtime environment. Refer to the [Hello, World! page](../../lang/helloworld.md) to install.
     
-    记得勾选设置中的 Run In Terminal 选项，如图：![](./images/vscode-7.png)
+    Remember to check the "Run In Terminal" option in settings, as shown in the figure:![](./images/vscode-7.png)
 
-## 使用 C/C++ 扩展编译并调试/智能补全代码
+## Using C/C++ Extension to Compile and Debug/IntelliSense Code
 
-### 安装扩展
+### Installing Extensions
 
-在 VS Code 中打开扩展商店，在搜索栏中输入 `C++` 或者 `@category:"programming languages"`，然后找到 C/C++，点击 Install 安装扩展．
+Open the extension store in VS Code, enter `C++` or `@category:"programming languages"` in the search bar, find C/C++, and click Install to install the extension.
 
 ![](./images/vscode-2.png)
 
 ???+ warning "Warning"
-    在配置前，请确保系统已经安装了 G++ 或 Clang，并已添加到了环境变量 `PATH` 中．请使用 CMD 或者 PowerShell，而不是 Git Bash 作为集成终端．
+    Before configuration, make sure the system has installed G++ or Clang and has added it to the environment variable `PATH`. Please use CMD or PowerShell, not Git Bash as the integrated terminal.
 
-### 配置 GDB/LLDB 调试器
+### Configuring GDB/LLDB Debugger
 
 #### GDB
 
-在 VS Code 中新建一份 C++ 代码文件，按照 C++ 语法写入一些内容（如 `int main(){}`），保存并按下<kbd>F5</kbd>，进入调试模式．
-如果出现了「选择调试器」的提示，选择 `C++ (GDB/LLDB)`．在「选择配置」中，G++ 用户选择 `g++.exe - 生成和调试活动文件`；Clang 用户选择 `clang++ - 生成和调试活动文件`．
+Create a new C++ code file in VS Code, write some content according to C++ syntax (such as `int main(){}`), save it and press <kbd>F5</kbd> to enter debug mode.
+If a "Select Debugger" prompt appears, select `C++ (GDB/LLDB)`. In "Select Configuration", G++ users choose `g++.exe - Build and debug active file`; Clang users choose `clang++ - Build and debug active file`.
 
 ???+ warning "Warning"
-    配置名称并非固定，而是可以自定义的．不同的操作系统可能具有不同的配置名称．
+    The configuration name is not fixed but can be customized. Different operating systems may have different configuration names.
 
-完成后，VS Code 将自动完成初始化操作在下方的集成终端中启动调试．至此，GDB 所有的配置流程已经完毕．
+After completion, VS Code will automatically complete the initialization operation and start debugging in the integrated terminal below. So far, all configuration steps for GDB are complete.
 
 #### LLDB
 
-如果需要采用 LLDB，需要安装另外一款扩展[^ref1]——[CodeLLDB](https://github.com/vadimcn/vscode-lldb/)．从该项目的 Release 页面下载 .vsix 文件后[^ref2]，从 VS Code 的扩展页面安装．
+If you need to use LLDB, you need to install another extension[^ref1]——[CodeLLDB](https://github.com/vadimcn/vscode-lldb/). After downloading the .vsix file from the Release page of that project[^ref2], install it from the VS Code extension page.
 
 ![](images/vscode-9.png)
 
-先按照上文 GDB 的配置过程操作一遍，然后删除 `.vscode/launch.json`，按下<kbd>F5</kbd>，选择 `LLDB`，再把 `launch.json` 中的 `${workspaceFolder}/<executable file>` 更改为 `${fileDirname}/${fileBasenameNoExtension}` 即可．
+First follow the GDB configuration process above, then delete `.vscode/launch.json`, press <kbd>F5</kbd>, select `LLDB`, and then change `${workspaceFolder}/<executable file>` in `launch.json` to `${fileDirname}/${fileBasenameNoExtension}`.
 
-至此，LLDB 配置完成．再次按下<kbd>F5</kbd>即可看到软件下方的调试信息．
+Now LLDB configuration is complete. Press <kbd>F5</kbd> again to see the debugging information at the bottom of the software.
 
-若要在以后使用 VS Code 编译并调试代码，所有的源代码都需要保存至这个文件夹内．若要编译并调试其他文件夹中存放的代码，需要重新执行上述步骤（或将旧文件夹内的 `.vscode` 子文件夹复制到新文件夹内）．
+If you want to use VS Code to compile and debug code in the future, all source code needs to be saved in this folder. If you want to compile and debug code stored in other folders, you need to re-execute the above steps (or copy the `.vscode` subfolder from the old folder to the new folder).
 
-### 开始调试代码
+### Starting to Debug Code
 
-使用 VS Code 打开一份代码，将鼠标悬停在行数左侧的空白区域，并单击出现的红点即可为该行代码设置断点．再次单击可取消设置断点．
+Open a code file with VS Code, hover over the blank area on the left side of the line numbers, and click the red dot that appears to set a breakpoint for that line of code. Click again to cancel setting a breakpoint.
 
 ![](images/vscode-5.apng)
 
-按下<kbd>F5</kbd>进入调试模式，编辑器上方会出现一个调试工具栏，四个蓝色按钮从左至右分别代表 GDB 中的 `continue`,`next`,`step` 和 `until`：
+Press <kbd>F5</kbd> to enter debug mode. A debug toolbar will appear at the top of the editor. The four blue buttons from left to right represent `continue`, `next`, `step` and `until` in GDB:
 
 ![](images/vscode-6.png)
 
-如果编辑器未自动跳转，点击左侧工具栏中的「调试」图标进入调试窗口，即可在左侧看到变量的值．
+If the editor doesn't automatically jump, click the "Debug" icon in the left toolbar to enter the debug window, where you can see the values of variables on the left.
 
-在「监视」中，你可以输入表达式，在每一次进行 `next` 或 `step` 等操作时都会重新求值并显示．
+In "Watch", you can input expressions, which will be re-evaluated and displayed each time you perform operations like `next` or `step`.
 
-在「调用堆栈」中，你可以看见当前函数执行的栈帧．
+In "Call Stack", you can see the stack frames of the current function execution.
 
 ???+ note "Tip"
-    你可以参照 [GDB 官方文档](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Arrays.html) 来查看某个数组一段区间内的内容．
+    You can refer to the [GDB official documentation](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Arrays.html) to view the content of a certain range of an array.
 
-在调试模式中，编辑器将以黄色底色显示下一步将要执行的代码．
+In debug mode, the editor will display the next code to be executed with a yellow background.
 
-### 配置 IntelliSense
+### Configuring IntelliSense
 
-用于调整 VS Code 的智能补全．
+Used to adjust VS Code's IntelliSense.
 
-如果你使用 Clang 编译器，在「IntelliSense 模式」中选择 `clang-x64` 而非默认的 `msvc-x64`；如果你使用 G++ 编译器，选择 `gcc-x64` 以使用自动补全等功能．否则会得到「IntelliSense 模式 msvc-x64 与编译器路径不兼容．」的错误．
+If you use the Clang compiler, select `clang-x64` instead of the default `msvc-x64` in "IntelliSense Mode"; if you use the G++ compiler, select `gcc-x64` to use auto-completion and other functions. Otherwise, you will get the error "IntelliSense Mode msvc-x64 is not compatible with the compiler path."
 
 ![](images/vscode-4.png)
 
-## 配置 clangd
+## Configuring clangd
 
 ???+ warning "Warning"
-    由于功能冲突，安装 clangd 扩展后 C/C++ 扩展的 IntelliSense 功能将被禁用（调试等功能仍然使用 C/C++ 扩展）．如果 clangd 扩展的功能出现问题，可以查看是否禁用了 C/C++ 扩展的 IntelliSense 功能．
+    Due to functionality conflicts, after installing the clangd extension, the C/C++ extension's IntelliSense function will be disabled (debugging and other functions still use the C/C++ extension). If the clangd extension's functionality has problems, check whether the C/C++ extension's IntelliSense function is disabled.
 
-### clangd 简介
+### Introduction to clangd
 
-LLVM 官网上对 clangd 的介绍是这样的：
+LLVM's official website introduces clangd as follows:
 
-> Clangd is an implementation of the Language Server Protocol leveraging Clang. Clangd’s goal is to provide language "smartness" features like code completion, find references, etc. for clients such as C/C++ Editors.
+> Clangd is an implementation of the Language Server Protocol leveraging Clang. Clangd's goal is to provide language "smartness" features like code completion, find references, etc. for clients such as C/C++ Editors.
 
-简单来说，clangd 是 Clang 对语言服务器协定（Language Server Protocol）的实现，提供了一些智能的特性，例如全项目索引、代码跳转、变量重命名、更快的代码补全、提示信息、格式化代码等，并且能利用 LSP 与 Vim、Emacs、VSCode 等编辑器协作．虽然官方给出的定义是 LSP 的实现，但 clangd 的功能更接近语言服务器（Language Server）而不仅仅只是协议本身．
+In simple terms, clangd is Clang's implementation of the Language Server Protocol (LSP), providing some intelligent features such as whole-project indexing, code jumping, variable renaming, faster code completion, prompt information, code formatting, etc. It can also collaborate with editors like Vim, Emacs, VSCode through LSP. Although the official definition is an implementation of LSP, clangd's functionality is closer to a Language Server rather than just the protocol itself.
 
-VS Code 的 C/C++ 扩展也有自动补全等功能，但在提示信息的易读程度的准确度等方面与 clangd 相比稍逊一筹，所以我们有时会使用 clangd 代替 C/C++ 扩展来实现代码自动补全等功能．
+VS Code's C/C++ extension also has auto-completion and other functions, but it is slightly inferior to clangd in terms of readability and accuracy of prompt information. Therefore, we sometimes use clangd instead of the C/C++ extension to implement code auto-completion and other functions.
 
-### 安装
+### Installation
 
-参见 [Getting started](https://clangd.llvm.org/installation)．
+See [Getting started](https://clangd.llvm.org/installation).
 
-### VS Code 扩展
+### VS Code Extension
 
-打开 VS Code 扩展商店，在搜索栏中输入 `clangd` 找到 clangd 扩展并安装
+Open the VS Code extension store, enter `clangd` in the search bar to find the clangd extension and install it.
 
 ![](images/vscode-8.png)
 
-如果下方弹出 clangd 要求关闭 Intellisense 的对话框，点击 "Disable Intellisense"，重新加载工作区，就可以享受 clangd 的自动补全等功能了．
+If a dialog pops up at the bottom asking clangd to close IntelliSense, click "Disable IntelliSense" and reload the workspace. You can then enjoy clangd's auto-completion and other features.
 
-## 编辑
+## Editing
 
-### 语法设置
+### Syntax Settings
 
-在新打开的编辑器中点击「选择语言」，即可打开对应的语法高亮，如图：
+In the newly opened editor, click "Select Language" to open the corresponding syntax highlighting, as shown in the figure:
 
 ![](images/vscode-11.apng)
 
-### 快捷键
+### Shortcuts
 
-官方快捷键 PDF 如下，也可以在 VS Code 中按下<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>打开命令面板并输入命令 `> Help: Keyboard Shortcuts Reference` 打开．[^ref3]
+The official shortcuts PDF is as follows. You can also press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> in VS Code to open the command palette and input the command `> Help: Keyboard Shortcuts Reference` to open it.[^ref3]
 
--   [Windows 系统快捷键](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf)
--   [Linux 系统快捷键](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf)
--   [Mac OS 系统快捷键](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf)
+-   [Windows Shortcuts](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf)
+-   [Linux Shortcuts](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf)
+-   [Mac OS Shortcuts](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf)
 
-部分快捷键：
+Some shortcuts:
 
-| 按键                                                            | 操作                        |
-| ------------------------------------------------------------- | ------------------------- |
-| <kbd>Ctrl</kbd>+<kbd>C</kbd>/<kbd>X</kbd>                     | 复制/剪切当前行（当没有选择内容时）        |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>                 | 删除当前行                     |
-| <kbd>Alt</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd>                  | 行上移/下移                    |
-| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd> | 行向上/向下复制                  |
-| <kbd>Ctrl</kbd>+<kbd>/</kbd>                                  | 切换行注释                     |
-| <kbd>Ctrl</kbd>+<kbd>\[</kbd>/<kbd>]</kbd>                    | 行向左/右缩进                   |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\[</kbd>/<kbd>]</kbd>   | 行折叠/展开                    |
-| <kbd>Ctrl</kbd>+<kbd>P</kbd>                                  | 打开最近打开的文件                 |
-| <kbd>Alt</kbd>+<kbd>Z</kbd>                                   | 切换自动折行                    |
-| <kbd>Alt</kbd>+<kbd>F12</kbd>                                 | 速览定义（如函数的定义）              |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\\</kbd>                | 跳转到匹配括号                   |
-| <kbd>Ctrl</kbd>+<kbd>T</kbd>                                  | 在工作区中查找符号（在文件夹中查找指定名称函数等） |
+| Key                                                          | Operation                        |
+| ------------------------------------------------------------ | ------------------------- |
+| <kbd>Ctrl</kbd>+<kbd>C</kbd>/<kbd>X</kbd>                     | Copy/Cut current line (when no content is selected)        |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd>                 | Delete current line                     |
+| <kbd>Alt</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd>                  | Move line up/down                    |
+| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd> | Copy line up/down                  |
+| <kbd>Ctrl</kbd>+<kbd>/</kbd>                                  | Toggle line comment                     |
+| <kbd>Ctrl</kbd>+<kbd>\[</kbd>/<kbd>]</kbd>                    | Indent/Unindent line                   |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\[</kbd>/<kbd>]</kbd>   | Fold/Unfold line                    |
+| <kbd>Ctrl</kbd>+<kbd>P</kbd>                                  | Open recently opened file                 |
+| <kbd>Alt</kbd>+<kbd>Z</kbd>                                   | Toggle word wrap                    |
+| <kbd>Alt</kbd>+<kbd>F12</kbd>                                 | Peek definition (like function definition)              |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\\</kbd>                | Jump to matching bracket                   |
+| <kbd>Ctrl</kbd>+<kbd>T</kbd>                                  | Find symbol in workspace (find function with specified name in folder) |
 
-### 多光标
+### Multiple Cursors
 
-按住<kbd>Alt</kbd>并单击即可在编辑器中添加光标，多数编辑操作都可同时进行；按住鼠标中键并在编辑器中拖动也可添加多行光标，如图：
+Hold <kbd>Alt</kbd> and click to add a cursor in the editor. Most editing operations can be done simultaneously; hold the middle mouse button and drag in the editor to also add multi-line cursors, as shown in the figure:
 
 ![](images/vscode-12.gif)
 
-按<kbd>Ctrl</kbd>+<kbd>F2</kbd>可在编辑器中同时更改所有匹配项，也可以在右键菜单中找到 Change All Occurrences，如图：
+Press <kbd>Ctrl</kbd>+<kbd>F2</kbd> to simultaneously change all matching items in the editor. You can also find "Change All Occurrences" in the right-click menu, as shown in the figure:
 
 ![](images/vscode-13.gif)
 
-注意此时在右上角会有一个工具栏，可在其中开启查找匹配项时是否开启大小写匹配、全字匹配等．
+Note that at this time there will be a toolbar in the upper right corner, where you can enable whether to match case, whole words, etc. when searching for matching items.
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: VS Code 的 C/C++ 扩展如果选择 lldb 作调试器，则会默认采用 lldb-mi 程序，而它已经被 LLVM 开发团队从项目中分离出来，需要自己编译该程序．而它本身就有一些 bug，使用体验和方便程度都不如 CodeLLDB 扩展．
+[^ref1]: If VS Code's C/C++ extension chooses lldb as the debugger, it will use the lldb-mi program by default, but it has been separated from the LLVM development team by themselves and needs to be compiled. It has some bugs, and the usage experience and convenience are not as good as the CodeLLDB extension.
 
-[^ref2]: 从扩展商店安装 CodeLLDB 后它会再从 GitHub 下载本体，下载速度奇慢，有时下载出错，所以最好直接下载本体然后安装．更新也可直接按照以上步骤下载安装．
+[^ref2]: After installing CodeLLDB from the extension store, it will download the main body from GitHub. The download speed is extremely slow, and sometimes the download fails. Therefore, it is best to directly download the main body and install it. Updates can also be directly downloaded and installed according to the above steps.
 
-[^ref3]: [VS Code 官方文档](https://code.visualstudio.com/docs/)．
+[^ref3]: [VS Code Official Documentation](https://code.visualstudio.com/docs/)

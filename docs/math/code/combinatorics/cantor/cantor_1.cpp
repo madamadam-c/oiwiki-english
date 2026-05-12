@@ -29,8 +29,8 @@ int main() {
   cin >> n;
   fac[0] = 1;
   for (int i = 1; i <= n; ++i) {
-    d[i] = lowbit(i);                 // O(n) 建树
-    fac[i] = (fac[i - 1] * i) % MOD;  // 预处理阶乘
+    d[i] = lowbit(i);                 // Build the tree in O(n)
+    fac[i] = (fac[i - 1] * i) % MOD;  // Precompute factorials
   }
   for (int i = 1; i <= n; ++i) {
     cin >> x;

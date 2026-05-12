@@ -1,4 +1,4 @@
-/* 「LOJ #6053」简单的函数 */
+/* LOJ #6053 Simple Function */
 #include <cmath>
 #include <iostream>
 
@@ -32,9 +32,9 @@ int div2(const _Tp &x) {
   return ((x & 1) ? x + mod : x) >> 1;
 }
 
-// 以上目的均为防负数和取模
+// The above are all for avoiding negative values and applying the modulus
 template <typename _Tp>
-long long sqrll(const _Tp &x) {  // 平方函数
+long long sqrll(const _Tp &x) {  // Square function
   return (long long)x * x;
 }
 
@@ -42,10 +42,10 @@ int pri[MAXS / 7], lpf[MAXS + 1], spri[MAXS + 1], pcnt;
 
 void sieve(const int &n) {
   for (int i = 2; i <= n; ++i) {
-    if (lpf[i] == 0) {  // 记录质数
+    if (lpf[i] == 0) {  // Record primes
       lpf[i] = ++pcnt;
       pri[lpf[i]] = i;
-      spri[pcnt] = sum(spri[pcnt - 1], i);  // 前缀和
+      spri[pcnt] = sum(spri[pcnt - 1], i);  // Prefix sum
     }
     for (int j = 1, v; j <= lpf[i] && (v = i * pri[j]) <= n; ++j) lpf[v] = j;
   }
@@ -113,9 +113,9 @@ using std::cout;
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cin >> global_n;
-  lim = sqrt(global_n);  // 上限
+  lim = sqrt(global_n);  // Upper limit
 
-  sieve(lim + 1000);  // 预处理
+  sieve(lim + 1000);  // Preprocess
   init(global_n);
   calcFprime();
   cout << (F(1, global_n) + 1ll + mod) % mod << '\n';

@@ -1,12 +1,12 @@
-## 简介
+## Introduction
 
-珂朵莉树（Chtholly Tree），又名老司机树 ODT（Old Driver Tree）．起源自 [CF896C](https://codeforces.com/problemset/problem/896/C)．
+Chtholly Tree, also known as ODT (Old Driver Tree), originated from [CF896C](https://codeforces.com/problemset/problem/896/C).
 
-这个名称指代的是一种「使用平衡树（`std::set`、`std::map` 等）或链表（`std::list`、手写链表等）维护颜色段均摊」的技巧，而不是一种特定的数据结构．其核心思想是将值相同的一段区间合并成一个结点处理．相较于传统的线段树等数据结构，对于含有区间覆盖的操作的问题，珂朵莉树可以更加方便地维护每个被覆盖区间的值．
+This name refers to a technique that uses a balanced tree (`std::set`, `std::map`, etc.) or a linked list (`std::list`, a manually written linked list, etc.) to maintain color segments with amortized complexity, rather than to a specific data structure. Its core idea is to merge a continuous interval with the same value into one node. Compared with traditional data structures such as segment trees, Chtholly Tree can maintain the value of each covered interval more conveniently for problems involving range assignment.
 
-## 实现（std::set）
+## Implementation (`std::set`)
 
-### 结点类型
+### Node type
 
 ```cpp
 struct Node_t {
@@ -19,24 +19,24 @@ struct Node_t {
 };
 ```
 
-其中，`int v` 是你自己指定的附加数据．
+Here, `int v` is the additional data specified by you.
 
-???+ note "`mutable` 关键字的含义是什么？"
-    `mutable` 的意思是「可变的」，让我们可以在后面的操作中修改 `v` 的值．在 C++ 中，mutable 是为了突破 const 的限制而设置的．被 mutable 修饰的变量（mutable 只能用于修饰类中的非静态数据成员），将永远处于可变的状态，即使在一个 const 函数中．
+???+ note "What does the `mutable` keyword mean?"
+    `mutable` means "changeable", allowing us to modify the value of `v` in later operations. In C++, mutable is provided to bypass const restrictions. A variable modified by mutable (mutable can only modify non-static data members of a class) always remains changeable, even in a const function.
     
-    这意味着，我们可以直接修改已经插入 `set` 的元素的 `v` 值，而不用将该元素取出后重新加入 `set`．
+    This means we can directly modify the `v` value of an element already inserted into a `set`, without taking that element out and inserting it into the `set` again.
 
-### 结点存储
+### Node storage
 
-我们希望维护所有结点，使得这些结点所代表的区间左端点单调增加且两两不交，最好可以保证所有区间的并是一个极大的连续范围．此处以 `std::set` 为例，用一个 `set<Node_t> odt;` 维护所有结点．
+We want to maintain all nodes so that the left endpoints of the intervals represented by these nodes are strictly increasing and pairwise disjoint. Ideally, the union of all intervals should be a maximal continuous range. Here we use `std::set` as an example, maintaining all nodes with `set<Node_t> odt;`.
 
-初始化时，向珂朵莉树中插入一个极长区间（如题目要求维护位置 $1$ 到 $n$ 的信息，插入区间 $[1,n+1]$）．
+During initialization, insert a very long interval into the Chtholly Tree. For example, if the problem requires maintaining information for positions $1$ to $n$, insert the interval $[1,n+1]$.
 
-### split 操作
+### `split` operation
 
-`split` 操作是珂朵莉树的核心．它接受一个位置 $x$，将原本包含点 $x$ 的区间（设为 $[l, r]$）分裂为两个区间 $[l, x)$ 和 $[x, r]$，并返回指向后者的迭代器．
+The `split` operation is the core of Chtholly Tree. It takes a position $x$, splits the interval originally containing point $x$ (denoted as $[l, r]$) into two intervals $[l, x)$ and $[x, r]$, and returns an iterator pointing to the latter.
 
-参考代码如下：
+Reference code:
 
 ```cpp
 auto split(int x) {
@@ -50,19 +50,19 @@ auto split(int x) {
 }
 ```
 
-在不支持使用 `auto` 进行返回类型推导的编译器上，可以将函数的返回类型改为 `set<Node_t>::iterator`．
+On compilers that do not support return type deduction with `auto`, the return type of the function can be changed to `set<Node_t>::iterator`.
 
-### assign 操作
+### `assign` operation
 
-另外一个重要的操作：`assign`．用于对一段区间进行赋值．设将要对区间 $[l,r]$ 赋值为 $v$．
+Another important operation is `assign`, which is used to assign a value to an interval. Suppose we are going to assign $v$ to the interval $[l,r]$.
 
-首先，将区间 $[l, r]$ 截取出来．依次调用 `split(r + 1), split(l)`，将此两者返回的迭代器记作 $itr, itl$，那么 $[itl, itr)$ 这个迭代器范围就指向了珂朵莉树中 $[l,r]$ 包含的所有区间．
+First, extract the interval $[l, r]$. Call `split(r + 1), split(l)` in order, and denote the iterators returned by these two calls as $itr, itl$. Then the iterator range $[itl, itr)$ points to all intervals contained in $[l,r]$ in the Chtholly Tree.
 
-然后，将原有的信息删除．`std::set` 有成员方法 `erase`，签名如同 `iterator erase( const_iterator first, const_iterator last );`，可以移除范围 `[first; last)` 中的元素．于是我们调用 `odt.erase(itl, itr);` 以删除原有的信息．
+Then delete the original information. `std::set` has a member method `erase` with a signature like `iterator erase( const_iterator first, const_iterator last );`, which can remove elements in the range `[first; last)`. Therefore, we call `odt.erase(itl, itr);` to delete the original information.
 
-最后，插入区间 $[l,r]$ 的新值．调用 `odt.insert(Node_t(l, r, v))` 即可．
+Finally, insert the new value for the interval $[l,r]$. Just call `odt.insert(Node_t(l, r, v))`.
 
-参考代码如下：
+Reference code:
 
 ```cpp
 void assign(int l, int r, int v) {
@@ -72,16 +72,16 @@ void assign(int l, int r, int v) {
 }
 ```
 
-???+ note "为什么需要先 `split(r + 1)` 再 `split(l)`？"
-    1.  `std::set::erase` 方法将使指向被擦除元素的引用和迭代器失效．而其他引用和迭代器不受影响．
-    2.  `std::set::insert` 方法不会使任何迭代器或引用失效．
-    3.  `split` 操作会将区间拆开．调用 `split(r + 1)` 之后 $r + 1$ 会成为两个新区间中右边区间的左端点，此时 `split` 左区间，必然不会访问到 $r + 1$ 为左端点的那个区间，也就不会将其拆开，删去 $r + 1$ 为左端点的区间，使迭代器失效．反之，先 `split(l)`，再 `split(r + 1)`，可能会把 $l$ 为左端点的区间删去，使迭代器失效．
+???+ note "Why do we need to call `split(r + 1)` before `split(l)`?"
+    1.  The `std::set::erase` method invalidates references and iterators pointing to erased elements. Other references and iterators are not affected.
+    2.  The `std::set::insert` method does not invalidate any iterators or references.
+    3.  The `split` operation splits an interval. After calling `split(r + 1)`, $r + 1$ becomes the left endpoint of the right interval among the two new intervals. At this point, splitting the left interval will definitely not access the interval whose left endpoint is $r + 1$, so it will not split and erase the interval whose left endpoint is $r + 1$, invalidating its iterator. Conversely, if we call `split(l)` first and then `split(r + 1)`, the interval whose left endpoint is $l$ may be erased, invalidating the iterator.
 
-### perform 操作
+### `perform` operation
 
-将珂朵莉树上的一段区间提取出来并进行操作．与 `assign` 操作类似，只不过是将删除区间改为遍历区间．
+Extract an interval range from the Chtholly Tree and operate on it. This is similar to the `assign` operation, except that deleting the interval range is replaced by traversing it.
 
-参考代码如下：
+Reference code:
 
 ```cpp
 void perform(int l, int r) {
@@ -92,47 +92,47 @@ void perform(int l, int r) {
 }
 ```
 
-注意不应该滥用这样的提取操作，可能使得时间复杂度错误．见下文「复杂度分析」一栏．
+Note that such extraction operations should not be abused, as they may make the time complexity invalid. See the "Complexity analysis" section below.
 
-## 实现（std::map）
+## Implementation (`std::map`)
 
-相较于 `std::set` 的实现，`std::map` 的实现的 `split` 操作写法更简单．除此之外，其余操作与 `std::set` 并无二异．
+Compared with the `std::set` implementation, the `split` operation in the `std::map` implementation is simpler to write. Other than that, the remaining operations are no different from those in `std::set`.
 
-### 结点存储
+### Node storage
 
-由于珂朵莉树存储的区间是连续的，我们不一定要记下右端点是什么．不妨使用一个 `map<int, int> mp;` 存储所有区间，其键维护左端点，其值维护其对应的左端点到下一个左端点之前的值．
+Since the intervals stored in a Chtholly Tree are continuous, we do not necessarily need to record the right endpoints. We can use a `map<int, int> mp;` to store all intervals: the key maintains the left endpoint, and the value maintains the value from that left endpoint to before the next left endpoint.
 
-初始化时，如题目要求维护位置 $1$ 到 $n$ 的信息，则调用 `mp[1] = -1, mp[n + 1] = -1` 表示将 $[1,n+1)$ 即 $[1, n]$ 都设为特殊值 $-1$，$[n+1, +\infty)$ 这个区间当作哨兵使用，也可以对它进行初始化．
+During initialization, if the problem requires maintaining information for positions $1$ to $n$, call `mp[1] = -1, mp[n + 1] = -1` to indicate that $[1,n+1)$, namely $[1, n]$, is set to the special value $-1$. The interval $[n+1, +\infty)$ is used as a sentinel and can also be initialized.
 
-### split 操作
+### `split` operation
 
-参考代码：（第一份）
+Reference code (first version):
 
 ```cpp
 void split(int x) {
-  auto it = prev(mp.upper_bound(x));  // 找到左端点小于等于 x 的区间．
-  mp[x] = it->second;  // 设立新的区间，并将上一个区间储存的值复制给本区间．
+  auto it = prev(mp.upper_bound(x));  // Find the interval whose left endpoint is at most x.
+  mp[x] = it->second;  // Create a new interval and copy the stored value from the previous interval.
 }
 ```
 
-参考代码：（第二份）
+Reference code (second version):
 
 ```cpp
 auto split(int pos) {
-  auto it = prev(mp.upper_bound(pos));  // 找到左端点小于等于 x 的区间．
+  auto it = prev(mp.upper_bound(pos));  // Find the interval whose left endpoint is at most x.
   return mp.insert(it, make_pair(pos, it->second));
-  // 设立新的区间，并将上一个区间储存的值复制给本区间．
+  // Create a new interval and copy the stored value from the previous interval.
 }
 ```
 
-这里使用了 `std::map::insert` 的重载 `iterator insert( const_iterator pos, const value_type& value );`，其插入 `value` 到尽可能接近正好在 `pos` 之前的位置．如果插入恰好发生在正好在 `pos` 之前的位置，那么复杂度是均摊常数，否则复杂度与容器大小成对数．
+Here we use the overload `iterator insert( const_iterator pos, const value_type& value );` of `std::map::insert`, which inserts `value` at the position as close as possible to just before `pos`. If the insertion happens exactly just before `pos`, the complexity is amortized constant; otherwise, the complexity is logarithmic in the container size.
 
-### assign 操作
+### `assign` operation
 
-对于 assign 操作，我们需要把 $[l,r−1]$ 内所有区间左端点删除，再建立新的区间．
+For the assign operation, we need to delete all interval left endpoints in $[l,r−1]$, then create a new interval.
 
 ```cpp
-void assign(int l, int r, int v) {  // 注意，这里的r是区间右端点+1
+void assign(int l, int r, int v) {  // Note: here r is the interval's right endpoint + 1
   split(l);
   split(r);
   auto it = mp.find(l);
@@ -143,10 +143,10 @@ void assign(int l, int r, int v) {  // 注意，这里的r是区间右端点+1
 }
 ```
 
-### perform 操作
+### `perform` operation
 
 ```cpp
-void perform(int l, int r) {  // 注意，这里的r是区间右端点+1
+void perform(int l, int r) {  // Note: here r is the interval's right endpoint + 1
   split(l);
   split(r);
   auto it = mp.find(l);
@@ -157,19 +157,19 @@ void perform(int l, int r) {  // 注意，这里的r是区间右端点+1
 }
 ```
 
-## 实现（链表）
+## Implementation (linked list)
 
-目前主流的实现是基于 `set` 来维护节点，但由于平均维护的区间个数很小，`set` 的优势并不明显．相比之下，链表（或数组）能更简洁地维护分裂与合并操作．
+The mainstream implementation currently maintains nodes based on `set`, but because the average number of maintained intervals is small, the advantage of `set` is not obvious. In comparison, a linked list (or array) can maintain split and merge operations more concisely.
 
-### 结点存储
+### Node storage
 
 ```cpp
 using i64 = int64_t;
 
 struct Block {
-  Block *next;  // 链表下一节点
-  int l, r;     // 区间范围
-  i64 val;      // 区间上的值
+  Block *next;  // Next node in the linked list
+  int l, r;     // Interval range
+  i64 val;      // Value on the interval
 
   Block(Block *next, int l, int r, i64 val)
       : next(next), l(l), r(r), val(val) {}
@@ -178,16 +178,16 @@ struct Block {
 } *root;
 ```
 
-### split 操作
+### `split` operation
 
 ```cpp
-// 返回左端点为 mid+1 的区间
+// Return the interval whose left endpoint is mid+1
 Block *split(int mid) {
-  for (Block *b = root; b; b = b->next) {  // 遍历链表
-    if (b->l == mid + 1) {                 // 左端点为 mid+1
+  for (Block *b = root; b; b = b->next) {  // Traverse the linked list
+    if (b->l == mid + 1) {                 // Left endpoint is mid+1
       return b;
     }
-    // 寻找能包含 mid 和 mid+1 的区间 [l, r]，将其被拆分成 [l, mid] 和 [mid+1,
+    // Find an interval [l, r] that contains mid and mid+1, and split it into [l, mid] and [mid+1,
     // r]
     if (b->l <= mid && mid + 1 <= b->r) {
       b->next = new Block(b->next, mid + 1, b->r, b->val);
@@ -195,36 +195,36 @@ Block *split(int mid) {
       return b->next;
     }
   }
-  return nullptr;  // 未找到，返回空
+  return nullptr;  // Not found; return null
 }
 ```
 
-在操作区间时，由于不能只维护区间的一部分，所以下面的操作进行之前都需要预先分裂区间，再完成相应操作．
+When operating on an interval, because we cannot maintain only part of an interval, the following operations all need to split intervals in advance before performing the corresponding operation.
 
 ```cpp
 Block *lb, *rb;
 
-// 预分裂，保证后续操作在 [l, r] 内部
+// Pre-split to ensure subsequent operations are inside [l, r]
 void prepare(int l, int r) {
   lb = split(l - 1);
   rb = split(r);
 }
 ```
 
-### assign 操作
+### `assign` operation
 
 ```cpp
 void assign(int l, int r, i64 val) {
   prepare(l, r);
-  lb->r = r;  // 将区间 [lb.l, lb.r] 修改成 [lb.l, r]
+  lb->r = r;  // Change interval [lb.l, lb.r] to [lb.l, r]
   lb->val = val;
-  lb->next = rb;  // 将 [lb.l, r] 链至其右侧相邻区间
+  lb->next = rb;  // Link [lb.l, r] to the adjacent interval on its right
 }
 
-// 注：这里没有释放被删除节点的内存，若有需要可自行添加
+// Note: the memory of deleted nodes is not freed here; add it yourself if needed
 ```
 
-### perform 操作
+### `perform` operation
 
 ```cpp
 void perform(int l, int r) {
@@ -235,35 +235,35 @@ void perform(int l, int r) {
 }
 ```
 
-## 复杂度分析
+## Complexity analysis
 
-### perform 以后立即对同一区间调用 assign
+### Calling `assign` on the same interval immediately after `perform`
 
-此时观察发现，两次 `split` 操作至多增加两个区间；一次 `assign` 将删除范围内的所有区间并增加一个区间，同时遍历所删除的区间．所以，我们所遍历的区间与所删除的区间数量成线性，而每次操作都只会增加 $O(1)$ 个区间，所以我们操作的区间数量关于操作次数（包括初始化）成线性，时间复杂度为均摊 $O(m\log n)$，其中 $m$ 为操作次数，$n$ 为珂朵莉树中最大区间个数（可以认为 $n\leq m$）．
+In this case, we can observe that two `split` operations add at most two intervals. One `assign` deletes all intervals in the range and adds one interval, while also traversing the deleted intervals. Therefore, the number of intervals we traverse is linear in the number of intervals deleted. Since each operation only adds $O(1)$ intervals, the number of intervals we operate on is linear in the number of operations (including initialization). The time complexity is amortized $O(m\log n)$, where $m$ is the number of operations and $n$ is the maximum number of intervals in the Chtholly Tree (one may regard $n\leq m$).
 
-### perform 以后不进行 assign
+### Not calling `assign` after `perform`
 
-如果允许特殊构造数据，这样一定是能被卡掉的，只需要使珂朵莉树中有足够多的不同区间并反复遍历，就能使珂朵莉树的复杂度达到甚至高于平方级别．
+If specially constructed data is allowed, this can definitely be hacked. It is enough to make the Chtholly Tree contain sufficiently many different intervals and traverse them repeatedly, which can make its complexity reach, or even exceed, quadratic level.
 
-如果要保证复杂度正确，必须保证数据随机．详见 [Codeforces 上关于珂朵莉树的复杂度的证明](http://codeforces.com/blog/entry/56135?#comment-398940)．更详细的严格证明见 [珂朵莉树的复杂度分析](https://zhuanlan.zhihu.com/p/102786071)．证明的结论是：用 `std::set` 实现的珂朵莉树的复杂度为 $O(n \log \log n)$，而用链表实现的复杂度为 $O(n \log n)$．
+To guarantee the stated complexity, the data must be random. See [the proof of Chtholly Tree complexity on Codeforces](http://codeforces.com/blog/entry/56135?#comment-398940). For a more detailed rigorous proof, see [Complexity Analysis of Chtholly Tree](https://zhuanlan.zhihu.com/p/102786071). The conclusion of the proof is that the complexity of Chtholly Tree implemented with `std::set` is $O(n \log \log n)$, while the complexity of the linked-list implementation is $O(n \log n)$.
 
-## 习题
+## Practice
 
 -   [「Luogu 1840」Color the Axis](https://www.luogu.com.cn/problem/P1840)
--   ~~[「SCOI2010」序列操作](https://www.luogu.com.cn/problem/P2572)~~（该题目来源已添加 Hack 数据）
+-   ~~[「SCOI2010」Sequence Operations](https://www.luogu.com.cn/problem/P2572)~~ (hack data has been added to this problem source)
 -   [「SHOI2015」脑洞治疗仪](https://loj.ac/problem/2037)
 -   [「Luogu 4979」矿洞：坍塌](https://www.luogu.com.cn/problem/P4979)
 -   [「Luogu 8146」risrqnis](https://www.luogu.com.cn/problem/P8146)
 
-## 扩展阅读
+## Further reading
 
 [ODT 的映射思想的推广 - 洛谷专栏 (luogu.com.cn)](https://www.luogu.com.cn/article/0mys9qkh)
 
-## 参考资料和注释
+## References and notes
 
--   [Problem - 896C - Codeforces](https://codeforces.com/problemset/problem/896/C)（珂朵莉树的起源）
--   [CF896C Willem, Chtholly and Seniorious 题解 - 洛谷专栏 (luogu.com.cn)](https://www.luogu.com.cn/article/gyxbe23s)（`std::set` 实现参考）
--   [珂朵莉树的 map 实现 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/469794466)（`std::map` 实现参考）
--   [题解 CF896C【Willem, Chtholly and Seniorious】- 洛谷专栏 (luogu.com.cn)](https://www.luogu.com.cn/article/umiw1fwp)（链表实现参考）
--   [Codeforces Round #449 Editorial - Codeforces](https://codeforces.com/blog/entry/56135?#comment-398940)（关于珂朵莉树的复杂度的证明）
--   [珂朵莉树的复杂度分析 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/102786071)（珂朵莉树的复杂度分析）
+-   [Problem - 896C - Codeforces](https://codeforces.com/problemset/problem/896/C) (the origin of Chtholly Tree)
+-   [CF896C Willem, Chtholly and Seniorious 题解 - 洛谷专栏 (luogu.com.cn)](https://www.luogu.com.cn/article/gyxbe23s) (`std::set` implementation reference)
+-   [珂朵莉树的 map 实现 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/469794466) (`std::map` implementation reference)
+-   [题解 CF896C【Willem, Chtholly and Seniorious】- 洛谷专栏 (luogu.com.cn)](https://www.luogu.com.cn/article/umiw1fwp) (linked-list implementation reference)
+-   [Codeforces Round #449 Editorial - Codeforces](https://codeforces.com/blog/entry/56135?#comment-398940) (proof of Chtholly Tree complexity)
+-   [珂朵莉树的复杂度分析 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/102786071) (complexity analysis of Chtholly Tree)

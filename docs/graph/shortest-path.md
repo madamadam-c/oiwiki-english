@@ -1,53 +1,53 @@
 author: du33169, lingkerio, Taoran-01
 
-## 定义
+## Definitions
 
-（还记得这些定义吗？在阅读下列内容之前，请务必了解 [图论相关概念](./concept.md) 中的基础部分．）
+(Do you remember these definitions? Before reading the following content, please make sure you understand the basics in [Graph Theory Concepts](./concept.md).)
 
--   路径
--   最短路
--   有向图中的最短路、无向图中的最短路
--   单源最短路、每对结点之间的最短路
+-   Path
+-   Shortest path
+-   Shortest path in directed graphs, shortest path in undirected graphs
+-   Single-source shortest path, all-pairs shortest path
 
-## 记号
+## Notation
 
-为了方便叙述，这里先给出下文将会用到的一些记号的含义．
+For convenience, we first give the meaning of some notation used below.
 
--   $n$ 为图上点的数目，$m$ 为图上边的数目；
--   $s$ 为最短路的源点；
--   $D(u)$ 为 $s$ 点到 $u$ 点的 **实际** 最短路长度；
--   $dis(u)$ 为 $s$ 点到 $u$ 点的 **估计** 最短路长度．任何时候都有 $dis(u) \geq D(u)$．特别地，当最短路算法终止时，应有 $dis(u)=D(u)$．
--   $w(u,v)$ 为 $(u,v)$ 这一条边的边权．
+-   $n$ is the number of nodes in the graph, $m$ is the number of edges;
+-   $s$ is the source vertex for shortest paths;
+-   $D(u)$ is the **actual** shortest path length from $s$ to $u$;
+-   $dis(u)$ is the **estimated** shortest path length from $s$ to $u$. At any time, $dis(u) \geq D(u)$. In particular, when the shortest path algorithm terminates, we should have $dis(u) = D(u)$.
+-   $w(u,v)$ is the weight of edge $(u,v)$.
 
-## 性质
+## Properties
 
-对于边权为正的图，任意两个结点之间的最短路，不会经过重复的结点．
+For a graph with positive edge weights, the shortest path between any two nodes does not contain repeated nodes.
 
-对于边权为正的图，任意两个结点之间的最短路，不会经过重复的边．
+For a graph with positive edge weights, the shortest path between any two nodes does not contain repeated edges.
 
-对于边权为正的图，任意两个结点之间的最短路，任意一条的结点数不会超过 $n$，边数不会超过 $n-1$．
+For a graph with positive edge weights, in the shortest path between any two nodes, the number of nodes does not exceed $n$, and the number of edges does not exceed $n-1$.
 
-## Floyd 算法
+## Floyd Algorithm
 
-是用来求任意两个结点之间的最短路的．
+Used to find the shortest path between any two nodes.
 
-复杂度比较高，但是常数小，容易实现（只有三个 `for`）．
+The time complexity is relatively high, but the constant factor is small and it is easy to implement (only three `for` loops).
 
-适用于任何图，不管有向无向，边权正负，但是最短路必须存在．（不能有个负环）
+Applicable to any graph, whether directed or undirected, with positive or negative edge weights, but a shortest path must exist (no negative cycles).
 
-### 实现
+### Implementation
 
-我们定义一个数组 `f[k][x][y]`，表示只允许经过结点 $1$ 到 $k$（也就是说，在子图 $V'={1, 2, \ldots, k}$ 中的路径，注意，$x$ 与 $y$ 不一定在这个子图中），结点 $x$ 到结点 $y$ 的最短路长度．
+We define an array `f[k][x][y]`, representing the shortest path length from node $x$ to node $y$ when only nodes $1$ to $k$ are allowed as intermediate nodes (that is, in the subgraph $V'={1, 2, \ldots, k}$, note that $x$ and $y$ are not necessarily in this subgraph).
 
-很显然，`f[n][x][y]` 就是结点 $x$ 到结点 $y$ 的最短路长度（因为 $V'={1, 2, \ldots, n}$ 即为 $V$ 本身，其表示的最短路径就是所求路径）．
+Clearly, `f[n][x][y]` is the shortest path length from $x$ to $y$ (because $V'={1, 2, \ldots, n}$ equals $V$ itself, and its represented shortest path is the desired path).
 
-接下来考虑如何求出 `f` 数组的值．
+Next, consider how to compute the values of the `f` array.
 
-`f[0][x][y]`：$x$ 与 $y$ 的边权，或者 $0$，或者 $+\infty$（`f[0][x][y]` 什么时候应该是 $+\infty$？当 $x$ 与 $y$ 间有直接相连的边的时候，为它们的边权；当 $x = y$ 的时候为零，因为到本身的距离为零；当 $x$ 与 $y$ 没有直接相连的边的时候，为 $+\infty$）．
+`f[0][x][y]`: the edge weight between $x$ and $y$, or $0$ if $x = y$, or $+\infty$ (when should `f[0][x][y]` be $+\infty$? When there is a directly connected edge between $x$ and $y$, it is their edge weight; when $x = y$, it is zero because the distance to itself is zero; when there is no direct edge between $x$ and $y$, it is $+\infty$).
 
-`f[k][x][y] = min(f[k-1][x][y], f[k-1][x][k]+f[k-1][k][y])`（`f[k-1][x][y]`，为不经过 $k$ 点的最短路径，而 `f[k-1][x][k]+f[k-1][k][y]`，为经过了 $k$ 点的最短路）．
+`f[k][x][y] = min(f[k-1][x][y], f[k-1][x][k]+f[k-1][k][y])` (`f[k-1][x][y]` is the shortest path not passing through $k$, and `f[k-1][x][k]+f[k-1][k][y]` is the shortest path passing through $k`).
 
-上面两行都显然是对的，所以说这个做法空间是 $O(N^3)$，我们需要依次增加问题规模（$k$ 从 $1$ 到 $n$），判断任意两点在当前问题规模下的最短路．
+The above two statements are clearly correct. Therefore, the space complexity is $O(N^3)$. We increase the problem scale step by step ($k$ from $1$ to $n$) and check the shortest path between any two nodes under the current problem scale.
 
 === "C++"
     ```cpp
@@ -68,12 +68,12 @@ author: du33169, lingkerio, Taoran-01
                 f[k][x][y] = min(f[k - 1][x][y], f[k - 1][x][k] + f[k - 1][k][y])
     ```
 
-因为第一维对结果无影响，我们可以发现数组的第一维是可以省略的，于是可以直接改成 `f[x][y] = min(f[x][y], f[x][k]+f[k][y])`．
+Since the first dimension has no effect on the result, we find that the first dimension of the array can be omitted. Therefore, we can directly change it to `f[x][y] = min(f[x][y], f[x][k]+f[k][y])`.
 
-???+ note "证明第一维对结果无影响"
-    对于给定的 `k`，当更新 `f[k][x][y]` 时，涉及的元素总是来自 `f[k-1]` 数组的第 `k` 行和第 `k` 列．然后我们可以发现，对于给定的 `k`，当更新 `f[k][k][y]` 或 `f[k][x][k]`，总是不会发生数值更新，因为按照公式 `f[k][k][y] = min(f[k-1][k][y], f[k-1][k][k]+f[k-1][k][y])`,`f[k-1][k][k]` 为 0，因此这个值总是 `f[k-1][k][y]`，对于 `f[k][x][k]` 的证明类似．
+???+ note "Proof that the first dimension has no effect on the result"
+    For a given `k`, when updating `f[k][x][y]`, the involved elements always come from row $k$ and column $k$ of the `f[k-1]` array. Then we notice that for a given `k`, when updating `f[k][k][y]` or `f[k][x][k]`, no value update ever occurs because according to the formula `f[k][k][y] = min(f[k-1][k][y], f[k-1][k][k]+f[k-1][k][y])`, `f[k-1][k][k]` is 0, so this value is always `f[k-1][k][y]`. The proof for `f[k][x][k]` is similar.
     
-    因此，如果省略第一维，在给定的 `k` 下，每个元素的更新中使用到的元素都没有在这次迭代中更新，因此第一维的省略并不会影响结果．
+    Therefore, if we omit the first dimension, for a given `k`, no element used in updating any other element has been updated in this iteration. Hence, omitting the first dimension does not affect the result.
 
 === "C++"
     ```cpp
@@ -94,33 +94,34 @@ author: du33169, lingkerio, Taoran-01
                 f[x][y] = min(f[x][y], f[x][k] + f[k][y])
     ```
 
-综上时间复杂度是 $O(N^3)$，空间复杂度是 $O(N^2)$．
+In summary, the time complexity is $O(N^3)$ and the space complexity is $O(N^2)$.
 
-### 应用
+### Applications
 
-???+ question "给一个正权无向图，找一个最小权值和的环．"
-    首先这一定是一个简单环．
-    
-    想一想这个环是怎么构成的．
-    
-    考虑环上编号最大的结点 $u$．
-    
-    `f[u-1][x][y]` 和 $(u,x)$,$(u,y)$ 共同构成了环．
-    
-    在 Floyd 的过程中枚举 $u$，计算这个和的最小值即可．
-    
-    时间复杂度为 $O(n^3)$．
-    
-    更多参见 [最小环](./min-cycle.md) 部分内容．
+???+ question "Given a positively weighted undirected graph, find a cycle with the minimum total weight."
 
-???+ question "已知一个有向图中任意两点之间是否有连边，要求判断任意两点是否连通．"
-    该问题即是求 **图的传递闭包**．
+    First, this must be a simple cycle.
     
-    我们只需要按照 Floyd 的过程，逐个加入点判断一下．
+    Think about how this cycle is formed.
     
-    只是此时的边的边权变为 $1/0$，而取 $\min$ 变成了 **或** 运算．
+    Consider the node $u$ with the largest index on the cycle.
     
-    再进一步用 bitset 优化，复杂度可以到 $O(\frac{n^3}{w})$．
+    `f[u-1][x][y]` and $(u,x)$,$(u,y)$ together form the cycle.
+    
+    Enumerate $u$ during the Floyd process and compute the minimum of this sum.
+    
+    Time complexity is $O(n^3)$.
+    
+    See also the [Minimum Cycle](./min-cycle.md) section.
+
+???+ question "Given a directed graph with edges between any two nodes, determine whether any two nodes are connected."
+    This problem is finding the **transitive closure** of the graph.
+    
+    We only need to follow the Floyd process and add nodes one by one to check.
+    
+    Here the edge weights become $1/0$, and taking $\min$ becomes the **OR** operation.
+    
+    Further optimization with bitset can achieve $O(\frac{n^3}{w})$.
     
     ```cpp
     // std::bitset<SIZE> f[SIZE];
@@ -129,36 +130,36 @@ author: du33169, lingkerio, Taoran-01
         if (f[i][k]) f[i] = f[i] | f[k];
     ```
 
-## Bellman–Ford 算法
+## Bellman–Ford Algorithm
 
-Bellman–Ford 算法是一种基于松弛（relax）操作的最短路算法，可以求出有负权的图的最短路，并可以对最短路不存在的情况进行判断．
+The Bellman–Ford algorithm is a shortest path algorithm based on the relax operation. It can find shortest paths in graphs with negative edge weights and can detect cases where no shortest path exists.
 
-在国内 OI 界，你可能听说过的「SPFA」，就是 Bellman–Ford 算法的一种实现．
+In the Chinese OI community, "SPFA" which you may have heard of is an implementation of the Bellman–Ford algorithm.
 
-### 过程
+### Process
 
-先介绍 Bellman–Ford 算法要用到的松弛操作（Dijkstra 算法也会用到松弛操作）．
+First, introduce the relax operation used by the Bellman–Ford algorithm (Dijkstra's algorithm also uses the relax operation).
 
-对于边 $(u,v)$，松弛操作对应下面的式子：$dis(v) = \min(dis(v), dis(u) + w(u, v))$．
+For an edge $(u,v)$, the relax operation corresponds to the following formula: $dis(v) = \min(dis(v), dis(u) + w(u, v))$.
 
-这么做的含义是显然的：我们尝试用 $S \to u \to v$（其中 $S \to u$ 的路径取最短路）这条路径去更新 $v$ 点最短路的长度，如果这条路径更优，就进行更新．
+The meaning of this operation is clear: we try to use the path $S \to u \to v$ (where $S \to u$ takes the shortest path) to update the shortest path length to $v$. If this path is better, we update.
 
-Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行松弛．我们每进行一轮循环，就对图上所有的边都尝试进行一次松弛操作，当一次循环中没有成功的松弛操作时，算法停止．
+The Bellman–Ford algorithm does exactly this: it repeatedly attempts to relax every edge in the graph. After each iteration, we have attempted to relax all edges in the graph. The algorithm stops when no successful relaxation occurs in an iteration.
 
-每次循环是 $O(m)$ 的，那么最多会循环多少次呢？
+Each iteration is $O(m)$. So, what is the maximum number of iterations?
 
-在最短路存在的情况下，由于一次松弛操作会使最短路的边数至少 $+1$，而最短路的边数最多为 $n-1$，因此整个算法最多执行 $n-1$ 轮松弛操作．故总时间复杂度为 $O(nm)$．
+Assuming a shortest path exists, one relax operation increases the number of edges in the shortest path by at least $1$, and the maximum number of edges in a shortest path is $n-1$. Therefore, the entire algorithm executes at most $n-1$ rounds of relaxation. Hence, the total time complexity is $O(nm)$.
 
-但还有一种情况，如果从 $S$ 点出发，抵达一个负环时，松弛操作会无休止地进行下去．注意到前面的论证中已经说明了，对于最短路存在的图，松弛操作最多只会执行 $n-1$ 轮，因此如果第 $n$ 轮循环时仍然存在能松弛的边，说明从 $S$ 点出发，能够抵达一个负环．
+However, there is another case: if from the source $S$, we can reach a negative cycle, the relax operation will continue indefinitely. Note that the previous argument has already shown that for a graph where a shortest path exists, relax operations execute at most $n-1$ rounds. Therefore, if an edge can still be relaxed in the $n$-th round, it means that from $S$, we can reach a negative cycle.
 
-???+ warning "负环判断中存在的常见误区"
-    需要注意的是，以 $S$ 点为源点跑 Bellman–Ford 算法时，如果没有给出存在负环的结果，只能说明从 $S$ 点出发不能抵达一个负环，而不能说明图上不存在负环．
+???+ warning "Common misconceptions in negative cycle detection"
+    Note that when running the Bellman–Ford algorithm with $S$ as the source, if it does not report a negative cycle, it only means that no negative cycle can be reached from $S$. It does not mean that there is no negative cycle in the graph.
     
-    因此如果需要判断整个图上是否存在负环，最严谨的做法是建立一个超级源点，向图上每个节点连一条权值为 0 的边，然后以超级源点为起点执行 Bellman–Ford 算法．
+    Therefore, if you need to check whether a negative cycle exists in the entire graph, the most rigorous approach is to create a super source, connect an edge of weight 0 to every node in the graph, and then run the Bellman–Ford algorithm with the super source as the starting point.
 
-### 实现
+### Implementation
 
-??? note "参考实现"
+??? note "Reference Implementation"
     === "C++"
         ```cpp
         struct Edge {
@@ -173,25 +174,25 @@ Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行�
         bool bellmanford(int n, int s) {
           memset(dis, 0x3f, (n + 1) * sizeof(int));
           dis[s] = 0;
-          bool flag = false;  // 判断一轮循环过程中是否发生松弛操作
+          bool flag = false;  // Flag to check if any relaxation occurred in this iteration
           for (int i = 1; i <= n; i++) {
             flag = false;
             for (int j = 0; j < edge.size(); j++) {
               u = edge[j].u, v = edge[j].v, w = edge[j].w;
               if (dis[u] == INF) continue;
-              // 无穷大与常数加减仍然为无穷大
-              // 因此最短路长度为 INF 的点引出的边不可能发生松弛操作
+              // Infinity plus/minus a constant is still infinity
+              // Therefore, edges from a node with shortest path length INF cannot cause relaxation
               if (dis[v] > dis[u] + w) {
                 dis[v] = dis[u] + w;
                 flag = true;
               }
             }
-            // 没有可以松弛的边时就停止算法
+            // Stop the algorithm when there are no edges that can be relaxed
             if (!flag) {
               break;
             }
           }
-          // 第 n 轮循环仍然可以松弛时说明 s 点可以抵达一个负环
+          // If relaxation can still occur in the n-th round, node s can reach a negative cycle
           return flag;
         }
         ```
@@ -218,31 +219,31 @@ Bellman–Ford 算法所做的，就是不断尝试对图上每一条边进行�
                     u, v, w = e.u, e.v, e.w
                     if dis[u] == INF:
                         continue
-                    # 无穷大与常数加减仍然为无穷大
-                    # 因此最短路长度为 INF 的点引出的边不可能发生松弛操作
+                    # Infinity plus/minus a constant is still infinity
+                    # Therefore, edges from a node with shortest path length INF cannot cause relaxation
                     if dis[v] > dis[u] + w:
                         dis[v] = dis[u] + w
                         flag = True
-                # 没有可以松弛的边时就停止算法
+                # Stop the algorithm when there are no edges that can be relaxed
                 if not flag:
                     break
-            # 第 n 轮循环仍然可以松弛时说明 s 点可以抵达一个负环
+            # If relaxation can still occur in the n-th round, node s can reach a negative cycle
             return flag
         ```
 
-### 队列优化：SPFA
+### Queue Optimization: SPFA
 
-即 Shortest Path Faster Algorithm．
+That is, Shortest Path Faster Algorithm.
 
-很多时候我们并不需要那么多无用的松弛操作．
+Often, we don't need so many useless relaxation operations.
 
-很显然，只有上一次被松弛的结点，所连接的边，才有可能引起下一次的松弛操作．
+Clearly, only the edges connected from nodes that were just relaxed in the previous step can possibly cause the next relaxation operation.
 
-那么我们用队列来维护「哪些结点可能会引起松弛操作」，就能只访问必要的边了．
+So we use a queue to maintain "which nodes might cause relaxation operations," so that we only visit necessary edges.
 
-SPFA 也可以用于判断 $s$ 点是否能抵达一个负环，只需记录最短路经过了多少条边，当经过了至少 $n$ 条边时，说明 $s$ 点可以抵达一个负环．
+SPFA can also be used to check whether node $s$ can reach a negative cycle. We only need to record how many edges the shortest path has traversed. When it has traversed at least $n$ edges, node $s$ can reach a negative cycle.
 
-??? note "实现"
+??? note "Implementation"
     === "C++"
         ```cpp
         struct edge {
@@ -264,10 +265,10 @@ SPFA 也可以用于判断 $s$ 点是否能抵达一个负环，只需记录最�
               int v = ed.v, w = ed.w;
               if (dis[v] > dis[u] + w) {
                 dis[v] = dis[u] + w;
-                cnt[v] = cnt[u] + 1;  // 记录最短路经过的边数
+                cnt[v] = cnt[u] + 1;  // Record the number of edges in the shortest path
                 if (cnt[v] >= n) return false;
-                // 在不经过负环的情况下，最短路至多经过 n - 1 条边
-                // 因此如果经过了多于 n 条边，一定说明经过了负环
+                // Without passing through a negative cycle, the shortest path traverses at most n - 1 edges
+                // Therefore, if it traverses more than n edges, it must have passed through a negative cycle
                 if (!vis[v]) q.push(v), vis[v] = 1;
               }
             }
@@ -307,85 +308,85 @@ SPFA 也可以用于判断 $s$ 点是否能抵达一个负环，只需记录最�
                     v, w = ed.v, ed.w
                     if dis[v] > dis[u] + w:
                         dis[v] = dis[u] + w
-                        cnt[v] = cnt[u] + 1  # 记录最短路经过的边数
+                        cnt[v] = cnt[u] + 1  # Record the number of edges in the shortest path
                         if cnt[v] >= n:
                             return False
-                        # 在不经过负环的情况下，最短路至多经过 n - 1 条边
-                        # 因此如果经过了多于 n 条边，一定说明经过了负环
+                        # Without passing through a negative cycle, the shortest path traverses at most n - 1 edges
+                        # Therefore, if it traverses more than n edges, it must have passed through a negative cycle
                         if not vis[v]:
                             q.append(v)
                             vis[v] = True
         ```
 
-虽然在大多数情况下 SPFA 跑得很快，但其最坏情况下的时间复杂度为 $O(nm)$，将其卡到这个复杂度也是不难的，所以考试时要谨慎使用（在没有负权边时最好使用 Dijkstra 算法，在有负权边且题目中的图没有特殊性质时，若 SPFA 是标算的一部分，题目不应当给出 Bellman–Ford 算法无法通过的数据范围）．
+Although SPFA runs fast in most cases, its worst-case time complexity is $O(nm)$. It is not difficult to construct data that reaches this complexity. Therefore, use it with caution in contests (when there are no negative weight edges, it is best to use Dijkstra's algorithm; when there are negative weight edges and the graph has no special properties, if SPFA is part of the intended solution, the problem should not give data ranges that Bellman–Ford cannot handle).
 
-???+ note "Bellman–Ford 的其他优化"
-    除了队列优化（SPFA）之外，Bellman–Ford 还有其他形式的优化，这些优化在部分图上效果明显，但在某些特殊图上，最坏复杂度可能达到指数级．
+???+ note "Other optimizations for Bellman–Ford"
+    Besides queue optimization (SPFA), Bellman–Ford has other forms of optimization, which are effective on some graphs but may reach exponential worst-case complexity on certain special graphs.
     
-    -   堆优化：将队列换成堆，与 Dijkstra 的区别是允许一个点多次入队．在有负权边的图可能被卡成指数级复杂度．
-    -   栈优化：将队列换成栈（即将原来的 BFS 过程变成 DFS），在寻找负环时可能具有更高效率，但最坏时间复杂度仍然为指数级．
-    -   LLL 优化：将普通队列换成双端队列，每次将入队结点距离和队内距离平均值比较，如果更大则插入至队尾，否则插入队首．
-    -   SLF 优化：将普通队列换成双端队列，每次将入队结点距离和队首比较，如果更大则插入至队尾，否则插入队首．
-    -   D´Esopo–Pape 算法：将普通队列换成双端队列，如果一个节点之前没有入队，则将其插入队尾，否则插入队首．
+    -   Heap optimization: Replace the queue with a heap. Unlike Dijkstra's, it allows a node to be enqueued multiple times. On graphs with negative edge weights, it may be reduced to exponential complexity.
+    -   Stack optimization: Replace the queue with a stack (changing the original BFS process to DFS). It may be more efficient when finding negative cycles, but the worst time complexity is still exponential.
+    -   LLL optimization: Replace the regular queue with a deque. Compare each enqueued node's distance with the average distance of nodes in the queue; if larger, insert at the tail, otherwise insert at the head.
+    -   SLF optimization: Replace the regular queue with a deque. Compare each enqueued node's distance with the front of the queue; if larger, insert at the tail, otherwise insert at the head.
+    -   D'Esopo–Pape algorithm: Replace the regular queue with a deque. If a node has not been enqueued before, insert it at the tail; otherwise, insert it at the head.
     
-    更多优化以及针对这些优化的 Hack 方法，可以看 [fstqwq 在知乎上的回答](https://www.zhihu.com/question/292283275/answer/484871888)．
+    For more optimizations and hacks against them, see [fstqwq's answer on Zhihu](https://www.zhihu.com/question/292283275/answer/484871888).
 
-## Dijkstra 算法
+## Dijkstra Algorithm
 
-Dijkstra（/ˈdikstrɑ/或/ˈdɛikstrɑ/）算法由荷兰计算机科学家 E. W. Dijkstra 于 1956 年发现，1959 年公开发表．是一种求解 **非负权图** 上单源最短路径的算法．
+Dijkstra's algorithm (/ˈdikstrɑ/ or /ˈdɛikstrɑ/) was discovered by Dutch computer scientist E. W. Dijkstra in 1956 and published in 1959. It is an algorithm for solving single-source shortest paths on **non-negative weight graphs**.
 
-### 过程
+### Process
 
-将结点分成两个集合：已确定最短路长度的点集（记为 $S$ 集合）的和未确定最短路长度的点集（记为 $T$ 集合）．一开始所有的点都属于 $T$ 集合．
+Divide nodes into two sets: the set of nodes with determined shortest path lengths (denoted as set $S$) and the set of nodes with undetermined shortest path lengths (denoted as set $T$). Initially, all nodes belong to set $T$.
 
-初始化 $dis(s)=0$，其他点的 $dis$ 均为 $+\infty$．
+Initialize $dis(s) = 0$, and $dis$ for all other nodes is $+\infty$.
 
-然后重复这些操作：
+Then repeat these operations:
 
-1.  从 $T$ 集合中，选取一个最短路长度最小的结点，移到 $S$ 集合中．
-2.  对那些刚刚被加入 $S$ 集合的结点的所有出边执行松弛操作．
+1.  From set $T$, select the node with the smallest shortest path length and move it to set $S$.
+2.  Perform relax operations on all outgoing edges of the node just added to set $S$.
 
-直到 $T$ 集合为空，算法结束．
+Repeat until set $T$ is empty, at which point the algorithm ends.
 
-### 时间复杂度
+### Time Complexity
 
-朴素的实现方法为每次 2 操作执行完毕后，直接在 $T$ 集合中暴力寻找最短路长度最小的结点．2 操作总时间复杂度为 $O(m)$，1 操作总时间复杂度为 $O(n^2)$，全过程的时间复杂度为 $O(n^2 + m) = O(n^2)$．
+The naive implementation is to directly search for the node with the smallest shortest path length in set $T$ after each step 2 operation. The total time complexity of step 2 is $O(m)$, and step 1 is $O(n^2)$. The overall time complexity is $O(n^2 + m) = O(n^2)$.
 
-可以用堆来优化这一过程：每成功松弛一条边 $(u,v)$，就将 $v$ 插入堆中（如果 $v$ 已经在堆中，直接执行 Decrease-key），1 操作直接取堆顶结点即可．共计 $O(m)$ 次 Decrease-key，$O(n)$ 次 pop，选择不同堆可以取到不同的复杂度，参考 [堆](../ds/heap.md) 页面．堆优化能做到的最优复杂度为 $O(n\log n+m)$，能做到这一复杂度的有斐波那契堆等．
+We can optimize this process using a heap: each time an edge $(u,v)$ is successfully relaxed, insert $v$ into the heap (if $v$ is already in the heap, perform Decrease-key directly). Step 1 is simply taking the top node from the heap. There are $O(m)$ Decrease-key operations and $O(n)$ pop operations. Different heaps give different complexities. See the [Heap](../ds/heap.md) page for reference. The optimal complexity achievable with heap optimization is $O(n\log n + m)$. Fibonacci heaps and similar data structures can achieve this complexity.
 
-特别地，可以使用优先队列维护，此时无法执行 Decrease-key 操作，但可以通过每次松弛时重新插入该结点，且弹出时检查该结点是否已被松弛过，若是则跳过，复杂度 $O(m\log n)$，优点是实现较简单．
+In particular, a priority queue can be used. At this time, the Decrease-key operation cannot be performed, but we can re-insert the node each time it is relaxed and check during popping whether the node has already been relaxed; if so, skip it. The complexity is $O(m\log n)$, and the advantage is relatively simple implementation.
 
-这里的堆也可以用线段树来实现，复杂度为 $O(m\log n)$，在一些特殊的非递归线段树实现下，该做法常数比堆更小．并且线段树支持的操作更多，在一些特殊图问题上只能用线段树来维护．
+The heap here can also be implemented with a segment tree, with complexity $O(m\log n)$. With some special non-recursive segment tree implementations, this approach has a smaller constant factor than the heap. Moreover, segment trees support more operations, and in some special graph problems, only segment trees can maintain the data.
 
-在稀疏图中，$m = O(n)$，堆优化的 Dijkstra 算法具有较大的效率优势；而在稠密图中，$m = O(n^2)$，这时候使用朴素实现更优．
+In sparse graphs where $m = O(n)$, the heap-optimized Dijkstra algorithm has a significant efficiency advantage; in dense graphs where $m = O(n^2)$, the naive implementation is better.
 
-### 正确性证明
+### Correctness Proof
 
-下面用数学归纳法证明，在 **所有边权值非负** 的前提下，Dijkstra 算法的正确性[^1]．
+We prove the correctness of Dijkstra's algorithm under the premise that **all edge weights are non-negative** using mathematical induction[^1].
 
-简单来说，我们要证明的，就是在执行 1 操作时，取出的结点 $u$ 最短路均已经被确定，即满足 $D(u) = dis(u)$．
+Simply put, what we need to prove is that during step 1, the node $u$ being removed has its shortest path already determined, i.e., $D(u) = dis(u)$.
 
-初始时 $S = \varnothing$，假设成立．
+Initially, $S = \varnothing$, and the assumption holds.
 
-接下来用反证法．
+Now, we use proof by contradiction.
 
-设 $u$ 点为算法中第一个在加入 $S$ 集合时不满足 $D(u) = dis(u)$ 的点．因为 $s$ 点一定满足 $D(u)=dis(u)=0$，且它一定是第一个加入 $S$ 集合的点，因此将 $u$ 加入 $S$ 集合前，$S \neq \varnothing$，如果不存在 $s$ 到 $u$ 的路径，则 $D(u) = dis(u) = +\infty$，与假设矛盾．
+Let $u$ be the first node in the algorithm that does not satisfy $D(u) = dis(u)$ when it is added to set $S$. Since the source $s$ must satisfy $D(s) = dis(s) = 0$ and is definitely the first node added to set $S$, before $u$ is added to set $S$, we have $S \ne \varnothing$. If there is no path from $s$ to $u$, then $D(u) = dis(u) = +\infty$, contradicting the assumption.
 
-于是一定存在路径 $s \to x \to y \to u$，其中 $y$ 为 $s \to u$ 路径上第一个属于 $T$ 集合的点，而 $x$ 为 $y$ 的前驱结点（显然 $x \in S$）．需要注意的是，可能存在 $s = x$ 或 $y = u$ 的情况，即 $s \to x$ 或 $y \to u$ 可能是空路径．
+Therefore, a path $s \to x \to y \to u$ must exist, where $y$ is the first node on the $s \to u$ path that belongs to set $T$, and $x$ is the predecessor of $y$ (clearly $x \in S$). Note that it is possible that $s = x$ or $y = u$, i.e., $s \to x$ or $y \to u$ may be an empty path.
 
-因为在 $u$ 结点之前加入的结点都满足 $D(u) = dis(u)$，所以在 $x$ 点加入到 $S$ 集合时，有 $D(x) = dis(x)$，此时边 $(x,y)$ 会被松弛，从而可以证明，将 $u$ 加入到 $S$ 时，一定有 $D(y)=dis(y)$．
+Since all nodes added to set $S$ before $u$ satisfy $D(u) = dis(u)$, when node $x$ is added to set $S$, we have $D(x) = dis(x)$. At this time, edge $(x,y)$ will be relaxed, so when $u$ is added to set $S$, we must have $D(y) = dis(y)$.
 
-下面证明 $D(u) = dis(u)$ 成立．在路径 $s \to x \to y \to u$ 中，因为图上所有边边权非负，因此 $D(y) \leq D(u)$．从而 $dis(y) = D(y) \leq D(u)\leq dis(u)$．但是因为 $u$ 结点在 1 过程中被取出 $T$ 集合时，$y$ 结点还没有被取出 $T$ 集合，因此此时有 $dis(u)\leq dis(y)$，从而得到 $dis(y) = D(y) = D(u) = dis(u)$，这与 $D(u)\neq dis(u)$ 的假设矛盾，故假设不成立．
+Next, we prove $D(u) = dis(u)$ holds. On the path $s \to x \to y \to u$, since all edge weights in the graph are non-negative, $D(y) \leq D(u)$. Thus $dis(y) = D(y) \leq D(u) \leq dis(u)$. However, when node $u$ is removed from set $T$ in step 1, node $y$ has not yet been removed from set $T$. Therefore, at this time, $dis(u) \leq dis(y)$. Combining with the previous inequality, we get $dis(y) = D(y) = D(u) = dis(u)$, which contradicts the assumption $D(u) \neq dis(u)$. Hence, the assumption does not hold.
 
-因此我们证明了，1 操作每次取出的点，其最短路均已经被确定．命题得证．
+Therefore, we have proven that in step 1, the shortest path of every node taken out has already been determined. The proposition is proven.
 
-注意到证明过程中的关键不等式 $D(y) \leq D(u)$ 是在图上所有边边权非负的情况下得出的．当图上存在负权边时，这一不等式不再成立，Dijkstra 算法的正确性将无法得到保证，算法可能会给出错误的结果．
+Note that the key inequality $D(y) \leq D(u)$ in the proof relies on the condition that all edge weights in the graph are non-negative. When the graph contains negative-weight edges, this inequality no longer holds, the correctness of Dijkstra's algorithm cannot be guaranteed, and the algorithm may produce incorrect results.
 
-### 实现
+### Implementation
 
-这里同时给出 $O(n^2)$ 的暴力做法实现和 $O(m \log m)$ 的优先队列做法实现．
+Here we give both the $O(n^2)$ brute-force implementation and the $O(m \log m)$ priority queue implementation.
 
-???+ note "朴素实现"
+???+ note "Naive Implementation"
     === "C++"
         ```cpp
         struct edge {
@@ -442,7 +443,7 @@ Dijkstra（/ˈdikstrɑ/或/ˈdɛikstrɑ/）算法由荷兰计算机科学家 E. 
                         dis[v] = dis[u] + w
         ```
 
-???+ note "优先队列实现"
+???+ note "Priority Queue Implementation"
     === "C++"
         ```cpp
         struct edge {
@@ -484,11 +485,11 @@ Dijkstra（/ˈdikstrɑ/或/ˈdɛikstrɑ/）算法由荷兰计算机科学家 E. 
         ```python
         def dijkstra(e, s):
             """
-            输入：
-            e:邻接表
-            s:起点
-            返回：
-            dis:从s到每个顶点的最短路长度
+            Input:
+            e: adjacency list
+            s: source node
+            Returns:
+            dis: shortest path length from s to each vertex
             """
             dis = defaultdict(lambda: float("inf"))
             dis[s] = 0
@@ -506,96 +507,96 @@ Dijkstra（/ˈdikstrɑ/或/ˈdɛikstrɑ/）算法由荷兰计算机科学家 E. 
             return dis
         ```
 
-## Johnson 全源最短路径算法
+## Johnson All-Pairs Shortest Path Algorithm
 
-Johnson 和 Floyd 一样，是一种能求出无负环图上任意两点间最短路径的算法．该算法在 1977 年由 Donald B. Johnson 提出．
+Like Floyd's algorithm, Johnson's algorithm can find the shortest path between any two nodes in a graph without negative cycles. This algorithm was proposed by Donald B. Johnson in 1977.
 
-任意两点间的最短路可以通过枚举起点，跑 $n$ 次 Bellman–Ford 算法解决，时间复杂度是 $O(n^2m)$ 的，也可以直接用 Floyd 算法解决，时间复杂度为 $O(n^3)$．
+The shortest path between any two nodes can be found by enumerating each source vertex and running Bellman–Ford $n$ times, with time complexity $O(n^2m)$. Alternatively, Floyd's algorithm can be used directly, with time complexity $O(n^3)$.
 
-注意到堆优化的 Dijkstra 算法求单源最短路径的时间复杂度比 Bellman–Ford 更优，如果枚举起点，跑 $n$ 次 Dijkstra 算法，就可以在 $O(nm\log m)$（取决于 Dijkstra 算法的实现）的时间复杂度内解决本问题，比上述跑 $n$ 次 Bellman–Ford 算法的时间复杂度更优秀，在稀疏图上也比 Floyd 算法的时间复杂度更加优秀．
+Note that the heap-optimized Dijkstra algorithm for single-source shortest paths has better time complexity than Bellman–Ford. If we enumerate each source vertex and run Dijkstra $n$ times, the problem can be solved in $O(nm\log m)$ (depending on the implementation of Dijkstra's algorithm), which is better than running Bellman–Ford $n$ times and is also better than Floyd's algorithm on sparse graphs.
 
-但 Dijkstra 算法不能正确求解带负权边的最短路，因此我们需要对原图上的边进行预处理，确保所有边的边权均非负．
+However, Dijkstra's algorithm cannot correctly solve shortest paths with negative-weight edges. Therefore, we need to preprocess the edges of the original graph to ensure all edge weights are non-negative.
 
-一种容易想到的方法是给所有边的边权同时加上一个正数 $x$，从而让所有边的边权均非负．如果新图上起点到终点的最短路经过了 $k$ 条边，则将最短路减去 $kx$ 即可得到实际最短路．
+One naive approach is to add the same positive number $x$ to all edge weights, making all edge weights non-negative. If the shortest path from the source to the destination in the new graph traverses $k$ edges, we can subtract $kx$ from the shortest path to get the actual shortest path.
 
-但这样的方法是错误的．考虑下图：
+But this approach is incorrect. Consider the following graph:
 
 ![](./images/shortest-path1.svg)
 
-$1 \to 2$ 的最短路为 $1 \to 5 \to 3 \to 2$，长度为 $−2$．
+The shortest path from $1 \to 2$ is $1 \to 5 \to 3 \to 2$ with length $-2$.
 
-但假如我们把每条边的边权加上 $5$ 呢？
+But what if we add $5$ to the weight of each edge?
 
 ![](./images/shortest-path2.svg)
 
-新图上 $1 \to 2$ 的最短路为 $1 \to 4 \to 2$，已经不是实际的最短路了．
+In the new graph, the shortest path from $1 \to 2$ is $1 \to 4 \to 2$, which is no longer the actual shortest path.
 
-Johnson 算法则通过另外一种方法来给每条边重新标注边权．
+Johnson's algorithm reweights edges using a different method.
 
-我们新建一个虚拟节点（在这里我们就设它的编号为 $0$）．从这个点向其他所有点连一条边权为 $0$ 的边．
+We create a new virtual node (let's say its number is $0$). Draw an edge of weight $0$ from this node to all other nodes.
 
-接下来用 Bellman–Ford 算法求出从 $0$ 号点到其他所有点的最短路，记为 $h_i$．
+Then use the Bellman–Ford algorithm to find the shortest path from node $0$ to all other nodes, and denote it as $h_i$.
 
-假如存在一条从 $u$ 点到 $v$ 点，边权为 $w$ 的边，则我们将该边的边权重新设置为 $w+h_u-h_v$．
+If there is an edge from node $u$ to node $v$ with weight $w$, we reset the edge weight to $w + h_u - h_v$.
 
-接下来以每个点为起点，跑 $n$ 轮 Dijkstra 算法即可求出任意两点间的最短路了．
+Now, run Dijkstra's algorithm $n$ times with each node as the source to find the shortest path between any two nodes.
 
-一开始的 Bellman–Ford 算法并不是时间上的瓶颈，若使用 `priority_queue` 实现 Dijkstra 算法，该算法的时间复杂度是 $O(nm\log m)$．
+The initial Bellman–Ford algorithm is not the time bottleneck. If Dijkstra's algorithm is implemented using `priority_queue`, the time complexity of this algorithm is $O(nm\log m)$.
 
-### 正确性证明
+### Correctness Proof
 
-为什么这样重新标注边权的方式是正确的呢？
+Why is this edge reweighting method correct?
 
-在讨论这个问题之前，我们先讨论一个物理概念——势能．
+Before discussing this, let's first discuss a physical concept — potential energy.
 
-诸如重力势能，电势能这样的势能都有一个特点，势能的变化量只和起点和终点的相对位置有关，而与起点到终点所走的路径无关．
+Both gravitational potential energy and electric potential energy share a characteristic: the change in potential energy depends only on the relative positions of the start and end points, not on the path taken from the start to the end.
 
-势能还有一个特点，势能的绝对值往往取决于设置的零势能点，但无论将零势能点设置在哪里，两点间势能的差值是一定的．
+Potential energy also has a characteristic: the absolute value of potential energy often depends on the location of the zero potential point, but regardless of where the zero potential point is set, the difference in potential energy between two points is fixed.
 
-接下来回到正题．
+Now, back to the main topic.
 
-在重新标记后的图上，从 $s$ 点到 $t$ 点的一条路径 $s \to p_1 \to p_2 \to \dots \to p_k \to t$ 的长度表达式如下：
+On the relabeled graph, the length of a path $s \to p_1 \to p_2 \to \dots \to p_k \to t$ from node $s$ to node $t$ is expressed as follows:
 
 $(w(s,p_1)+h_s-h_{p_1})+(w(p_1,p_2)+h_{p_1}-h_{p_2})+ \dots +(w(p_k,t)+h_{p_k}-h_t)$
 
-化简后得到：
+After simplification, we get:
 
 $w(s,p_1)+w(p_1,p_2)+ \dots +w(p_k,t)+h_s-h_t$
 
-无论我们从 $s$ 到 $t$ 走的是哪一条路径，$h_s-h_t$ 的值是不变的，这正与势能的性质相吻合！
+Regardless of which path we take from $s$ to $t$, the value of $h_s - h_t$ does not change. This perfectly matches the property of potential energy!
 
-为了方便，下面我们就把 $h_i$ 称为 $i$ 点的势能．
+For convenience, we refer to $h_i$ as the potential energy of node $i$.
 
-上面的新图中 $s \to t$ 的最短路的长度表达式由两部分组成，前面的边权和为原图中 $s \to t$ 的最短路，后面则是两点间的势能差．因为两点间势能的差为定值，因此原图上 $s \to t$ 的最短路与新图上 $s \to t$ 的最短路相对应．
+In the new graph, the length of the shortest path from $s$ to $t$ consists of two parts: the sum of edge weights in front is the shortest path from $s$ to $t$ in the original graph, and the latter part is the potential difference between the two nodes. Since the potential difference between two nodes is constant, the shortest path from $s$ to $t$ in the original graph corresponds to the shortest path from $s$ to $t$ in the new graph.
 
-到这里我们的正确性证明已经解决了一半——我们证明了重新标注边权后图上的最短路径仍然是原来的最短路径．接下来我们需要证明新图中所有边的边权非负，因为在非负权图上，Dijkstra 算法能够保证得出正确的结果．
+At this point, half of the correctness proof is resolved — we have proven that the shortest path in the new graph is still the original shortest path. Next, we need to prove that all edge weights in the new graph are non-negative because Dijkstra's algorithm guarantees correct results on non-negative weight graphs.
 
-根据三角形不等式，图上任意一边 $(u,v)$ 上两点满足：$h_v \leq h_u + w(u,v)$．这条边重新标记后的边权为 $w'(u,v)=w(u,v)+h_u-h_v \geq 0$．这样我们证明了新图上的边权均非负．
+According to the triangle inequality, for any edge $(u,v)$ in the graph, the two endpoints satisfy: $h_v \leq h_u + w(u,v)$. The reweighted edge weight is $w'(u,v) = w(u,v) + h_u - h_v \geq 0$. Thus, we have proven that all edge weights in the new graph are non-negative.
 
-这样，我们就证明了 Johnson 算法的正确性．
+With this, we have proven the correctness of Johnson's algorithm.
 
-## 不同方法的比较
+## Comparison of Different Methods
 
-| 最短路算法   | Floyd      | Bellman–Ford | Dijkstra     | Johnson       |
-| ------- | ---------- | ------------ | ------------ | ------------- |
-| 最短路类型   | 每对结点之间的最短路 | 单源最短路        | 单源最短路        | 每对结点之间的最短路    |
-| 作用于     | 任意图        | 任意图          | 非负权图         | 任意图           |
-| 能否检测负环？ | 能          | 能            | 不能           | 能             |
-| 时间复杂度   | $O(N^3)$   | $O(NM)$      | $O(M\log M)$ | $O(NM\log M)$ |
+| Shortest Path Algorithm | Floyd       | Bellman–Ford | Dijkstra     | Johnson        |
+| ---------------------- | ----------- | ------------ | ------------ | -------------- |
+| Path Type              | All-pairs   | Single-source | Single-source | All-pairs       |
+| Applicable to          | Any graph   | Any graph    | Non-negative | Any graph       |
+| Can detect negative cycle? | Yes      | Yes          | No           | Yes             |
+| Time Complexity        | $O(N^3)$    | $O(NM)$      | $O(M\log M)$ | $O(NM\log M)$  |
 
-注：表中的 Dijkstra 算法在计算复杂度时均用 `priority_queue` 实现．
+Note: The Dijkstra algorithm in the table uses `priority_queue` implementation for complexity calculation.
 
-## 输出方案
+## Outputting the Path
 
-开一个 `pre` 数组，在更新距离的时候记录下来后面的点是如何转移过去的，算法结束前再递归地输出路径即可．
+Maintain a `pre` array during distance updates to record how the next node is reached. Before the algorithm finishes, output the path recursively.
 
-比如 Floyd 就要记录 `pre[i][j] = k;`，Bellman–Ford 和 Dijkstra 一般记录 `pre[v] = u`．
+For example, in Floyd's algorithm, record `pre[i][j] = k`; for Bellman–Ford and Dijkstra, generally record `pre[v] = u`.
 
-## 一些特殊情形
+## Special Cases
 
--   边权只由 $0$ 和 $1$ 组成的图上最短路：[0-1 BFS](./bfs.md#双端队列-bfs)；
--   允许至多 $k$ 次改变路径成本等操作的最短路问题：[分层图最短路](./node.md#分层图最短路)．
+-   Shortest path in graphs where edge weights are only $0$ and $1$: [0-1 BFS](./bfs.md#deque-bfs);
+-   Shortest path problems allowing at most $k$ changes in path cost or similar operations: [Layered Graph Shortest Path](./node.md#layered-graph-shortest-path).
 
-## 参考资料与注释
+## References and Notes
 
-[^1]: 《算法导论（第 3 版中译本）》，机械工业出版社，2013 年，第 384 - 385 页．
+[^1]: *Introduction to Algorithms (3rd Edition Chinese Translation)*, Mechanical Industry Press, 2013, pp. 384-385.

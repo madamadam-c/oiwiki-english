@@ -1,186 +1,186 @@
 author: ouuan, CBW2007, partychicken, StudyingFather, Xeonacid, Henry-ZHR
 
-## 软件简介
+## Software Introduction
 
-Notepad++ 是 Windows 操作系统下的文本编辑器，支持多国语言、多种编码、多种编程语言的高亮和补全．它的 logo 也十分可爱，是一只变色龙（![npp-logo](./images/npp-logo.webp)）
+Notepad++ is a text editor for Windows operating systems. It supports multiple languages, multiple encodings, and syntax highlighting and completion for multiple programming languages. Its logo is also very cute, a chameleon (![npp-logo](./images/npp-logo.webp))
 
-其功能比其他许多编辑软件强大许多，打开大文件时更加稳定，不断撤销不会出问题．关闭时也不需要保存，它会自动为你保存在缓冲区中．（可能需要配置）而且，它十分小巧，只有 10MB+，甚至可以放在 U 盘中随身携带．
+Its functionality is much stronger than many other editing software. It is more stable when opening large files, and continuous undo won't cause problems. When closing, it doesn't need to save. It automatically saves for you in the buffer. (May need configuration) Moreover, it is very compact, only 10MB+, and can even be carried on a USB drive.
 
-## 下载与安装
+## Download and Installation
 
-参见 [Getting started | Notepad++ User Manual](https://npp-user-manual.org/docs/getting-started/)．
+See [Getting started | Notepad++ User Manual](https://npp-user-manual.org/docs/getting-started/).
 
-## 更改界面语言
+## Changing Interface Language
 
 ![npp-lang](./images/npp-lang.gif)
 
-语言改完了，就可以随心所欲地魔改编辑器啦！
+After changing the language, you can freely customize the editor!
 
-## 初级玩法
+## Basic Usage
 
-这里主要讲一些基础和特色功能．
+Here are some basic and feature functions.
 
-### 查找与替换
+### Find and Replace
 
-依次单击「（菜单栏）搜索」->「查找」（快捷键 `CTRL`+`F`）即可打开「查找」页面（如下图）．
+Click "(Menu Bar) Search" -> "Find" (shortcut `CTRL`+`F`) to open the "Find" page (as shown in the figure).
 
 ![npp-search](./images/npp-search.png)
 
-依次单击「（菜单栏）搜索」->「替换」（快捷键 `CTRL`+`H`）即可打开「替换」页面（如下图）．
+Click "(Menu Bar) Search" -> "Replace" (shortcut `CTRL`+`H`) to open the "Replace" page (as shown in the figure).
 
 ![npp-replace](./images/npp-replace.png)
 
-查找、替换之间其实是一个窗口，单击上面的标签页就可以完成切换．
+In fact, Find and Replace are the same window. Click the tab above to switch.
 
-其功能与普通编辑器大同小异，但是支持更多，如：
+Its functions are similar to ordinary editors, but support more, such as:
 
-1.  严格匹配或大小写匹配等
-2.  跨文档匹配
-3.  转义字符，如'\r'，'\n'．
-4.  正则表达式
-5.  计数
+1.  Strict match or case match
+2.  Cross-document matching
+3.  Escape characters, like '\r', '\n'
+4.  Regular expressions
+5.  Counting
 
-### 定期备份
+### Periodic Backup
 
 ![npp-settings-1](./images/npp-settings-1.png)
 
-有了这个功能，就可以不用费心地担心意外情况代码丢失啦！
+With this function, you don't have to worry about code loss due to accidents!
 
-但是，这个功能只是为你的文件拍了一个快照，并没有真正保存，所以还是建议要有良好的保存习惯．或者说可以去自带插件商店安装 "Auto Save" 插件（详见 [高级玩法 -> 插件](#插件)，下同）
+However, this function only takes a snapshot of your file, not really saving it. So it is still recommended to have good saving habits. Or you can go to the built-in plugin store to install the "Auto Save" plugin (see [Advanced Usage -> Plugins](#plugins), same below)
 
-### 书签功能
+### Bookmark Function
 
-在你需要的行按 `Ctrl`+`F2` 即可设放置/取消书签，放置过书签的行前段有一个蓝色圆点．
+Press `Ctrl`+`F2` on the line you need to set/remove bookmarks. Lines with bookmarks have a blue dot in front.
 
-按 `F2` 可以定位到下一个书签．
+Press `F2` to locate to the next bookmark.
 
-如果你抱怨不方便，可以去自带插件商店安装 "Bookmarks" 插件
+If you find it inconvenient, you can go to the built-in plugin store to install the "Bookmarks" plugin
 
-### 代码高亮
+### Syntax Highlighting
 
-右击左下角的 "XXX file"，可以选择许多种语言高亮，C、C++、PASCAL、Markdown 等任你挑选．你甚至可以自己定义高亮！
+Right-click "XXX file" in the bottom left corner to choose from many language highlighting options such as C, C++, PASCAL, Markdown, etc. You can even define your own highlighting!
 
-如果你认为每一次打开文件都要更改高亮很麻烦，可以在「设置 -> 首选项 -> 新建 -> 默认语言」中修改默认高亮．
+If you think it's troublesome to change highlighting every time you open a file, you can modify the default highlighting in "Settings -> Preferences -> New -> Default Language".
 
-需要渲染 Markdown 的，可以去插件商店安装 "Markdown Viewer"，还有更多类似插件等着你！
+If you need to render Markdown, you can go to the plugin store to install "Markdown Viewer", and there are many similar plugins waiting for you!
 
-### 显示所有字符
+### Show All Characters
 
 ![npp-settings-2](./images/npp-settings-2.png)
 
-点击红框所圈的按钮，就可以非（za）常（luan）清（wu）晰（zhang）地显示出「空格」、「TAB」、「换行」等原来不可见字符．
+Click the button circled in red, and you can show "space", "TAB", "newline" and other invisible characters very (chaotically) clearly.
 
-### 自动识别文件编码与换行符
+### Auto-detect File Encoding and Line Endings
 
-Notepad++ 可以自动识别当前文件编码是 `UTF-8` 还是 `GB2312` 甚至其他．再也不用担心被 `锟斤拷` 抡死或被 `烫烫烫` 烫死了．
+Notepad++ can automatically detect whether the current file encoding is `UTF-8` or `GB2312` or even others. No more worry about being messed up by garbled characters or seeing uninitialized memory.
 
-如果要使用不同的编码浏览文章，请依次单击「（菜单顶栏）编码」->「使用 XXX 编码」．如果想给文件换一个字符编码，请依次单击「（菜单顶栏）编码」->「转为 XXX 编码」．
+If you want to use a different encoding to browse an article, click "(Menu Top Bar) Encoding" -> "Encode with XXX". If you want to change the file's character encoding, click "(Menu Top Bar) Encoding" -> "Convert to XXX Encoding".
 
-它还可以自动识别换行符是 `CR`、`LF` 或 `CRLF`．不用担心下载下来的数据被吞换行．
+It can also automatically detect whether line endings are `CR`, `LF`, or `CRLF`. Don't worry about downloaded data losing line breaks.
 
-在底部信息栏，你可以看到 "Windows(CR LF)" 等字样，这就是当前文件的换行符．右击它，可以改变当前文件换行符．此操作配合「显示所有字符」更直观哟！
+In the bottom status bar, you can see "Windows(CR LF)" and similar text. This is the current file's line ending. Right-click on it to change the current file's line ending. This operation is more intuitive when combined with "Show All Characters"!
 
-## 高级玩法
+## Advanced Usage
 
-这个就适用于需求较高的用户．
+This is for users with higher needs.
 
-### 宏
+### Macros
 
-宏可以帮助你完成许多重复的工作，例如，将奇数行的「abcde」改为「afce」，需要两步．
+Macros can help you complete many repetitive tasks. For example, changing "abcde" in odd lines to "afce" takes two steps.
 
-#### 录制宏
+#### Recording Macro
 
 ![npp-macro-rec](./images/npp-macro-rec.gif)
 
-#### 使用宏
+#### Using Macro
 
 ![npp-macro-use](./images/npp-macro-use.gif)
 
-#### 大量处理，重复使用
+#### Large-scale Processing, Repeated Use
 
-如果是更多行呢？操作就需要一点改变．
+What about more lines? The operation needs some change.
 
-首先是录制，一定要先按键盘上的 `HOME` 或 `END` 键将光标移动到行首或行尾，然后用方向键调整横向位置，再进行更改．最后一定要用方向键将光标移动到下一个要处理的行．
+First, for recording, be sure to press the `HOME` or `END` key on the keyboard to move the cursor to the beginning or end of the line, then use arrow keys to adjust the horizontal position, then make changes. Finally, be sure to use arrow keys to move the cursor to the next line to process.
 
-比如刚刚的例子，可以先按 `END` 键，然后依次按 `←`，`Backspace`,`←`,`Backspace`,`F`，最后按两下 `↓`，最后停止录制．
+For the example above, first press the `END` key, then press in sequence `←`, `Backspace`, `←`, `Backspace`, `F`, and finally press `↓` twice, then stop recording.
 
-然后是重播，先定位到第一个要处理的行（第 3 行），然后点击「宏」->「重复运行宏」．在弹出窗口设置要运行的宏（刚录制的一般是第一个），设置运行次数（或者直接运行到文件尾），点确定即可．
+Then for playback, first locate to the first line to process (line 3), then click "Macro" -> "Run Macro Multiple Times". In the popup window, set the macro to run (the one just recorded is generally the first one), set the number of times to run (or run directly to end of file), and click OK.
 
-#### 保存宏
+#### Saving Macro
 
-点击「宏」->「保存录制宏」，并设置名称和快捷键，即可保存，方便后续使用．
+Click "Macro" -> "Save Recorded Macro", set the name and shortcut, and it will be saved for later use.
 
-### 插件
+### Plugins
 
-#### 插件管理
+#### Plugin Management
 
-打开功能栏的「插件」按钮，列表中会显示所有你安装过的插件．
+Open the "Plugins" button in the function bar. The list will show all plugins you have installed.
 
-再选择「插件管理」选项，即可管理你的插件．
+Then select "Plugin Management" to manage your plugins.
 
-#### 安装插件（商店）
+#### Installing Plugins (Store)
 
-1.  打开「可用」选项卡，在列表中勾选你所要的插件
-2.  点击右上角的「安装」按钮，按照提示重启软件即可．
+1.  Open the "Available" tab, check the plugin you want in the list
+2.  Click the "Install" button in the upper right corner, and follow the prompts to restart the software.
 
-#### 安装插件（手动）
+#### Installing Plugins (Manually)
 
-1.  下载插件（由第三方托管的官方地址：<https://sourceforge.net/projects/npp-plugins/>）注意一定要选择 **与安装 Notepad++ 时处理器架构相同** 的插件．
-2.  找到一个名为 "XXX.dll" 的文件（通常以插件名命名）．
-3.  在 Notepad++ 中的功能栏点插件，并在列表中点「打开插件文件夹」．
-4.  将刚才找到的 DLL 文件放入文件夹中，重启 Notepad++．
-5.  【可选】删除刚才拷贝的文件，**但不要删除生成的文件夹！**
+1.  Download the plugin (officially hosted by third parties: <https://sourceforge.net/projects/npp-plugins/>). Be sure to choose the plugin **with the same processor architecture as when you installed Notepad++**.
+2.  Find a file named "XXX.dll" (usually named after the plugin).
+3.  In the function bar of Notepad++, click Plugins and in the list click "Open Plugins Folder".
+4.  Put the DLL file you just found into the folder, and restart Notepad++.
+5.  [Optional] Delete the file you just copied, **but do not delete the generated folder!**
 
-Tips: 如果多次不成功，可以尝试新建一个与插件名相同的文件夹在将 ".dll" 文件放入创建的文件夹中
+Tips: If it doesn't succeed multiple times, try creating a new folder with the same name as the plugin and put the ".dll" file into the created folder
 
-#### 更新插件
+#### Updating Plugins
 
-在插件管理中，选择「更新」选项卡，并勾选要更新的插件，然后点右上角的「更新」按钮．
+In Plugin Management, select the "Update" tab, check the plugin to update, and click the "Update" button in the upper right corner.
 
-#### 移除插件
+#### Removing Plugins
 
-同样在插件管理中，选择「已安装」选项卡，并勾选要移除的插件，然后点右上角的「移除」按钮．
+Same in Plugin Management, select the "Installed" tab, check the plugin to remove, and click the "Remove" button in the upper right corner.
 
-### 搭建开发环境
+### Setting Up Development Environment
 
-不只是编辑器！"Notepad++" 可谓神一样的存在，它可以通过傻瓜式地编译代码，甚至代替 IDE！这里以 C++ 为例
+Not just an editor! "Notepad++" is like a god-level existence. It can compile code in a foolproof way, even replacing IDEs! Here's an example with C++
 
-1.  安装编译器并将其必要的文件目录添加到 PATH 环境变量中．（C++ 需要添加 %APPPATH%\bin）当你在 cmd 中输入 g++ 时不再提示'g++'不是内部或外部命令……即可（中间可能需要重启电脑）．推荐 [下载 ConsolePauser](https://sourceforge.net/projects/orwelldevcpp/files/Tools/ConsolePauser.exe/download) 然后随便放并将其目录添加到环境变量（此为 Dev-C++ 的插件，在 Dev-C++ 软件根目录也有）．
+1.  Install the compiler and add its necessary directory to the PATH environment variable. (For C++ you need to add %APPPATH%\bin). When you type g++ in cmd and it no longer says 'g++' is not an internal or external command... it's ready (you may need to restart the computer). Recommended to [download ConsolePauser](https://sourceforge.net/projects/orwelldevcpp/files/Tools/ConsolePauser.exe/download) and put it anywhere and add its directory to environment variables (this is a Dev-C++ plugin, also found in Dev-C++ software root directory).
 
-2.  在菜单栏中选择「运行」->「运行……」，打开「运行」窗口．
+2.  In the menu bar, select "Run" -> "Run...", and open the "Run" window.
 
-3.  分别输入以下命令
+3.  Enter the following commands respectively:
 
     ```shell
-    #编译命令：
+    #Compile command:
     cmd /c g++.exe -o $(CURRENT_DIRECTORY)\$(NAME_PART).exe $(FULL_CURRENT_PATH)
-    #运行命令：
+    #Run command:
     cmd /c $(CURRENT_DIRECTORY)\$(NAME_PART).exe $(FULL_CURRENT_PATH) & pause
-    #调试命令：
+    #Debug command:
     cmd /c gdb $(CURRENT_DIRECTORY)\$(NAME_PART).exe
 
-    #如果下载了ConsolePauser可以使用下列代码获得更好的程序运行体验！（注意添加环境变量！）
+    #If you downloaded ConsolePauser, you can use the following code for a better program running experience! (Remember to add environment variables!)
 
-    #编译命令：
+    #Compile command:
     cmd /c (start ConsolePauser "g++.exe -o $(CURRENT_DIRECTORY)\$(NAME_PART).exe $(FULL_CURRENT_PATH)")
-    #运行命令：
+    #Run command:
     cmd /c (start ConsolePauser "$(CURRENT_DIRECTORY)\$(NAME_PART).exe")
-    #调试命令：
+    #Debug command:
     cmd /c (start ConsolePauser "gdb $(CURRENT_DIRECTORY)\$(NAME_PART).exe")
     ```
 
-4.  单击「保存」，名字可以自己取，如 "Compile","Run" 等，然后设定好你想要的快捷键（捡好记的来，如 Dev-C++ 就分别是 `F9` 和 `F10`）．
+4.  Click "Save", you can name it yourself, such as "Compile", "Run", etc., then set your desired shortcut (choose easy-to-remember ones, like Dev-C++'s are `F9` and `F10` respectively).
 
 5.  Enjoy it!
 
-## 小彩蛋
+## Little Easter Eggs
 
-1.  在运行安装程序时你会在下方看到这样一句话：
+1.  When running the installer, you will see this sentence at the bottom:
 
     > "The best things in life are free. Notepad++ is free. So Notepad++ is the best(.)"
     >
-    > （生活中最好的事情都是免费的．Notepad++ 是免费的．所以 Notepad++ 是最好的．）
+    > (The best things in life are free. Notepad++ is free. So Notepad++ is the best.)
 
-    这牛吹的，不得不说，很有底气．
+    This boast, have to say, is quite confident.
 
-2.  在一个新开的页面中输入 "random" 并选中，再按 `F1` 就会得到一句很有意思的话．
+2.  In a new page, type "random" and select it, then press `F1` and you will get a very interesting sentence.

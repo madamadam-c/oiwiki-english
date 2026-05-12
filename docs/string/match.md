@@ -1,32 +1,32 @@
-本页面将简述字符串匹配问题以及它的解法．
+This page gives a brief introduction to the string matching problem and its solutions.
 
-## 字符串匹配问题
+## String Matching Problem
 
-### 定义
+### Definition
 
-又称模式匹配（pattern matching）．该问题可以概括为「给定字符串 $S$ 和 $T$，在主串 $S$ 中寻找子串 $T$」．字符 $T$ 称为模式串 (pattern)．
+Also known as pattern matching. The problem can be summarized as "given strings $S$ and $T$, find substring $T$ in the main string $S$". Character $T$ is called the pattern.
 
-### 类型
+### Types
 
--   单串匹配：给定一个模式串和一个待匹配串，找出前者在后者中的所有位置．
--   多串匹配：给定多个模式串和一个待匹配串，找出这些模式串在后者中的所有位置．
-    -   出现多个待匹配串时，将它们直接连起来便可作为一个待匹配串处理．
-    -   可以直接当做单串匹配，但是效率不够高．
--   其他类型：例如匹配一个串的任意后缀，匹配多个串的任意后缀……
+-   Single pattern matching: given a pattern and a text to match, find all positions of the pattern in the text.
+-   Multiple pattern matching: given multiple patterns and a text to match, find all positions of these patterns in the text.
+    -   When there are multiple texts to match, connecting them directly can be treated as one text.
+    -   It can be treated directly as single pattern matching, but the efficiency is not high enough.
+-   Other types: for example, matching any suffix of a string, matching any suffix of multiple strings......
 
-## 暴力做法
+## Brute Force
 
-简称 BF (Brute Force) 算法．该算法的基本思想是从主串 $S$ 的第一个字符开始和模式串 $T$ 的第一个字符进行比较，若相等，则继续比较二者的后续字符；否则，模式串 $T$ 回退到第一个字符，重新和主串 $S$ 的第二个字符进行比较．如此往复，直到 $S$ 或 $T$ 中所有字符比较完毕．
+Abbreviated as BF (Brute Force) algorithm. The basic idea is to start from the first character of the main string $S$ and compare it with the first character of the pattern $T$; if they are equal, continue comparing the subsequent characters of both; otherwise, the pattern $T$ goes back to the first character and compares with the second character of the main string $S$. This repeats until all characters in $S$ or $T$ have been compared.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
     /*
-     * s：待匹配的主串
-     * t：模式串
-     * n：主串的长度
-     * m：模式串的长度
+     * s: the main string to be matched
+     * t: the pattern
+     * n: length of the main string
+     * m: length of the pattern
      */
     std::vector<int> match(char *s, char *t, int n, int m) {
       std::vector<int> ans;
@@ -57,20 +57,20 @@
         return ans
     ```
 
-### 时间复杂度
+### Time Complexity
 
-设 $n$ 为主串的长度，$m$ 为模式串的长度．默认 $m\ll n$．
+Let $n$ be the length of the main string and $m$ be the length of the pattern. By default $m \ll n$.
 
-BF 算法匹配成功时，在最好情况下，只有一趟匹配成功，此趟比较次数为 $m$，而其余每趟不成功的匹配都发生在模式串的第一个字符，还需要 $n-m$ 次比较，总比较次数为 $n$，故时间复杂度为 $O(n)$；在最坏情况下，匹配成功的趟数为 $n-m+1$，每趟比较次数为 $m$，总比较次数为 $m(n-m+1)$，故时间复杂度为 $O(mn)$．
+When BF algorithm matches successfully, in the best case, only one successful match occurs, with $m$ comparisons for this round, while each unsuccessful match occurs at the first character of the pattern, requiring $n-m$ more comparisons, so the total number of comparisons is $n$, giving time complexity $O(n)$; in the worst case, the number of successful matches is $n-m+1$, with $m$ comparisons per round, giving a total of $m(n-m+1)$ comparisons, so the time complexity is $O(mn)$.
 
-BF 算法匹配失败时，在最好情况下，每趟不成功的匹配都发生在模式串的第一个字符，BF 算法要执行 $n-m+1$ 次比较，时间复杂度为 $O(n)$；在最坏情况下，每趟不成功的匹配都发生在模式串的最后一个字符，BF 算法要执行 $m(n-m+1)$ 次比较，时间复杂度为 $O(mn)$．
+When BF algorithm fails to match, in the best case, each unsuccessful match occurs at the first character of the pattern, requiring $n-m+1$ comparisons, giving time complexity $O(n)$; in the worst case, each unsuccessful match occurs at the last character of the pattern, requiring $m(n-m+1)$ comparisons, giving time complexity $O(mn)$.
 
-如果模式串有至少两个不同的字符，则 BF 算法的平均时间复杂度为 $O(n)$．但是在 OI 题目中，给出的字符串一般都不是纯随机的．
+If the pattern has at least two different characters, the average time complexity of BF algorithm is $O(n)$. However, in OI problems, the given strings are generally not purely random.
 
-## Hash 的方法
+## Hash Method
 
-参见：[字符串哈希](./hash.md)
+See: [String Hash](./hash.md)
 
-## KMP 算法
+## KMP Algorithm
 
-参见：[前缀函数与 KMP 算法](./kmp.md)
+See: [Prefix Function and KMP Algorithm](./kmp.md)

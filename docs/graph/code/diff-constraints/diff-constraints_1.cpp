@@ -11,7 +11,7 @@ int head[10005], vis[10005], tot[10005], cnt;
 long long ans, dist[10005];
 queue<int> q;
 
-void addedge(int u, int v, int w) {  // 加边
+void addedge(int u, int v, int w) {  // Add edge
   e[++cnt].v = v;
   e[cnt].w = w;
   e[cnt].next = head[u];
@@ -42,7 +42,7 @@ int main() {
   dist[0] = 0;
   vis[0] = 1;
   q.push(0);
-  while (!q.empty()) {  // 判负环，看上面的
+  while (!q.empty()) {  // Detect negative cycles; see above
     int cur = q.front();
     q.pop();
     vis[cur] = 0;

@@ -22,7 +22,7 @@ constexpr int LOG2_ORD = 23;  // __builtin_ctz(MOD - 1)
 constexpr uint ZETA = PowMod(QUAD_NONRESIDUE, (MOD - 1) >> LOG2_ORD);
 constexpr uint INV_ZETA = InvMod(ZETA);
 
-// 返回做 n 长 FFT 所需的单位根数组，长度为一半
+// Returns the roots of unity needed for an n-point FFT, with half the length
 std::pair<std::vector<uint>, std::vector<uint>> GetFFTRoot(int n) {
   assert((n & (n - 1)) == 0);
   if (n / 2 == 0) return {};
@@ -69,7 +69,7 @@ void InvFFT(int n, uint a[], const uint root[]) {
   for (int i = 0; i < n; ++i) a[i] = (ull)a[i] * inv_n % MOD;
 }
 
-// 形式幂级数复合，求出 f(g) mod x^n 要求 g(0) = 0
+// Formal power series composition: compute f(g) mod x^n, requiring g(0) = 0
 std::vector<uint> FPSComposition(std::vector<uint> f, std::vector<uint> g,
                                  int n) {
   assert(g.empty() || g[0] == 0);
@@ -162,7 +162,7 @@ std::vector<uint> TaylorShift(std::vector<uint> f, uint c) {
   return f;
 }
 
-// 多项式复合，求出 f(g) mod x^n
+// Polynomial composition: compute f(g) mod x^n
 std::vector<uint> PolyComposition(const std::vector<uint> &f,
                                   const std::vector<uint> &g, int n) {
   if (g.empty() || g[0] == 0) return FPSComposition(f, g, n);

@@ -32,7 +32,7 @@ void upd(int step, int M) {
         int las = v[i];
         int now = v[(i + 1) % len];
         if (d[las] != LLONG_MAX) {
-          // 如果d[las]=LLONG_MAX，d[las]+step会越界，需要特判
+          // If d[las] = LLONG_MAX, d[las] + step overflows, so handle it separately
           d[now] = std::min(d[now], d[las] + step);
         }
       }
@@ -52,7 +52,7 @@ int main() {
 
   for (int i = 0; i < M; i++) {
     d[i] = LLONG_MAX;
-    // 本题的h达到了ll的上界，如果使用ll的话必需把初值置为LLONG_MAX
+    // In this problem, h reaches the upper bound of ll; if using ll, the initial value must be LLONG_MAX
   }
   d[0] = 0;
 

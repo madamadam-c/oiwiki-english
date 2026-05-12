@@ -1,59 +1,59 @@
-## 定义
+## Definition
 
-![ST 表示意图](images/st.svg)
+![Sparse Table diagram](images/st.svg)
 
-ST 表（Sparse Table，稀疏表）是用于解决 **可重复贡献问题** 的数据结构．
+An ST table (Sparse Table) is a data structure for solving **overlapping contribution problems**.
 
-???+ note "什么是可重复贡献问题？"
-    **可重复贡献问题** 是指对于运算 $\operatorname{opt}$，满足 $x\operatorname{opt} x=x$，则对应的区间询问就是一个可重复贡献问题．例如，最大值有 $\max(x,x)=x$，gcd 有 $\operatorname{gcd}(x,x)=x$，所以 RMQ 和区间 GCD 就是一个可重复贡献问题．像区间和就不具有这个性质，如果求区间和的时候采用的预处理区间重叠了，则会导致重叠部分被计算两次，这是我们所不愿意看到的．另外，$\operatorname{opt}$ 还必须满足结合律才能使用 ST 表求解．
+???+ note "What is an overlapping contribution problem?"
+    An **overlapping contribution problem** means that for an operation $\operatorname{opt}$, if $x\operatorname{opt} x=x$, then the corresponding interval query is an overlapping contribution problem. For example, maximum satisfies $\max(x,x)=x$, and gcd satisfies $\operatorname{gcd}(x,x)=x$, so RMQ and interval GCD are overlapping contribution problems. Interval sum does not have this property: if the preprocessed intervals used for interval sum overlap, the overlapping part is counted twice, which is not what we want. In addition, $\operatorname{opt}$ must also satisfy associativity to be solved with an ST table.
 
-???+ note "什么是 RMQ？"
-    RMQ 是英文 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）值．解决 RMQ 问题有很多种方法，可以参考 [RMQ 专题](../topic/rmq.md)．
+???+ note "What is RMQ?"
+    RMQ is the abbreviation of Range Maximum/Minimum Query, meaning interval maximum/minimum query. There are many ways to solve RMQ; see the [RMQ topic](../topic/rmq.md).
 
-## 引入
+## Introduction
 
-???+ example "[Luogu P3865【模板】ST 表 & RMQ 问题](https://www.luogu.com.cn/problem/P3865)"
-    给定 $n$（$1\le n\le 10^5$）个整数，有 $m$（$1\le m\le 2\times 10^6$）个询问，对于每个询问，你需要回答区间 $[l,r]$ 中的最大值．
+???+ example "[Luogu P3865 Template: ST Table & RMQ Problem](https://www.luogu.com.cn/problem/P3865)"
+    Given $n$ ($1\le n\le 10^5$) integers and $m$ ($1\le m\le 2\times 10^6$) queries, answer the maximum value in interval $[l,r]$ for each query.
 
-考虑暴力做法．每次都对区间 $[l,r]$ 扫描一遍，求出最大值．
+Consider the brute-force approach. For every query, scan the interval $[l,r]$ once and compute the maximum value.
 
-显然，这个算法会超时．
+Clearly, this algorithm times out.
 
-## ST 表
+## ST Table
 
-ST 表基于 [倍增](../basic/binary-lifting.md) 思想，可以做到 $\Theta(n\log n)$ 预处理，$\Theta(1)$ 回答每个询问．但是不支持修改操作．
+An ST table is based on [binary lifting](../basic/binary-lifting.md). It supports $\Theta(n\log n)$ preprocessing and answers each query in $\Theta(1)$, but it does not support modifications.
 
-基于倍增思想，我们考虑如何求出区间最大值．可以发现，如果按照一般的倍增流程，每次跳 $2^i$ 步的话，询问时的复杂度仍旧是 $\Theta(\log n)$，并没有比线段树更优，反而预处理一步还比线段树慢．
+Based on binary lifting, consider how to compute interval maximum. We can see that if we follow the normal binary lifting process and jump $2^i$ steps at a time, query complexity is still $\Theta(\log n)$, which is not better than a segment tree, while preprocessing is even slower than a segment tree by one step.
 
-我们发现 $\max(x,x)=x$，也就是说，区间最大值是一个具有「可重复贡献」性质的问题．即使用来求解的预处理区间有重叠部分，只要这些区间的并是所求的区间，最终计算出的答案就是正确的．
+We notice that $\max(x,x)=x$, meaning interval maximum has the "overlapping contribution" property. Even if the preprocessed intervals used to solve it overlap, as long as their union is the queried interval, the final answer is correct.
 
-如果手动模拟一下，可以发现我们能使用至多两个预处理过的区间来覆盖询问区间，也就是说询问时的时间复杂度可以被降至 $\Theta(1)$，在处理有大量询问的题目时十分有效．
+By manually simulating the process, we can see that at most two preprocessed intervals can cover the queried interval. Thus query time can be reduced to $\Theta(1)$, which is very effective for problems with many queries.
 
-具体实现如下：
+The implementation is as follows:
 
-令 $f(i,j)$ 表示区间 $[i,i+2^j-1]$ 的最大值．
+Let $f(i,j)$ denote the maximum value in interval $[i,i+2^j-1]$.
 
-显然 $f(i,0)=a_i$．
+Clearly, $f(i,0)=a_i$.
 
-根据定义式，第二维就相当于倍增的时候「跳了 $2^j-1$ 步」，依据倍增的思路，写出状态转移方程：$f(i,j)=\max(f(i,j-1),f(i+2^{j-1},j-1))$．
+According to the definition, the second dimension is equivalent to "jumping $2^j-1$ steps" in binary lifting. Following the binary lifting idea, the transition is: $f(i,j)=\max(f(i,j-1),f(i+2^{j-1},j-1))$.
 
 ![](./images/st-preprocess-lift.svg)
 
-以上就是预处理部分．而对于查询，可以简单实现如下：
+This is the preprocessing part. For queries, we can implement them simply as follows:
 
-对于每个询问 $[l,r]$，我们把它分成两部分：$[l,l+2^s-1]$ 与 $[r-2^s+1,r]$，其中 $s=\left\lfloor\log_2(r-l+1)\right\rfloor$．两部分的结果的最大值就是回答．
+For each query $[l,r]$, split it into two parts: $[l,l+2^s-1]$ and $[r-2^s+1,r]$, where $s=\left\lfloor\log_2(r-l+1)\right\rfloor$. The maximum of the two parts is the answer.
 
-![ST 表的查询过程](./images/st-query.svg)
+![Query process of an ST table](./images/st-query.svg)
 
-根据上面对于「可重复贡献问题」的论证，由于最大值是「可重复贡献问题」，重叠并不会对区间最大值产生影响．又因为这两个区间完全覆盖了 $[l,r]$，可以保证答案的正确性．
+By the argument above for "overlapping contribution problems", because maximum is an overlapping contribution problem, overlap does not affect the interval maximum. Since these two intervals fully cover $[l,r]$, correctness is guaranteed.
 
-???+ example "[Luogu P3865【模板】ST 表 & RMQ 问题](https://www.luogu.com.cn/problem/P3865) 参考实现"
-    === "C 风格"
+???+ example "[Luogu P3865 Template: ST Table & RMQ Problem](https://www.luogu.com.cn/problem/P3865) Reference Implementation"
+    === "C style"
         ```cpp
         --8<-- "docs/ds/code/sparse-table/sparse-table_1.cpp"
         ```
     
-    === "C++ 风格"
+    === "C++ style"
         ```cpp
         --8<-- "docs/ds/code/sparse-table/sparse-table_2.cpp"
         ```
@@ -63,13 +63,13 @@ ST 表基于 [倍增](../basic/binary-lifting.md) 思想，可以做到 $\Theta(
         --8<-- "docs/ds/code/sparse-table/sparse-table_1.py"
         ```
 
-## 注意点
+## Notes
 
-1.  输入输出数据一般很多，建议开启输入输出优化．
+1.  Input and output data are usually large, so input/output optimization is recommended.
 
-2.  在预处理 ST 表时通常需要建立一个一维大小为 $\log n$，另一维大小为 $n$ 的数组，此时应优先让大小为 $\log n$ 的维度作为第一维，以提升缓存局部性．
+2.  When preprocessing an ST table, one dimension usually has size $\log n$ and the other has size $n$. Prefer making the dimension of size $\log n$ the first dimension to improve cache locality.
 
-3.  每次用 [std::log](https://en.cppreference.com/w/cpp/numeric/math/log) 重新计算对数函数值并不值得，建议利用 `__builtin_clz` 或 `__lg` 等内建函数进行计算．如无法利用这些内建函数，也可以预处理对数函数值．预处理方式如下所示：
+3.  Recomputing logarithms each time with [std::log](https://en.cppreference.com/w/cpp/numeric/math/log) is not worthwhile. It is recommended to use built-ins such as `__builtin_clz` or `__lg`. If these built-ins cannot be used, logarithm values can also be preprocessed as follows:
 
 $$
 \begin{cases}
@@ -78,45 +78,45 @@ $$
 \end{cases}
 $$
 
-## ST 表维护其他信息
+## Maintaining Other Information with ST Tables
 
-除 RMQ 以外，还有其它的「可重复贡献问题」．例如「区间按位与」、「区间按位或」、「区间 GCD」，ST 表都能高效地解决．
+Besides RMQ, there are other "overlapping contribution problems". For example, interval bitwise AND, interval bitwise OR, and interval GCD can all be solved efficiently with ST tables.
 
-需要注意的是，对于「区间 GCD」，ST 表的查询复杂度并没有比线段树更优（令值域为 $w$，ST 表的查询复杂度为 $\Theta(\log w)$，而线段树为 $\Theta(\log n+\log w)$，且值域一般是大于 $n$ 的），但是 ST 表的预处理复杂度也没有比线段树更劣，而编程复杂度方面 ST 表比线段树简单很多．
+Note that for interval GCD, the query complexity of an ST table is not better than a segment tree. Let the value domain be $w$; ST table query complexity is $\Theta(\log w)$, while segment tree complexity is $\Theta(\log n+\log w)$, and the value domain is usually larger than $n$. However, ST table preprocessing complexity is not worse than a segment tree, and ST tables are much simpler to program.
 
-如果分析一下，「可重复贡献问题」一般都带有某种类似 RMQ 的成分．例如「区间按位与」就是每一位取最小值，而「区间 GCD」则是每一个质因数的指数取最小值．
+On closer analysis, overlapping contribution problems generally have some RMQ-like component. For example, interval bitwise AND takes the minimum on each bit, while interval GCD takes the minimum exponent of every prime factor.
 
-## 总结
+## Summary
 
-ST 表能较好的维护「可重复贡献」的区间信息（同时也应满足结合律），时间复杂度较低，代码量相对其他算法很小．但是，ST 表能维护的信息非常有限，不能较好地扩展，并且不支持修改操作．
+ST tables can maintain interval information with "overlapping contribution" well (the operation should also satisfy associativity), with low time complexity and much less code than many other algorithms. However, the information ST tables can maintain is very limited, they do not extend well, and they do not support modifications.
 
-## 习题
+## Exercises
 
--   [「SCOI2007」降雨量](https://loj.ac/p/2279)
+-   [SCOI2007 Rainfall](https://loj.ac/p/2279)
 
--   [\[USACO07JAN\] 平衡的阵容 Balanced Lineup](https://www.luogu.com.cn/problem/P2880)
+-   [[USACO07JAN] Balanced Lineup](https://www.luogu.com.cn/problem/P2880)
 
-## 附录：ST 表求区间 GCD 的时间复杂度分析
+## Appendix: Time Complexity Analysis of ST Table for Interval GCD
 
-在算法运行的时候，可能要经过 $\Theta(\log n)$ 次迭代．每一次迭代都可能会使用 GCD 函数进行递归，令值域为 $w$，GCD 函数的时间复杂度最高是 $\Omega(\log w)$ 的，所以总时间复杂度看似有 $O(n\log n\log w)$．
+During the algorithm, there may be $\Theta(\log n)$ iterations. Each iteration may use the GCD function recursively. Let the value domain be $w$; the worst-case time complexity of the GCD function is $\Omega(\log w)$, so the total time complexity seems to be $O(n\log n\log w)$.
 
-但是，在 GCD 的过程中，每一次递归（除最后一次递归之外）都会使数列中的某个数至少减半，而数列中的数最多减半的次数为 $\log_2 (w^n)=\Theta(n\log w)$，所以，GCD 的递归部分最多只会运行 $O(n\log w)$ 次．再加上循环部分（以及最后一层递归）的 $\Theta(n\log n)$，最终时间复杂度则是 $O(n(\log w+\log n))$，由于可以构造数据使得时间复杂度为 $\Omega(n(\log w+\log n))$，所以最终的时间复杂度即为 $\Theta(n(\log w+\log n))$．
+However, during GCD computation, every recursive call except the last one reduces some number in the sequence by at least half. The numbers in the sequence can be halved at most $\log_2 (w^n)=\Theta(n\log w)$ times in total. Thus the recursive part of GCD runs at most $O(n\log w)$ times. Adding the loop part (and the final recursive layer), which is $\Theta(n\log n)$, the final time complexity is $O(n(\log w+\log n))$. Since data can be constructed to make the time complexity $\Omega(n(\log w+\log n))$, the final time complexity is $\Theta(n(\log w+\log n))$.
 
-而查询部分的时间复杂度很好分析，考虑最劣情况，即每次询问都询问最劣的一对数，时间复杂度为 $\Theta(\log w)$．因此，ST 表维护「区间 GCD」的时间复杂度为预处理 $\Theta(n(\log n+\log w))$，单次查询 $\Theta(\log w)$．
+The query part is easy to analyze: in the worst case, every query asks about the worst pair of numbers, so the time complexity is $\Theta(\log w)$. Therefore, for maintaining interval GCD with an ST table, preprocessing is $\Theta(n(\log n+\log w))$, and each query is $\Theta(\log w)$.
 
-线段树的相应操作是预处理 $\Theta(n\log w)$，单次查询 $\Theta(\log n+\log w)$．
+The corresponding segment tree operations are preprocessing $\Theta(n\log w)$ and each query $\Theta(\log n+\log w)$.
 
-这并不是一个严谨的数学论证，更为严谨的附在下方：
+This is not a rigorous mathematical proof; a more rigorous proof is attached below:
 
-??? note "更严谨的证明"
-    理解本段，可能需要具备 [时间复杂度](../basic/complexity.md) 的关于「势能分析法」的知识．
+??? note "More Rigorous Proof"
+    Understanding this paragraph may require knowledge of "potential analysis" from [Time Complexity](../basic/complexity.md).
     
-    先分析预处理部分的时间复杂度：
+    First analyze the time complexity of preprocessing:
     
-    设「待考虑数列」为在预处理 ST 表的时候当前层循环的数列．例如，第零层的数列就是原数列，第一层的数列就是第零层的数列经过一次迭代之后的数列，即 `st[1..n][1]`，我们将其记为 $A$．
+    Let the "sequence under consideration" be the sequence in the current layer loop during ST table preprocessing. For example, the zeroth layer is the original sequence, and the first layer is the sequence after one iteration of the zeroth layer, i.e. `st[1..n][1]`; denote it by $A$.
     
-    而势能函数就定义为「待考虑数列」中所有数的累乘的以二为底的对数．即：$\Phi(A)=\log_2\left(\prod\limits_{i=1}^n A_i\right)$．
+    Define the potential function as the base-2 logarithm of the product of all numbers in the "sequence under consideration": $\Phi(A)=\log_2\left(\prod\limits_{i=1}^n A_i\right)$.
     
-    在一次迭代中，所花费的时间相当于迭代循环所花费的时间与 GCD 所花费的时间之和．其中，GCD 花费的时间有长有短．最短可能只有两次甚至一次递归，而最长可能有 $O(\log w)$ 次递归．但是，GCD 过程中，除最开头一层与最末一层以外，每次递归都会使「待考虑数列」中的某个结果至少减半．即，$\Phi(A)$ 会减少至少 $1$，该层递归所用的时间可以被势能函数均摊．
+    In one iteration, the time spent is the sum of the iteration loop time and the time spent by GCD. GCD time varies: it may take only two or even one recursive calls in the shortest case, and $O(\log w)$ calls in the longest case. However, during GCD, except for the first and last layers, every recursive call reduces some result in the "sequence under consideration" by at least half. That is, $\Phi(A)$ decreases by at least $1$, and the time used by that recursive layer can be amortized by the potential function.
     
-    同时，我们可以看到，$\Phi(A)$ 的初值最大为 $\log_2 (w^n)=\Theta(n\log w)$，而 $\Phi(A)$ 不增．所以，ST 表预处理部分的时间复杂度为 $O(n(\log w+\log n))$．
+    At the same time, the initial value of $\Phi(A)$ is at most $\log_2 (w^n)=\Theta(n\log w)$, and $\Phi(A)$ never increases. Therefore, the time complexity of ST table preprocessing is $O(n(\log w+\log n))$.

@@ -1,81 +1,81 @@
 author: Ir1d, cqnuljs, akakw1, MingqiHuang, Chrogeek, henrytbtrue, Planet6174, StudyingFather
 
-## 文件的概念
+## The Concept of Files
 
-文件是根据特定的目的而收集在一起的有关数据的集合．C/C++ 把每一个文件都看成是一个有序的字节流，每个文件都是以 **文件结束标志**（EOF）结束，如果要操作某个文件，程序应该首先打开该文件，每当一个文件被打开后（请记得关闭打开的文件），该文件就和一个流关联起来，这里的流实际上是一个字节序列．
+A file is a collection of related data gathered for a specific purpose. C/C++ treats every file as an ordered byte stream. Every file ends with an **end-of-file marker** (EOF). To operate on a file, a program should first open the file. Whenever a file is opened, remember to close it later; the file is associated with a stream, and this stream is essentially a byte sequence.
 
-C/C++ 将文件分为文本文件和二进制文件．文本文件就是简单的文本文件（重点），另外二进制文件就是特殊格式的文件或者可执行代码文件等．
+C/C++ divides files into text files and binary files. Text files are ordinary text files, which are the focus here. Binary files include files in special formats, executable code files, and so on.
 
-## 文件的操作步骤
+## Steps for File Operations
 
-1、打开文件，将文件指针指向文件，决定打开文件类型；  
-2、对文件进行读、写操作（比赛中主要用到的操作，其他一些操作暂时不写）；  
-3、在使用完文件后，关闭文件．
+1.  Open the file, point the file pointer to the file, and decide the file opening mode.  
+2.  Read from or write to the file; these are the main operations used in contests, so other operations are omitted for now.  
+3.  Close the file after using it.
 
-## `freopen` 函数
+## The `freopen` Function
 
-### 函数简介
+### Function Introduction
 
-函数用于将指定输入输出流以指定方式重定向到文件，包含于头文件 `stdio.h (cstdio)` 中，该函数可以在不改变代码原貌的情况下改变输入输出环境，但使用时应当保证流是可靠的．
+This function redirects a specified input/output stream to a file in a specified mode. It is declared in the header `stdio.h (cstdio)`. It can change the input/output environment without changing the original structure of the code, but you should ensure that the stream is reliable when using it.
 
-函数主要有三种方式：读、写和附加．
+The main modes are reading, writing, and appending.
 
-### 命令格式
+### Syntax
 
 ```cpp
 FILE* freopen(const char* filename, const char* mode, FILE* stream);
 ```
 
-### 参数说明
+### Parameter Description
 
--   `filename`: 要打开的文件名
--   `mode`: 文件打开的模式，表示文件访问的权限
--   `stream`: 文件指针，通常使用标准文件流 (`stdin/stdout`) 或标准错误输出流 (`stderr`)
--   返回值：文件指针，指向被打开文件
+-   `filename`: the name of the file to open
+-   `mode`: the file opening mode, indicating the file access permissions
+-   `stream`: a file pointer, usually a standard file stream (`stdin/stdout`) or the standard error stream (`stderr`)
+-   Return value: a file pointer pointing to the opened file
 
-### 文件打开格式（选读）
+### File Opening Modes (Optional)
 
--   `r`：以只读方式打开文件，文件必须存在，只允许读入数据 **（常用）**
--   `r+`：以读/写方式打开文件，文件必须存在，允许读/写数据
--   `rb`：以只读方式打开二进制文件，文件必须存在，只允许读入数据
--   `rb+`：以读/写方式打开二进制文件，文件必须存在，允许读/写数据
--   `rt+`：以读/写方式打开文本文件，允许读/写数据
--   `w`：以只写方式打开文件，文件不存在会新建文件，否则清空内容，只允许写入数据 **（常用）**
--   `w+`：以读/写方式打开文件，文件不存在将新建文件，否则清空内容，允许读/写数据
--   `wb`：以只写方式打开二进制文件，文件不存在将会新建文件，否则清空内容，只允许写入数据
--   `wb+`：以读/写方式打开二进制文件，文件不存在将新建文件，否则清空内容，允许读/写数据
--   `a`：以只写方式打开文件，文件不存在将新建文件，写入数据将被附加在文件末尾（保留 EOF 符）
--   `a+`：以读/写方式打开文件，文件不存在将新建文件，写入数据将被附加在文件末尾（不保留 EOF 符）
--   `at+`：以读/写方式打开文本文件，写入数据将被附加在文件末尾
--   `ab+`：以读/写方式打开二进制文件，写入数据将被附加在文件末尾
+-   `r`: open a file for reading only; the file must exist and only input is allowed **(commonly used)**
+-   `r+`: open a file for reading/writing; the file must exist and both input and output are allowed
+-   `rb`: open a binary file for reading only; the file must exist and only input is allowed
+-   `rb+`: open a binary file for reading/writing; the file must exist and both input and output are allowed
+-   `rt+`: open a text file for reading/writing; both input and output are allowed
+-   `w`: open a file for writing only; create it if it does not exist, otherwise clear its contents; only output is allowed **(commonly used)**
+-   `w+`: open a file for reading/writing; create it if it does not exist, otherwise clear its contents; both input and output are allowed
+-   `wb`: open a binary file for writing only; create it if it does not exist, otherwise clear its contents; only output is allowed
+-   `wb+`: open a binary file for reading/writing; create it if it does not exist, otherwise clear its contents; both input and output are allowed
+-   `a`: open a file for writing only; create it if it does not exist; written data is appended to the end of the file (preserving the EOF marker)
+-   `a+`: open a file for reading/writing; create it if it does not exist; written data is appended to the end of the file (not preserving the EOF marker)
+-   `at+`: open a text file for reading/writing; written data is appended to the end of the file
+-   `ab+`: open a binary file for reading/writing; written data is appended to the end of the file
 
-### 使用方法
+### Usage
 
-读入文件内容：
+Read file contents:
 
 ```cpp
 freopen("data.in", "r", stdin);
-// data.in 就是读取的文件名，要和可执行文件放在同一目录下
+// data.in is the file to read; it should be in the same directory as the executable
 ```
 
-输出到文件：
+Output to a file:
 
 ```cpp
 freopen("data.out", "w", stdout);
-// data.out 就是输出文件的文件名，和可执行文件在同一目录下
+// data.out is the output file; it is in the same directory as the executable
 ```
 
-关闭标准输入/输出流
+Close the standard input/output streams:
 
 ```cpp
 fclose(stdin);
 fclose(stdout);
 ```
 
-??? note "注"
-    `printf/scanf/cin/cout` 等函数默认使用 `stdin/stdout`，将 `stdin/stdout` 重定向后，这些函数将输入/输出到被定向的文件
+??? note "Note"
+    Functions such as `printf/scanf/cin/cout` use `stdin/stdout` by default. After redirecting `stdin/stdout`, these functions read from or write to the redirected files.
 
-### 模板
+### Template
 
 ```cpp
 #include <cstdio>
@@ -85,7 +85,7 @@ int main(void) {
   freopen("data.in", "r", stdin);
   freopen("data.out", "w", stdout);
   /*
-  中间的代码不需要改变，直接使用 cin 和 cout 即可
+  The code in the middle does not need to change; just use cin and cout directly
   */
   fclose(stdin);
   fclose(stdout);
@@ -93,29 +93,29 @@ int main(void) {
 }
 ```
 
-## `fopen` 函数（选读）
+## The `fopen` Function (Optional)
 
-函数大致与 `freopen` 相同，函数将打开指定文件并返回打开文件的指针
+This function is roughly the same as `freopen`. It opens the specified file and returns a pointer to the opened file.
 
-### 函数原型
+### Function Prototype
 
 ```cpp
 FILE* fopen(const char* path, const char* mode)
 ```
 
-各项参数含义同 `freopen`
+The meanings of the parameters are the same as for `freopen`.
 
-### 可用读写函数（基本）
+### Available Read/Write Functions (Basic)
 
 -   `fread/fwrite`
 -   `fgetc/fputc`
 -   `fscanf/fprintf`
 -   `fgets/fputs`
 
-### 使用方式
+### Usage
 
 ```cpp
-FILE *in, *out;  // 定义文件指针
+FILE *in, *out;  // Define file pointers
 in = fopen("data.in", "r");
 out = fopen("data.out", "w");
 /*
@@ -125,43 +125,43 @@ fclose(in);
 fclose(out);
 ```
 
-## C++ 的 `ifstream/ofstream` 文件输入输出流
+## C++ `ifstream/ofstream` File Input/Output Streams
 
-### 使用方法
+### Usage
 
-读入文件内容：
+Read file contents:
 
 ```cpp
 ifstream fin("data.in");
-// data.in 就是读取文件的相对位置或绝对位置
+// data.in is the relative or absolute path of the file to read
 ```
 
-输出到文件：
+Output to a file:
 
 ```cpp
 ofstream fout("data.out");
-// data.out 就是输出文件的相对位置或绝对位置
+// data.out is the relative or absolute path of the output file
 ```
 
-关闭标准输入/输出流
+Close the standard input/output streams:
 
 ```cpp
 fin.close();
 fout.close();
 ```
 
-### 模板
+### Template
 
 ```cpp
 #include <fstream>
-using namespace std;  // 两个类型都在 std 命名空间里
+using namespace std;  // Both types are in the std namespace
 
 ifstream fin("data.in");
 ofstream fout("data.out");
 
 int main(void) {
   /*
-  中间的代码改变 cin 为 fin ，cout 为 fout 即可
+  In the code in the middle, just change cin to fin and cout to fout
   */
   fin.close();
   fout.close();
@@ -169,6 +169,6 @@ int main(void) {
 }
 ```
 
-## 参考资料
+## References
 
-1.  信息学奥赛一本通
+1.  Informatics Olympiad: A Beginner's Guide

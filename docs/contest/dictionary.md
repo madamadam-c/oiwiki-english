@@ -1,31 +1,29 @@
-前置知识：[分块](../ds/decompose.md)．
+Prerequisite knowledge: [Block decomposition](../ds/decompose.md).
 
-朴素的打表，指的是在比赛时把所有可能的输入对应的答案都计算出来并保存下来，然后在代码里开个数组把答案放里面，直接输出即可．
+Naive precomputation refers to calculating the answers for all possible inputs during a contest and saving them, then storing the answers in an array in the code and directly outputting them.
 
-注意这个技巧只适用于输入的值域不大（如，输入只有一个数，而且范围很小）的问题，否则可能会导致代码过长、MLE、打表需要的时间过长等问题．
+Note that this technique is only applicable when the input value range is small (e.g., the input is a single number with a very small range). Otherwise, it may cause issues such as excessive code length, MLE, or the precomputation taking too long.
 
-???+ note "例题"
-    规定 $f(x)$ 为整数 $x$ 的二进制表示中 $1$ 的个数．输入一个正整数 $n$($n\leq 10^9$)，输出 $\sum_{i=1}^n f^2(i)$．
+???+ note "Example Problem"
+Define $f(x)$ as the number of $1$s in the binary representation of integer $x$. Given a positive integer $n$ ($n\leq 10^9$), output $\sum_{i=1}^n f^2(i)$.
 
-如果对于每一个 $n$，都输出 $f(n)$ 的话，除了可能会 MLE 外，还有可能代码超过最大代码长度限制，导致编译不通过．
+If we were to output $f(n)$ for every $n$, besides potentially causing MLE, the code might also exceed the maximum code length limit, resulting in a compilation failure.
 
-我们考虑优化这个答案表．采用 [分块](../ds/decompose.md) 的思想，我们设置一个合理的步长 $m$（这个步长一般视代码长度而定），对于第 $i$ 块，计算出：
+We consider optimizing this answer table. Using the idea of [block decomposition](../ds/decompose.md), we set a reasonable step size $m$ (this step size is generally determined by the code length), and for the $i$-th block, we compute:
 
 $$
 \sum_{k=\frac{n}{m}(i-1)+1}^{\frac{ni}{m}} f^2(k)
 $$
 
-的值．
+Then, when outputting the answer, we process it using the block decomposition approach. That is, for complete blocks, we use the precomputed values, and for partial blocks, we compute the answer by brute force.
 
-然后输出答案时采用分块思想处理即可．即，整块的答案用预处理的值计算，非整块的答案暴力计算．
+In general, such problems involve computing individual function values $f(x)$ quickly, but require summing (multiplying, or performing some quickly mergeable operation on) a large number of function values, where straightforward enumeration would exceed the time limit. When a standard approach cannot be found, segmented precomputation is a good alternative.
 
-一般来说，这样的问题对于处理单个函数值 $f(x)$ 很快，但是需要大量函数值求和（求积或某些可以快速合并的操作），枚举会超出时间限制，在找不到标准做法的情况下，分段打表是一个不错的选择．
+???+ note "Notes"
+When the exponent in the problem above is not constant but has a small range, precomputation can also be considered.
 
-???+ note "注意事项"
-    当上题中指数不是定值，但是范围较小，也可以考虑打表．
+### Example Problems
 
-### 例题
+[「BZOJ 3798」Special Primes](https://hydro.ac/p/bzoj-P3798): Find how many primes in the interval $[l,r]$ can be decomposed into the sum of squares of two positive integers.
 
-[「BZOJ 3798」特殊的质数](https://hydro.ac/p/bzoj-P3798)：求 $[l,r]$ 区间内有多少个质数可以分解为两个正整数的平方和．
-
-[「Luogu P1822」魔法指纹](https://www.luogu.com.cn/problem/P1822)
+[「Luogu P1822」Magic Fingerprint](https://www.luogu.com.cn/problem/P1822)

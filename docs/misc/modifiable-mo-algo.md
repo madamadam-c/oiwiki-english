@@ -1,18 +1,18 @@
 author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouuan, renbaoshuo, Lixuannan
 
-请确保您已经会普通莫队算法了．如果您还不会，请先阅读前面的 [普通莫队算法](./mo-algo.md)．
+Please make sure you already know ordinary Mo's algorithm. If not, read the previous [ordinary Mo's algorithm](./mo-algo.md) first.
 
-## 特点
+## Characteristics
 
-普通莫队是不能带修改的．
+Ordinary Mo's algorithm cannot handle modifications.
 
-我们可以强行让它可以修改，就像 DP 一样，可以强行加上一维 **时间维**, 表示这次操作的时间．
+We can force it to support modifications. Like DP, we can forcibly add one more **time dimension**, representing the time of this operation.
 
-时间维表示经历的修改次数．
+The time dimension represents the number of modifications experienced.
 
-即把询问 $[l,r]$ 变成 $[l,r,\text{time}]$．
+That is, turn a query $[l,r]$ into $[l,r,\text{time}]$.
 
-那么我们的坐标也可以在时间维上移动，即 $[l,r,\text{time}]$ 多了一维可以移动的方向，可以变成：
+Then our coordinate can also move along the time dimension. That is, $[l,r,\text{time}]$ gains one additional movable direction and can become:
 
 -   $[l-1,r,\text{time}]$
 -   $[l+1,r,\text{time}]$
@@ -21,33 +21,33 @@ author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouu
 -   $[l,r,\text{time}-1]$
 -   $[l,r,\text{time}+1]$
 
-这样的转移也是 $O(1)$ 的，但是我们排序又多了一个关键字，再搞搞就行了．
+These transitions are also $O(1)$, but sorting has one more key. Handle it similarly.
 
-可以用和普通莫队类似的方法排序转移，做到 $O(n^{5/3})$．
+Using a sorting method similar to ordinary Mo's algorithm, this can achieve $O(n^{5/3})$.
 
-这一次我们排序的方式是以 $n^{2/3}$ 为一块，分成了 $n^{1/3}$ 块，第一关键字是左端点所在块，第二关键字是右端点所在块，第三关键字是时间．
+This time, the sorting method uses blocks of size $n^{2/3}$, divided into $n^{1/3}$ blocks. The first key is the block containing the left endpoint, the second key is the block containing the right endpoint, and the third key is time.
 
-???+ note "最优块长以及时间复杂度分析"
-    我们设序列长为 $n$，$m$ 个询问，$t$ 个修改．
+???+ note "Optimal Block Size and Time Complexity Analysis"
+    Let the sequence length be $n$, with $m$ queries and $t$ modifications.
     
-    带修莫队排序的第二关键字是右端点所在块编号，不同于普通莫队．
+    The second sorting key of Mo's algorithm with modifications is the block number of the right endpoint, unlike ordinary Mo's algorithm.
     
-    想一想，如果不把右端点分块：
+    Think about what happens if the right endpoint is not blocked:
     
-    -   乱序的右端点对于每个询问会移动 $n$ 次．
-    -   有序的右端点会带来乱序的时间，每次询问会移动 $t$ 次．
+    -   If right endpoints are unordered, they may move $n$ times per query.
+    -   If right endpoints are ordered, time becomes unordered and may move $t$ times per query.
     
-    无论哪一种情况，带来的时间开销都无法接受．
+    Either case has unacceptable time cost.
     
-    接下来分析时间复杂度．
+    Now analyze the time complexity.
     
-    设块长为 $s$，则有 $\dfrac{n}{s}$ 个块．对于块 $i$ 和块 $j$，记有 $q_{i,j}$ 个询问的左端点位于块 $i$，右端点位于块 $j$．
+    Let the block size be $s$, so there are $\dfrac{n}{s}$ blocks. For block $i$ and block $j$, let $q_{i,j}$ be the number of queries whose left endpoint lies in block $i$ and right endpoint lies in block $j$.
     
-    每「组」左右端点不换块的询问 $(i,j)$，端点每次移动 $O(s)$ 次，时间单调递增，$O(t)$．
+    For each "group" of queries $(i,j)$ where the left and right endpoints do not change blocks, the endpoints move $O(s)$ times per query, and time increases monotonically, costing $O(t)$.
     
-    左右端点换块的时间忽略不计．
+    The time for endpoints changing blocks is ignored.
     
-    表示一下就是：
+    Written out:
     
     $$
     \begin{aligned}
@@ -57,50 +57,50 @@ author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouu
     \end{aligned}
     $$
     
-    考虑求导求此式极小值．设 $f(s)=ms+\dfrac{n^2t}{s^2}$．那 $f'(s)=m-\dfrac{2n^2t}{s^3}=0$．
+    Consider differentiating to minimize this expression. Let $f(s)=ms+\dfrac{n^2t}{s^2}$. Then $f'(s)=m-\dfrac{2n^2t}{s^3}=0$.
     
-    得 $s=\sqrt[3]{\dfrac{2n^2t}{m}}=\dfrac{2^{1/3}n^{2/3}t^{1/3}}{m^{1/3}}=s_0$．
+    Thus $s=\sqrt[3]{\dfrac{2n^2t}{m}}=\dfrac{2^{1/3}n^{2/3}t^{1/3}}{m^{1/3}}=s_0$.
     
-    也就是当块长取 $\dfrac{n^{2/3}t^{1/3}}{m^{1/3}}$ 时有最优时间复杂度 $O\left(n^{2/3}m^{2/3}t^{1/3}\right)$．
+    In other words, when the block size is $\dfrac{n^{2/3}t^{1/3}}{m^{1/3}}$, the optimal time complexity is $O\left(n^{2/3}m^{2/3}t^{1/3}\right)$.
     
-    常说的 $O\left(n^{5/3}\right)$ 便是把 $n,m,t$ 当做同数量级的时间复杂度．
+    The commonly stated $O\left(n^{5/3}\right)$ treats $n,m,t$ as being of the same order.
     
-    实际操作中还是推荐设定 $n^{2/3}$ 为块长．
+    In practice, it is still recommended to set the block size to $n^{2/3}$.
 
-## 例题
+## Example
 
-???+ note "例题 [「国家集训队」数颜色/维护队列](https://www.luogu.com.cn/problem/P1903)"
-    题目大意：给你一个序列，M 个操作，有两种操作：
+???+ note "Example [\[National Training Team\] Number of Colors / Maintain Queue](https://www.luogu.com.cn/problem/P1903)"
+    Problem summary: given a sequence and M operations, there are two types of operations:
     
-    1.  修改序列上某一位的数字
-    2.  询问区间 $[l,r]$ 中数字的种类数（多个相同的数字只算一个）
+    1.  Modify the number at one position in the sequence.
+    2.  Query the number of distinct values in interval $[l,r]$ (multiple equal numbers count only once).
 
-我们不难发现，如果不带操作 1（修改）的话，我们就能轻松用普通莫队解决．
+It is not hard to see that without operation 1 (modification), ordinary Mo's algorithm can solve the problem easily.
 
-但是题目还带单点修改，所以用 **带修改的莫队**．
+But the problem also has point modifications, so use **Mo's algorithm with modifications**.
 
-### 过程
+### Procedure
 
-先考虑普通莫队的做法：
+First consider ordinary Mo's algorithm:
 
--   每次扩大区间时，每加入一个数字，则统计它已经出现的次数，如果加入前这种数字出现次数为 $0$，则说明这是一种新的数字，答案 $+1$．然后这种数字的出现次数 $+1$．
--   每次减小区间时，每删除一个数字，则统计它删除后的出现次数，如果删除后这种数字出现次数为 $0$，则说明这种数字已经从当前的区间内删光了，也就是当前区间减少了一种颜色，答案 $-1$．然后这种数字的出现次数 $-1$．
+-   When expanding the interval, each time a number is added, count how many times it has already appeared. If its occurrence count before adding is $0$, it means this is a new number, so answer $+1$. Then increase this number's occurrence count by $+1$.
+-   When shrinking the interval, each time a number is deleted, count its occurrence count after deletion. If its occurrence count after deletion is $0$, it means this number has been completely removed from the current interval, so the current interval has one fewer color and the answer is $-1$. Then decrease this number's occurrence count by $-1$.
 
-现在再来考虑修改：
+Now consider modifications:
 
--   单点修改，把某一位的数字修改掉．假如我们是从一个经历修改次数为 $i$ 的询问转移到一个经历修改次数为 $j$ 的询问上，且 $i<j$ 的话，我们就需要把第 $i+1$ 个到第 $j$ 个修改强行加上．
--   假如 $j<i$ 的话，则需要把第 $i$ 个到第 $j+1$ 个修改强行还原．
+-   For a point modification, modify the number at one position. Suppose we transfer from a query that has experienced $i$ modifications to a query that has experienced $j$ modifications, and $i<j$. Then we need to forcibly apply modifications $i+1$ through $j$.
+-   If $j<i$, we need to forcibly roll back modifications $i$ through $j+1$.
 
-怎么强行加上一个修改呢？假设一个修改是修改第 $pos$ 个位置上的颜色，原本 $pos$ 上的颜色为 $a$，修改后颜色为 $b$，还假设当前莫队的区间扩展到了 $[l,r]$．
+How do we forcibly apply a modification? Suppose a modification changes the color at position $pos$: the original color at pos is $a$, and the new color is $b$. Also suppose the current Mo interval is $[l,r]$.
 
--   加上这个修改：我们首先判断 $pos$ 是否在区间 $[l,r]$ 内．如果是的话，我们等于是从区间中删掉颜色 $a$，加上颜色 $b$，并且当前颜色序列的第 $pos$ 项的颜色改成 $b$．如果不在区间 $[l,r]$ 内的话，我们就直接修改当前颜色序列的第 $pos$ 项为 $b$．
--   还原这个修改：等于加上一个修改第 $pos$ 项、把颜色 $b$ 改成颜色 $a$ 的修改．
+-   Apply this modification: first check whether $pos$ lies inside interval $[l,r]$. If so, this is equivalent to deleting color $a$ from the interval, adding color $b$, and changing the color at position $pos$ in the current color sequence to $b$. If $pos$ is not inside interval $[l,r]$, directly change the color at position $pos$ in the current color sequence to $b$.
+-   Roll back this modification: this is equivalent to applying a modification at position $pos$ that changes color $b$ back to color $a$.
 
-因此这道题就这样用带修改莫队轻松解决啦！
+Thus, this problem can be solved easily with Mo's algorithm with modifications.
 
-### 实现
+### Implementation
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/misc/code/modifiable-mo-algo/modifiable-mo-algo_1.cpp"
     ```

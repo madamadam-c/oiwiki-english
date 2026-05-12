@@ -1,153 +1,153 @@
 author: Ir1d, partychicken, ouuan, Marcythm, TianyiQ
 
-## 概述
+## Overview
 
-前置知识：[随机函数](../misc/random.md) 和 [概率初步](../math/probability/basic-conception.md)
+Prerequisite knowledge: [Random function](../misc/random.md) and [Preliminary probability](../math/probability/basic-conception.md)
 
-本文将对 OI/ICPC 中的随机化相关技巧做一个简单的分类，并对每个分类予以介绍．本文也将介绍一些在 OI/ICPC 中很少使用，但与 OI/ICPC 在风格等方面较为贴近的方法，这些内容前将用 `(*)` 标注．
+This article will make a simple classification of randomization related techniques in OI/ICPC and introduce each classification. This article will also introduce some methods that are rarely used in OI/ICPC but are close to OI/ICPC in terms of style and other aspects. These contents will be marked with `(*)`.
 
-这一分类并不代表广泛共识，也必定不能囊括所有可能性，因此仅供参考．
+This classification does not represent broad consensus and certainly cannot cover all possibilities, so it is for reference only.
 
-**记号和约定**：
+**Notations and Conventions**:
 
--   $\mathrm{Pr}[A]$ 表示事件 $A$ 发生的概率．
--   $\mathrm{E}[X]$ 表示随机变量 $X$ 的期望．
--   赋值号 $:=$ 表示引入新的量，例如 $Y:=1926$ 表示引入值为 $1926$ 的量 $Y$．
+-   $\mathrm{Pr}[A]$ represents the probability of event $A$ occurring.
+-   $\mathrm{E}[X]$ represents the expectation of random variable $X$.
+-   The assignment number $:=$ represents the introduction of a new quantity, for example, $Y:=1926$ represents the introduction of the quantity $Y$ with the value $1926$.
 
-## 用随机集合覆盖目标元素
+## Overwrite the target element with a random collection
 
-庞大的解空间中有一个（或多个）解是我们想要的．我们可以尝试进行多次撒网，只要有一次能够网住目标解就能成功．
+There is one (or more) solutions in the huge solution space that we want. We can try to cast the net multiple times. As long as we can catch the target solution once, we will be successful.
 
-### 例：三部图的判定
+### Example: Judgment of Tripartite Diagram
 
-???+ note "问题"
-    给定一张 $n$ 个结点、$m$ 条边的简单无向图，用 RGB 三种颜色给每个结点染色 满足任意一对邻居都不同色，或者报告无解．
+???+ note "question"
+    Given a simple undirected graph with $n$ nodes and $m$ edges, use RGB three colors to color each node such that any pair of neighbors have different colors, or report no solution.
 
-对每个点 $v$，从 $\{R,G,B\}$ 中等概率独立随机地选一种颜色 $C_v$，并钦定 $v$  **不** 被染成 $C_v$．最优解恰好符合这些限制的概率，显然是 $\big(\frac 23\big)^n$．
+For each point $v$, independently and randomly select a color $C_v$ from $\{R,G,B\}$ with medium probability, and specify that $v$ **not** be dyed $C_v$. The probability that the optimal solution exactly meets these constraints is obviously $\big(\frac 23\big)^n$.
 
-在这些限制下，对于一对邻居 $(u,v)$，「$u,v$ 不同色」的要求等价于以下这条「推出」关系：
+Under these constraints, for a pair of neighbors $(u,v)$, the requirement of "$u,v$ different colors" is equivalent to the following "pull-out" relationship:
 
--   对于所有异于 $C_u,C_v$ 的颜色 $X$，若 $u$ 被染成 $X$，则 $v$ 被染成 $\{R,G,B\}\setminus\{X,C_v\}$．
+-   For all colors $X$ that are different from $C_u,C_v$, if $u$ is dyed as $X$, then $v$ is dyed as $\{R,G,B\}\setminus\{X,C_v\}$.
 
-于是我们可以对每个 $v$ 设置布尔变量 $B_v$，其取值表示 $v$ 被染成两种剩余的颜色中的哪一种．借助 2-SAT 模型即可以 $O(n+m)$ 的复杂度解决这个问题．
+So we can set the Boolean variable $B_v$ for each $v$, whose value indicates which of the two remaining colors $v$ is dyed into. This problem can be solved with the complexity of $O(n+m)$ using the 2-SAT model.
 
-这样做，单次的正确率是 $\big(\frac 23\big)^n$．将算法重复运行 $-\big(\frac 32\big)^n\log \epsilon$ 次，只要有一次得到解就输出，这样即可保证 $1-\epsilon$ 的正确率．（详见后文中「概率上界的分析」）
+In this way, the single accuracy rate is $\big(\frac 23\big)^n$. Repeat the algorithm $-\big(\frac 32\big)^n\log \epsilon$ times, and output it as soon as the solution is obtained once. This can ensure the accuracy of $1-\epsilon$. (See "Analysis of Probability Upper Bound" later in the article for details)
 
 ***
 
-**回顾**：本题中「解空间」就是集合 $\{R,G,B\}^n$，我们每次通过随机施加限制来在一个缩小的范围内搜寻「目标解」——即合法的染色方案．
+**Review**: The "solution space" in this question is the set $\{R,G,B\}^n$. We search for the "target solution" - that is, a legal coloring scheme - within a narrowed range by randomly imposing restrictions each time.
 
-### 例：[CodeChef SELEDGE](https://www.codechef.com/problems/SELEDGE)
+### Example: [CodeChef SELEDGE](https://www.codechef.com/problems/SELEDGE)
 
-???+ note "简要题意"
-    给定一张点、边都有非负权值的无向图，找到一个大小 $\leq K$ 的边集合 $S$，以最大化与 $S$ 相连的点的权值和减去 $S$ 的边权和．一个点的权值只被计算一次．
+???+ note "Brief question meaning"
+    Given an undirected graph with non-negative weights for both points and edges, find an edge set $S$ of size $\leq K$ to maximize the sum of the weights of the points connected to $S$ minus the sum of the edge weights of $S$. The weight of a point is calculated only once.
 
-观察：如果选出的边中有三条边构成一条链，则删掉中间的那条一定不劣；如果选出的边中有若干条构成环，则删掉任何一条一定不劣．
+Observation: If three of the selected edges form a chain, then deleting the middle one is not inferior; if there are several selected edges that form a cycle, then deleting any one of them is not inferior.
 
-推论：最优解选出的边集，一定构成若干个不相交的菊花图（即直径不超过 2 的树）．
+Corollary: The edge set selected by the optimal solution must form several disjoint chrysanthemum diagrams (that is, trees with a diameter not exceeding 2).
 
-推论：最优解选出的边集，一定构成一张二分图．
+Corollary: The edge set selected by the optimal solution must form a bipartite graph.
 
-我们对每个点等概率独立随机地染上黑白两种颜色之一，并要求这一染色方案，恰好也是最优解所对应的二分图的黑白染色方案．
+We independently and randomly dye each point with one of two colors, black and white, with equal probability, and require this coloring scheme to be exactly the black-and-white coloring scheme of the bipartite graph corresponding to the optimal solution.
 
-尝试计算最优解符合这一要求的概率：
+Try to calculate the probability that the optimal solution meets this requirement:
 
--   考虑一张 $n$ 个点的菊花图，显然它有 2 种染色方案，所以它被染对颜色的概率是 $\dfrac 2{2^n}=2^{1-n}$．
--   假设最优解中每个菊花的结点数分别为 $a_1,\cdots,a_l$，则一定有 $(a_1-1)+\cdots+(a_l-1)\leq K$，其中 $K$ 表示最多能够选出的边数．
--   从而所有菊花都被染对颜色的概率是 $2^{1-a_1}\cdots 2^{1-a_l}\geq 2^{-K}$．
+-   Consider a chrysanthemum picture with $n$ points. Obviously it has 2 dyeing schemes, so the probability of it being dyed the right color is $\dfrac 2{2^n}=2^{1-n}$.
+-   Assuming that the number of nodes in each chrysanthemum in the optimal solution is $a_1,\cdots,a_l$, then there must be $(a_1-1)+\cdots+(a_l-1)\leq K$, where $K$ represents the maximum number of edges that can be selected.
+-   Therefore, the probability that all chrysanthemums are dyed the right color is $2^{1-a_1}\cdots 2^{1-a_l}\geq 2^{-K}$.
 
-在上述要求下，尝试建立费用流模型计算最优答案：
+Under the above requirements, try to establish a cost flow model to calculate the optimal answer:
 
--   建立二分图，白点在左侧并与 $S$ 相连，黑点在右侧并与 $T$ 相连．
-    -   对于白点 $v$，从 $S$ 向它连一条容量为 1、费用为 $-A_v$ 的边，和一条容量为 $\infty$、费用为 0 的边．
-    -   对于黑点 $v$，从它向 $T$ 连一条容量为 1、费用为 $-A_v$ 的边，和一条容量为 $\infty$、费用为 0 的边．
--   对于原图中的边 $(u,v,B)$ 满足 $u$ 为白色、$v$ 为黑色，连一条从 $u$ 到 $v$ 的边，容量为 1，费用为 $B$．
--   在该图中限制流量不超过 $K$，则最小费用的相反数就是答案．
+-   Create a bipartite graph, with the white point on the left and connected to $S$, and the black point on the right and connected to $T$.
+    -   For the white point $v$, there is an edge with a capacity of 1 and a cost of $-A_v$ and an edge with a capacity of $\infty$ and a cost of 0 connected to it from $S$.
+    -   For the black point $v$, there is an edge with a capacity of 1 and a cost of $-A_v$ and an edge with a capacity of $\infty$ and a cost of 0 connected from it to $T$.
+-   For the edge $(u,v,B)$ in the original image, $u$ is white and $v$ is black. If there is an edge from $u$ to $v$, the capacity is 1 and the cost is $B$.
+-   In this figure, the traffic is limited to no more than $K$, then the opposite number of the minimum cost is the answer.
 
-用 SPFA 费用流求解的话，复杂度是 $O\big(K^2(n+m)\big)$，证明：
+If SPFA cost flow is used to solve the problem, the complexity is $O\big(K^2(n+m)\big)$. Prove:
 
--   首先，显然 SPFA 的运行次数 $\leq K$．
--   然后，在一次 SPFA 中，任何一个结点至多入队 $O(K)$ 次．这是因为：
-    -   任意时刻有流量的边不会超过 $3K$ 条，否则就意味着在原图中选了超过 $K$ 条边．
-    -   对于任何一条长为 $L$ 的增广路，其中至少有 $\dfrac L2-2$ 条边是某条有流量的边的反向边，因为正向边都是从图的左侧指向右侧，只有这些反向边才会从右侧指向左侧．
-    -   综合以上两条，得到任意一条增广路的长度不超过 $6K+4$．
--   综上，复杂度是 $O\big(K^2(n+m)\big)$．
+-   First, obviously the number of SPFA runs is $\leq K$.
+-   Then, in a SPFA, any node can enter the team at most $O(K)$ times. This is because:
+    -   There will be no more than $3K$ edges with traffic at any time, otherwise it means that more than $K$ edges have been selected in the original image.
+    -   For any Zengguang road with a length of $L$, at least $\dfrac L2-2$ edges are the reverse edges of an edge with traffic, because the forward edges point from the left side of the graph to the right, and only these reverse edges will point from the right side to the left.
+    -   Combining the above two, we can get that the length of any Zengguang Road does not exceed $6K+4$.
+-   To sum up, the complexity is $O\big(K^2(n+m)\big)$.
 
-和上一题类似，我们需要把整个过程重复 $-2^K \log\epsilon$ 次以得到 $1-\epsilon$ 的正确率．总复杂度 $O\big(2^KK^2(n+m)\cdot -\log\epsilon\big)$．
+Similar to the previous question, we need to repeat the whole process $-2^K \log\epsilon$ times to get the accuracy of $1-\epsilon$. Total complexity $O\big(2^KK^2(n+m)\cdot -\log\epsilon\big)$.
 
-## 用随机元素命中目标集合
+## Hit the target set with random elements
 
-我们需要确定一个集合中的任意一个元素，为此我们随机选取元素，以期能够恰好命中这一集合．
+We need to determine any element in a set, so we randomly select elements in the hope of hitting this set exactly.
 
-### 例：[Gym 101550I](https://codeforces.com/gym/101550/attachments)
+### Example: [Gym 101550I](https://codeforces.com/gym/101550/attachments)
 
-???+ note "简要题意"
-    有一张图形如：两条平行的链，加上连接两链的两条平行边．给定这张图上的若干条简单路径（每条路径表示一次通话），请你选择尽量少的边放置窃听器，以使得每条给定的路径上都有至少一个窃听器．
+???+ note "Brief question meaning"
+    There is a graph such as: two parallel chains, plus two parallel sides connecting the two chains. Given several simple paths on this graph (each path represents a call), please choose as few edges as possible to place eavesdroppers so that there is at least one eavesdropper on each given path.
 
-整张图可以拆分为一个环加上四条从环伸出去的链．对于这四条链中的任何一条（记作 $C$），考虑在这条链上如何放置窃听器，容易通过贪心算法得到满足以下条件的方案：
+The whole picture can be divided into a ring and four chains extending from the ring. For any of these four chains (denoted as $C$), considering how to place eavesdroppers on this chain, it is easy to obtain a solution that satisfies the following conditions through a greedy algorithm:
 
--   在拦截所有 $C$ 内部进行的通话的前提下，用的窃听器数量最少．
--   在上一条的前提下，使得 $C$ 上的窃听器离环的最短距离尽可能小．
-    -   作这一要求的目的是尽可能地拦截恰有一个端点在 $C$ 内部的通话．
+-   On the premise of intercepting all calls made within $C$, the minimum number of eavesdroppers is used.
+-   Under the premise of the previous item, make the shortest distance between the eavesdropper on $C$ and the ring as small as possible.
+    -   The purpose of this requirement is to intercept calls with exactly one endpoint inside $C$ as much as possible.
 
-接着考虑链与环相接处的共计 4 条边，我们暴力枚举这些边上有没有放窃听器．显然，如果想要拦截跨越链和环的通话，在这 4 条边上放窃听器一定是最优的．现在，我们可以把通话线路分为以下几种：
+Then consider a total of 4 edges where the chain and the ring connect, and we violently enumerate whether there are bugs placed on these edges. Obviously, if you want to intercept calls across chains and rings, it must be optimal to place eavesdroppers on these four edges. Now, we can divide the call lines into the following types:
 
-1.  完全在链上的通话线路．这些线路一定已经被拦截，故可以忽略．
-2.  跨越链和环，且已经被拦截的通话线路．它们可以忽略．
-3.  跨越链和环，且未被拦截的通话线路．我们可以直接截掉它在链上的部分（因为链上的窃听器放置方案已经固定了），只保留环上的部分．
-4.  完全在环上的通话线路．
+1.  A completely on-chain call line. These lines must have been intercepted, so they can be ignored.
+2.  Call lines that span chains and rings and have been intercepted. They can be ignored.
+3.  Call lines that span chains and rings without being intercepted. We can directly cut off its part on the chain (because the eavesdropper placement scheme on the chain has been fixed) and only keep the part on the ring.
+4.  A completely on-the-loop call line.
 
-至此，问题转化成了环上的问题．
+At this point, the problem is transformed into a problem on the ring.
 
-设最优解中在环上的边集 $S$ 上放置了窃听器，如果我们已经确定了 $S$ 中的任何一个元素 $e$，就可以：
+Assume that a bug is placed on the edge set $S$ on the ring in the optimal solution. If we have determined any element $e$ in $S$, we can:
 
--   先在 $e$ 处断环为链．
--   然后从 $e$ 开始贪心，不断找到下一个放置窃听器的边．注意到如果经过合适的预处理，贪心的每一步可以做到 $O(1)$ 的复杂度．
--   从而以 $O(|S|)$ 的复杂度解决问题．
+-   First break the ring into a chain at $e$.
+-   Then start being greedy from $e$ and continue to find the next edge where the bug is placed. Note that with appropriate preprocessing, each greedy step can achieve $O(1)$ complexity.
+-   Thus solving the problem with $O(|S|)$ complexity.
 
-我们考虑随机选取环上的一条边 $e'$，并钦定 $e'\in S$ 再执行上述过程，重复多次取最优．
+We consider randomly selecting an edge $e'$ on the ring, and specifying $e'\in S$, and then perform the above process, repeating many times to obtain the optimal result.
 
-分析单次复杂度：
+Analyze single complexity:
 
--   观察：记 $S'$ 表示所有选取了 $e'$ 的方案中的最优解，则 $|S'|\leq |S|+1$．
--   从而单次复杂度 $O(|S'|)=O(|S|)$．
+-   Observation: Note that $S'$ represents the optimal solution among all the solutions that selected $e'$, then $|S'|\leq |S|+1$.
+-   Therefore, the single-shot complexity is $O(|S'|)=O(|S|)$.
 
-分析正确率：
+Analysis accuracy:
 
--   显然单次正确率 $\dfrac {|S|}n$，其中 $n$ 表示环长．
--   所以需要重复 $-\dfrac n{|S|}\log\epsilon$ 次以得到 $1-\epsilon$ 的正确率．
+-   Obviously the single accuracy rate is $\dfrac {|S|}n$, where $n$ represents the ring length.
+-   Therefore, it is necessary to repeat $-\dfrac n{|S|}\log\epsilon$ times to obtain the accuracy of $1-\epsilon$.
 
-综上，该算法的复杂度 $O\big(|S|\cdot -\dfrac n{|S|}\log\epsilon\big)=O(-n\log\epsilon)$．
+In summary, the complexity of this algorithm is $O\big(|S|\cdot -\dfrac n{|S|}\log\epsilon\big)=O(-n\log\epsilon)$.
 
-### 例：[CSES 1685 New Flight Routes](https://cses.fi/problemset/task/1685)
+### Example: [CSES 1685 New Flight Routes](https://cses.fi/problemset/task/1685)
 
-???+ note "简要题意"
-    给定一张有向图，请你加最少的边使得该图强连通，需 **输出方案**．
+???+ note "Brief question meaning"
+    Given a directed graph, please add the minimum number of edges to make the graph strongly connected. You need **output solution**.
 
-先对原图进行强连通缩点．我们的目标显然是使每个汇点能到达每个源点．
+First, perform strong connection reduction on the original image. Our goal is obviously to make every sink point reach every source point.
 
-不难证明，我们一定只会从汇点到源点连边，因为任何其他的连边，都能对应上一条不弱于它的、从汇点到源点的连边．
+It is not difficult to prove that we will only connect edges from the sink point to the source point, because any other edge can correspond to the previous edge from the sink point to the source point that is not weaker than it.
 
-我们的一个核心操作是，取汇点 $t$ 和源点 $s$（它们不必在同一个弱连通分量里），连边 $t\to s$ 以 **使得 $s$ 和 $t$ 都不再是汇点或源点**（记作目标 I）．理想情况下这种操作每次能减少一个汇点和一个源点，那我们不断操作直到只剩一个汇点或只剩一个源点，而这样的情形就很平凡了．由此，我们猜测答案是源点个数与汇点个数的较大值．
+One of our core operations is to take the sink point $t$ and the source point $s$ (they do not have to be in the same weakly connected component), and connect the edge $t\to s$ so that $s$ and $t$ are no longer sink points or source points (denoted as objective I). Ideally, this operation can reduce one sink point and one source point each time. Then we continue to operate until there is only one sink point or only one source point left, and this situation is very ordinary. From this, we guess that the answer is the larger value of the number of source points and the number of sink points.
 
-不难发现，上述操作能够达到目标 I 的充要条件是：$t$ 拥有 $s$ 以外的前驱、且 $s$ 拥有 $t$ 以外的后继．可以证明（等会会给出证明），对于任意一张有着至少两个源点和至少两个汇点的 DAG，都存在这样的 $(s,t)$；但存在性的结论无法帮助我们构造方案，还需做其他分析．
+It is not difficult to find that the necessary and sufficient conditions for the above operation to achieve goal I are: $t$ has a predecessor other than $s$, and $s$ has a successor other than $t$. It can be proved (the proof will be given later) that for any DAG with at least two source points and at least two sink points, there exists such $(s,t)$; but the existence conclusion cannot help us construct a solution, and other analysis is required.
 
--   有了这个充要条件还难以直接得到算法，主要的原因是连边 $t\to s$ 后可能影响其他 $(s',t')$ 二元组的合法性，这个比较难处理．
+-   With this necessary and sufficient condition, it is difficult to obtain the algorithm directly. The main reason is that connecting the edge $t\to s$ may affect the legality of other $(s',t')$ tuples, which is difficult to deal with.
 
-注意到我们关于源汇点间的关系知之甚少（甚至连快速查询一对 $s-t$ 间是否可达都需要 dfs + bitset 预处理，而时限并不允许这么做），这提示我们需要某种非常一般和强大的性质．
+Noting that we know very little about the relationship between source and sink points (even a quick query whether a pair of $s-t$ is reachable requires dfs + bitset preprocessing, and the time limit does not allow this), this suggests that we need some very general and powerful properties.
 
-观察：不满足目标 I 的 $(s,t)$ 至多有 $n+m-1$ 对，其中 $n$ 表示源点个数，$m$ 表示汇点个数．
+Observation: $(s,t)$ that does not satisfy target I has at most $n+m-1$ pairs, where $n$ represents the number of source points and $m$ represents the number of sink points.
 
--   理由：对于每一对这样的 $(s,t)$，若把它看成 $s,t$ 间的一条边，则所有这些边构成的图形如若干条不相交的链，于是边数不超过点数减一．
--   作出这一观察的动机是，要想将存在性结论应用于算法，前置步骤往往是把定性的结果加强为定量的结果．
+-   Reason: For each such pair of $(s,t)$, if it is regarded as an edge between $s,t$, then the graph formed by all these edges is like a number of disjoint chains, so the number of edges does not exceed the number of points minus one.
+-   The motivation for making this observation is that in order to apply existential conclusions to algorithms, the preliminary step is often to strengthen the qualitative results into quantitative results.
 
-推论：等概率随机选取 $(s,t)$，满足前述要求的概率 $\geq \dfrac {(n-1)(m-1)}{nm}$．
+Corollary: $(s,t)$ is randomly selected with equal probability, and the probability of meeting the above requirements is $\geq \dfrac {(n-1)(m-1)}{nm}$.
 
--   注意到这个结论严格强于先前给出的存在性结论．
+-   Note that this conclusion is strictly stronger than the existence conclusion given previously.
 
-推论：等概率独立随机地连续选取 $\dfrac {\min(n,m)}2$ 对不含公共元素的 $(s,t)$，并对它们 **依次** 操作（即连边 $t\to s$），则这些操作全部满足目标 I 的概率 $\geq \dfrac 14$．
+Corollary: If we independently and randomly select $\dfrac {\min(n,m)}2$ pairs of $(s,t)$ without common elements with equal probability, and operate them **sequentially** (that is, connect edges $t\to s$), then the probability of all these operations satisfying target I is $\geq \dfrac 14$.
 
--   理由：
+-   reason:
 
 $$
 \begin{aligned}
@@ -157,9 +157,9 @@ $$
 \end{aligned}
 $$
 
-而连续选完 $k$ 对 $(s,t)$ 后判断它们是否全部满足目标 I 很简单，只要再跑一遍强连通缩点，判断一下 $n,m$ 是否都减小了 $k$ 即可．注意到若每次减少 $k=\dfrac{\min(n,m)}2$，则 $\min(n,m)$ 必在 $O\big(\log(n+m)\big)$ 轮内变成 1，也就转化到了平凡的情况．
+After continuously selecting $k$ and $(s,t)$, it is very simple to judge whether they all meet the target I. Just run the strongly connected contraction point again and judge whether $n,m$ has reduced by $k$. Note that if $k=\dfrac{\min(n,m)}2$ is reduced each time, $\min(n,m)$ must become 1 in $O\big(\log(n+m)\big)$ rounds, which transforms into a trivial situation.
 
-???+ note "算法伪代码"
+???+ note "Algorithm pseudocode"
     ```text
     while(n>1 and m>1):
         randomly choose k=min(n,m)/2 pairs (s,t)
@@ -169,226 +169,226 @@ $$
     solve_trivial()
     ```
 
-复杂度 $O\big((|V|+|E|) \log |V|\big)$．
+Complexity $O\big((|V|+|E|) \log |V|\big)$.
 
 ***
 
-**回顾**：我们需要确定任意一对能够实现目标 I 的二元组 $(s,t)$，为此我们随机选择 $(s,t)$．
+**Review**: We need to determine any pair of binary pairs $(s,t)$ that can achieve goal I. For this purpose, we randomly select $(s,t)$.
 
-## 用随机化获得随机数据的性质
+## Using randomization to obtain properties of random data
 
-如果一道题的数据随机生成，我们可能可以利用随机数据的性质解决它．而在有些情况下，即使数据并非随机生成，我们也可以通过随机化来给其赋予随机数据的某些特性，从而帮助解决问题．
+If the data for a question is randomly generated, we may be able to use the properties of random data to solve it. In some cases, even if the data is not randomly generated, we can give it some characteristics of random data through randomization to help solve the problem.
 
-### 例：随机增量法
+### Example: random increment method
 
-随机生成的元素序列可能具有「前缀最优解变化次数期望下很小」等性质，而随机增量法就通过随机打乱输入的序列来获得这些性质．
+The randomly generated element sequence may have properties such as "the number of changes to the prefix optimal solution is expected to be very small", and the random increment method obtains these properties by randomly disrupting the input sequence.
 
-详见 [随机增量法](../geometry/random-incremental.md)．
+See [Random Increment Method](../geometry/random-incremental.md) for details.
 
-### 例：[TopCoder MagicMolecule](https://archive.topcoder.com/ProblemStatement/pm/11705) 随机化解法
+### Example: [TopCoder MagicMolecule](https://archive.topcoder.com/ProblemStatement/pm/11705) randomization method
 
-???+ note "简要题意"
-    给定一张 $n$ 个点、带点权的无向图，在其中所有大小不小于 $\dfrac {2n}3$ 的团中，找到点权和最大的那个．
+???+ note "Brief question meaning"
+    Given an undirected graph with $n$ points and point weights, find the one with the largest sum of point weights among all clusters whose size is not less than $\dfrac {2n}3$.
     
     $n\leq 50$
 
-不难想到折半搜索．把点集均匀分成左右两半 $V_L,V_R$（大小都为 $\dfrac n2$），计算数组 $f_{L,k}$ 表示点集 $L\subseteq V_L$ 中的所有 $\geq k$ 元团的最大权值和．接着我们枚举右半边的每个团 $C_R$，算出左半边有哪些点与 $C_R$ 中的所有点相连（这个点集记作 $N_L$），并用 $f_{N_L,\frac 23 n-|C_R|}+\textit{value}(C_R)$ 更新答案．
+It is not difficult to think of half search. Divide the point set evenly into two halves $V_L,V_R$ (both sizes are $\dfrac n2$), and calculate the array $f_{L,k}$ to represent the maximum weight sum of all $\geq k$ tuples in the point set $L\subseteq V_L$. Then we enumerate each cluster $C_R$ on the right half, calculate which points on the left half are connected to all points in $C_R$ (this point set is recorded as $N_L$), and update the answer with $f_{N_L,\frac 23 n-|C_R|}+\textit{value}(C_R)$.
 
--   注意到可以 $O(1)$ 转移每一个 $f_{L,k}$．具体地说，取 $d$ 为 $L$ 中的任意一个元素，然后分类讨论：
-    -   假设最优解中 $d$ 不在团中，则从 $f_{L\setminus \{d\},k}$ 转移而来．
-    -   假设最优解中 $d$ 在团中，则从 $f_{L\cap N(d),k}+\textit{value}(d)$ 转移而来，其中 $N(d)$ 表示 $d$ 的邻居集合．
-    -   别忘了还要用 $f_{L,k+1}$ 来更新 $f_{L,k}$．
+-   Note that $O(1)$ can be transferred to each $f_{L,k}$. Specifically, take $d$ as any element in $L$, and then discuss it in categories:
+    -   Assuming that $d$ in the optimal solution is not in the group, it is transferred from $f_{L\setminus \{d\},k}$.
+    -   Assuming that $d$ in the optimal solution is in the group, it is transferred from $f_{L\cap N(d),k}+\textit{value}(d)$, where $N(d)$ represents the neighbor set of $d$.
+    -   Don’t forget to use $f_{L,k+1}$ to update $f_{L,k}$.
 
-这个解法会超时．尝试优化：
+This solution will time out. Try to optimize:
 
--   平分点集时均匀随机地划分．这样的话，最优解的点集 $C_{res}$ 以可观的概率也被恰好平分（即 $|C_{res}\cap V_L|=|C_{res}\cap V_R|$）．
-    -   当然，$|C_{res}|$ 可能是奇数．简单起见，这里假设它是偶数；奇数的情况对解法没有本质改变．
-    -   实验发现，随机尝试约 20 次就能以很大概率有至少一次满足该性质．也就是说，如果我们的算法依赖于「$C_{res}$ 被平分」这一性质，则将算法重复执行 20 次取最优，同样也能保证以很大概率得到正确答案．
--   有了这一性质，我们就可以直接钦定左侧团 $L$、右侧团 $C_R$ 的大小都 $\geq \dfrac n3$．这会对复杂度带来两处改进：
-    -   $f$ 可以省掉记录大小的维度．
-    -   因为只需考虑大小 $\geq \dfrac n3$ 的团，所以需要考虑的左侧团 $L$ 和 右侧团 $C_R$ 的数量也大大减少至约 $1.8\cdot 10^6$．
--   现在的瓶颈变成了求单侧的某一子集的权值和，因为这需要 $O\big(2^{|V_L|}+2^{|V_R|}\big)$ 的预处理．
-    -   解决方案：在 $V_L,V_R$ 内部再次折半；当查询一个子集的权值和时，将这个子集分成左右两半查询，再把答案相加．
--   这样即可通过本题．
+-   When the point set is bisected, it is divided evenly and randomly. In this case, the point set $C_{res}$ of the optimal solution is also equally divided (i.e. $|C_{res}\cap V_L|=|C_{res}\cap V_R|$) with considerable probability.
+    -   Of course, $|C_{res}|$ may be an odd number. For the sake of simplicity, it is assumed here that it is an even number; the case of an odd number does not essentially change the solution.
+    -   Experiments have found that after about 20 random attempts, this property can be satisfied at least once with a high probability. In other words, if our algorithm relies on the property of "$C_{res}$ is divided equally", then repeating the algorithm 20 times to get the best result can also guarantee that the correct answer will be obtained with a high probability.
+-   With this property, we can directly determine the sizes of the left group $L$ and the right group $C_R$ to be $\geq \dfrac n3$. This will bring two improvements to complexity:
+    -   $f$ can omit the record size dimension.
+    -   Since only groups of size $\geq \dfrac n3$ need to be considered, the number of left group $L$ and right group $C_R$ that need to be considered is also greatly reduced to about $1.8\cdot 10^6$.
+-   The bottleneck now becomes finding the weight sum of a certain subset of one side, because this requires $O\big(2^{|V_L|}+2^{|V_R|}\big)$ preprocessing.
+    -   Solution: Halve again inside $V_L,V_R$; when querying the weight sum of a subset, divide the subset into left and right halves for query, and then add the answers.
+-   This way you can pass this question.
 
 ***
 
-**回顾**：一个随机的集合有着「在划分出的两半的数量差距不会太悬殊」这一性质，而我们通过随机划分获取了这个性质．
+**Review**: A random set has the property that "the numerical difference between the two divided halves will not be too large", and we obtain this property through random division.
 
-## 随机化用于哈希
+## Randomization for hashing
 
-### 例：[UOJ #207 共价大爷游长沙](https://uoj.ac/problem/207)
+### Example: [UOJ #207 Covalent Master Travels to Changsha](https://uoj.ac/problem/207)
 
-???+ note "简要题意"
-    维护一棵动态变化的树，和一个动态变化的结点二元组集合．你需要支持：
+???+ note "Brief question meaning"
+    Maintain a dynamically changing tree and a dynamically changing node tuple set. You need support for:
     
-    -   删边、加边．保证得到的还是一棵树．
-    -   加入/删除某个结点二元组．
-    -   给定一条边 $e$，判断是否对于集合中的每个结点二元组 $(s,t)$，$e$ 都在 $s,t$ 间的简单路径上．
+    -   Delete edges, add edges. You are guaranteed to get a tree.
+    -   Add/delete a node tuple.
+    -   Given an edge $e$, determine whether for each node tuple $(s,t)$ and $e$ in the set, they are on a simple path between $s,t$.
 
-对图中的每条边 $e$，我们定义集合 $S_e$ 表示经过该边的关键路径（即题中的 $(a,b)$）集合．考虑对每条边动态维护集合 $S_e$ 的哈希值，这样就能轻松判定 $S_e$ 是否等于全集（即 $e$ 是否是「必经之路」）．
+For each edge $e$ in the graph, we define the set $S_e$ to represent the set of critical paths passing through the edge (i.e. $(a,b)$ in the question). Consider dynamically maintaining the hash value of the set $S_e$ for each edge, so that you can easily determine whether $S_e$ is equal to the full set (that is, whether $e$ is the "only way").
 
-哈希的方式是，对每个 $(a,b)$ 赋予 $2^{64}$ 以内的随机非负整数 $H_{(a,b)}$，然后一个集合的哈希值就是其中元素的 $H$ 值的异或和．
+The hashing method is to assign a random non-negative integer $H_{(a,b)}$ within $2^{64}$ to each $(a,b)$, and then the hash value of a set is the XOR sum of the $H$ values ​​of the elements.
 
-这样的话，任何一个固定的集合的哈希值一定服从 $R:=\left\{0,1,\cdots,2^{64}-1\right\}$ 上的均匀分布（换句话说，哈希值的取值范围为 $R$，且取每一个值的概率相等）．这是因为：
+In this case, the hash value of any fixed set must obey the uniform distribution on $R:=\left\{0,1,\cdots,2^{64}-1\right\}$ (in other words, the hash value range is $R$, and the probability of taking each value is equal). This is because:
 
-1.  单个 $H_{(a,b)}$ 显然服从均匀分布．
-2.  两个独立且服从 $R$ 上的均匀分布的随机变量的异或和，一定也服从 $R$ 上的均匀分布．自证不难．
+1.  A single $H_{(a,b)}$ obviously obeys a uniform distribution.
+2.  The XOR sum of two independent random variables that obey the uniform distribution on $R$ must also obey the uniform distribution on $R$. It is not difficult to prove it yourself.
 
-从而该算法的正确率是有保障的．
+Therefore, the accuracy of the algorithm is guaranteed.
 
-至于如何维护这个哈希值，使用 LCT 即可．
+As for how to maintain this hash value, just use LCT.
 
-### 例：[CodeChef PANIC](https://www.codechef.com/problems/PANIC) 及其错误率分析
+### Example: [CodeChef PANIC](https://www.codechef.com/problems/PANIC) and its error rate analysis
 
-本题的大致解法：
+Rough solution to this question:
 
-1.  可以证明[^ref1] $S(N)$ 服从一个关于 $N$ 的 $O(K)$ 阶线性递推式．
-2.  用 BM 算法求出该递推式．
-3.  借助递推式，用凯莱哈密顿定理计算出 $S(N)$．
+1.  It can be proved that [^ref1] $S(N)$ obeys a $O(K)$ order linear recurrence about $N$.
+2.  Use the BM algorithm to find this recursive formula.
+3.  With the help of recursion formula, use Cayley's Hamilton theorem to calculate $S(N)$.
 
-这里仅关注第二部分，即如何求一个矩阵序列的递推式．所以我们只需考虑下述问题：
+Here we only focus on the second part, that is, how to find the recursive formula of a matrix sequence. So we only need to consider the following questions:
 
-???+ note "问题"
-    给定一个矩阵序列，该序列在模 $P:=998244353$ 意义下服从一个齐次线性递推式（递推式中的数乘和加法运算定义为矩阵的数乘和加法），求出最短递推式．
+???+ note "question"
+    Given a matrix sequence, which obeys a homogeneous linear recurrence in the modulo $P:=998244353$ sense (the multiplication and addition operations in the recurrence are defined as the multiplication and addition of matrices), find the shortest recurrence.
 
-如果一系列矩阵服从一个递推式 $F$，那么它的每一位也一定服从 $F$．然而，如果对某一位求出最短递推式 $F'$，则 $F'$ 可能会比 $F$ 更短，从而产生问题．
+If a series of matrices obeys a recurrence formula $F$, then each bit of it must also obey $F$. However, if the shortest recurrence $F'$ is found for a certain bit, $F'$ may be shorter than $F$, causing problems.
 
-解决方案：给矩阵的每一位 $(i,j)$ 赋予一个 $<P$ 的随机权值 $x_{i,j}$，然后对于序列中每个矩阵计算其所有位的加权和模 $P$ 的结果，再把每个矩阵算出的这个数连成一个数列，最后我们对所得数列运行 BM 算法．
+Solution: Assign a random weight value $x_{i,j}$ with value $<P$ to each bit $(i,j)$ of the matrix, then calculate the weighted sum of all bits modulo $P$ for each matrix in the sequence, and then connect the calculated numbers for each matrix into a sequence. Finally, we run the BM algorithm on the resulting sequence.
 
-错误率分析：
+Error rate analysis:
 
--   假设上述做法求得了不同于 $F$（且显然也不长于 $F$）的 $l$ 阶递推式 $F'$．
--   因为矩阵序列不服从 $F'$，所以一定存在矩阵中的某个位置 $(i,j)$，满足该位置对应的数列 $S_{i,j}$ 在某个 $N$ 处不服从 $F'$．也就是说：
+-   Assume that the above method obtains the $l$ order recurrence formula $F'$ that is different from $F$ (and obviously not longer than $F$).
+-   Because the matrix sequence does not obey $F'$, there must be a certain position $(i,j)$ in the matrix, and the sequence $S_{i,j}$ corresponding to this position does not obey $F'$ at a certain $N$. That is to say:
 
 $$
 S(N)_{i,j}-F'_1S(N-1)_{i,j}-\cdots-F'_lS(N-l)_{i,j}\not\equiv 0\pmod {P}
 $$
 
--   假设 $(i,j)$ 是唯一的不服从的位置，则一定有：
+-   Assuming that $(i,j)$ is the only disobedient position, there must be:
 
 $$
 T_{i,j}:=\Big(x_{i,j}\cdot\big(S(N)_{i,j}-F'_1S(N-1)_{i,j}-\cdots-F'_lS(N-l)_{i,j}\big)\bmod P\Big)=0
 $$
 
--   显然这仅当 $x_{i,j}=0$ 时才成立，概率 $P^{-1}$．
--   如果有多个不服从的位置呢？
-    -   对每个这样的位置 $(i,j)$，易证 $T_{i,j}$ 服从 $R:=\{0,1,\cdots,P-1\}$ 上的均匀分布．
-    -   若干个互相独立的、服从 $R$ 上的均匀分布的随机变量，它们在模意义下的和，依然服从 $R$ 上的均匀分布．自证不难．
-    -   从而这种情况下的错误率也是 $P^{-1}$．
+-   Obviously this is true only when $x_{i,j}=0$, with probability $P^{-1}$.
+-   What if there are multiple disobedient positions?
+    -   For each such position $(i,j)$, it is easy to prove that $T_{i,j}$ obeys the uniform distribution on $R:=\{0,1,\cdots,P-1\}$.
+    -   For several mutually independent random variables that obey the uniform distribution on $R$, their sum in the modular sense still obeys the uniform distribution on $R$. It is not difficult to prove it yourself.
+    -   Therefore, the error rate in this case is also $P^{-1}$.
 
-### 例：[UOJ #552 同构判定鸭](https://uoj.ac/problem/552) 及其错误率分析
+### Example: [UOJ #552 Isomorphic Determination Duck](https://uoj.ac/problem/552) and its error rate analysis
 
-???+ note "简要题意"
-    给定两张边权为小写字母的有向图 $G_0,G_1$，你要对这两张图分别算出「所有路径对应的字符串构成的多重集」（可能是无穷集），并判断这两个多重集是否相等．如果不相等，你要给出一个最短的串，满足它在两个多重集中的出现次数不相等．
+???+ note "Brief question meaning"
+    Given two directed graphs $G_0,G_1$ whose edge weights are lowercase letters, you need to calculate "the multiset composed of strings corresponding to all paths" (possibly an infinite set) for these two graphs, and determine whether the two multisets are equal. If they are not equal, you have to give the shortest string such that the number of occurrences in the two multisets is not equal.
 
-令 $f_{K,i,j}$ 表示图 $G_K$ 中从点 $i$ 开始的所有长为 $j$ 的路径，这些路径对应的所有字符串构成的多重集的哈希值．按照 $j$ 升序考虑每个状态，转移时枚举 $i$ 的出边并钦定该边为路径上的第一条边．
+Let $f_{K,i,j}$ represent all paths with length $j$ starting from point $i$ in graph $G_K$, and the hash values ​​of the multiset composed of all strings corresponding to these paths. Consider each state in ascending order of $j$. When transitioning, enumerate the outgoing edges of $i$ and specify this edge as the first edge on the path.
 
-要判断是否存在长度 $=L$ 的坏串，只需把 $\{f_{0,*,L}\}$ 和 $\{f_{1,*,L}\}$ 各自「整合」起来再比较即可（通配符 `*` 这里表示每一个结点，例如 $\{f_{0,*,L}\}$ 表示全体 $f_{0,i,L}$ 构成的集合，其中 $i$ 取遍所有结点）．官方题解[^ref2]中证明了最短坏串（如果存在的话）长度一定不超过 $n_1+n_2$，所以这个解法的复杂度是可靠的．
+To determine whether there is a bad string of length $=L$, just "integrate" $\{f_{0,*,L}\}$ and $\{f_{1,*,L}\}$ and compare them (the wildcard `*` here represents each node, for example, $\{f_{0,*,L}\}$ represents the set of all $f_{0,i,L}$, where $i$ takes all nodes). The official solution [^ref2] proves that the length of the shortest bad string (if it exists) must not exceed $n_1+n_2$, so the complexity of this solution is reliable.
 
-接下来考虑具体的哈希方式．注意到常规的哈希方法——即把串 $a_1a_2\cdots a_k$ 映射到 $\big(a_1+Pa_2+P^2a_3+\cdots+P^{k-1}a_k\big)\bmod Q$ 上、再把多重集的哈希值定为其中元素的哈希值之和模 $Q$——在这里是行不通的．一个反例是，集合 `{"ab","cd"}` 与集合 `{"cb","ad"}` 的哈希值是一样的，不论 $P,Q$ 如何取值．
+Next consider the specific hashing method. Note that the conventional hashing method - that is, mapping the string $a_1a_2\cdots a_k$ to $\big(a_1+Pa_2+P^2a_3+\cdots+P^{k-1}a_k\big)\bmod Q$, and then defining the hash value of the multiset as the sum of the hash values ​​of the elements modulo $Q$ - does not work here. A counterexample is that the hash value of the set `{"ab","cd"}` and the set `{"cb","ad"}` are the same, regardless of how $P,Q$ takes the value.
 
-上述做法的问题在于，一个串的哈希值是一个和式，从而其中的每一项可以拆出来并重组．为避免这一问题，我们考虑把哈希值改为一个连乘式．此外，乘法交换律会使得不同的位不可区分，为避免这一点我们要为不同的位赋予不同的权值．
+The problem with the above approach is that the hash value of a string is a sum, so each item in it can be taken apart and reassembled. To avoid this problem, we consider changing the hash value to a continuous multiplication. In addition, the commutative law of multiplication will make different bits indistinguishable. To avoid this, we need to assign different weights to different bits.
 
-对每一个二元组 $(c,j)$（其中 $c$ 为字符，$j$ 为整数表示 $c$ 在某个串中的第几位）我们都预先生成一个随机数 $x_{c,j}$．然后我们把串 $a_1a_2\cdots a_k$ 映射到 $x_{a_1,1}x_{a_2,2}\cdots x_{a_k,k}\bmod Q$ 上（其中 $Q$ 为 **随机选取** 的质数）、再把多重集的哈希值定为其中元素的哈希值之和模 $Q$．接下来分析它的错误率．
+For each tuple $(c,j)$ (where $c$ is a character and $j$ is an integer indicating the number of $c$ in a certain string), we generate a random number $x_{c,j}$ in advance. Then we map the string $a_1a_2\cdots a_k$ to $x_{a_1,1}x_{a_2,2}\cdots x_{a_k,k}\bmod Q$ (where $Q$ is a **randomly selected** prime number), and then set the hash value of the multiset as the sum of the hash values ​​of the elements modulo $Q$. Next, analyze its error rate.
 
-???+ note "(*)Schwartz–Zippel 引理"
-    令 $f\in F[z_1,\cdots,z_k]$ 为域 $F$ 上的 $k$ 元 $d$ 次非零多项式，令 $S$ 为 $F$ 的有限子集，则至多有 $d\cdot |S|^{k-1}$ 组 $(z_1,\cdots,z_k)\in S^k$ 满足 $f(z_1,\cdots,z_k)=0$．
+???+ note "(*)Schwartz–Zippel Lemma"
+    Let $f\in F[z_1,\cdots,z_k]$ be the $d$ degree non-zero polynomial of $k$ elements on the domain $F$, let $S$ be a finite subset of $F$, then there are at most $d\cdot |S|^{k-1}$ groups $(z_1,\cdots,z_k)\in S^k$ that satisfy $f(z_1,\cdots,z_k)=0$.
     
-    ??? note "如果你不知道域是什么"
-        你只需记得这两样东西都是域：
+    ??? note "If you don't know what a domain is"
+        All you need to remember is that these two things are domains:
         
-        1.  模质数的剩余系，以及其上的各种运算．
-        2.  实数集，以及其上的各种运算．
+        1.  The remainder system of modulo prime numbers, and various operations on it.
+        2.  The set of real numbers, and various operations on it.
     
-    推论：若 $z_1,\cdots,z_k$ 都在 $S$ 中等概率独立随机选取，则 $\mathrm{Pr}\big[f(z_1,\cdots,z_k)=0\big]\leq \dfrac d{|S|}$．
+    Corollary: If $z_1,\cdots,z_k$ are all independently and randomly selected from $S$ with medium probability, then $\mathrm{Pr}\big[f(z_1,\cdots,z_k)=0\big]\leq \dfrac d{|S|}$.
 
-记 $F$ 为模 $Q$ 的剩余系所对应的域，则对于一个 $L\leq n_1+n_2$，$\sum\limits_i f_{0,i,L}$ 和 $\sum\limits_i f_{1,i,L}$ 就分别对应着一个 $F$ 上关于变元集合 $\{x_{*,*}\}$ 的 $L$ 次多元多项式，不妨将这两个多项式记为 $P_0,P_1$．
+Let $F$ be the domain corresponding to the residual system modulo $Q$. Then for a $L\leq n_1+n_2$, $\sum\limits_i f_{0,i,L}$ and $\sum\limits_i f_{1,i,L}$ respectively correspond to a $L$ degree multivariate polynomial on $F$ with respect to the variable set $\{x_{*,*}\}$. We might as well record these two polynomials as $P_0,P_1$.
 
-假如两个不同的字符串多重集的哈希值相同，则有两种可能：
+If two different string multisets have the same hash value, there are two possibilities:
 
-1.  $P_0\equiv P_1\pmod {Q}$，即 $P_0,P_1$ 的每一项系数在模 $Q$ 意义下都对应相等．
-2.  $P_0\not\equiv P_1\pmod {Q}, P_0(x_{*,*})\equiv P_1(x_{*,*})\pmod {Q}$，即 $P_0,P_1$ 虽然不恒等，但我们选取的这一组 $\{x_{*,*}\}$ 恰好使得它们在此处的点值相等．
+1.  $P_0\equiv P_1\pmod {Q}$, that is, each coefficient of $P_0,P_1$ is equal in the modulo $Q$ sense.
+2.  Although $P_0\not\equiv P_1\pmod {Q}, P_0(x_{*,*})\equiv P_1(x_{*,*})\pmod {Q}$, that is, $P_0,P_1$ are not identical, the group of $\{x_{*,*}\}$ we selected just makes their point values ​​here equal.
 
-分析前者发生的概率：
+Analyze the probability of the former happening:
 
--   观察：对于任意的 $A\neq B; A,B\leq N$ 和随机选取的质数 $Q\leq Q_{\max}$，一定有：
+-   Observation: For any $A\neq B; A,B\leq N$ and a randomly selected prime number $Q\leq Q_{\max}$, there must be:
 
 $$
 \mathrm{Pr}\big[A\equiv B\pmod {Q}\big]=O\Big(\dfrac{\log N \log Q_{max}}{Q_{max}}\Big)
 $$
 
--   这是因为：使 $A\equiv B$ 成立的 $Q$ 一定满足 $Q\big|(A-B)$，这样的 $Q$ 有 $\omega(A-B)\leq \log_2 N$ 个；而由质数定理，$Q_{\max}$ 以内不同的质数又有 $\Theta\Big(\dfrac {Q_{\max}}{\log Q_{\max}}\Big)$ 个．将两者相除即可得到上式．
--   在上述观察中取 $A,B$（满足 $A\neq B$）为某一特定项在 $P_0,P_1$ 中的系数（也就等于该项对应的串在 $G_0,G_1$ 中的出现次数），则易见 $A,B\leq (m_1+m_2)^{L}$，得到：
+-   This is because: $Q$ that makes $A\equiv B$ true must satisfy $Q\big|(A-B)$, and there are $\omega(A-B)\leq \log_2 N$ such $Q$; and according to the prime number theorem, there are $\Theta\Big(\dfrac {Q_{\max}}{\log Q_{\max}}\Big)$ different prime numbers within $Q_{\max}$. Divide the two to get the above formula.
+-   In the above observation, taking $A,B$ (satisfying $A\neq B$) as the coefficient of a specific item in $P_0,P_1$ (which is equal to the number of occurrences of the string corresponding to the item in $G_0,G_1$), then it is easy to see $A,B\leq (m_1+m_2)^{L}$, and we get:
 
 $$
 \mathrm{Pr}\big[A\equiv B\pmod {Q}\big]=O\Big(\dfrac{L\log (m_1+m_2) \log Q_{max}}{Q_{max}}\Big)
 $$
 
--   所以取 $Q_{\max}\approx 10^{12}$ 就绰绰有余．如果机器无法支持这么大的整数运算，可以用双哈希代替．
+-   So taking $Q_{\max}\approx 10^{12}$ is more than enough. If the machine cannot support such large integer operations, double hashing can be used instead.
 
-分析后者发生的概率：
+Analyze the probability of the latter happening:
 
--   在 Schwartz–Zippel 引理中：
-    -   取域 $F$ 为模 $Q$ 的剩余系对应的域
-    -   取 $f(x_{*,*})=P_0(x_{*,*})-P_1(x_{*,*})$ 为 $L$ 次非零多项式
-    -   取 $S=F$
--   得到：所求概率 $\leq \dfrac LQ$．
+-   In the Schwartz–Zippel lemma:
+    -   Take the domain $F$ as the domain corresponding to the remainder system modulo $Q$
+    -   Let $f(x_{*,*})=P_0(x_{*,*})-P_1(x_{*,*})$ be a non-zero polynomial of degree $L$
+    -   Take $S=F$
+-   Obtain: the desired probability $\leq \dfrac LQ$.
 
-注意到我们需要对每个 $L$ 都能保证正确性，所以要想保证严谨的话还需用 Union Bound（见后文）说明一下．
+Note that we need to ensure correctness for each $L$, so if we want to ensure rigor, we need to use Union Bound (see later) to explain.
 
-实践上我们不必随机选取模数，因为——比如说——用自己的生日做模数的话，实际上已经相当于随机数了．
+In practice, we don't need to randomly select the modulus, because - for example - using your own birthday as the modulus is actually equivalent to a random number.
 
-### 例：（\*）子矩阵不同元素个数
+### Example: (\*) Number of different elements in sub-matrix
 
-???+ note "问题"
-    给定 $n\times m$ 的矩阵，$q$ 次询问一个连续子矩阵中不同元素的个数，要求在线算法．
+???+ note "question"
+    Given a matrix of $n\times m$, querying the number of different elements in a continuous submatrix $q$ times requires an online algorithm.
     
-    允许 $\epsilon$ 的相对误差和 $\delta$ 的错误率，换句话说，你要对至少 $(1-\delta)q$ 个询问给出离正确答案相对误差不超过 $\epsilon$ 的回答．
+    Allow a relative error of $\epsilon$ and an error rate of $\delta$. In other words, you have to give answers to at least $(1-\delta)q$ queries that are within a relative error of no more than $\epsilon$ from the correct answer.
     
     $n\cdot m\leq 2\cdot10^5;q\leq 10^6;\epsilon=0.5,\delta=0.2$
 
-引理：令 $X_{1\cdots k}$ 为互相独立的随机变量，且取值在 $[0,1]$ 中均匀分布，则 $\mathrm{E}\big[\min\limits_i X_i\big]=\dfrac 1{k+1}$．
+Lemma: Let $X_{1\cdots k}$ be mutually independent random variables, and their values ​​are uniformly distributed in $[0,1]$, then $\mathrm{E}\big[\min\limits_i X_i\big]=\dfrac 1{k+1}$.
 
--   证明：考虑一个单位圆，其上分布着 **相对位置** 均匀随机的 $k+1$ 个点，分别在位置 $0,X_1,X_2,\cdots,X_k$ 处．那么 $\min\limits_i X_i$ 就等于 $k+1$ 段空隙中特定的一段的长度．而因为这些空隙之间是「对称」的，所以其中任何一段特定空隙的期望长度都是 $\dfrac 1{k+1}$．
+-   Proof: Consider a unit circle, on which $k+1$ points with **relative positions** are distributed uniformly and randomly, respectively at positions $0,X_1,X_2,\cdots,X_k$. Then $\min\limits_i X_i$ is equal to the length of a specific segment in the $k+1$ segment gap. And because these gaps are "symmetrical" to each other, the expected length of any specific gap is $\dfrac 1{k+1}$.
 
-我们取 $k$ 为不同元素的个数，并借助上述引理来从 $\min\limits_i X_i$ 反推得到 $k$．
+We take $k$ as the number of different elements, and use the above lemma to derive $k$ from $\min\limits_i X_i$.
 
-考虑采用某个哈希函数，将矩阵中每个元素都均匀、独立地随机映射到 $[0,1]$ 中的实数上去，且相等的元素会映射到相等的实数．这样的话，一个子矩阵中的所有元素对应的那些实数，在去重后就恰好是先前的集合 $\{X_1,\cdots,X_k\}$ 的一个实例，其中 $k$ 等于子矩阵中不同元素的个数．
+Consider using a hash function to uniformly and independently randomly map each element in the matrix to a real number in $[0,1]$, and equal elements will be mapped to equal real numbers. In this case, the real numbers corresponding to all elements in a submatrix, after deduplication, are exactly an instance of the previous set $\{X_1,\cdots,X_k\}$, where $k$ is equal to the number of different elements in the submatrix.
 
-于是我们得到了算法：
+So we get the algorithm:
 
-1.  给矩阵中元素赋 $[0,1]$ 中的哈希值．为保证随机性，哈希函数可以直接用 `map` 和随机数生成器实现，即每遇到一个新的未出现过的值就给它随机一个哈希值．
-2.  回答询问时设法求出子矩阵中哈希值的最小值 $M$，并输出 $\dfrac 1M-1$．
+1.  Assign the hash value in $[0,1]$ to the elements in the matrix. To ensure randomness, the hash function can be directly implemented using `map` and a random number generator, that is, every time it encounters a new value that has not appeared before, it will be given a random hash value.
+2.  When answering the query, try to find the minimum value of the hash value $M$ in the submatrix, and output $\dfrac 1M-1$.
 
-然而，这个算法并不能令人满意．它的输出值的期望是 $\mathrm{E}\Big[\dfrac 1{\min\limits_i X_i}-1\Big]$，但事实上这个值并不等于 $\dfrac 1{\mathrm{E}\big[\min\limits_i X_i\big]}-1=k$，而（可以证明）等于 $\infty$．
+However, this algorithm is not satisfactory. Its expected output value is $\mathrm{E}\Big[\dfrac 1{\min\limits_i X_i}-1\Big]$, but in fact this value is not equal to $\dfrac 1{\mathrm{E}\big[\min\limits_i X_i\big]}-1=k$, but (can be proven) equal to $\infty$.
 
-也就是说，我们不能直接把 $\min\limits_i X_i$ 的单次取值放在分母上，而要先算得它的期望，再把期望值放在分母上．
+In other words, we cannot directly put the single value of $\min\limits_i X_i$ on the denominator, but must first calculate its expectation and then put the expected value on the denominator.
 
-怎么算期望值？多次随机取平均．
+How to calculate expected value? Take the average multiple times randomly.
 
-我们用 $C$ 组不同的哈希函数分别执行前述过程，回答询问时计算出 $C$ 个不同的 $M$ 值，并算出其平均数 $\overline M$，然后输出 $\big(\overline M\big)^{-1}-1$．
+We use $C$ groups of different hash functions to perform the above process respectively. When answering the query, we calculate $C$ different $M$ values, calculate their average $\overline M$, and then output $\big(\overline M\big)^{-1}-1$.
 
-实验发现取 $C\approx 80$ 即可满足要求．严格证明十分繁琐，在此略去．
+The experiment found that $C\approx 80$ can meet the requirements. The strict proof is very cumbersome and will be omitted here.
 
-最后，怎么求子矩阵最小值？用二维 S-T 表即可，预处理 $O(nm\log n\log m)$，回答询问 $O(1)$．
+Finally, how to find the minimum value of the submatrix? Just use a two-dimensional S-T table, preprocess $O(nm\log n\log m)$, and answer the query $O(1)$.
 
-## 随机化在算法中的其他应用
+## Other applications of randomization in algorithms
 
-随机化的其他作用还包括：
+Other effects of randomization include:
 
--   防止被造数据者用针对性数据卡掉．例如在搜索时随机打乱邻居的顺序．
--   保证算法过程中进行的「操作」具有（某种意义上的）均匀性．例如 [模拟退火](../misc/simulated-annealing.md) 算法．
+-   Prevent those who have created data from being stuck with targeted data. For example, randomly shuffling the order of neighbors during search.
+-   Ensure that the "operations" performed during the algorithm are uniform (in a certain sense). For example, [Simulated Annealing](../misc/simulated-annealing.md) algorithm.
 
-在这些场景下，随机化常常（但并不总是）与乱搞、骗分等做法挂钩．
+In these scenarios, randomization is often (but not always) linked to practices such as messing around and cheating on scores.
 
-### 例：[「TJOI2015」线性代数](https://loj.ac/problem/2100)
+### Example: ["TJOI2015"Linear Algebra](https://loj.ac/problem/2100)
 
-本题的标准算法是网络流，但这里我们采取这样的乱搞做法：
+The standard algorithm for this question is network flow, but here we adopt this messy approach:
 
--   每次随机一个位置，把这个位置取反，判断大小并更新答案．
+-   Each time a position is randomized, the position is inverted, the size is determined and the answer is updated.
 
-??? note "代码"
+??? note "code"
     ```cpp
     #include <algorithm>
     #include <cstdlib>
@@ -427,13 +427,13 @@ $$
     }
     ```
 
-### 例：（\*）随机堆[^ref3]
+### Example: (\*) random heap [^ref3]
 
-可并堆最常用的写法应该是左偏树了，通过维护树高让树左偏来保证合并的复杂度．然而维护树高有点麻烦，我们希望尽量避开．
+The most commonly used way to write a merged heap is to use a left-skewed tree. By maintaining the tree height and making the tree left-skewed, the complexity of the merge is ensured. However, maintaining the height of the tree is a bit troublesome, and we hope to avoid it as much as possible.
 
-那么可以考虑使用随机堆，即不按照树高来交换儿子，而是随机交换．
+Then you can consider using a random heap, that is, not exchanging sons according to the height of the tree, but randomly exchanging.
 
-???+ note "代码"
+???+ note "code"
     ```cpp
     struct Node {
       int child[2];
@@ -452,16 +452,16 @@ $$
     void pop(int &now) { now = merge(nd[now].child[0], nd[now].child[1]); }
     ```
 
-随机堆对堆的形态没有任何硬性或软性的要求，合并操作的期望复杂度对任何两个堆（作为 `merge` 函数的参数）都成立．下证．
+Random heap does not have any hard or soft requirements on the shape of the heap. The expected complexity of the merge operation is true for any two heaps (as parameters of the `merge` function). Submit the certificate.
 
-???+ note "期望复杂度的证明"
-    将证，对于任意的堆 $A$，从根节点开始每次随机选左或者右走下去（直到无路可走），路径长度（即路径上的结点数）的期望值 $h(A)\leq\log_2 (|A|+1)$．
+???+ note "Proof of expected complexity"
+    It will be proved that for any heap $A$, starting from the root node and randomly choosing the left or right each time (until there is no way to go), the expected value of the path length (that is, the number of nodes on the path) is $h(A)\leq\log_2 (|A|+1)$.
     
-    -   注意到在前述过程中合并堆 $A,B$ 的期望复杂度是 $O\big(h(A)+h(B)\big)$ 的，所以上述结论可以保证随机堆的期望复杂度．
+    -   Note that in the aforementioned process, the expected complexity of the merged heap $A,B$ is $O\big(h(A)+h(B)\big)$, so the above conclusion can guarantee the expected complexity of the random heap.
     
-    证明采用数学归纳．边界情况是 $A$ 为空图，此时显然．下设 $A$ 非空．
+    The proof uses mathematical induction. The boundary case is that $A$ is an empty graph, which is obvious at this time. Let $A$ be non-empty.
     
-    假设 $A$ 的两个子树分别为 $L,R$，则：
+    Assume that the two subtrees of $A$ are $L,R$ respectively, then:
     
     $$
     \begin{align} h(A)
@@ -472,113 +472,113 @@ $$
     \\&=\log_2{(|A|+1)} \end{align}
     $$
     
-    证毕．
+    Certificate completed.
 
-## 与随机性有关的证明技巧
+## Proof techniques related to randomness
 
-以下列举几个比较有用的技巧．
+Here are a few more useful techniques.
 
-自然，这寥寥几项不可能就是全部；如果你了解某种没有列出的技巧，那么欢迎补充．
+Of course, these few can't be all; if you know of any techniques not listed, please feel free to add them.
 
-### 概率上界的分析
+### Analysis of Probability Upper Bounds
 
-详见 [概率不等式](../math/probability/concentration-inequality.md) 页面．
+See the [Probability Inequality](../math/probability/concentration-inequality.md) page for details.
 
-除了上述页面中提到的各种不等式外，推导过程中还经常会用到以下结论：
+In addition to the various inequalities mentioned on the above page, the following conclusions are often used during the derivation process:
 
-**自然常数的使用**：$\Big(1-\dfrac{1}{n}\Big)^n\leq \dfrac{1}{\mathrm{e}},\forall n\geq1$
+**Use of natural constants**: $\Big(1-\dfrac{1}{n}\Big)^n\leq \dfrac{1}{\mathrm{e}},\forall n\geq1$
 
--   左式关于 $n\geq 1$ 单调递增且在 $+\infty$ 处的极限是 $\dfrac{1}{\mathrm{e}}$，因此有这个结论．
--   这告诉我们，如果 $n$ 个互相独立的事件，每个的发生概率为 $1-\dfrac 1n$，则它们全部发生的概率至多为 $\dfrac{1}{\mathrm{e}}$．
+-   The left equation is monotonically increasing with respect to $n\geq 1$ and the limit at $+\infty$ is $\dfrac{1}{\mathrm{e}}$, so we have this conclusion.
+-   This tells us that if there are $n$ independent events, each with probability $1-\dfrac 1n$, then the probability of all of them occurring is at most $\dfrac{1}{\mathrm{e}}$.
 
-### 「耦合」思想
+### "Coupling" thinking
 
-「耦合」思想常用于同时处理超过一个有随机性的对象，或者同时处理随机的对象和确定性的对象．
+The idea of ​​"coupling" is often used to process more than one random object at the same time, or to process random objects and deterministic objects at the same time.
 
-#### 引子：随机图的连通性
+#### Introduction: Connectivity of Random Graphs
 
-???+ note "问题"
-    对于 $n \in \mathbf{N}^*; p,q\in [0,1]$ 且 $q\leq p$，求证：随机图 $G_1(n,p)$ 的连通分量个数的期望值不超过随机图 $G_2(n,q)$ 的连通分量个数的期望值．这里 $G(n,\alpha)$ 表示一张 $n$ 个结点的简单无向图 $G$，其中 $\dfrac {n(n-1)}2$ 条可能的边中的每一条都有 $\alpha$ 的概率出现，且这些概率互相独立．
+???+ note "question"
+    For $n \in \mathbf{N}^*; p,q\in [0,1]$ and $q\leq p$, verify: the expected value of the number of connected components of the random graph $G_1(n,p)$ does not exceed the expected value of the number of connected components of the random graph $G_2(n,q)$. Here $G(n,\alpha)$ represents a simple undirected graph $G$ with $n$ nodes, in which each of the $\dfrac {n(n-1)}2$ possible edges has a probability of $\alpha$, and these probabilities are independent of each other.
 
-这个结论看起来再自然不过，但严格证明却并不那么容易．
+This conclusion seems natural, but it is not so easy to prove strictly.
 
-???+ note "证明思路"
-    我们假想这两张图分别使用了一个 01 随机数生成器来获知每条边存在与否，其中 $G_1$ 的生成器 $T_1$ 每次以 $p$ 的概率输出 1，$G_2$ 的生成器 $T_2$ 每次以 $q$ 的概率输出 1．这样，要构造一张图，就只需把对应的生成器运行 $\dfrac {n(n-1)}2$ 遍即可．
+???+ note "Proof idea"
+    We assume that these two pictures use a 01 random number generator to know whether each edge exists or not. The generator $T_1$ of $G_1$ outputs 1 with a probability of $p$ every time, and the generator $T_2$ of $G_2$ outputs 1 with a probability of $q$ every time. In this way, to construct a graph, you only need to run the corresponding generator $\dfrac {n(n-1)}2$ times.
     
-    现在我们把两个生成器合二为一．考虑随机数生成器 $T$，每次以 $q$ 的概率输出 0，以 $p-q$ 的概率输出 1，以 $1-p$ 的概率输出 2．如果我们将这个 $T$ 运行 $\dfrac {n(n-1)}2$ 遍，就能同时构造出 $G_1$ 和 $G_2$．具体地说，如果输出是 0，则认为 $G_1$ 和 $G_2$ 中都没有当前考虑的边；如果输出是 1，则认为只有 $G_1$ 中有当前考虑的边；如果输出是 2，则认为 $G_1$ 和 $G_2$ 中都有当前考虑的边．
+    Now we combine the two generators into one. Consider the random number generator $T$, which outputs 0 with a probability of $q$, 1 with a probability of $p-q$, and 2 with a probability of $1-p$. If we run this $T$ $\dfrac {n(n-1)}2$ times, we can construct $G_1$ and $G_2$ at the same time. Specifically, if the output is 0, it is considered that there is no currently considered edge in $G_1$ and $G_2$; if the output is 1, it is considered that only $G_1$ has the currently considered edge; if the output is 2, it is considered that both $G_1$ and $G_2$ have currently considered edges.
     
-    容易验证，这样生成的 $G_1$ 和 $G_2$ 符合其定义，而且在每个实例中，$G_2$ 的边集都是 $G_1$ 边集的子集．因此在每个实例中，$G_2$ 的连通分量个数都不小于 $G_1$ 的连通分量个数；那么期望值自然也满足同样的大小关系．
+    It is easy to verify that the $G_1$ and $G_2$ generated in this way conform to their definitions, and in each instance, the edge set of $G_2$ is a subset of the edge set of $G_1$. Therefore, in each instance, the number of connected components of $G_2$ is not less than the number of connected components of $G_1$; then the expected value naturally satisfies the same size relationship.
 
-这一段证明中用到的思想被称为「耦合」，可以从字面意思来理解这种思想．本例中它体现为把两个本来独立的随机过程合二为一．
+The idea used in this proof is called "coupling", and this idea can be understood literally. In this case, it is embodied in combining two originally independent random processes into one.
 
-#### 应用：[NERC 2019 Problem G: Game Relics](https://codeforces.com/contest/1267/problem/G)
+#### Application: [NERC 2019 Problem G: Game Relics](https://codeforces.com/contest/1267/problem/G)
 
-???+ note "简要题意"
-    有若干个物品，每个物品有一个价格 $c_i$．你想要获得所有物品，为此你可以任意地进行两种操作：
+???+ note "Brief question meaning"
+    There are several items, each item has a price $c_i$. You want to get all the items, and to do so you can do either of two things:
     
-    1.  选择一个未拥有的物品 $i$，花 $c_i$ 块钱买下来．
-    2.  花 $x$ 块钱从所有物品（包括已经拥有的）中等概率随机抽取一个．如果尚未拥有该物品，则直接获得它；否则一无所获，但是会返还 $\dfrac x2$ 块钱．$x$ 为输入的常数．
+    1.  Choose an item $i$ that you don’t own and buy it for $c_i$ yuan.
+    2.  Spend $x$ dollars to randomly select one from all items (including those you already own) with a medium probability. If you don't already own the item, get it directly; otherwise, get nothing, but $\dfrac x2$ dollars will be returned. $x$ is the input constant.
     
-    问最优策略下的期望花费．
+    Ask about the expected cost under the optimal strategy.
 
-观察：如果选择抽物品，就一定会一直抽直到获得新物品为止．
+Observation: If you choose to draw items, you will definitely keep drawing until you get new items.
 
--   理由：如果抽一次没有获得新物品，则新的局面和抽物品之前的局面一模一样，所以如果旧局面的最优行动是「抽一发」，则新局面的最优行动一定也是「再抽一发」．
+-   Reason: If no new item is obtained after drawing once, the new situation will be exactly the same as the situation before the item was drawn. Therefore, if the optimal action in the old situation is "drawing one shot", the optimal action in the new situation must also be "drawing another shot".
 
-我们可以计算出 $f_k$ 表示：如果当前已经拥有 $k$ 个不同物品，则期望要花多少钱才能抽到新物品．根据刚才的观察，我们可以直接把 $f_k$ 当作一个固定的代价，即转化为「每次花 $f_k$ 块钱随机获得一个新物品」．
+We can calculate $f_k$ which means: if we already have $k$ different items, how much money do we expect to spend to draw new items. Based on the observations just now, we can directly regard $f_k$ as a fixed price, that is, convert it into "each time you spend $f_k$ yuan to randomly obtain a new item."
 
-???+ note "期望代价的计算"
-    显然 $f_k=\dfrac x2 \cdot (R-1)+x$，其中 $R$ 表示要得到新物品期望的抽取次数．
+???+ note "Calculation of expected cost"
+    Obviously $f_k=\dfrac x2 \cdot (R-1)+x$, where $R$ represents the expected number of draws to get new items.
     
-    引理：如果一枚硬币有 $p$ 的概率掷出正面，则首次掷出正面所需的期望次数为 $\dfrac 1p$．
+    Lemma: If a coin has a probability of $p$ that it will come up heads, then the expected number of times it takes to flip heads for the first time is $\dfrac 1p$.
     
-    -   感性理解：$\dfrac 1p \cdot p = 1$，所以扔这么多次期望得到 1 次正面，看起来就比较对．
-    -   这种感性理解可以通过 [大数定律](https://en.wikipedia.org/wiki/Law_of_large_numbers) 严谨化，即考虑 $n\to \infty$ 次「不断抛硬币直到得到正面」的实验．推导细节略．
-    -   另一种可行的证法是，直接把期望的定义带进去暴算．推导细节略．
+    -   Perceptual understanding: $\dfrac 1p \cdot p = 1$, so it seems more right to throw it so many times and expect to get 1 head.
+    -   This perceptual understanding can be made rigorous through the [law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers), that is, consider $n\to \infty$ experiments of "continuously tossing a coin until you get heads". The details of the derivation are omitted.
+    -   Another feasible way to prove it is to directly bring the definition of expectation into the calculation. The details of the derivation are omitted.
     
-    显然抽一次得到新物品的概率是 $\dfrac {n-k}n$，那么 $R=\dfrac n{n-k}$．
+    Obviously the probability of getting a new item by drawing once is $\dfrac {n-k}n$, then $R=\dfrac n{n-k}$.
 
-结论：最优策略一定是先抽若干次，再买掉所有没抽到的物品．
+Conclusion: The optimal strategy must be to draw a few items first, and then buy all the undrawn items.
 
-这个结论符合直觉，因为 $f_k$ 是关于 $k$ 递增的，早抽似乎确实比晚抽看起来好一点．
+This conclusion is intuitive, because $f_k$ is increasing with respect to $k$, and early draw does seem to be better than late draw.
 
-???+ note "证明"
-    先考虑证明一个特殊情况．将证：
+???+ note "prove"
+    Consider first proving a special case. Will prove:
     
-    -   随机过程 $A$：先买物品 $x$，然后不断抽直到得到所有物品
-    -   ……一定不优于……
-    -   随机过程 $B$：不断抽直到得到 $x$ 以外的所有物品，然后如果还没有 $x$ 则买下来
+    -   Random process $A$: first buy item $x$, and then continue to draw until you get all the items
+    -   ...must not be better than...
+    -   Random process $B$: Keep drawing until you get all items except $x$, and then buy $x$ if you don’t have it yet
     
-    考虑让随机过程 $A$ 和随机过程 $B$ 使用同一个随机数生成器．即，$A$ 的第一次抽取和 $B$ 的第一次抽取会抽到同一个元素，第二次、第三次……也是一样．
+    Consider letting the random process $A$ and the random process $B$ use the same random number generator. That is, the first extraction of $A$ and the first extraction of $B$ will extract the same element, and the same will happen for the second and third times...
     
-    显然，此时 $A$ 和 $B$ 抽取的次数必定相等．对于一个被 $A$ 抽到的物品 $y\neq x$，观察到：
+    Obviously, at this time, the number of extractions of $A$ and $B$ must be equal. For an item $y\neq x$ drawn by $A$, observe:
     
-    -   $A$ 中抽到 $y$ 时已经持有的物品数，一定大于等于 $B$ 中抽到 $y$ 时已经持有的物品数．
+    -   The number of items already held when $y$ is drawn from $A$ must be greater than or equal to the number of items already held when $y$ is drawn from $B$.
     
-    因此 $B$ 的单次抽取代价不高于 $A$ 的单次抽取代价，进而抽取的总代价也不高于 $A$．
+    Therefore, the single extraction cost of $B$ is not higher than the single extraction cost of $A$, and the total extraction cost is not higher than $A$.
     
-    显然 $B$ 的购买代价同样不高于 $A$．综上，$B$ 一定不劣于 $A$．
+    Obviously, the purchase price of $B$ is also not higher than $A$. To sum up, $B$ must not be inferior to $A$.
     
-    然后可以通过数学归纳把这一结论推广到一般情况．具体地说，每次我们找到当前策略中的最后一次购买，然后根据上述结论，把这一次购买移到最后一定不劣．细节略．
+    This conclusion can then be extended to general situations through mathematical induction. Specifically, every time we find the last purchase in the current strategy, and then based on the above conclusion, it is not bad to move this purchase to the end. Details omitted.
 
-基于这个结论，我们再次等价地转化问题：把「选一个物品并支付对应价格购买」的操作，改成「随机选一个未拥有的物品并支付对应价格购买」．等价性的理由是，既然购买只是用来扫尾的，那选到哪个都无所谓．
+Based on this conclusion, we equivalently transform the problem again: changing the operation of "choose an item and pay the corresponding price to buy" to "randomly select an item that you don't own and pay the corresponding price to buy it." The reason for equivalence is that since the purchase is only for cleaning up, it doesn't matter which one you choose.
 
-现在我们发现，「抽取」和「购买」，实质上已经变成了相同的操作，区别仅在于付出的价格不同．选择购买还是抽取，对于获得物品的顺序毫无影响，而且每种获得物品的顺序都是等可能的．
+Now we find that "extraction" and "purchase" have essentially become the same operation, the only difference is the price paid. Choosing to buy or draw has no effect on the order in which items are obtained, and each order in which items are obtained is equally possible.
 
-观察：在某一时刻，我们应当选择买，当且仅当下一次抽取的代价（由已经抽到的物品数确定）大于剩余物品的平均价格（等于的话则任意）．
+Observation: At a certain moment, we should choose to buy if and only if the cost of the next draw (determined by the number of items that have been drawn) is greater than the average price of the remaining items (if equal, it is arbitrary).
 
--   可以证明，随着时间的推移，抽取代价的增速一定不低于剩余物品均价的增速．这说明从抽到买的「临界点」只有一个，进一步验证了先前结论．
+-   It can be proved that as time goes on, the growth rate of the drawing cost is never lower than the growth rate of the average price of the remaining items. This shows that there is only one "critical point" from drawing to buying, which further verifies the previous conclusion.
 
-最后，我们枚举所有可能的局面（即已经拥有的元素集合），算出这种局面出现的概率（已有元素的排列方案数除以总方案数），乘上当前局面最优决策的代价（由拥有元素个数和剩余物品总价确定），再加起来即可．这个过程可以用背包式的 DP 优化，即可通过本题．
+Finally, we enumerate all possible situations (that is, the set of elements we already have), calculate the probability of this situation occurring (the number of arrangement options for existing elements divided by the total number of options), multiply this by the cost of the optimal decision in the current situation (determined by the number of elements we have and the total price of the remaining items), and add it all up. This process can be optimized using backpack-style DP, and this question can be passed.
 
 ***
 
-**回顾**：可以看到，耦合的技巧在本题中使用了两次．第一次是在证明过程中，令两个随机过程使用同一个随机源；第二次是把购买转化成随机购买（即引入随机源），从而使得购买和抽取这两种操作实质上「耦合」为同一种操作（即令抽取和购买操作共享一个随机源）．
+**Review**: It can be seen that the coupling technique is used twice in this question. The first time is to make the two random processes use the same random source during the proof process; the second time is to convert the purchase into a random purchase (that is, introduce a random source), so that the two operations of purchase and extraction are essentially "coupled" into the same operation (that is, the extraction and purchase operations share a random source).
 
-## 参考资料
+## References
 
 [^ref1]: [PANIC - Editorial](https://discuss.codechef.com/t/panic-editorial/80145)
 
-[^ref2]: [UOJ NOI Round #4 Day2 题解](https://peehs-moorhsum.blog.uoj.ac/blog/6375)
+[^ref2]: [UOJ NOI Round #4 Day2 Problem Solution](https://peehs-moorhsum.blog.uoj.ac/blog/6375)
 
 [^ref3]: [Anna Gambin and Adam Malinowski, Randomized Meldable Priority Queues](https://www.researchgate.net/publication/2801527_Randomized_Meldable_Priority_Queues)

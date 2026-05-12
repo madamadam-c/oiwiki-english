@@ -1,42 +1,42 @@
 author: morris821028
 
-## 简介
+## Introduction
 
-可持久化数据结构 (Persistent data structure) 总是可以保留每一个历史版本，并且支持操作的不可变特性 (immutable)．
+A persistent data structure can always preserve every historical version and supports immutable operations.
 
-## 可持久化分类
+## Categories of Persistence
 
-### 部分可持久化 (Partially Persistent)
+### Partially Persistent
 
-所有版本都可以访问，但是只有最新版本可以修改．
+All versions can be accessed, but only the newest version can be modified.
 
-### 完全可持久化 (Fully Persistent)
+### Fully Persistent
 
-所有版本都既可以访问又可以修改．
+All versions can both be accessed and modified.
 
-若支持将两个历史版本合并，则又称为 Confluently Persistent
+If merging two historical versions is supported, the structure is also called confluently persistent.
 
-## 实际应用
+## Practical Applications
 
-### 几何计算
+### Computational Geometry
 
-在几何计算中有许多离线算法，如扫描线算法一次扫过去回答所有询问，在时间复杂度分析上相当优异．但强迫在线的情况下，每一次都扫描一次，询问操作的时间复杂度就从对数时间降成线性．为了解决这一种情况，持久化技术给了另一种思维，我们将扫描线的时间轴作为一个变动依据，持久化相关的结构，只要我们能将询问在对数时间内穿梭于这个时间轴，必能动态解决先前的问题．
+There are many offline algorithms in computational geometry. For example, a sweep-line algorithm can answer all queries in one pass and has excellent time complexity. However, if the problem is forced online, scanning once per query degrades query complexity from logarithmic time to linear time. Persistence gives another way to think about this situation: treat the sweep line's time axis as a changing parameter and persist the related structures. As long as queries can move through this time axis in logarithmic time, the original problem can be handled dynamically.
 
-### 字串处理
+### String Processing
 
-为了达到非常高效率的合并操作，防止大量重复性字串的生成伴随的效能退化，使得各方面的操作都能远低于线性操作．如 C++ rope 就是一个持久化的数据结构．不只是字串操作，若处理类型有大量重复的情况，持久化的概念便能派上用场．
+Persistence can achieve highly efficient merge operations and prevent performance degradation caused by generating large amounts of repeated strings, making many operations much faster than linear time. For example, C++ `rope` is a persistent data structure. This is not limited to string operations; whenever a processed type has many repeated parts, the idea of persistence can be useful.
 
-### 版本回溯
+### Version Rollback
 
-实际上就是对应大部分的应用软体中的 redo/undo．如果资料库/操作变动为了高效率操作而会配上复杂的结构（并不像 hash, set 反转操作只需要常数或对数时间），那么为了快速回推变动结果，持久化结构就是要减少 redo/undo 的花费．
+This corresponds to redo/undo in most application software. If a database or operation changes use complex structures for efficiency (unlike `hash` or `set`, whose reverse operations may only need constant or logarithmic time), persistent structures reduce the cost of quickly rolling back changes.
 
-资料库本身可以常数回推，纪录变动的部分情况即可．而应用层的计算，大部分实作都是砍掉快取，并且重新计算出一份新的结构，有时候回推的变动大小为 m，为了重新计算结构而消耗了 n+m，如果 n 和 m 的差距非常大，那连续回推的体感就很糟糕．
+The database itself may support constant-time rollback by recording only the changed parts. At the application layer, however, many implementations discard caches and recompute a new structure. If the rollback size is m, recomputing may cost n+m; when n and m differ greatly, repeated rollback feels very slow.
 
-### 函数式编程
+### Functional Programming
 
-函数式编程需要特别的数据结构以符合语言特性，其中不可变的性质更为重要，以利于并行环境与除错．如面向对象编程的 Java 8 后引入 stream 类，支援写出函数式的语法设计，可提供惰性求值、无限值域等的特殊功能．
+Functional programming requires special data structures that fit the language model, where immutability is especially important for parallel environments and debugging. For example, Java introduced stream classes after Java 8 in object-oriented programming, supporting functional-style syntax and special capabilities such as lazy evaluation and infinite domains.
 
-## 参考
+## References
 
 -   <https://en.wikipedia.org/wiki/Persistent_data_structure>
--   MIT 课程 <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-854j-advanced-algorithms-fall-2005/lecture-notes/persistent.pdf>
+-   MIT course <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-854j-advanced-algorithms-fall-2005/lecture-notes/persistent.pdf>

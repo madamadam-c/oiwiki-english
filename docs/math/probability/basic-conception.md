@@ -1,102 +1,102 @@
-## 概述
+## Overview
 
-在研究具体的随机现象时我们通常着重关注以下要素：
+When studying concrete random phenomena, we usually focus on the following elements:
 
--   样本空间 $\Omega$，指明随机现象所有可能出现的结果．
--   事件域 $\mathcal{F}$，表示我们所关心的所有事件．
--   概率 $P$，描述每一个事件发生的可能性大小．
+-   Sample space $\Omega$, which specifies all possible outcomes of the random phenomenon.
+-   Event field $\mathcal{F}$, representing all events we care about.
+-   Probability $P$, describing the likelihood of each event occurring.
 
-## 样本空间、随机事件
+## Sample Space and Random Events
 
-### 定义
+### Definition
 
-一个随机现象中可能发生的不能再细分的结果被称为 **样本点**．所有样本点的集合称为 **样本空间**，通常用 $\Omega$ 来表示．
+The indivisible possible outcomes of a random phenomenon are called **sample points**. The set of all sample points is called the **sample space**, usually denoted by $\Omega$.
 
-一个 **随机事件** 是样本空间 $\Omega$ 的子集，它由若干样本点构成，用大写字母 $A, B, C, \cdots$ 表示．
+A **random event** is a subset of the sample space $\Omega$, consisting of several sample points, and is denoted by capital letters $A, B, C, \cdots$.
 
-对于一个随机现象的结果 $\omega$ 和一个随机事件 $A$，我们称事件 $A$  **发生了** 当且仅当 $\omega \in A$．
+For an outcome $\omega$ of a random phenomenon and a random event $A$, we say event $A$ **occurred** if and only if $\omega \in A$.
 
-例如，掷一次骰子得到的点数是一个随机现象，其样本空间可以表示为 $\Omega=\{1,2,3,4,5,6\}$．设随机事件 $A$ 为「获得的点数大于 $4$」，则 $A = \{ 5, 6 \}$．若某次掷骰子得到的点数 $\omega = 3$，由于 $\omega \notin A$，故事件 $A$ 没有发生．
+For example, the number obtained from rolling a die once is a random phenomenon, and its sample space can be expressed as $\Omega = \{1, 2, 3, 4, 5, 6\}$. Let random event $A$ be "the number obtained is greater than $4$", then $A = \{5, 6\}$. If in a particular roll the number $\omega = 3$, since $\omega \notin A$, event $A$ did not occur.
 
-### 事件的运算
+### Operations on Events
 
-由于我们将随机事件定义为了样本空间 $\Omega$ 的子集，故我们可以将集合的运算（如交、并、补等）移植到随机事件上．记号与集合运算保持一致．
+Since we define random events as subsets of the sample space $\Omega$, we can apply set operations (such as intersection, union, complement, etc.) to random events. The notation is consistent with set operations.
 
-特别的，事件的并 $A \cup B$ 也可记作 $A + B$，事件的交 $A \cap B$ 也可记作 $AB$，此时也可分别称作 **和事件** 和 **积事件**．
+Specifically, the union of events $A \cup B$ can also be written as $A + B$, and the intersection $A \cap B$ can also be written as $AB$. In this context, they may also be called **sum events** and **product events** respectively.
 
-## 事件域
+## Event Field
 
-研究具体的随机现象时我们需要明确哪些事件是我们感兴趣的．根据随机事件的定义，显然有 $\mathcal{F} \subset 2^{\Omega}$（记号 $2^{\Omega}$ 表示 $\Omega$ 的幂集），但 $\mathcal{F} = 2^{\Omega}$ 却不是必须的．这在样本空间 $\Omega$ 有限时可能有些难以理解，毕竟 $2^{\Omega}$ 尽管更大了但仍然有限．而当 $\Omega$ 为无穷集时，$2^{\Omega}$ 的势变得更大，其中也难免会出现一些「性质不太好」且我们不关心的事件，这时为了兼顾这些事件而放弃一些性质就显得得不偿失了．
+When studying concrete random phenomena, we need to determine which events interest us. According to the definition of random events, we clearly have $\mathcal{F} \subset 2^{\Omega}$ (where $2^{\Omega}$ denotes the power set of $\Omega$), but $\mathcal{F} = 2^{\Omega}$ is not required. This may be somewhat difficult to understand when the sample space $\Omega$ is finite, since $2^{\Omega}$ is larger but still finite. When $\Omega$ is an infinite set, the cardinality of $2^{\Omega}$ becomes even larger, and inevitably there will be some "pathological" events that we don't care about. In this case, giving up some properties to accommodate these events would not be worth the cost.
 
-尽管 $\mathcal{F} = 2^{\Omega}$ 不是必须的，这并不代表 $2^{\Omega}$ 的任一子集都能成为事件域．我们通常会对一些事件进行运算得到的结果事件的概率感兴趣，因此我们希望事件域 $\mathcal{F}$ 满足下列条件：
+Although $\mathcal{F} = 2^{\Omega}$ is not required, this does not mean that any subset of $2^{\Omega}$ can become an event field. We are usually interested in the probabilities of events obtained by performing operations on some events, so we require the event field $\mathcal{F}$ to satisfy the following conditions:
 
--   $\varnothing \in \mathcal{F}$；
--   若 $A \in \mathcal{F}$，则补事件 $\bar{A} \in \mathcal{F}$；
--   若有一列事件 $A_n \in \mathcal{F}, n = 1, 2, 3\dots$，则 $\bigcup A_n \in \mathcal{F}$．
+-   $\varnothing \in \mathcal{F}$;
+-   If $A \in \mathcal{F}$, then the complement $\bar{A} \in \mathcal{F}$;
+-   If there is a sequence of events $A_n \in \mathcal{F}, n = 1, 2, 3\dots$, then $\bigcup A_n \in \mathcal{F}$.
 
-简言之，就是事件域 $\mathcal{F}$ 对在补运算、和可数并下是封闭的，且包含元素 $\varnothing$．
+In short, the event field $\mathcal{F}$ is closed under complement and countable union, and contains the element $\varnothing$.
 
-可以证明满足上述三个条件的事件域 $\mathcal{F}$ 对可数交也是封闭的．
+It can be proven that an event field $\mathcal{F}$ satisfying the three conditions above is also closed under countable intersection.
 
-以掷骰子为例，当样本空间记为 $\Omega=\{1,2,3,4,5,6\}$ 时，以下两个集合能够成为事件域：
+Taking die rolling as an example, when the sample space is $\Omega = \{1, 2, 3, 4, 5, 6\}$, the following two sets can serve as event fields:
 
 -   $\mathcal{F}_1 = \{ \varnothing, \Omega \}$
 -   $\mathcal{F}_2 = \{ \varnothing, \{1, 3, 5\}, \{2, 4, 6\}, \Omega \}$
 
-但以下两个集合则不能
+But the following two sets cannot:
 
--   $\mathcal{F}_3 = \{ \varnothing, \{1\}, \Omega \}$（对补不封闭）
--   $\mathcal{F}_4 = \{ \{1, 3, 5\}, \{2, 4, 6\} \}$（不含有 $\varnothing$ 且对并不封闭）
+-   $\mathcal{F}_3 = \{ \varnothing, \{1\}, \Omega \}$ (not closed under complement)
+-   $\mathcal{F}_4 = \{ \{1, 3, 5\}, \{2, 4, 6\} \}$ (does not contain $\varnothing$ and is not closed under union)
 
-## 概率
+## Probability
 
-### 定义
+### Definition
 
-#### 古典定义
+#### Classical Definition
 
-在概率论早期实践中，由于涉及到的随机现象都比较简单，具体表现为样本空间 $\Omega$ 是有限集，且直观上所有样本点是等可能出现的，因此人们便总结出了下述定义：
+In the early practice of probability theory, since the random phenomena involved were relatively simple, specifically with finite sample space $\Omega$ and intuitively all sample points equally likely to occur, people derived the following definition:
 
-如果一个随机现象满足：
+If a random phenomenon satisfies:
 
--   只有有限个基本结果；
--   每个基本结果出现的可能性是一样的；
+-   There are only finitely many elementary outcomes;
+-   Each elementary outcome is equally likely to occur;
 
-那么对于每个事件 $A$，定义它的概率为
+Then for each event $A$, its probability is defined as
 
 $$
-P(A)=\frac{\#(A)}{\#(\Omega)}
+P(A) = \frac{\#(A)}{\#(\Omega)}
 $$
 
-其中 $\#(\cdot)$ 表示对随机事件（一个集合）大小的度量．
+where $\#(\cdot)$ denotes the measure of the size of a random event (a set).
 
-后来人们发现这一定义可以直接推广到 $\Omega$ 无限的一部分情景中，于是就有了所谓 [几何概型](https://baike.baidu.com/item/%E5%87%A0%E4%BD%95%E6%A6%82%E5%9E%8B/4035773)．
+Later, people found that this definition can be directly extended to some scenarios where $\Omega$ is infinite, leading to what is called the [geometric probability model](https://en.wikipedia.org/wiki/Geometric_probability).
 
-#### 公理化定义
+#### Axiomatic Definition
 
-上述基于直观认识的定义在逻辑上有一个很大的漏洞：在定义「概率」这一概念时用到了「可能性」这一说法，产生了循环定义的问题．同时「等可能」在样本空间无限时会产生歧义，由此产生了包括 [Bertrand 悖论](https://baike.baidu.com/item/%E8%B4%9D%E7%89%B9%E6%9C%97%E6%82%96%E8%AE%BA/9241081) 在内的一系列问题．
+The above intuitive definition has a significant logical flaw: the concept of "probability" is defined using the term "likelihood," creating a circular definition. At the same time, "equally likely" becomes ambiguous when the sample space is infinite, leading to a series of problems including the [Bertrand paradox](https://en.wikipedia.org/wiki/Bertrand%27s_paradox).
 
-经过不断探索，苏联数学家柯尔莫哥洛夫于 1933 年在他的《概率论基础》一书中第一次给出了概率的公理化定义：
+After continuous exploration, Soviet mathematician Kolmogorov first gave the axiomatic definition of probability in 1933 in his book "Foundations of Probability Theory":
 
-概率函数 $P$ 是一个从事件域 $\mathcal{F}$ 到闭区间 $[0, 1]$ 的映射，且满足：
+The probability function $P$ is a mapping from the event field $\mathcal{F}$ to the closed interval $[0, 1]$, satisfying:
 
--   **规范性**：事件 $\Omega$ 的概率值为 $1$，即 $P(\Omega)=1$．
--   **可数可加性**：若一列事件 $A_1, A_2, \cdots$ 两两不交，则 $P\left( \bigcup_{i \geq 1} A_i \right) = \sum_{i \geq 1} P(A_i)$．
+-   **Normality**: The probability of event $\Omega$ is $1$, i.e., $P(\Omega) = 1$.
+-   **Countable additivity**: If a sequence of events $A_1, A_2, \cdots$ are pairwise disjoint, then $P\left( \bigcup_{i \geq 1} A_i \right) = \sum_{i \geq 1} P(A_i)$.
 
-### 概率函数的性质
+### Properties of Probability Functions
 
-对于任意随机事件 $A, B \in \mathcal{F}$，有
+For any random events $A, B \in \mathcal{F}$:
 
--   **单调性**：若 $A \subset B$，则有 $P(A) \leq P(B)$．
--   **容斥原理**：$P(A+B) = P(A) + P(B) - P(AB)$．
--   $P(A - B) = P(A) - P(AB)$，这里 $A - B$ 表示差集．
+-   **Monotonicity**: If $A \subset B$, then $P(A) \leq P(B)$.
+-   **Inclusion-exclusion principle**: $P(A + B) = P(A) + P(B) - P(AB)$.
+-   $P(A - B) = P(A) - P(AB)$, where $A - B$ denotes the set difference.
 
-## 概率空间
+## Probability Space
 
-我们在一开始提到，研究具体的随机现象时我们通常关注样本空间 $\Omega$、事件域 $\mathcal{F}$ 以及概率函数 $P$．我们将三元组 $(\Omega, \mathcal{F}, P)$ 称为一个概率空间．
+At the beginning, we mentioned that when studying concrete random phenomena, we usually focus on the sample space $\Omega$, the event field $\mathcal{F}$, and the probability function $P$. We call the triple $(\Omega, \mathcal{F}, P)$ a **probability space**.
 
-概率只有在确定的概率空间下讨论才有意义．我们前面提到的 Bertrand 悖论归根结底就是因对样本空间 $\Omega$ 的定义不明确而产生的．
+Probability only has meaning when discussed in a determined probability space. The Bertrand paradox mentioned earlier is fundamentally caused by an unclear definition of the sample space $\Omega$.
 
-## 参考资料与注释
+## References and Notes
 
--   [概率论（数学分支）\_百度百科](https://baike.baidu.com/item/概率论/829122)
--   [Probability - Wikipedia](https://en.wikipedia.org/wiki/Probability)
+-   [Probability Theory (mathematical branch) - Wikipedia](https://en.wikipedia.org/wiki/Probability)
+-   [Probability Theory - Baidu Baike](https://baike.baidu.com/item/概率论/829122)

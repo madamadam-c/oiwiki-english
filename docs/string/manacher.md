@@ -1,46 +1,46 @@
-## 描述
+## Description
 
-给定一个长度为 $n$ 的字符串 $s$，请找到所有对 $(i, j)$ 使得子串 $s[i \dots j]$ 为一个回文串．当 $t = t_{\text{rev}}$ 时，字符串 $t$ 是一个回文串（$t_{\text{rev}}$ 是 $t$ 的反转字符串）．
+Given a string $s$ of length $n$, find all pairs $(i, j)$ such that the substring $s[i \dots j]$ is a palindrome. A string $t$ is a palindrome when $t = t_{\text{rev}}$ ($t_{\text{rev}}$ is the reverse string of $t$).
 
-## 解释
+## Explanation
 
-显然在最坏情况下可能有 $O(n^2)$ 个回文串，因此似乎一眼看过去该问题并没有线性算法．
+Obviously, in the worst case there can be $O(n^2)$ palindromes, so at first glance there seems to be no linear algorithm for this problem.
 
-但是关于回文串的信息可用 **一种更紧凑的方式** 表达：对于每个位置 $i = 0 \dots n - 1$，我们找出值 $d_1[i]$ 和 $d_2[i]$．二者分别表示以位置 $i$ 为中心的长度为奇数和长度为偶数的回文串个数．换个角度，二者也表示了以位置 $i$ 为中心的最长回文串的半径长度（半径长度 $d_1[i]$，$d_2[i]$ 均为从位置 $i$ 到回文串最右端位置包含的字符个数）．
+However, the information about palindromes can be expressed in **a more compact way**: for each position $i = 0 \dots n - 1$, we find values $d_1[i]$ and $d_2[i]$. Both represent the number of palindromes of odd length and even length centered at position $i$. Alternatively, they represent the radius length of the longest palindrome centered at position $i$ (radius length $d_1[i]$, $d_2[i]$ are both the number of characters from position $i$ to the right end of the palindrome).
 
-举例来说，字符串 $s = \mathtt{abababc}$ 以 $s[3] = b$ 为中心有三个奇数长度的回文串，最长回文串半径为 $3$，也即 $d_1[3] = 3$：
+For example, for string $s = \mathtt{abababc}$ centered at $s[3] = b$, there are three odd-length palindromes, and the longest palindrome has radius $3$, i.e., $d_1[3] = 3$:
 
 $$
 a\ \overbrace{b\ a\ \underset{s_3}{b}\ a\ b}^{d_1[3]=3}\ c
 $$
 
-字符串 $s = \mathtt{cbaabd}$ 以 $s[3] = a$ 为中心有两个偶数长度的回文串，最长回文串半径为 $2$，也即 $d_2[3] = 2$：
+For string $s = \mathtt{cbaabd}$ centered at $s[3] = a$, there are two even-length palindromes, and the longest palindrome has radius $2$, i.e., $d_2[3] = 2$:
 
 $$
 c\ \overbrace{b\ a\ \underset{s_3}{a}\ b}^{d_2[3]=2}\ d
 $$
 
-因此关键思路是，如果以某个位置 $i$ 为中心，我们有一个长度为 $l$ 的回文串，那么我们有以 $i$ 为中心的长度为 $l - 2$，$l - 4$，等等的回文串．所以 $d_1[i]$ 和 $d_2[i]$ 两个数组已经足够表示字符串中所有子回文串的信息．
+Thus, the key idea is that if we have a palindrome of length $l$ centered at some position $i$, then we also have palindromes of length $l - 2$, $l - 4$, etc. centered at $i$. So the two arrays $d_1[i]$ and $d_2[i]$ are sufficient to represent all palindrome information in the string.
 
-一个令人惊讶的事实是，存在一个复杂度为线性并且足够简单的算法计算上述两个「回文性质数组」$d_1[]$ 和 $d_2[]$．在这篇文章中我们将详细的描述该算法．
+A surprising fact is that there exists an algorithm with linear complexity and simple enough to compute the two "palindrome property arrays" $d_1[]$ and $d_2[]$. In this article we will describe this algorithm in detail.
 
-## 解法
+## Solutions
 
-总的来说，该问题具有多种解法：应用字符串哈希，该问题可在 $O(n \log n)$ 时间内解决，而使用后缀数组和快速 LCA 该问题可在 $O(n)$ 时间内解决．
+In general, this problem has multiple solutions: using string hashing, it can be solved in $O(n \log n)$ time, and using suffix arrays and fast LCA, it can be solved in $O(n)$ time.
 
-但是这里描述的算法 **压倒性** 的简单，并且在时间和空间复杂度上具有更小的常数．该算法由 **Glenn K. Manacher** 在 1975 年提出．
+However, the algorithm described here is **overwhelmingly** simple and has smaller constants in terms of time and space complexity. This algorithm was proposed by **Glenn K. Manacher** in 1975.
 
-## 朴素算法
+## Naive Algorithm
 
-为了避免在之后的叙述中出现歧义，这里我们指出什么是「朴素算法」．
+To avoid ambiguity in subsequent descriptions, we point out what the "naive algorithm" is.
 
-该算法通过下述方式工作：对每个中心位置 $i$，在比较一对对应字符后，只要可能，该算法便尝试将答案加 $1$．
+This algorithm works as follows: for each center position $i$, after comparing a pair of corresponding characters, the algorithm tries to increment the answer by $1$ as long as possible.
 
-该算法是比较慢的：它只能在 $O(n^2)$ 的时间内计算答案．
+This algorithm is relatively slow: it can only compute the answer in $O(n^2)$ time.
 
-该朴素算法的实现如下：
+The implementation of this naive algorithm is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         vector<int> d1(n), d2(n);
@@ -72,21 +72,21 @@ $$
                 d2[i] += 1
         ```
 
-## Manacher 算法
+## Manacher Algorithm
 
-这里我们将只描述算法中寻找所有奇数长度子回文串的情况，即只计算 $d_1[]$；寻找所有偶数长度子回文串的算法（即计算数组 $d_2[]$）将只需对奇数情况下的算法进行一些小修改．
+Here we will only describe the case of finding all odd-length sub-palindromes, i.e., only computing $d_1[]$. The algorithm for finding all even-length sub-palindromes (i.e., computing array $d_2[]$) only requires small modifications to the algorithm for odd-length case.
 
-为了快速计算，我们维护已找到的最靠右的子回文串的 **边界 $[l, r]$**（即具有最大 $r$ 值的回文串，其中 $l$ 和 $r$ 分别为该回文串左右边界的位置）．初始时，我们置 $l = 0$ 和 $r = -1$（*-1*需区别于倒序索引位置，这里可为任意负数，仅为了循环初始时方便）．
+To compute quickly, we maintain the **boundary $[l, r]$** of the rightmost sub-palindrome found so far (i.e., the palindrome with the maximum $r$ value, where $l$ and $r$ are the positions of the left and right boundaries of that palindrome). Initially, we set $l = 0$ and $r = -1$ (*-1* needs to be distinguished from reverse index position; it can be any negative number here, only for convenience at the start of the loop).
 
-### 过程
+### Process
 
-现在假设我们要对下一个 $i$ 计算 $d_1[i]$，而之前所有 $d_1[]$ 中的值已计算完毕．我们将通过下列方式计算：
+Now suppose we want to compute $d_1[i]$ for the next $i$, and all values in $d_1[]$ have been computed before. We will compute as follows:
 
--   如果 $i$ 位于当前子回文串之外，即 $i > r$，那么我们调用朴素算法．
+-   If $i$ is outside the current sub-palindrome, i.e., $i > r$, then we call the naive algorithm.
 
-    因此我们将连续地增加 $d_1[i]$，同时在每一步中检查当前的子串 $[i - d_1[i] \dots i + d_1[i]]$（$d_1[i]$ 表示半径长度，下同）是否为一个回文串．如果我们找到了第一处对应字符不同，又或者碰到了 $s$ 的边界，则算法停止．在两种情况下我们均已计算完 $d_1[i]$．此后，仍需记得更新 $(l, r)$．
+    Therefore, we will continuously increase $d_1[i]$, and at each step check whether the current substring $[i - d_1[i] \dots i + d_1[i]]$ ($d_1[i]$ represents the radius length, same below) is a palindrome. If we find the first place where the corresponding characters differ, or we reach the boundary of $s$, the algorithm stops. In both cases, we have finished computing $d_1[i]$. After that, we still need to remember to update $(l, r)$.
 
--   现在考虑 $i \le r$ 的情况．我们将尝试从已计算过的 $d_1[]$ 的值中获取一些信息．首先在子回文串 $(l, r)$ 中反转位置 $i$，即我们得到 $j = l + (r - i)$．现在来考察值 $d_1[j]$．因为位置 $j$ 同位置 $i$ 对称，我们 **几乎总是** 可以置 $d_1[i] = d_1[j]$．该想法的图示如下（可认为以 $j$ 为中心的回文串被「拷贝」至以 $i$ 为中心的位置上）：
+-   Now consider the case $i \le r$. We will try to get some information from the already computed $d_1[]$ values. First, reflect position $i$ in the sub-palindrome $(l, r)$, i.e., we get $j = l + (r - i)$. Now consider the value $d_1[j]$. Because positions $j$ and $i$ are symmetric, we **almost always** can set $d_1[i] = d_1[j]$. The idea is illustrated below (we can think of the palindrome centered at $j$ being "copied" to the position centered at $i$):
 
     $$
     \ldots\
@@ -104,11 +104,11 @@ $$
     \ldots
     $$
 
-    然而有一个 **棘手的情况** 需要被正确处理：当「内部」的回文串到达「外部」回文串的边界时，即 $j - d_1[j] + 1 \le l$（或者等价的说，$i + d_1[j] - 1 \ge r$）．因为在「外部」回文串范围以外的对称性没有保证，因此直接置 $d_1[i] = d_1[j]$ 将是不正确的：我们没有足够的信息来断言在位置 $i$ 的回文串具有同样的长度．
+    However, there is a **tricky case** that needs to be handled correctly: when the "inner" palindrome reaches the boundary of the "outer" palindrome, i.e., $j - d_1[j] + 1 \le l$ (or equivalently, $i + d_1[j] - 1 \ge r$). Since symmetry outside the "outer" palindrome is not guaranteed, directly setting $d_1[i] = d_1[j]$ would be incorrect: we don't have enough information to assert that the palindrome at position $i$ has the same length.
 
-    实际上，为了正确处理这种情况，我们应该「截断」回文串的长度，即置 $d_1[i] = r - i + 1$．之后我们将运行朴素算法以尝试尽可能增加 $d_1[i]$ 的值．
+    In fact, to handle this case correctly, we should "truncate" the palindrome length, i.e., set $d_1[i] = r - i + 1$. Then we will run the naive algorithm to try to increase the value of $d_1[i]$ as much as possible.
 
-    该种情况的图示如下（以 $j$ 为中心的回文串已经被截断以落在「外部」回文串内）：
+    The illustration of this case is as follows (the palindrome centered at $j$ has been truncated to fit within the "outer" palindrome):
 
     $$
     \ldots\
@@ -126,27 +126,27 @@ $$
     }_\text{try moving here}
     $$
 
-    该图示显示出，尽管以 $j$ 为中心的回文串可能更长，以致于超出「外部」回文串，但在位置 $i$，我们只能利用其完全落在「外部」回文串内的部分．然而位置 $i$ 的答案可能比这个值更大，因此接下来我们将运行朴素算法来尝试将其扩展至「外部」回文串之外，也即标识为 "try moving here" 的区域．
+    This illustration shows that although the palindrome centered at $j$ may be longer and extend beyond the "outer" palindrome, at position $i$ we can only use the part that completely lies within the "outer" palindrome. However, the answer at position $i$ may be larger than this value, so next we run the naive algorithm to try to extend it beyond the "outer" palindrome, i.e., the area marked as "try moving here".
 
-最后，仍有必要提醒的是，我们应当记得在计算完每个 $d_1[i]$ 后更新值 $(l, r)$．
+    Finally, it is still necessary to remind that we should remember to update the values $(l, r)$ after computing each $d_1[i]$.
 
-同时，再让我们重复一遍：计算偶数长度回文串数组 $d_2[]$ 的算法同上述计算奇数长度回文串数组 $d_1[]$ 的算法十分类似．
+    Also, let us repeat: the algorithm for computing the even-length palindrome array $d_2[]$ is very similar to the algorithm for computing the odd-length palindrome array $d_1[]$.
 
-## Manacher 算法的复杂度
+## Complexity of Manacher Algorithm
 
-因为在计算一个特定位置的答案时我们总会运行朴素算法，所以一眼看去该算法的时间复杂度为线性的事实并不显然．
+Since we always run the naive algorithm when computing the answer for a specific position, at first glance it is not obvious that the time complexity of this algorithm is linear.
 
-然而更仔细的分析显示出该算法具有线性复杂度．此处我们需要指出，[计算 Z 函数的算法](./z-func.md) 和该算法较为类似，并同样具有线性时间复杂度．
+However, a more careful analysis shows that the algorithm has linear complexity. Here we need to point out that the [algorithm for computing the Z-function](./z-func.md) is quite similar to this algorithm and also has linear time complexity.
 
-实际上，注意到朴素算法的每次迭代均会使 $r$ 增加 $1$，以及 $r$ 在算法运行过程中从不减小．这两个观察告诉我们朴素算法总共会进行 $O(n)$ 次迭代．
+In fact, note that each iteration of the naive algorithm increases $r$ by $1$, and $r$ never decreases during the execution of the algorithm. These two observations tell us that the naive algorithm will perform a total of $O(n)$ iterations.
 
-Manacher 算法的另一部分显然也是线性的，因此总复杂度为 $O(n)$．
+The other part of Manacher's algorithm is obviously also linear, so the total complexity is $O(n)$.
 
-## Manacher 算法的实现
+## Implementation of Manacher Algorithm
 
-### 分类讨论
+### Case Analysis
 
-为了计算 $d_1[]$，我们有以下代码：
+To compute $d_1[]$, we have the following code:
 
 === "C++"
     ```cpp
@@ -179,7 +179,7 @@ Manacher 算法的另一部分显然也是线性的，因此总复杂度为 $O(n
             r = i + k
     ```
 
-计算 $d_2[]$ 的代码十分类似，但是在算术表达式上有些许不同：
+The code for computing $d_2[]$ is very similar, but there are some differences in the arithmetic expressions:
 
 === "C++"
     ```cpp
@@ -212,24 +212,24 @@ Manacher 算法的另一部分显然也是线性的，因此总复杂度为 $O(n
             r = i + k
     ```
 
-### 统一处理
+### Unified Treatment
 
-虽然在讲解过程及上述实现中我们将 $d_1[]$ 和 $d_2[]$ 的计算分开考虑，但实际上可以通过一个技巧将二者的计算统一为 $d_1[]$ 的计算．
+Although in the explanation and the above implementation we considered the computation of $d_1[]$ and $d_2[]$ separately, in fact they can be unified into the computation of $d_1[]$ using a trick.
 
-给定一个长度为 $n$ 的字符串 $s$，我们在其 $n + 1$ 个空中插入分隔符 $\#$，从而构造一个长度为 $2n + 1$ 的字符串 $s'$．举例来说，对于字符串 $s = \mathtt{abababc}$，其对应的 $s' = \mathtt{\#a\#b\#a\#b\#a\#b\#c\#}$．
+Given a string $s$ of length $n$, we insert a separator $\#$ into each of its $n + 1$ gaps, thereby constructing a string $s'$ of length $2n + 1$. For example, for $s = \mathtt{abababc}$, its corresponding $s' = \mathtt{\#a\#b\#a\#b\#a\#b\#c\#}$.
 
-对于字母间的 $\#$，其实际意义为 $s$ 中对应的「空」．而两端的 $\#$ 则是为了实现的方便．
+The actual meaning of $\#$ between letters corresponds to the "gap" in $s$. The $\#$ at the two ends are for the convenience of implementation.
 
-注意到，在对 $s'$ 计算 $d_1[]$ 后，对于一个位置 $i$，$d_1[i]$ 所描述的最长的子回文串必定以 $\#$ 结尾（若以字母结尾，由于字母两侧必定各有一个 $\#$，因此可向外扩展一个得到一个更长的）．因此，对于 $s$ 中一个以字母为中心的极大子回文串，设其长度为 $m + 1$，则其在 $s'$ 中对应一个以相应字母为中心，长度为 $2m + 3$ 的极大子回文串；而对于 $s$ 中一个以空为中心的极大子回文串，设其长度为 $m$，则其在 $s'$ 中对应一个以相应表示空的 $\#$ 为中心，长度为 $2m + 1$ 的极大子回文串（上述两种情况下的 $m$ 均为偶数，但该性质成立与否并不影响结论）．综合以上观察及少许计算后易得，在 $s'$ 中，$d_1[i]$ 表示在 $s$ 中以对应位置为中心的极大子回文串的 **总长度加一**．
+Note that after computing $d_1[]$ for $s'$, for a position $i$, the longest sub-palindrome described by $d_1[i]$ must end at a $\#$ (if it ends at a letter, since there must be a $\#$ on each side of the letter, it can be extended outward by one to get a longer one). Therefore, for a maximal sub-palindrome in $s$ centered at a letter, with length $m + 1$, it corresponds in $s'$ to a maximal sub-palindrome centered at the corresponding letter with length $2m + 3$. For a maximal sub-palindrome in $s$ centered at a gap, with length $m$, it corresponds in $s'$ to a maximal sub-palindrome centered at the $\#$ representing that gap with length $2m + 1$ (in both cases above, $m$ is even, but whether this property holds does not affect the conclusion). After combining the above observations and some calculations, it is easy to get that in $s'$, $d_1[i]$ represents **the total length plus one** of the maximal sub-palindrome in $s$ centered at the corresponding position.
 
-上述结论建立了 $s'$ 的 $d_1[]$ 同 $s$ 的 $d_1[]$ 和 $d_2[]$ 间的关系．
+The above conclusion establishes the relationship between $d_1[]$ of $s'$ and $d_1[]$ and $d_2[]$ of $s$.
 
-由于该统一处理本质上即求 $s'$ 的 $d_1[]$，因此在得到 $s'$ 后，代码同上节计算 $d_1[]$ 的一样．
+Since this unified treatment is essentially computing $d_1[]$ of $s'$, after obtaining $s'$, the code is the same as in the previous section for computing $d_1[]$.
 
-## 练习题目
+## Practice Problems
 
 -   [UVa #11475 "Extend to Palindrome"](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=2470)
--   [「国家集训队」最长双回文串](https://www.luogu.com.cn/problem/P4555)
+-   [「National Team」Longest Double Palindrome](https://www.luogu.com.cn/problem/P4555)
 -   [CF1326D2. Labyrinth](https://codeforces.com/contest/1326/problem/D2)
 
-**本页面主要译自博文 [Нахождение всех подпалиндромов](http://e-maxx.ru/algo/palindromes_count) 与其英文翻译版 [Finding all sub-palindromes in $O(N)$](https://cp-algorithms.com/string/manacher.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the article [Нахождение всех подпалиндромов](http://e-maxx.ru/algo/palindromes_count) and its English translation [Finding all sub-palindromes in $O(N)$](https://cp-algorithms.com/string/manacher.html). The Russian version is in the Public Domain with Leave a Link; the English version is under CC-BY-SA 4.0.**

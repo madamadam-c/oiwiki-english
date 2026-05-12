@@ -1,10 +1,10 @@
 author: Alex-McAvoy, lingkerio, LvCGame
 
-## 树的带权路径长度
+## Weighted Path Length of a Tree
 
-设二叉树具有 $n$ 个带权叶结点，从根结点到各叶结点的路径长度与相应叶节点权值的乘积之和称为 **树的带权路径长度（Weighted Path Length of Tree，WPL）**．
+Suppose a binary tree has $n$ weighted leaf nodes. The sum, over all leaves, of the path length from the root to the leaf multiplied by that leaf's weight is called the **weighted path length of the tree (WPL)**.
 
-设 $w_i$ 为二叉树第 $i$ 个叶结点的权值，$l_i$ 为从根结点到第 $i$ 个叶结点的路径长度，则 WPL 计算公式如下：
+Let $w_i$ be the weight of the $i$-th leaf node in the binary tree, and let $l_i$ be the path length from the root to the $i$-th leaf node. Then WPL is computed as follows:
 
 $$
 WPL=\sum_{i=1}^nw_il_i
@@ -12,77 +12,77 @@ $$
 
 ![](./images/huffman-tree-1.svg)
 
-如上图所示，其 WPL 计算过程与结果如下：
+As shown above, its WPL is computed as follows:
 
 $$
 WPL=2*2+3*2+4*2+7*2=4+6+8+14=32
 $$
 
-## 结构
+## Structure
 
-对于给定一组具有确定权值的叶结点，可以构造出不同的二叉树，其中，**WPL 最小的二叉树** 称为 **霍夫曼树（Huffman Tree）**．
+For a given set of leaf nodes with fixed weights, different binary trees can be constructed. Among them, the **binary tree with the minimum WPL** is called a **Huffman tree**.
 
-对于霍夫曼树来说，其叶结点权值越小，离根越远，叶结点权值越大，离根越近，此外其仅有叶结点的度为 $0$，其他结点度均为 $2$．
+In a Huffman tree, leaf nodes with smaller weights are farther from the root, and leaf nodes with larger weights are closer to the root. In addition, only leaf nodes have degree $0$; all other nodes have degree $2$.
 
-## 霍夫曼算法
+## Huffman Algorithm
 
-霍夫曼算法用于构造一棵霍夫曼树，算法步骤如下：
+The Huffman algorithm constructs a Huffman tree. The steps are as follows:
 
-1.  **初始化**：由给定的 $n$ 个权值构造 $n$ 棵只有一个根节点的二叉树，得到一个二叉树集合 $F$．
-2.  **选取与合并**：从二叉树集合 $F$ 中选取根节点权值 **最小的两棵** 二叉树分别作为左右子树构造一棵新的二叉树，这棵新二叉树的根节点的权值为其左、右子树根结点的权值和．
-3.  **删除与加入**：从 $F$ 中删除作为左、右子树的两棵二叉树，并将新建立的二叉树加入到 $F$ 中．
-4.  重复 2、3 步，当集合中只剩下一棵二叉树时，这棵二叉树就是霍夫曼树．
+1.  **Initialization**: Construct $n$ binary trees, each containing only one root node, from the given $n$ weights, forming a set of binary trees $F$.
+2.  **Selection and merging**: From $F$, choose the two binary trees whose root weights are **minimum**, and use them as the left and right subtrees of a new binary tree. The root weight of this new binary tree is the sum of the root weights of its left and right subtrees.
+3.  **Deletion and insertion**: Remove the two binary trees used as the left and right subtrees from $F$, and add the newly built binary tree to $F$.
+4.  Repeat steps 2 and 3. When only one binary tree remains in the set, it is the Huffman tree.
 
 ![](./images/huffman-tree-2.svg)
 
-### 正确性证明
+### Proof of Correctness
 
-???+ note "引理"
-    最优前缀编码树（Huffman 树）中的权值最小的两个叶结点总是最深的叶结点，并且将这两个结点调整为兄弟结点至少不会破坏编码树的最优性．
+???+ note "Lemma"
+    The two leaf nodes with the smallest weights in an optimal prefix code tree (Huffman tree) are always among the deepest leaf nodes, and adjusting these two nodes to be siblings does not destroy the optimality of the code tree.
 
-??? note "证明"
-    我们采用反证法来证明该命题．假设在一棵最优前缀编码树中，存在两个权值最小的叶结点，它们不是最深的叶结点．设这两个结点为 $a$ 和 $b$，且它们的深度小于某个最深的叶结点．对于这个最深的叶结点 $c$，我们可以将 $a$ 和 $c$ 交换位置，或将 $b$ 和 $c$ 交换位置．由于 Huffman 算法保证树的每一层按权值最小的叶结点合并，因此在交换后，树的带权路径长度（WPL）将减少．由此矛盾可得出假设不成立，因此权值最小的两个叶结点必须是最深的叶结点．
+??? note "Proof"
+    We prove this statement by contradiction. Suppose that in an optimal prefix code tree, there are two leaf nodes with the smallest weights that are not deepest leaves. Let these two nodes be $a$ and $b$, and suppose their depths are smaller than the depth of some deepest leaf node. For such a deepest leaf $c$, we can swap the positions of $a$ and $c$, or swap the positions of $b$ and $c$. Since the Huffman algorithm merges the smallest-weight leaves at each layer of the tree, after the swap the weighted path length (WPL) of the tree decreases. This contradiction shows that the assumption is false, so the two leaf nodes with the smallest weights must be deepest leaf nodes.
     
-    接下来，假设这两个权值最小的叶结点分别为 $a$ 和 $b$，它们的深度相同．如果在一棵最优前缀编码树中这两个结点不是兄弟结点，假设存在其他结点 $c$ 和 $d$ 与 $a$ 和 $b$ 分别是兄弟结点（假设 $a$ 和 $c$ 是兄弟结点，$b$ 和 $d$ 是兄弟结点）．我们可以将 $a$ 和 $b$ 合并为一个子树．
+    Next, suppose these two minimum-weight leaves are $a$ and $b$, and they have the same depth. If they are not siblings in an optimal prefix code tree, suppose there are other nodes $c$ and $d$ that are siblings of $a$ and $b$ respectively (that is, $a$ and $c$ are siblings, and $b$ and $d$ are siblings). We can merge $a$ and $b$ into one subtree.
     
-    -   如果 $a$ 和 $b$ 合并后的权值之和小于 $c$ 或 $d$ 的权值，那么我们可以将合并后的子树与权值较大的结点（如 $c$ 或 $d$）合并，形成新的子树，WPL 会减少．
-    -   如果 $a$ 和 $b$ 的权值之和不小于 $c$ 和 $d$ 的权值，我们可以直接将 $a$ 和 $b$ 调整为兄弟结点，$c$ 和 $d$ 作为另一个兄弟结点，WPL 不会增加．
+    -   If the sum of the weights of $a$ and $b$ after merging is less than the weight of $c$ or $d$, then we can merge the resulting subtree with the larger-weight node (such as $c$ or $d$) to form a new subtree, reducing the WPL.
+    -   If the sum of the weights of $a$ and $b$ is not less than the weights of $c$ and $d$, we can directly adjust $a$ and $b$ to be siblings and let $c$ and $d$ be another pair of siblings; the WPL will not increase.
     
-    因此，经过这样的调整，最优性不会被破坏，得证．
+    Therefore, after such an adjustment, optimality is not destroyed. This proves the lemma.
 
-???+ note "定理"
-    Huffman 算法得到的前缀编码树是最优前缀编码树．
+???+ note "Theorem"
+    The prefix code tree obtained by the Huffman algorithm is an optimal prefix code tree.
 
-??? note "证明"
-    我们使用数学归纳法来证明该定理．
+??? note "Proof"
+    We prove the theorem by mathematical induction.
     
-    -   **基本情况**: 当字母数 $n = 2$ 时，显然，直接将两个字母合并成一棵树即为最优编码树．
-    -   **归纳假设**: 假设对于字母数 $n = k$（$k \geq 2$）时，Huffman 算法能够得到最优前缀编码树．
-    -   **归纳步骤**: 对于字母数 $n = k + 1$，我们从 $k+1$ 个字母中选出两个权值最小的字母，将它们合并为一棵子树，子树的根作为虚拟字母（虚拟结点）．根据引理可知，这一操作不会破坏前缀编码树的最优性．此时，虚拟字母与剩下的 $k$ 个字母一同构成 $k + 1$ 个字母，根据归纳假设，当字母数为 $k$ 时，Huffman 算法能够得到最优前缀编码树．
+    -   **Base case**: When the number of letters is $n = 2$, directly merging the two letters into one tree is clearly optimal.
+    -   **Induction hypothesis**: Suppose that when the number of letters is $n = k$ ($k \geq 2$), the Huffman algorithm can obtain an optimal prefix code tree.
+    -   **Induction step**: For $n = k + 1$ letters, choose the two letters with the smallest weights from $k+1$ letters and merge them into one subtree, treating the subtree root as a virtual letter (virtual node). By the lemma, this operation does not destroy the optimality of the prefix code tree. Now this virtual letter together with the remaining $k$ letters gives $k + 1$ letters in total, and by the induction hypothesis, the Huffman algorithm can obtain an optimal prefix code tree for $k$ letters.
     
-    因此，通过数学归纳法，Huffman 算法对于任意字母数 $n$ 都能够得到最优前缀编码树，得证．
+    Therefore, by mathematical induction, the Huffman algorithm can obtain an optimal prefix code tree for any number of letters $n$.
 
-## 霍夫曼编码
+## Huffman Coding
 
-在进行程序设计时，通常给每一个字符标记一个单独的代码来表示一组字符，即 **编码**．
+In programming, each character is usually assigned a separate code to represent a set of characters; this is called **encoding**.
 
-在进行二进制编码时，假设所有的代码都等长，那么表示 $n$ 个不同的字符需要 $\left \lceil \log_2 n \right \rceil$ 位，称为 **等长编码**．
+For binary encoding, if all codes have equal length, representing $n$ different characters requires $\left \lceil \log_2 n \right \rceil$ bits. This is called **fixed-length encoding**.
 
-如果每个字符的 **使用频率相等**，那么等长编码无疑是空间效率最高的编码方法，而如果字符出现的频率不同，则可以让频率高的字符采用尽可能短的编码，频率低的字符采用尽可能长的编码，来构造出一种 **不等长编码**，从而获得更好的空间效率．
+If every character has the **same frequency of use**, fixed-length encoding is undoubtedly the most space-efficient encoding method. If characters appear with different frequencies, then high-frequency characters can be assigned shorter codes and low-frequency characters longer codes, forming a **variable-length encoding** and achieving better space efficiency.
 
-在设计不等长编码时，要考虑解码的唯一性，如果一组编码中任一编码都不是其他任何一个编码的前缀，那么称这组编码为 **前缀编码**，其保证了编码被解码时的唯一性．
+When designing variable-length encodings, the uniqueness of decoding must be considered. If no code in a set is the prefix of any other code, this set is called a **prefix code**, which guarantees unique decoding.
 
-霍夫曼树可用于构造 **最短的前缀编码**，即 **霍夫曼编码（Huffman Code）**，其构造步骤如下：
+A Huffman tree can be used to construct the **shortest prefix code**, namely a **Huffman code**. The construction steps are as follows:
 
-1.  设需要编码的字符集为：$d_1,d_2,\dots,d_n$，他们在字符串中出现的频率为：$w_1,w_2,\dots,w_n$．
-2.  以 $d_1,d_2,\dots,d_n$ 作为叶结点，$w_1,w_2,\dots,w_n$ 作为叶结点的权值，构造一棵霍夫曼树．
-3.  规定霍夫曼编码树的左分支代表 $0$，右分支代表 $1$，则从根结点到每个叶结点所经过的路径组成的 $0$、$1$ 序列即为该叶结点对应字符的编码．
+1.  Let the character set to be encoded be $d_1,d_2,\dots,d_n$, and let their frequencies in the string be $w_1,w_2,\dots,w_n$.
+2.  Use $d_1,d_2,\dots,d_n$ as leaf nodes and $w_1,w_2,\dots,w_n$ as their weights to construct a Huffman tree.
+3.  Let the left branch of the Huffman coding tree represent $0$ and the right branch represent $1$. Then the sequence of $0$s and $1$s along the path from the root to each leaf is the code for the character corresponding to that leaf.
 
 ![](./images/huffman-tree-3.svg)
 
-## 示例代码
+## Sample Code
 
-??? note "霍夫曼树的构建"
+??? note "Building a Huffman Tree"
     ```cpp
     struct HNode {
       int weight;
@@ -94,7 +94,7 @@ $$
     Htree createHuffmanTree(int arr[], int n) {
       Htree forest[N];
       Htree root = NULL;
-      for (int i = 0; i < n; i++) {  // 将所有点存入森林
+      for (int i = 0; i < n; i++) {  // Put all nodes into the forest.
         Htree temp;
         temp = (Htree)malloc(sizeof(HNode));
         temp->weight = arr[i];
@@ -102,8 +102,8 @@ $$
         forest[i] = temp;
       }
     
-      for (int i = 1; i < n; i++) {  // n-1 次循环建霍夫曼树
-        int minn = -1, minnSub;  // minn 为最小值树根下标，minnsub 为次小值树根下标
+      for (int i = 1; i < n; i++) {  // Build the Huffman tree in n - 1 iterations.
+        int minn = -1, minnSub;  // minn is the minimum root index; minnSub is the second minimum.
         for (int j = 0; j < n; j++) {
           if (forest[j] != NULL && minn == -1) {
             minn = j;
@@ -115,7 +115,7 @@ $$
           }
         }
     
-        for (int j = minnSub; j < n; j++) {  // 根据 minn 与 minnSub 赋值
+        for (int j = minnSub; j < n; j++) {  // Assign according to minn and minnSub.
           if (forest[j] != NULL) {
             if (forest[j]->weight < forest[minn]->weight) {
               minnSub = minn;
@@ -126,20 +126,20 @@ $$
           }
         }
     
-        // 建新树
+        // Build a new tree.
         root = (Htree)malloc(sizeof(HNode));
         root->weight = forest[minn]->weight + forest[minnSub]->weight;
         root->lchild = forest[minn];
         root->rchild = forest[minnSub];
     
-        forest[minn] = root;     // 指向新树的指针赋给 minn 位置
-        forest[minnSub] = NULL;  // minnSub 位置为空
+        forest[minn] = root;     // Store the pointer to the new tree at minn.
+        forest[minnSub] = NULL;  // The minnSub position is emptied.
       }
       return root;
     }
     ```
 
-??? note "计算构成霍夫曼树的 WPL"
+??? note "Computing the WPL of a Built Huffman Tree"
     ```cpp
     struct HNode {
       int weight;
@@ -148,11 +148,11 @@ $$
     
     using Htree = HNode *;
     
-    int getWPL(Htree root, int len) {  // 递归实现，对于已经建好的霍夫曼树，求 WPL
+    int getWPL(Htree root, int len) {  // Recursive WPL for an already built Huffman tree.
       if (root == NULL)
         return 0;
       else {
-        if (root->lchild == NULL && root->rchild == NULL)  // 叶节点
+        if (root->lchild == NULL && root->rchild == NULL)  // Leaf node.
           return root->weight * len;
         else {
           int left = getWPL(root->lchild, len + 1);
@@ -163,10 +163,10 @@ $$
     }
     ```
 
-??? note "对于未建好的霍夫曼树，直接求其 WPL"
+??? note "Computing WPL Directly Without Building the Huffman Tree"
     ```cpp
-    int getWPL(int arr[], int n) {  // 对于未建好的霍夫曼树，直接求其 WPL
-      priority_queue<int, vector<int>, greater<int>> huffman;  // 小根堆
+    int getWPL(int arr[], int n) {  // Directly compute WPL without building the Huffman tree.
+      priority_queue<int, vector<int>, greater<int>> huffman;  // Min-heap.
       for (int i = 0; i < n; i++) huffman.push(arr[i]);
     
       int res = 0;
@@ -183,7 +183,7 @@ $$
     }
     ```
 
-??? note "对于给定序列，计算霍夫曼编码"
+??? note "Computing Huffman Codes for a Given Sequence"
     ```cpp
     struct HNode {
       int weight;
@@ -192,10 +192,10 @@ $$
     
     using Htree = HNode *;
     
-    void huffmanCoding(Htree root, int len, int arr[]) {  // 计算霍夫曼编码
+    void huffmanCoding(Htree root, int len, int arr[]) {  // Compute Huffman codes.
       if (root != NULL) {
         if (root->lchild == NULL && root->rchild == NULL) {
-          printf("结点为 %d 的字符的编码为: ", root->weight);
+          printf("The code for the character at node %d is: ", root->weight);
           for (int i = 0; i < len; i++) printf("%d", arr[i]);
           printf("\n");
         } else {

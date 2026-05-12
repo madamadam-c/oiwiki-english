@@ -1,24 +1,24 @@
 author: wjy-yy, Ir1d, Xeonacid
 
-## 定义
+## Definitions
 
-### 半平面
+### Half-Plane
 
-一条直线和直线的一侧．半平面是一个点集，因此是一条直线和直线的一侧构成的点集．当包含直线时，称为闭半平面；当不包含直线时，称为开半平面．
+A line together with one side of the line. A half-plane is a set of points, namely the point set formed by a line and one side of that line. If it includes the line, it is called a closed half-plane; if it does not include the line, it is called an open half-plane.
 
-解析式一般为 $Ax+By+C\ge 0$．
+Its analytic expression is usually $Ax+By+C\ge 0$.
 
-在计算几何中用向量表示，整个题统一以向量的左侧或右侧为半平面．
+In computational geometry, it is represented by vectors, and a problem consistently treats either the left side or the right side of each vector as the half-plane.
 
-![半平面](./images/hpi1.svg)
+![Half-plane](./images/hpi1.svg)
 
-### 半平面交
+### Half-Plane Intersection
 
-半平面交是指多个半平面的交集．因为半平面是点集，所以点集的交集仍然是点集．在平面直角坐标系围成一个区域．
+Half-plane intersection is the intersection of multiple half-planes. Since a half-plane is a point set, the intersection of point sets is still a point set. It forms a region in the Cartesian plane.
 
-这就很像普通的线性规划问题了，得到的半平面交就是线性规划中的可行域．一般情况下半平面交是有限的，经常考察面积等问题的解决．
+This is very similar to an ordinary linear programming problem: the resulting half-plane intersection is the feasible region in linear programming. In general, the half-plane intersection is bounded, and problems often ask for quantities such as area.
 
-它可以理解为向量集中每一个向量的右侧的交，或者是下面方程组的解．
+It can be understood as the intersection of the right sides of every vector in a vector set, or as the solution set of the following system of inequalities.
 
 $$
 \begin{cases}
@@ -28,119 +28,119 @@ A_2x+B_2y+C\ge 0\\
 \end{cases}
 $$
 
-### 多边形的核
+### Kernel of a Polygon
 
-如果一个点集中的点与多边形上任意一点的连线与多边形没有其他交点，那么这个点集被称为多边形的核．
+If, for every point in a point set, the segment connecting it to any point on the polygon has no other intersection with the polygon, then this point set is called the kernel of the polygon.
 
-把多边形的每条边看成是首尾相连的向量，那么这些向量在多边形内部方向的半平面交就是多边形的核．
+Treat each edge of the polygon as a head-to-tail vector. The half-plane intersection of the sides of these vectors facing the interior of the polygon is the kernel of the polygon.
 
-## 解法 - S&I 算法
+## Solution - S&I Algorithm
 
-### 极角排序
+### Polar-Angle Sorting
 
-C 语言有一个库函数叫做 `atan2(double y,double x)`，可以返回 $\theta\in (-\pi,\pi]$，$\theta =\arctan \frac{y}{x}$．
+The C language has a library function called `atan2(double y,double x)`, which returns $\theta\in (-\pi,\pi]$, where $\theta =\arctan \frac{y}{x}$.
 
-直接以向量为自变量，调用这个函数，以返回值为关键字排序，得到新的边（向量）集．
+Call this function directly with the vector as the argument, and sort by the returned value to obtain the new edge, or vector, set.
 
-排序时，如果遇到共线向量（且方向相同），则取靠近可行域的一个．比如两个向量的极角相同，而我们要的是向量的左侧半平面，那么我们只需要保留左侧的向量．判断方法是取其中一个向量的起点或终点与另一个比较，检查是在左边还是在右边．
+When sorting, if collinear vectors with the same direction are encountered, keep the one closer to the feasible region. For example, if two vectors have the same polar angle and we need the left half-plane of the vectors, then we only need to keep the vector on the left. To determine this, compare the start point or endpoint of one vector with the other and check whether it lies on the left or right.
 
-### 维护单调队列
+### Maintaining a Monotonic Queue
 
-因为半平面交是一个凸多边形，所以需要维护一个凸壳．因为后来加入的只可能会影响最开始加入的或最后加入的边（此时凸壳连通），只需要删除队首和队尾的元素，所以需要用单调队列．
+Because a half-plane intersection is a convex polygon, we need to maintain a convex hull. Since newly added edges can only affect the earliest or latest added edges, when the hull is connected, we only need to delete elements from the front and back of the queue, so a monotonic queue is used.
 
-我们遍历排好序了的向量，并维护另一个交点数组．当单队中元素超过 2 个时，他们之间就会产生交点．
+Traverse the sorted vectors and maintain another array of intersection points. When the monotonic queue contains more than 2 elements, intersections are generated between them.
 
-对于当前向量，如果上一个交点在这条向量表示的半平面交的 **异侧**，那么上一条边就没有意义了．
+For the current vector, if the previous intersection point lies on the **opposite side** of the half-plane represented by this vector, then the previous edge is no longer useful.
 
-![单调队列](./images/hpi2.svg)
+![Monotonic queue](./images/hpi2.svg)
 
-如上图，假设取向量左侧半平面．极角排序后，遍历顺序应该是 $\vec a\to\vec b\to\vec c$．当 $\vec a$ 和 $\vec b$ 入队时，在交点数组里会产生一个点 $D$（交点数组保存队列中相同下标的向量与前一向量的交点）．
+As shown above, suppose we take the left half-plane of each vector. After polar-angle sorting, the traversal order should be $\vec a\to\vec b\to\vec c$. When $\vec a$ and $\vec b$ enter the queue, a point $D$ is generated in the intersection array. The intersection array stores, at the same index as a vector in the queue, the intersection point between that vector and the previous vector.
 
-接下来枚举到 $\vec c$ 时，发现 $D$ 在 $\vec c$ 的右侧．而因为 **产生**  $D$  **的向量的极角一定比** $\vec c$  **要小**，所以产生 $D$ 的向量（指 $\vec b$）就对半平面交没有影响了．
+Next, when enumerating $\vec c$, we find that $D$ is on the right side of $\vec c$. Because the polar angle of the vector that **generated**  $D$  **must be smaller than** that of $\vec c$, the vector that generated $D$, namely $\vec b$, no longer affects the half-plane intersection.
 
-还有一种可能的情况是快结束的时候，新加入的向量会从队首开始造成影响．
+Another possible case is that near the end, a newly added vector starts affecting the front of the queue.
 
-![队首影响](./images/hpi7.svg)
+![Effect on the queue front](./images/hpi7.svg)
 
-仍然假设取向量左侧半平面．加入向量 $\vec f$ 之后，第一个交点 $G$ 就在 $\vec f$ 的右侧，我们把上面的判断标准逆过来看，就知道此时应该删除向量 $\vec a$，也即 **队首** 的向量．
+Still suppose we take the left half-plane of each vector. After adding vector $\vec f$, the first intersection point $G$ lies on the right side of $\vec f$. Applying the criterion above in reverse, we know that vector $\vec a$, namely the vector at the **front of the queue**, should be deleted.
 
-最后用队首的向量排除一下队尾多余的向量．因为队首的向量会被后面的约束，而队尾的向量不会．此时它们围成了一个环，因此队首的向量就可以约束队尾的向量．
+Finally, use the vector at the front of the queue to remove extra vectors at the back. The vector at the front is constrained by later vectors, while the vector at the back is not. At this point they form a cycle, so the front vector can constrain the back vector.
 
-### 得到半平面交
+### Obtaining the Half-Plane Intersection
 
-如果半平面交是一个凸 $n$ 边形，最后在交点数组里会得到 $n$ 个点．我们再把它们首尾相连，就是一个统一方向（顺或逆时针）的 $n$ 多边形．
+If the half-plane intersection is a convex $n$-gon, then the intersection array will finally contain $n$ points. Connecting them head-to-tail gives an $n$-gon with a consistent orientation, either clockwise or counterclockwise.
 
-此时就可以用三角剖分求面积了．（求面积是最基础的考法）
+At this point, triangulation can be used to compute the area. Computing area is the most basic type of problem.
 
-偶尔会出现半平面交不存在或面积为 0 的情况，注意考虑边界．
+Occasionally, the half-plane intersection may not exist or may have area 0, so pay attention to boundary cases.
 
-### 注意事项
+### Notes
 
-当出现一个可以把队列里的点全部弹出去的向量（即所有队列里的点都在该向量的右侧），则我们 **必须** 先处理队尾，再处理队首．因此在循环中，我们先枚举 `--r;` 的部分，再枚举 `++l;` 的部分，才不会错．原因如下．
+When there is a vector that can pop all points in the queue, meaning all points in the queue are on the right side of this vector, we **must** process the back of the queue before the front. Therefore, in the loop, we first handle the `--r;` part and then the `++l;` part; otherwise the algorithm can be wrong. The reason is as follows.
 
 ![](./images/hpi4.svg)
 
-一般情况下，我们在队列（队列顺序为 $\left\{\vec{u},\vec{v}\right\}$）后面加一条边（向量 $\vec w$），会产生一个交点 $N$，缩小 $\vec{v}$ 后面的范围．
+In the usual case, when we add an edge, vector $\vec w$, after the queue, whose order is $\left\{\vec{u},\vec{v}\right\}$, an intersection point $N$ is generated, shrinking the region after $\vec{v}$.
 
 ![](./images/hpi5.svg)
 
-但是毕竟每次操作都是一般的，因此可能会有把 $M$ 点「挤出去」的情况．
+However, since each operation is generic, it is possible for point $M$ to be "squeezed out".
 
 ![](./images/hpi6.svg)
 
-如果此时出现了向量 $\vec a$，使得 $M$ 在 $\vec a$ 的右侧，那么 $M$ 就要出队了．此时如果从队首枚举 `++l`，显然是扩大了范围．实际上 $M$ 点是由 $\vec u$ 和 $\vec v$ 共同构成的，因此需要考虑影响到现有进程的是 $\vec u$ 还是 $\vec v$．而因为我们在极角排序后，向量是逆时针顺序，所以 $\vec v$ 的影响要更大一些．
+If at this point a vector $\vec a$ appears such that $M$ lies on the right side of $\vec a$, then $M$ must leave the queue. If we enumerate `++l` from the front of the queue at this point, the region is obviously expanded. In fact, point $M$ is jointly formed by $\vec u$ and $\vec v$, so we need to consider whether $\vec u$ or $\vec v$ affects the current process. Since after polar-angle sorting the vectors are in counterclockwise order, the influence of $\vec v$ is greater.
 
-就如上图，如果 $M$ 确认在 $\vec a$ 的右侧，那么此时 $\vec v$ 的影响一定不会对半平面交的答案作出任何贡献．
+As shown above, if $M$ is confirmed to be on the right side of $\vec a$, then the influence of $\vec v$ definitely contributes nothing to the answer of the half-plane intersection.
 
-而我们排除队首的原因是 **当前向量的限制比队首向量要大**，这个条件的前提是队列里有不止两个线段（向量），不然就会出现上面的情况．
+The reason we remove the front of the queue is that **the current vector imposes a stronger constraint than the front vector**. This condition assumes that the queue has more than two segments, or vectors; otherwise the case above can occur.
 
-所以一定要先排除队尾再排除队首．
+Therefore, always remove from the back before removing from the front.
 
-???+ note "代码 - 比较部分"
+???+ note "Code - Comparison Part"
     ```cpp
     friend bool operator<(seg x, seg y) {
       db t1 = atan2((x.b - x.a).y, (x.b - x.a).x);
-      db t2 = atan2((y.b - y.a).y, (y.b - y.a).x);  // 求极角
-      if (fabs(t1 - t2) > eps)                      // 如果极角不等
+      db t2 = atan2((y.b - y.a).y, (y.b - y.a).x);  // find polar angle
+      if (fabs(t1 - t2) > eps)                      // if polar angles differ
         return t1 < t2;
       return (y.a - x.a) * (y.b - x.a) >
-             eps;  // 判断向量x在y的哪边，令最靠左的排在最左边
+             eps;  // determine which side vector x is on relative to y; put the leftmost first
     }
     ```
 
-???+ note "代码 - 增量部分"
+???+ note "Code - Incremental Part"
     ```cpp
-    // pnt its(seg a,seg b)表示求线段a,b的交点
-    // s[]是极角排序后的向量
-    // q[]是向量队列
-    // t[i]是s[i-1]与s[i]的交点
-    // 【码风】队列的范围是(l,r]
-    // 求的是向量左侧的半平面
+    // pnt its(seg a,seg b) computes the intersection of segments a and b
+    // s[] contains the vectors after polar-angle sorting
+    // q[] is the vector queue
+    // t[i] is the intersection of s[i-1] and s[i]
+    // Code style: the queue range is (l,r]
+    // We compute the half-plane on the left side of each vector
     int l = 0, r = 0;
     for (int i = 1; i <= n; ++i)
       if (s[i] != s[i - 1]) {
-        // 注意要先检查队尾
+        // Remember to check the back first
         while (r - l > 1 && (s[i].b - t[r]) * (s[i].a - t[r]) >
-                                eps)  // 如果上一个交点在向量右侧则弹出队尾
+                                eps)  // pop the back if the previous intersection is on the right side of the vector
           --r;
         while (r - l > 1 && (s[i].b - t[l + 2]) * (s[i].a - t[l + 2]) >
-                                eps)  // 如果第一个交点在向量右侧则弹出队首
+                                eps)  // pop the front if the first intersection is on the right side of the vector
           ++l;
         q[++r] = s[i];
-        if (r - l > 1) t[r] = its(q[r], q[r - 1]);  // 求新交点
+        if (r - l > 1) t[r] = its(q[r], q[r - 1]);  // compute the new intersection
       }
     while (r - l > 1 &&
-           (q[l + 1].b - t[r]) * (q[l + 1].a - t[r]) > eps)  // 注意删除多余元素
+           (q[l + 1].b - t[r]) * (q[l + 1].a - t[r]) > eps)  // remember to delete extra elements
       --r;
-    t[r + 1] = its(q[l + 1], q[r]);  // 再求出新的交点
+    t[r + 1] = its(q[l + 1], q[r]);  // compute the new intersection again
     ++r;
-    // 这里不能在t里面++r需要注意一下……
+    // Note that ++r cannot be placed inside t here.
     ```
 
-## 练习
+## Exercises
 
-[POJ 2451 Uyuw's Concert](http://poj.org/problem?id=2451) 注意边界
+[POJ 2451 Uyuw's Concert](http://poj.org/problem?id=2451) pay attention to boundaries
 
-[POJ 1279 Art Gallery](http://poj.org/problem?id=1279) 求多边形的核
+[POJ 1279 Art Gallery](http://poj.org/problem?id=1279) find the kernel of a polygon
 
-[「CQOI2006」凸多边形](https://www.luogu.com.cn/problem/P4196)
+[CQOI2006 Convex Polygon](https://www.luogu.com.cn/problem/P4196)

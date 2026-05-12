@@ -1,43 +1,43 @@
-本页面将简要介绍排序算法．
+This page will briefly introduce sorting algorithms.
 
-## 定义
+## Definition
 
-**排序算法**（英语：Sorting algorithm）是一种将一组特定的数据按某种顺序进行排列的算法．排序算法多种多样，性质也大多不同．
+**Sorting algorithm** (English: Sorting algorithm) is an algorithm that arranges a set of specific data in a certain order. There are many types of sorting algorithms, and their properties also vary greatly.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-稳定性是指相等的元素经过排序之后相对顺序是否发生了改变．
+Stability refers to whether the relative order of equal elements changes after sorting.
 
-拥有稳定性这一特性的算法会让原本有相等键值的纪录维持相对次序，即如果一个排序算法是稳定的，当有两个相等键值的纪录 $R$ 和 $S$，且在原本的列表中 $R$ 出现在 $S$ 之前，在排序过的列表中 $R$ 也将会是在 $S$ 之前．
+An algorithm with the stability property will maintain the relative order of records with equal keys. That is, if a sorting algorithm is stable, and there are two records $R$ and $S$ with equal keys, and $R$ appears before $S$ in the original list, then $R$ will also be before $S$ in the sorted list.
 
-基数排序、计数排序、插入排序、冒泡排序、归并排序是稳定排序．
+Radix sort, counting sort, insertion sort, bubble sort, and merge sort are stable sorts.
 
-选择排序、堆排序、快速排序、希尔排序不是稳定排序．
+Selection sort, heap sort, quicksort, and shell sort are not stable sorts.
 
-### 时间复杂度
+### Time Complexity
 
-主页面：[复杂度](./complexity.md)
+Main page: [Complexity](./complexity.md)
 
-时间复杂度用来衡量一个算法的运行时间和输入规模的关系，通常用 $O$ 表示．
+Time complexity measures the relationship between an algorithm's running time and input size, usually expressed using $O$.
 
-简单计算复杂度的方法一般是统计「简单操作」的执行次数，有时候也可以直接数循环的层数来近似估计．
+A simple method to calculate complexity is to count the number of "simple operations" executed, and sometimes you can estimate it by counting the number of nested loops.
 
-时间复杂度分为最优时间复杂度、平均时间复杂度和最坏时间复杂度．OI 竞赛中要考虑的一般是最坏时间复杂度，因为它代表的是算法运行水平的下界，在评测中不会出现更差的结果了．
+Time complexity includes best-case time complexity, average-case time complexity, and worst-case time complexity. In OI competitions, the worst-case time complexity is usually what needs to be considered, as it represents the lower bound of the algorithm's performance and no worse results will appear during judging.
 
-基于比较的排序算法的时间复杂度下限是 $O(n\log n)$ 的．
+The lower bound of time complexity for comparison-based sorting algorithms is $O(n\log n)$.
 
-当然也有不是 $O(n\log n)$ 的．例如，[计数排序](./counting-sort.md) 的时间复杂度是 $O(n+w)$，其中 $w$ 代表输入数据的值域大小．
+There are also algorithms that are not $O(n\log n)$. For example, [counting sort](./counting-sort.md) has a time complexity of $O(n+w)$, where $w$ represents the range of input values.
 
-以下是几种排序算法的比较．
+The following is a comparison of several sorting algorithms.
 
-![几种排序算法的比较](images/sort-intro-1.apng)
+![Comparison of several sorting algorithms](images/sort-intro-1.apng)
 
-### 空间复杂度
+### Space Complexity
 
-与时间复杂度类似，空间复杂度用来描述算法空间消耗的规模．一般来说，空间复杂度越小，算法越好．
+Similar to time complexity, space complexity describes the scale of an algorithm's space consumption. Generally, the smaller the space complexity, the better the algorithm.
 
-## 外部链接
+## External Links
 
--   [排序算法 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95)
+-   [Sorting algorithm - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Sorting_algorithm)

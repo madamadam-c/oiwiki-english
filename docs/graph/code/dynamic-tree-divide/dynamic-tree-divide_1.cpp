@@ -30,9 +30,9 @@ void calcsiz(int x, int f) {
       maxx[x] = max(maxx[x], siz[p[j]]);
     }
   maxx[x] =
-      max(maxx[x], sum - siz[x]);  // maxx[x] 表示以 x 为根时的最大子树大小
+      max(maxx[x], sum - siz[x]);  // maxx[x] denotes the maximum subtree size when rooted at x
   if (maxx[x] < maxx[rt])
-    rt = x;  // 这里不能写 <= ，保证在第二次 calcsiz 时 rt 不改变
+    rt = x;  // Do not write <= here, to ensure rt does not change during the second calcsiz
 }
 
 struct heap {
@@ -70,19 +70,19 @@ void dfs(int x, int f, int d, heap& y) {
 }
 
 void pre(int x) {
-  vis[x] = true;  // 不考虑 x
+  vis[x] = true;  // Ignore x
   for (int j = h[x]; j; j = nxt[j])
     if (!vis[p[j]]) {
       rt = 0;
       maxx[rt] = inf;
       sum = siz[p[j]];
       calcsiz(p[j], -1);
-      calcsiz(rt, -1);  // 计算两次，第二次求出以 rt 为根时的各子树大小
+      calcsiz(rt, -1);  // Compute twice; the second time obtains subtree sizes rooted at rt
       fa[rt] = x;
       dfs(p[j], -1, 1, dist[rt]);
       ch[x].insert(dist[rt].top());
       dep[rt] = dep[x] + 1;
-      pre(rt);  // 记录点分树上的父亲
+      pre(rt);  // Record the parent in the centroid decomposition tree
     }
   ch[x].insert(0);
   if (ch[x].size() >= 2)

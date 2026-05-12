@@ -1,49 +1,49 @@
 author: JiZiQian, llleixx, firefly-zjyjoe
 
-## 什么是左偏树？
+## What Is a Leftist Tree?
 
-**左偏树** 与 [**配对堆**](./pairing-heap.md) 一样，是一种 **可并堆**，具有堆的性质，并且可以快速合并．
+A **leftist tree**, like a [**pairing heap**](./pairing-heap.md), is a **mergeable heap**. It has the heap property and supports fast merging.
 
-## 左偏树的定义和性质
+## Definition and Properties of Leftist Trees
 
-对于一棵二叉树，我们定义 **外节点** 为子节点数小于两个的节点，定义一个节点的 $\mathrm{dist}$ 为其到子树中最近的外节点所经过的边的数量．空节点的 $\mathrm{dist}$ 为 $0$．
+For a binary tree, define an **external node** as a node with fewer than two children. Define a node's $\mathrm{dist}$ as the number of edges on the path from it to the nearest external node in its subtree. The $\mathrm{dist}$ of an empty node is $0$.
 
-???+ note "注意"
-    有些资料中对 $\mathrm{dist}$ 的定义是本文中的 $\mathrm{dist}$ 减 $1$，这样定义是因为代码编写时可以省略一些判空流程，但需要注意应预先置空节点的 $\mathrm{dist}$ 为 $-1$．本文中所有代码对 $\mathrm{dist}$ 的定义 **均为空节点 $\mathrm{dist}$ 为 $-1$ 的定义**，请注意与行文间 $\mathrm{dist}$ 定义的差别．
+???+ note "Note"
+    Some references define $\mathrm{dist}$ as the $\mathrm{dist}$ value here minus $1$. This definition can omit some null checks in code, but the $\mathrm{dist}$ of empty nodes must be initialized to $-1$. All code in this article uses the $\mathrm{dist}$ definition where **empty nodes have $\mathrm{dist}$ as $-1$**, so note the difference from the prose $\mathrm{dist}$ definition.
 
-左偏树是一棵二叉树，它不仅具有堆的性质，并且是「左偏」的：每个节点左儿子的 $\mathrm{dist}$ 都大于等于右儿子的 $\mathrm{dist}$．
+A leftist tree is a binary tree that not only has the heap property but is also "leftist": for every node, the $\mathrm{dist}$ of its left child is at least the $\mathrm{dist}$ of its right child.
 
-因此，左偏树每个节点的 $\mathrm{dist}$ 都等于其右儿子的 $\mathrm{dist}$ 加一．
+Therefore, in a leftist tree, each node's $\mathrm{dist}$ equals its right child's $\mathrm{dist}$ plus one.
 
-需要注意的是，$\mathrm{dist}$ 不是深度，**左偏树的深度没有保证**，一条向左的链也符合左偏树的定义．
+Note that $\mathrm{dist}$ is not depth. **A leftist tree has no depth guarantee**; a chain extending to the left also satisfies the definition of a leftist tree.
 
-## 核心操作：合并（merge）
+## Core Operation: Merge
 
-合并两个堆时，由于要满足堆性质，先取值较小（为了方便，本文讨论小根堆）的那个根作为合并后堆的根节点，然后将这个根的左儿子作为合并后堆的左儿子，递归地合并其右儿子与另一个堆，作为合并后的堆的右儿子．为了满足左偏性质，合并后若左儿子的 $\mathrm{dist}$ 小于右儿子的 $\mathrm{dist}$，就交换两个儿子．
+When merging two heaps, to satisfy the heap property, first take the root with the smaller value (for convenience, this article discusses min-heaps) as the root of the merged heap. Then keep this root's left child as the left child of the merged heap, and recursively merge its right child with the other heap to become the right child of the merged heap. To satisfy the leftist property, after merging, if the left child's $\mathrm{dist}$ is less than the right child's $\mathrm{dist}$, swap the two children.
 
-参考代码：
+Reference code:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int merge(int x, int y) {
-      if (!x || !y) return x | y;  // 若一个堆为空则返回另一个堆
-      if (t[x].val > t[y].val) swap(x, y);  // 取值较小的作为根
-      t[x].rs = merge(t[x].rs, y);          // 递归合并右儿子与另一个堆
+      if (!x || !y) return x | y;  // If one heap is empty, return the other.
+      if (t[x].val > t[y].val) swap(x, y);  // Use the smaller value as the root.
+      t[x].rs = merge(t[x].rs, y);          // Recursively merge the right child with the other heap.
       if (t[t[x].rs].d > t[t[x].ls].d)
-        swap(t[x].ls, t[x].rs);   // 若不满足左偏性质则交换左右儿子
-      t[x].d = t[t[x].rs].d + 1;  // 更新dist
+        swap(t[x].ls, t[x].rs);   // Swap children if the leftist property is violated.
+      t[x].d = t[t[x].rs].d + 1;  // Update dist.
       return x;
     }
     ```
 
-由于左偏性质，每递归一层，其中一个堆根节点的 $\mathrm{dist}$ 就会减小 $1$，而一棵有 $n$ 个节点的二叉树，根的 $\mathrm{dist}$ 不超过 $\left\lceil\log (n+1)\right\rceil$，所以合并两个大小分别为 $n$ 和 $m$ 的堆复杂度是 $O(\log n+\log m)$．
+Due to the leftist property, each recursive level decreases the $\mathrm{dist}$ of one heap root by $1$. For a binary tree with $n$ nodes, the root's $\mathrm{dist}$ is at most $\left\lceil\log (n+1)\right\rceil$, so merging heaps of sizes $n$ and $m$ takes $O(\log n+\log m)$ time.
 
-???+ note "关于 $\mathrm{dist}$ 性质的证明"
-    一棵根的 $\mathrm{dist}$ 为 $x$ 的二叉树至少有 $x-1$ 层是满二叉树，那么就至少有 $2^x-1$ 个节点．注意这个性质是所有二叉树都具有的，并不是左偏树所特有的．
+???+ note "Proof of the $\mathrm{dist}$ Property"
+    A binary tree whose root has $\mathrm{dist}$ as $x$ has at least $x-1$ full levels, so it has at least $2^x-1$ nodes. Note that this property holds for all binary trees; it is not unique to leftist trees.
 
-左偏树还有一种无需交换左右儿子的写法：将 $\mathrm{dist}$ 较大的儿子视作左儿子，$\mathrm{dist}$ 较小的儿子视作右儿子：
+There is also a way to write a leftist tree without explicitly swapping children: treat the child with larger $\mathrm{dist}$ as the left child, and the child with smaller $\mathrm{dist}$ as the right child:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int& rs(int x) { return t[x].ch[t[t[x].ch[1]].d < t[t[x].ch[0]].d]; }
     
@@ -57,27 +57,27 @@ author: JiZiQian, llleixx, firefly-zjyjoe
     }
     ```
 
-## 左偏树的其它操作
+## Other Operations on Leftist Trees
 
-### 插入节点
+### Insert a Node
 
-单个节点也可以视为一个堆，合并即可．
+A single node can also be regarded as a heap, so just merge it.
 
-### 删除根
+### Delete the Root
 
-合并根的左右儿子即可．
+Just merge the root's left and right children.
 
-### 删除任意节点
+### Delete an Arbitrary Node
 
-#### 做法
+#### Method
 
-先将左右儿子合并，然后自底向上更新 $\mathrm{dist}$、不满足左偏性质时交换左右儿子，当 $\mathrm{dist}$ 无需更新时结束递归：
+First merge the left and right children, then update $\mathrm{dist}$ from bottom to top, swapping left and right children whenever the leftist property is violated. End the recursion when $\mathrm{dist}$ no longer needs to be updated:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int& rs(int x) { return t[x].ch[t[t[x].ch[1]].d < t[t[x].ch[0]].d]; }
     
-    // 有了 pushup，直接 merge 左右儿子就实现了删除节点并保持左偏性质
+    // With pushup, merging the left and right children deletes the node while preserving the leftist property.
     int merge(int x, int y) {
       if (!x || !y) return x | y;
       if (t[x].val < t[y].val) swap(x, y);
@@ -107,24 +107,24 @@ author: JiZiQian, llleixx, firefly-zjyjoe
     }
     ```
 
-#### 复杂度证明
+#### Complexity Proof
 
-先考虑 `merge` 的过程，每次都会使 $x$ 或 $y$ 向下一层，也就是说最极端的情况，就是一直选择左偏树的右节点（$\mathrm{dist}$ 最小的节点）向下一层，此时 $\mathrm{dist}$ 减少了 $1$．
+First consider the `merge` process. Each step moves either $x$ or $y$ down one level. In the most extreme case, it always follows the right node of a leftist tree (the node with the smallest $\mathrm{dist}$), so $\mathrm{dist}$ decreases by $1$ each time.
 
-再考虑 `pushup` 的过程，我们令当前 `pushup` 的这个节点为 $x$，其父亲为 $y$，一个节点的「初始 $\mathrm{dist}$」为它在 `pushup` 前的 $\mathrm{dist}$．从被删除节点的父亲开始递归，有两种情况：
+Now consider the `pushup` process. Let the current node being processed by `pushup` be $x$, and its parent be $y$. Define a node's "initial $\mathrm{dist}$" as its $\mathrm{dist}$ before `pushup`. Starting the recursion from the parent of the deleted node, there are two cases:
 
-1.  $x$ 是 $y$ 的右儿子，此时 $y$ 的初始 $\mathrm{dist}$ 为 $x$ 的初始 $\mathrm{dist}$ 加一．
-2.  $x$ 是 $y$ 的左儿子，由于节点的 $\mathrm{dist}$ 最多减一，因此只有 $y$ 的左右儿子初始 $\mathrm{dist}$ 相等时（此时左儿子 $\mathrm{dist}$ 减一会导致左右儿子互换）才会继续递归下去，因此 $y$ 的初始 $\mathrm{dist}$ 仍然是 $x$ 的初始 $\mathrm{dist}$ 加一．
+1.  $x$ is the right child of $y$. Then $y$'s initial $\mathrm{dist}$ is $x$'s initial $\mathrm{dist}$ plus one.
+2.  $x$ is the left child of $y$. Since a node's $\mathrm{dist}$ decreases by at most one, recursion continues only when $y$'s left and right children have equal initial $\mathrm{dist}$ values (then the left child's $\mathrm{dist}$ decreasing by one causes the two children to be swapped). Thus $y$'s initial $\mathrm{dist}$ is still $x$'s initial $\mathrm{dist}$ plus one.
 
-所以，我们得到，每递归一层 $x$ 的初始 $\mathrm{dist}$ 就会加一，因此最多递归 $O(\log n)$ 层．
+Therefore, for $x$, the initial $\mathrm{dist}$ increases by one at each recursive level, so there are at most $O(\log n)$ recursive levels.
 
-### 整个堆加上/减去一个值、乘上一个正数
+### Add/Subtract a Value to the Whole Heap, or Multiply by a Positive Number
 
-其实可以打标记且不改变相对大小的操作都可以．
+In fact, any operation that can be lazily tagged and does not change the relative order of keys is possible.
 
-在根打上标记，删除根/合并堆（访问儿子）时下传标记即可：
+Put the lazy tag on the root, and push it down when deleting the root or merging heaps (that is, when accessing children):
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int merge(int x, int y) {
       if (!x || !y) return x | y;
@@ -142,93 +142,93 @@ author: JiZiQian, llleixx, firefly-zjyjoe
     }
     ```
 
-## 其他可并堆
+## Other Mergeable Heaps
 
-### 随机堆
+### Randomized Heap
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int merge(int x, int y) {
       if (!x || !y) return x | y;
       if (t[y].val < t[x].val) swap(x, y);
-      if (rand() & 1)  // 随机选择是否交换左右子节点
+      if (rand() & 1)  // Randomly decide whether to swap the left and right children.
         swap(t[x].ls, t[x].rs);
       t[x].ls = merge(t[x].ls, y);
       return x;
     }
     ```
 
-可以看到该实现方法唯一不同之处便是采用了随机数来实现合并，这样一来便可以省去 $\mathrm{dist}$ 的相关计算．且平均时间复杂度亦为 $O(\log n)$，详细证明可参考 [Randomized Heap](https://cp-algorithms.com/data_structures/randomized_heap.html)．
+The only difference in this implementation is that it uses randomness during merging, which avoids the computations related to $\mathrm{dist}$. Its average time complexity is also $O(\log n)$. For a detailed proof, see [Randomized Heap](https://cp-algorithms.com/data_structures/randomized_heap.html).
 
-### 斜堆
+### Skew Heap
 
-斜堆是左偏树的自适应形式．当合并两个堆时，它无条件交换合并路径上的所有节点，以此试图维护平衡．根据均摊分析，自顶向下斜堆（top-down skew heap）插入，合并，删除最小值的复杂度为 $O(\log n)$[^ref1]．
+A skew heap is a self-adjusting form of a leftist tree. When merging two heaps, it unconditionally swaps all nodes on the merge path in an attempt to maintain balance. By amortized analysis, insertion, merging, and deleting the minimum in a top-down skew heap all take $O(\log n)$ time[^ref1].
 
-## 例题
+## Practice Problems
 
-### 模板题
+### Template Problems
 
-[luogu P3377【模板】左偏树（可并堆）](https://www.luogu.com.cn/problem/P3377)
+[Luogu P3377 [Template] Leftist Tree (Mergeable Heap)](https://www.luogu.com.cn/problem/P3377)
 
 [Monkey King](https://www.luogu.com.cn/problem/P1456)
 
-[罗马游戏](https://www.luogu.com.cn/problem/P2713)
+[Roman Game](https://www.luogu.com.cn/problem/P2713)
 
-需要注意的是：
+Things to note:
 
-1.  合并前要检查是否已经在同一堆中．
+1.  Before merging, check whether the two nodes are already in the same heap.
 
-2.  左偏树的深度可能达到 $O(n)$，因此找一个点所在的堆顶要用并查集维护，不能直接暴力跳父亲．（虽然很多题数据水，暴力跳父亲可以过……）（用并查集维护根时要保证原根指向新根，新根指向自己．）
+2.  The depth of a leftist tree may reach $O(n)$, so use a DSU to maintain the heap root containing a node; do not simply climb parent pointers by brute force. (Although many problems have weak data and brute-force parent climbing may pass.) When using a DSU to maintain roots, ensure that the old root points to the new root and the new root points to itself.
 
-??? note "罗马游戏参考代码"
+??? note "Reference Code for Roman Game"
     ```cpp
     --8<-- "docs/ds/code/leftist-tree/leftist-tree_1.cpp"
     ```
 
-### 树上问题
+### Tree Problems
 
-[「APIO2012」派遣](https://www.luogu.com.cn/problem/P1552)
+[APIO2012 Dispatching](https://www.luogu.com.cn/problem/P1552)
 
-[「JLOI2015」城池攻占](https://loj.ac/problem/2107)
+[JLOI2015 City Capture](https://loj.ac/problem/2107)
 
-这类题目往往是每个节点维护一个堆，与儿子合并，依题意弹出、修改、计算答案，有点像线段树合并的类似题目．
+In these problems, each node often maintains a heap, merges it with its children, and performs pops, modifications, and answer computations according to the statement. This is somewhat similar to problems involving segment tree merging.
 
-??? note "城池攻占参考代码"
+??? note "Reference Code for City Capture"
     ```cpp
     --8<-- "docs/ds/code/leftist-tree/leftist-tree_2.cpp"
     ```
 
-### [「SCOI2011」棘手的操作](https://loj.ac/problem/2441)
+### [SCOI2011 Tricky Operation](https://loj.ac/problem/2441)
 
-首先，找一个节点所在堆的堆顶要用并查集，而不能暴力向上跳．
+First, use a DSU to find the heap root containing a node; do not climb upward by brute force.
 
-再考虑单点查询，若用普通的方法打标记，就得查询点到根路径上的标记之和，最坏情况下可以达到 $O(n)$ 的复杂度．如果只有堆顶有标记，就可以快速地查询了，但如何做到呢？
+For point queries, if lazy tags are applied in the ordinary way, you would need to query the sum of tags along the path from the node to the root, which can be $O(n)$ in the worst case. If only heap roots have tags, queries become fast, but how can we achieve that?
 
-可以用类似启发式合并的方式，每次合并的时候把较小的那个堆标记暴力下传到每个节点，然后把较大的堆的标记作为合并后的堆的标记．由于合并后有另一个堆的标记，所以较小的堆下传标记时要下传其标记减去另一个堆的标记．由于每个节点每被合并一次所在堆的大小至少乘二，所以每个节点最多被下放 $O(\log n)$ 次标记，暴力下放标记的总复杂度就是 $O(n\log n)$．
+Use an idea similar to small-to-large merging. Each time heaps are merged, push the tag of the smaller heap down to every node in it by brute force, and use the tag of the larger heap as the tag of the merged heap. Since the merged heap also has the other heap's tag, when pushing down the smaller heap's tag, push down its tag minus the other heap's tag. Because every time a node's heap is merged, the heap size containing it at least doubles, each node has tags pushed down at most $O(\log n)$ times, so the total complexity of brute-force tag pushing is $O(n\log n)$.
 
-再考虑单点加，先删除，再更新，最后插入即可．
+For point add, delete the node first, then update it, and finally insert it back.
 
-然后是全局最大值，可以用一个平衡树/支持删除任意节点的堆（如左偏树）/multiset 来维护每个堆的堆顶．
+For the global maximum, maintain the root of each heap using a balanced tree, a heap supporting arbitrary deletion (such as a leftist tree), or a `multiset`.
 
-所以，每个操作分别如下：
+Thus the operations are as follows:
 
-1.  暴力下传点数较小的堆的标记，合并两个堆，更新 size、tag，在 multiset 中删去合并后不在堆顶的那个原堆顶．
-2.  删除节点，更新值，插入回来，更新 multiset．需要分删除节点是否为根来讨论一下．
-3.  堆顶打标记，更新 multiset．
-4.  打全局标记．
-5.  查询值 + 堆顶标记 + 全局标记．
-6.  查询根的值 + 堆顶标记 + 全局标记．
-7.  查询 multiset 最大值 + 全局标记．
+1.  Brute-force push down the tag of the heap with fewer nodes, merge the two heaps, update `size` and `tag`, and remove from the `multiset` the old heap root that is no longer a root after merging.
+2.  Delete the node, update its value, insert it back, and update the `multiset`. You need to distinguish whether the deleted node is the root.
+3.  Apply a tag to the heap root and update the `multiset`.
+4.  Apply a global tag.
+5.  Query value + heap-root tag + global tag.
+6.  Query root value + heap-root tag + global tag.
+7.  Query maximum value in the `multiset` + global tag.
 
-??? note "棘手的操作参考代码"
+??? note "Reference Code for Tricky Operation"
     ```cpp
     --8<-- "docs/ds/code/leftist-tree/leftist-tree_3.cpp"
     ```
 
-### [「BOI2004」Sequence 数字序列](https://www.luogu.com.cn/problem/P4331)
+### [BOI2004 Sequence](https://www.luogu.com.cn/problem/P4331)
 
-这是一道论文题，详见 [《黄源河 -- 左偏树的特点及其应用》](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2005%E8%AE%BA%E6%96%87%E9%9B%86/%E9%BB%84%E6%BA%90%E6%B2%B3--%E5%B7%A6%E5%81%8F%E6%A0%91%E7%9A%84%E7%89%B9%E7%82%B9%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/%E9%BB%84%E6%BA%90%E6%B2%B3.pdf)．
+This is a paper-based problem. See [Huang Yuanhe -- Characteristics and Applications of Leftist Trees](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2005%E8%AE%BA%E6%96%87%E9%9B%86/%E9%BB%84%E6%BA%90%E6%B2%B3--%E5%B7%A6%E5%81%8F%E6%A0%91%E7%9A%84%E7%89%B9%E7%82%B9%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/%E9%BB%84%E6%BA%90%E6%B2%B3.pdf) for details.
 
-## 参考资料
+## References
 
 [^ref1]: [Self-Adjusting Heaps](https://epubs.siam.org/doi/10.1137/0215004)

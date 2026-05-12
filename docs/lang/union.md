@@ -1,10 +1,10 @@
-**联合体**（union）是特殊的类类型，它在一个时刻只能保有其一个非静态数据成员．
+A **union** is a special class type that can hold only one of its non-static data members at a time.
 
-联合体在 2023 年正式被加入 NOI 大纲入门级中．
+Unions were officially added to the introductory level of the NOI syllabus in 2023.
 
-## 定义联合体
+## Defining a Union
 
-联合体声明的类说明符与类或 [结构体](./struct.md) 的声明相似：
+The class specifier for declaring a union is similar to the declaration of a class or [struct](./struct.md):
 
 ```cpp
 union MyUnion {
@@ -13,12 +13,12 @@ union MyUnion {
 } x;
 ```
 
-联合体的定义与结构体类似．按照上述定义，`MyUnion` 同样可以当作一种自定义类型使用．名称 `MyUnion` 可以省略．
+The definition of a union is similar to that of a struct. With the definition above, `MyUnion` can also be used as a custom type. The name `MyUnion` may be omitted.
 
-## 访问/修改成员元素
+## Accessing/Modifying Members
 
-与结构体类似，同样可以使用 `变量名.成员名` 进行访问．
+As with structs, members can be accessed with `variable_name.member_name`.
 
-联合体所占用的内存空间大小 **不小于** 其最大的成员的大小，所有成员 **共用内存空间与地址**．当一个成员被赋值，由于内存共享，该联合体中的其他成员都会被覆盖．即同一时刻联合体中只能保存一个成员的值．
+The memory occupied by a union is **not smaller than** the size of its largest member, and all members **share the same memory space and address**. When one member is assigned, the other members in the union are overwritten because the memory is shared. In other words, a union can store the value of only one member at any given time.
 
-联合体的更多用法可以参见 [cppreference：联合体声明](https://zh.cppreference.com/w/cpp/language/union)．
+For more uses of unions, see [cppreference: union declaration](https://en.cppreference.com/w/cpp/language/union).

@@ -1,20 +1,20 @@
-## Jordan 分解
+## Jordan Decomposition
 
-设 $T$ 是 $n$ 维空间 $V$ 上的一个线性变换．如果 $T$ 的最小多项式为：
+Let $T$ be a linear transformation on an $n$-dimensional space $V$. If the minimal polynomial of $T$ is:
 
 $$
 m_A(\lambda)={(\lambda-\lambda_1)}^{r_1}{(\lambda-\lambda_2)}^{r_2}\cdots{(\lambda-\lambda_k)}^{r_k}
 $$
 
-那么由准素分解可知，空间 $V$ 可以分解为子空间的直和：
+Then by the primary decomposition theorem, the space $V$ can be decomposed into a direct sum of subspaces:
 
 $$
 V=V_1\oplus V_2\oplus\cdots\oplus V_k
 $$
 
-其中 $V_i=N\left({(A-\lambda_i I)}^{r_i}\right)$，式中 $A$ 为 $T$ 对应的矩阵，这些子空间都在 $T$ 作用下不变．
+where $V_i=N\left({(A-\lambda_i I)}^{r_i}\right)$, $A$ being the matrix corresponding to $T$, and these subspaces are all invariant under $T$.
 
-令变换 $T_i$ 为 $V$ 在子空间 $V_i$ 上的射影，即构造多项式 $u_i(T)$ 使得：
+Let the transformation $T_i$ be the projection of $V$ onto the subspace $V_i$, i.e., construct a polynomial $u_i(T)$ such that:
 
 -   $$
     T_i=u_i(T)\frac{m_A(T)}{{(T-\lambda_i T_e)}^{r_i}}
@@ -23,52 +23,52 @@ $$
     T_1+T_2+\cdots+T_k=T_e
     $$
 
-式中 $T_e$ 表示空间 $V$ 的恒等变换．于是有性质：
+where $T_e$ denotes the identity transformation on $V$. Then we have the properties:
 
--   变换 $T_i$ 在空间 $V_i$ 上的限制 ${T_i|}_{V_i}$ 为空间 $V_i$ 的恒等变换．
--   如果 $i$ 与 $j$ 不相等，变换 $T_i$ 在空间 $V_j$ 上的限制 ${T_i|}_{V_j}$ 为空间 $V_j$ 的零变换．
+-   The restriction of $T_i$ to $V_i$, denoted ${T_i|}_{V_i}$, is the identity transformation on $V_i$.
+-   If $i \neq j$, the restriction of $T_i$ to $V_j$, denoted ${T_i|}_{V_j}$, is the zero transformation on $V_j$.
 
-于是变换 $T_i$ 将空间 $V$ 的每一个向量 $\xi$ 映射为它在空间 $V_i$ 中的分量 $\xi_i$．
+Thus, the transformation $T_i$ maps every vector $\xi$ in $V$ to its component in $V_i$.
 
-构造变换：
+Construct the transformation:
 
 $$
 T_D=\lambda_1 T_1+\lambda_2 T_2+\cdots+\lambda_k T_k
 $$
 
-由于每一个变换 $T_i$ 都是变换 $T$ 的一个多项式，所以变换 $T_D$ 也是变换 $T$ 的一个多项式，于是每一个子空间 $V_i$ 在变换 $T_D$ 下不变．
+Since each $T_i$ is a polynomial in $T$, $T_D$ is also a polynomial in $T$, so each subspace $V_i$ is invariant under $T_D$.
 
-由上述等式可知，变换 $T_D$ 在子空间 $V_i$ 上的限制 ${T_D|}_{V_i}$ 是子空间 $V_i$ 的一个位似，位似系数为 $\lambda_i$．因此，变换 $T_D$ 可以对角化．
+From the above, the restriction of $T_D$ to $V_i$, denoted ${T_D|}_{V_i}$, is a homothety on $V_i$ with ratio $\lambda_i$. Therefore, $T_D$ is diagonalizable.
 
-构造：
+Construct:
 
 $$
 T_N=T-T_D
 $$
 
-于是变换 $T_N$ 也是变换 $T$ 的一个多项式，所以每一个子空间 $V_i$ 在变换 $T_N$ 下不变．对于子空间 $V_i$ 中的任意向量 $\xi_i$，有：
+Then $T_N$ is also a polynomial in $T$, so each subspace $V_i$ is invariant under $T_N$. For any vector $\xi_i$ in $V_i$, we have:
 
 $$
 {T_N}^{r_i}(\xi_i)={T-T_D}^{r_i}(\xi_i)={T-\lambda_i T_i}^{r_i}(\xi_i)=0
 $$
 
-令 $r$ 为全体 $r_i$ 的最大值，那么对于空间 $V$ 中的任意向量 $\xi$，变换 $T_N$ 的 $r$ 次方将向量 $\xi$ 映射至零向量．因此变换 $T_N$ 是一个幂零变换．
+Let $r$ be the maximum of all $r_i$. Then for any vector $\xi$ in $V$, $T_N^r$ maps $\xi$ to the zero vector. Therefore, $T_N$ is a nilpotent transformation.
 
-这样，空间 $V$ 的每一个变换 $T$ 都可以写成：
+Thus, every transformation $T$ on $V$ can be written as:
 
 $$
 T=T_D+T_N
 $$
 
-其中 $T_D$ 可以对角化，而 $T_N$ 是一个幂零变换．因为 $T_D$ 和 $T_N$ 都是变换 $T$ 的多项式，所以它们的乘积可交换：
+where $T_D$ is diagonalizable and $T_N$ is nilpotent. Since $T_D$ and $T_N$ are both polynomials in $T$, their product commutes:
 
 $$
 T_DT_N=T_NT_D
 $$
 
-定理：设 $T_1$ 和 $T_2$ 是空间 $V$ 的两个可对角化变换，且 $T_1T_2=T_2T_1$，那么存在一个基，使得 $T_1$ 和 $T_2$ 关于这同一个基的矩阵是对角形式．
+**Theorem:** Let $T_1$ and $T_2$ be two diagonalizable transformations on $V$ such that $T_1T_2=T_2T_1$. Then there exists a basis such that the matrices of both $T_1$ and $T_2$ with respect to this basis are diagonal.
 
-定理：设 $T$ 是 $n$ 维空间 $V$ 上的一个线性变换，那么存在一个可对角化变换 $T_D$ 和一个幂零变换 $T_N$，使得：
+**Theorem:** Let $T$ be a linear transformation on an $n$-dimensional space $V$. Then there exists a diagonalizable transformation $T_D$ and a nilpotent transformation $T_N$ such that:
 
 -   $$
     T=T_D+T_N
@@ -77,13 +77,13 @@ $$
     T_DT_N=T_NT_D
     $$
 
-它们都是变换 $T$ 的多项式，并且它们由变换 $T$ 唯一确定．
+They are both polynomials in $T$, and are uniquely determined by $T$.
 
-该定理给出关于变换 $T$ 的分解，称为 $T$ 的若尔当（Jordan）分解，$T_D$ 叫做 $T$ 的可对角化部分，$T_N$ 叫做 $T$ 的幂零部分．
+This decomposition is called the Jordan decomposition of $T$, where $T_D$ is called the diagonalizable part of $T$, and $T_N$ is called the nilpotent part of $T$.
 
-同样地，有矩阵的 Jordan 分解：
+Similarly, there is the Jordan decomposition of matrices:
 
-定理：设 $A$ 是一个 $n$ 阶矩阵，那么存在一个可对角化矩阵 $D$ 和一个幂零矩阵 $N$，使得：
+**Theorem:** Let $A$ be an $n \times n$ matrix. Then there exists a diagonalizable matrix $D$ and a nilpotent matrix $N$ such that:
 
 -   $$
     A=D+N
@@ -92,41 +92,41 @@ $$
     DN=ND
     $$
 
-它们都是矩阵 $A$ 的多项式，并且它们由矩阵 $A$ 唯一确定．
+They are both polynomials in $A$, and are uniquely determined by $A$.
 
-该定理给出关于矩阵 $A$ 的分解，称为 $A$ 的若尔当（Jordan）分解，$D$ 叫做 $A$ 的可对角化部分，$N$ 叫做 $A$ 的幂零部分．
+This decomposition is called the Jordan decomposition of $A$, where $D$ is called the diagonalizable part of $A$, and $N$ is called the nilpotent part of $A$.
 
-## lambda 矩阵
+## Lambda Matrices
 
-接下来引入的部分是含有变元参量 $\lambda$ 的更广义的矩阵，不仅仅是一个数表．这部分讨论相较单纯由数构成的矩阵而言，更加广泛一些．
+The following introduces a more general class of matrices containing a variable parameter $\lambda$, not merely a table of numbers. This discussion is more general than that of matrices over a field of numbers.
 
-对于 $\lambda$ 矩阵，对应空间相应的域，变为含有一个变元 $\lambda$ 的有理式域．
+For $\lambda$-matrices, the corresponding field becomes the field of rational functions in one variable $\lambda$.
 
-以 $\lambda$ 的多项式为元素的矩阵称为 $\lambda$ 矩阵，记为 $A(\lambda)$．
+A matrix whose entries are polynomials in $\lambda$ is called a $\lambda$-matrix, denoted $A(\lambda)$.
 
-由于多项式域包含数域，数字矩阵是特殊的 $\lambda$ 矩阵，数字矩阵 $A$ 的特征矩阵 $\lambda I-A$ 是一种 $\lambda$ 矩阵．
+Since a polynomial field contains a number field, numeric matrices are special cases of $\lambda$-matrices. In particular, the characteristic matrix $\lambda I - A$ of a numeric matrix $A$ is a $\lambda$-matrix.
 
-### lambda 矩阵的初等变换
+### Elementary Operations on Lambda Matrices
 
-对于 $\lambda$ 矩阵，同样可以定义加减法、乘法、初等变换、秩．对于 $\lambda$ 方阵，同样可以定义行列式、余子式、代数余子式．
+For $\lambda$-matrices, addition, subtraction, multiplication, and elementary operations can be defined similarly. For square $\lambda$-matrices, determinant, minor, and cofactor can also be defined.
 
-对于 $\lambda$ 矩阵，初等变换与数阵大多相同，仅将倍加变换改为（这里以行变换为例）：
+For $\lambda$-matrices, elementary operations are mostly the same as for numeric matrices, except that the row-addition operation is modified (taking row operations as an example):
 
--   用 $\lambda$ 的多项式 $\varphi(\lambda)$ 乘某行并加到另一行上．
+-   Multiply a row by a polynomial $\varphi(\lambda)$ in $\lambda$ and add to another row.
 
-注意倍乘变换不进行修改．这是因为倍加变换不改变行列式，而倍乘变换改变行列式．为了保持多项式域的秩的性质，行列式只能在数域上进行改变．
+Note that the row-scaling operation is not modified. This is because row addition does not change the determinant, while row scaling does. To preserve the rank properties in the polynomial field, the determinant can only be changed over a number field.
 
-相应的初等矩阵也一并进行修改．
+The corresponding elementary matrices are modified accordingly.
 
-易见三种初等阵的行列式均为非零常数，因此均为满秩．所以它们左乘或右乘，不改变 $\lambda$ 矩阵的秩．
+It is easy to see that the determinants of the three types of elementary matrices are all nonzero constants, hence all are full rank. Therefore, left or right multiplication by them does not change the rank of a $\lambda$-matrix.
 
-若 $A(\lambda)$ 经过有限次初等变换变为 $B(\lambda)$，则称 $A(\lambda)$ 和 $B(\lambda)$ 等价．
+If $A(\lambda)$ can be transformed into $B(\lambda)$ through a finite number of elementary operations, then $A(\lambda)$ and $B(\lambda)$ are said to be equivalent.
 
-对于 $\lambda$ 矩阵，如果等价，则秩相同．反之则不然，这与数字矩阵有区别．
+For $\lambda$-matrices, equivalent implies same rank. The converse is not true, which differs from numeric matrices.
 
-## Smith 标准型
+## Smith Normal Form
 
-定理：设 $\lambda$ 矩阵的秩是 $r$，则 $A(\lambda)$ 一定等价于：
+**Theorem:** Let the rank of a $\lambda$-matrix be $r$. Then $A(\lambda)$ is always equivalent to:
 
 $$
 \begin{pmatrix}
@@ -135,81 +135,81 @@ D(\lambda) & 0\\
 \end{pmatrix}
 $$
 
-其中：
+where:
 
 $$
 D(\lambda)=\begin{pmatrix}
-d_1(\lambda) &  & \\
+d_1(\lambda) &  \\
  & \ddots & \\
  &  & d_r(\lambda)\\
 \end{pmatrix}
 $$
 
-每一个 $d_i(\lambda)$ 是一个首 $1$ 多项式，并且相邻两个多项式有整除关系 $d_i(\lambda)|d_{i+1}(\lambda)$．
+Each $d_i(\lambda)$ is a monic polynomial, and consecutive polynomials satisfy the divisibility relation $d_i(\lambda)|d_{i+1}(\lambda)$.
 
-称此标准型为 Smith 标准型，称 $d_i(\lambda)$ 为不变因子．
+This normal form is called the Smith normal form, and $d_i(\lambda)$ are called invariant factors.
 
-具体求解 Smith 标准型的办法是，从左上角到右下角进行消元，每次左上角的元素是右下方剩余的全体多项式的最大公因式，并借助左上角的元素将该行该列全部消为 $0$．
+The specific method to compute the Smith normal form is: eliminate from the top-left to bottom-right, each time taking the greatest common divisor of all remaining polynomials in the top-left corner, and using that element to zero out the rest of that row and column.
 
-定理：条件 $A(\lambda)$ 和 $B(\lambda)$ 等价，等价于条件 $A(\lambda)$ 和 $B(\lambda)$ 拥有完全一样的不变因子．
+**Theorem:** The condition that $A(\lambda)$ and $B(\lambda)$ are equivalent is equivalent to the condition that $A(\lambda)$ and $B(\lambda)$ have exactly the same invariant factors.
 
-### 初等因子
+### Elementary Divisors
 
-由代数基本定理，设 $A(\lambda)$ 的不变因子 $d_1(\lambda),d_2(\lambda),\cdots,d_m(\lambda)$ 的分解为：
+By the fundamental theorem of algebra, let the invariant factors of $A(\lambda)$ be $d_1(\lambda),d_2(\lambda),\cdots,d_m(\lambda)$, with factorization:
 
 $$
 d_i(\lambda)={(\lambda-\lambda_1)}^{e_{i1}}{(\lambda-\lambda_2)}^{e_{i2}}\cdots{(\lambda-\lambda_S)}^{e_{iS}}
 $$
 
-其中 $\lambda_1,\cdots,\lambda_S$ 互不相同．由于：
+where $\lambda_1,\cdots,\lambda_S$ are distinct. Since:
 
 $$
 d_i(\lambda)|d_{i+1}(\lambda)
 $$
 
-因此指数 $e_{1j},e_{2j},\cdots,e_{mj}$ 递增，并且最后一项 $d_m(\lambda)$ 的各项指数均非零．
+the exponents $e_{1j},e_{2j},\cdots,e_{mj}$ are non-decreasing, and the last factor $d_m(\lambda)$ has all exponents nonzero.
 
-上式中指数大于零的全部因子，统称为 $A(\lambda)$ 的初等因子．
+All factors with positive exponent in the above expression are collectively called the elementary divisors of $A(\lambda)$.
 
-注意，初等因子计重数．如果对于某个 $j$，指数 $e_{ij}$ 出现了若干次，则对应的初等因子 ${(\lambda-\lambda_j)}^{e_{ij}}$ 也应当出现相应次数．
+Note that elementary divisors count multiplicities. If for some $j$, the exponent $e_{ij}$ appears multiple times, the corresponding elementary divisor ${(\lambda-\lambda_j)}^{e_{ij}}$ should also appear the same number of times.
 
-之前的定理说明，$A(\lambda)$ 与 $B(\lambda)$ 等价，等价于他们两个拥有完全一致的不变因子．不变因子完全相同，自然初等因子也完全相同，但是反之则不然．事实上有结论：
+The previous theorem states that $A(\lambda)$ and $B(\lambda)$ are equivalent if and only if they have exactly the same invariant factors. Same invariant factors obviously imply same elementary divisors, but not conversely. In fact, we have:
 
-定理：$A(\lambda)$ 与 $B(\lambda)$ 不变因子完全相同，等价于初等因子和秩均完全相同．
+**Theorem:** $A(\lambda)$ and $B(\lambda)$ having exactly the same invariant factors is equivalent to having exactly the same elementary divisors and rank.
 
-于是「初等因子和秩均完全相同」也成为判断 $\lambda$ 矩阵等价性的条件．
+Thus, "exactly the same elementary divisors and rank" is also a criterion for equivalence of $\lambda$-matrices.
 
-在初等变换的时候，也可以先将 $A(\lambda)$ 变换为对角阵，再求出初等因子和秩，再求出不变因子得到标准型．有结论：
+During elementary operations, one can also first transform $A(\lambda)$ to a diagonal matrix, then find the elementary divisors and rank, and finally get the invariant factors for the normal form. There is:
 
-定理：设 $A(\lambda)$ 等价于对角阵：
+**Theorem:** Let $A(\lambda)$ be equivalent to the diagonal matrix:
 
 $$
 \operatorname{diag}\{f_1(\lambda),f_2(\lambda),\cdots,f_r(\lambda),0,\cdots,0\}
 $$
 
-那么有 $f_1(\lambda),f_2(\lambda),\cdots,f_r(\lambda)$ 的全体一次因子的幂 ${(\lambda-\lambda_j)}^{e_{ij}}$，构成 $A(\lambda)$ 的初等因子．
+Then the factors ${(\lambda-\lambda_j)}^{e_{ij}}$ of $f_1(\lambda),f_2(\lambda),\cdots,f_r(\lambda)$, where each $f_i$ is a product of linear factors, together form the elementary divisors of $A(\lambda)$.
 
-由初等因子和秩构造不变因子的具体方法为：先将初等因子按照因式分类，排成表格，把同类因式进行降幂排列放到同一行，各类因式的最高次幂放到一列，把列数用 $1$ 补齐至秩 $r$，那么每一列的乘积构成一个不变因子．
+The specific method to construct invariant factors from elementary divisors and rank is: first classify the elementary divisors by factors, arrange them in a table, put factors of the same type in the same row in descending powers, fill the columns to rank $r$ with 1's, then the product of each column forms an invariant factor.
 
-### 在特征矩阵中的应用
+### Application to Characteristic Matrices
 
-如果 $A$ 与 $B$ 是数阵，那么它们的特征矩阵是 $\lambda$ 矩阵．有结论：
+If $A$ and $B$ are numeric matrices, then their characteristic matrices are $\lambda$-matrices. We have:
 
-定理：条件数阵 $A$ 与 $B$ 相似，等价于条件特征矩阵 $\lambda I-A$ 和 $\lambda I-B$ 等价．
+**Theorem:** Two numeric matrices $A$ and $B$ are similar if and only if their characteristic matrices $\lambda I-A$ and $\lambda I-B$ are equivalent.
 
-由于特征矩阵 $\lambda I-A$ 只在主对角线含有 $n$ 个 $\lambda$，所以秩为 $n$．由上述推理，同型的数阵的特征矩阵的秩始终相等，于是有等价性：
+Since the characteristic matrix $\lambda I-A$ has exactly $n$ entries of $\lambda$ on the main diagonal, its rank is $n$. From the above, characteristic matrices of same-sized numeric matrices always have the same rank, so we have the equivalence:
 
-数阵 $A$ 与 $B$ 相似，等价于特征矩阵 $\lambda I-A$ 和 $\lambda I-B$ 有完全相同的初等因子．
+Numeric matrices $A$ and $B$ are similar if and only if their characteristic matrices $\lambda I-A$ and $\lambda I-B$ have exactly the same elementary divisors.
 
-对于特征矩阵 $\lambda I-A$，初等变换保持等价性，所以不改变秩．
+For the characteristic matrix $\lambda I-A$, elementary operations preserve equivalence, so do not change the rank.
 
-观察三种初等变换，由于唯一被改写的倍加变换不改变行列式，事实上三种初等变换仅对行列式的结果多项式改变常数倍，因此不改变行列式的结果多项式的因式分解与次数．
+Observing the three types of elementary operations, since the only modified operation (row addition) does not change the determinant, in fact all three types of elementary operations only change the determinant polynomial by a constant factor, thus do not change the factorization or degree of the determinant polynomial.
 
-因此特征矩阵 $\lambda I-A$ 的行列式为 $n$ 次多项式，初等变换化为 Smith 标准型后，由于秩为 $n$，行列式就是主对角线全体不变因子的乘积，也等于全体初等因子的乘积．因此，特征矩阵 $\lambda I-A$ 的全体初等因子的次数之和等于 $n$．
+Therefore, the determinant of the characteristic matrix $\lambda I-A$ is an $n$-degree polynomial. After transforming to Smith normal form via elementary operations, since the rank is $n$, the determinant equals the product of all invariant factors on the main diagonal, which also equals the product of all elementary divisors. Thus, the sum of the degrees of all elementary divisors of $\lambda I-A$ equals $n$.
 
-## Jordan 标准型
+## Jordan Normal Form
 
-矩阵
+A matrix
 
 $$
 \begin{pmatrix}
@@ -222,11 +222,11 @@ $$
 \end{pmatrix}
 $$
 
-主对角线上的元素都是 $\lambda$，紧邻主对角线上方的元素都是 $1$，其余位置都是 $0$，叫做属于 $\lambda$ 的一个 Jordan 矩阵，或称 Jordan 块．
+with all elements on the main diagonal equal to $\lambda$, all elements immediately above the main diagonal equal to $1$, and all other elements $0$, is called a Jordan matrix (or Jordan block) associated with $\lambda$.
 
-显然，幂零 Jordan 矩阵是 Jordan 矩阵的特例，即 $\lambda$ 为 $0$ 的情形．
+Clearly, a nilpotent Jordan matrix is a special case of a Jordan matrix, namely when $\lambda = 0$.
 
-定理：设 $T$ 是 $n$ 维空间 $V$ 的一个变换，$\lambda_1,\cdots,\lambda_k$ 是 $T$ 的一切互不相同的特征值，那么存在一个基，使得 $T$ 关于这个基的矩阵有形状：
+**Theorem:** Let $T$ be a transformation on an $n$-dimensional space $V$, and $\lambda_1,\cdots,\lambda_k$ be all distinct eigenvalues of $T$. Then there exists a basis such that the matrix of $T$ with respect to this basis has the form:
 
 $$
 \begin{pmatrix}
@@ -237,7 +237,7 @@ B_1 &  &  & 0\\
 \end{pmatrix}
 $$
 
-其中
+where
 
 $$
 B_i=\begin{pmatrix}
@@ -248,45 +248,45 @@ J_{i1} &  &  & 0\\
 \end{pmatrix}
 $$
 
-其中 $J_{i1},\cdots,J_{is_i}$ 都是属于 $\lambda_i$ 的 Jordan 块．
+and $J_{i1},\cdots,J_{is_i}$ are all Jordan blocks associated with $\lambda_i$.
 
-这是因为，首先根据最小多项式：
+The proof proceeds as follows. First, according to the minimal polynomial:
 
 $$
 m_A(\lambda)={(\lambda-\lambda_1)}^{r_1}{(\lambda-\lambda_2)}^{r_2}\cdots{(\lambda-\lambda_k)}^{r_k}
 $$
 
-有准素分解：
+we have the primary decomposition:
 
 $$
 V=V_1\oplus V_2\oplus\cdots\oplus V_k
 $$
 
-其中：
+where:
 
 $$
 V_i=N\left({(A-\lambda_i I)}^{r_i}\right)
 $$
 
-式中 $A$ 为 $T$ 对应的矩阵．
+and $A$ is the matrix corresponding to $T$.
 
-令变换 $S_i$ 为 $T$ 在 $V_i$ 上的限制 ${T|}_{V_i}$，接下来试图对每一个 $S_i$ 进行 Jordan 分解．
+Let $S_i$ be the restriction of $T$ to $V_i$, denoted ${T|}_{V_i}$. Next, we attempt to perform Jordan decomposition on each $S_i$.
 
-记 $T_e$ 为 $V$ 上的恒等变换．与前文的 Jordan 分解不同，记 $T_i$ 为 $S_i$ 的 Jordan 分解中的幂零部分：
+Let $T_e$ be the identity transformation on $V$. Unlike the previous Jordan decomposition, denote $T_i$ as the nilpotent part in the Jordan decomposition of $S_i$:
 
 $$
 S_i=\lambda_i T_e+T_i
 $$
 
-于是 $T_i$ 为子空间 $V_i$ 的一个幂零变换，事实上也是 $T-\lambda_i T_e$ 在 $V_i$ 上的限制 ${(T-\lambda_i T_e)|}_{V_i}$．
+Then $T_i$ is a nilpotent transformation on subspace $V_i$, which is indeed the restriction ${(T-\lambda_i T_e)|}_{V_i}$.
 
-子空间 $V_i$ 可以分解为幂零变换 $T_i$ 循环子空间的直和：
+The subspace $V_i$ can be decomposed into a direct sum of cyclic subspaces for the nilpotent transformation $T_i$:
 
 $$
 V_i=W_{i1}\oplus W_{i2}\oplus\cdots\oplus W_{is_i}
 $$
 
-在每一个循环子空间 $W_{ij}$ 里，取一个循环基并倒序排列，凑成 $V_i$ 的一个基，于是 $T_i$ 关于这个基的矩阵有形状：
+In each cyclic subspace $W_{ij}$, take a cyclic basis and arrange in reverse order to form a basis of $V_i$. Then the matrix of $T_i$ with respect to this basis has the form:
 
 $$
 N_i=\begin{pmatrix}
@@ -297,7 +297,7 @@ N_{i1} &  &  & 0\\
 \end{pmatrix}
 $$
 
-全体 $N_{ij}$ 均为幂零 Jordan 块．于是对于 $V_i$ 上述选取的基，$S_i$ 对应的矩阵是：
+All $N_{ij}$ are nilpotent Jordan blocks. Then with respect to the basis chosen for $V_i$, the matrix of $S_i$ is:
 
 $$
 B_i=\begin{pmatrix}
@@ -318,11 +318,11 @@ J_{i1} &  &  & 0\\
 \end{pmatrix}
 $$
 
-这里 $J_{i1},J_{i2},\cdots,J_{is_i}$ 都是属于 $\lambda_i$ 的 Jordan 块．
+Here $J_{i1},J_{i2},\cdots,J_{is_i}$ are all Jordan blocks associated with $\lambda_i$.
 
-对于每一个子空间 $V_i$，按照以上方式选取一个基，凑起来成为 $V$ 的基，那么 $T$ 关于这个基的矩阵即构成定理规定的形式．
+For each subspace $V_i$, choose a basis as above. Putting them together forms a basis of $V$. Then the matrix of $T$ with respect to this basis exactly has the form prescribed in the theorem.
 
-形如：
+A matrix of the form:
 
 $$
 \begin{pmatrix}
@@ -333,15 +333,15 @@ J_1 &  &  & 0\\
 \end{pmatrix}
 $$
 
-的 $n$ 阶矩阵，其中每一个 $J_i$ 都是一个 Jordan 块，叫做一个 Jordan 标准型．
+where each $J_i$ is a Jordan block, is called a Jordan normal form.
 
-定理：每一个 $n$ 阶矩阵 $A$ 都与一个 Jordan 标准型相似．除了各个 Jordan 块排列的次序以外，与 $A$ 相似的 Jordan 标准型是由 $A$ 唯一确定的．
+**Theorem:** Every $n \times n$ matrix $A$ is similar to a Jordan normal form. Apart from the order of Jordan blocks, the Jordan normal form similar to $A$ is uniquely determined by $A$.
 
-注意在上述构造的矩阵 $B_i$ 中，第一项是一个单位阵的若干倍，自然可以和第二项交换．因此，第一项就是 $B_i$ 的 Jordan 分解的可对角化部分，第二项就是 $B_i$ 的 Jordan 分解的幂零部分．
+Note that in the constructed matrix $B_i$, the first term is a scalar multiple of the identity, so it commutes with the second term. Therefore, the first term is the diagonalizable part of the Jordan decomposition of $B_i$, and the second term is the nilpotent part.
 
-在一个矩阵对应的 Jordan 标准型里面，主对角线上的元素构成的对角阵是这个矩阵对应的 Jordan 标准型的可对角化部分，把主对角线上的元素换成 $0$ 就得到这个矩阵对应的 Jordan 标准型的幂零部分．
+In the Jordan normal form of a matrix, the diagonal matrix formed by the elements on the main diagonal is the diagonalizable part of the Jordan normal form, and replacing those elements with $0$ gives the nilpotent part.
 
-定理：对于矩阵 $A$ 的 Jordan 标准型中，每一个 Jordan 块：
+**Theorem:** For each Jordan block in the Jordan normal form of matrix $A$:
 
 $$
 J_i=\begin{pmatrix}
@@ -353,28 +353,28 @@ J_i=\begin{pmatrix}
 \end{pmatrix}
 $$
 
-对应于特征矩阵 $\lambda I-A$ 的一个初等因子 ${(\lambda-\lambda_i)}^{n_i}$，特征矩阵 $\lambda I-A$ 的全体初等因子对应于矩阵 $A$ 的 Jordan 标准型中的全体 Jordan 块．
+it corresponds to an elementary divisor ${(\lambda-\lambda_i)}^{n_i}$ of the characteristic matrix $\lambda I - A$. All elementary divisors of $\lambda I - A$ correspond to all Jordan blocks in the Jordan normal form of $A$.
 
-这是因为，矩阵 $A$ 相似于它的 Jordan 标准型，因此两者的特征矩阵也等价，将 Jordan 标准型的特征矩阵化为 Smith 标准型即可看出．
+This is because matrix $A$ is similar to its Jordan normal form, so their characteristic matrices are also equivalent. Transforming the characteristic matrix of the Jordan normal form to Smith normal form reveals this.
 
-由这个定理，借助特征矩阵 $\lambda I-A$ 的初等因子，可以写出矩阵 $A$ 的 Jordan 标准型．
+From this theorem, with the elementary divisors of the characteristic matrix $\lambda I - A$, one can write the Jordan normal form of $A$.
 
-一个推论是，矩阵 $A$ 可对角化，等价于特征矩阵 $\lambda I-A$ 的初等因子均为一次的．
+A corollary is that matrix $A$ is diagonalizable if and only if all elementary divisors of $\lambda I - A$ are linear.
 
-## 弗罗贝尼乌斯（Forbenious）定理
+## Frobenius Theorem
 
-上文指出，$n$ 阶特征矩阵的 Smith 标准形的秩为 $n$．
+Above, we noted that the Smith normal form of an $n$-th order characteristic matrix has rank $n$.
 
-定理：设矩阵 $A$ 的特征矩阵 $\lambda I-A$ 的 Smith 标准形为：
+**Theorem:** Let the Smith normal form of the characteristic matrix $\lambda I - A$ of matrix $A$ be:
 
 $$
 \operatorname{diag}\{d_1(\lambda),d_2(\lambda),\cdots,d_n(\lambda)\}
 $$
 
-则最后一个不变因子 $d_n(\lambda)$ 恰好为矩阵 $A$ 的最小多项式 $m_A(\lambda)$．
+Then the last invariant factor $d_n(\lambda)$ is exactly the minimal polynomial $m_A(\lambda)$ of matrix $A$.
 
-推论：矩阵 $A$ 可对角化的等价条件为：
+**Corollary:** Equivalent conditions for matrix $A$ to be diagonalizable are:
 
--   最小多项式 $m_A(\lambda)$ 无重根．
--   特征矩阵 $\lambda I-A$ 的不变因子无重根．
--   特征矩阵 $\lambda I-A$ 的初等因子均为一次的．
+-   The minimal polynomial $m_A(\lambda)$ has no repeated roots.
+-   No invariant factor of the characteristic matrix $\lambda I - A$ has repeated roots.
+-   All elementary divisors of the characteristic matrix $\lambda I - A$ are linear.

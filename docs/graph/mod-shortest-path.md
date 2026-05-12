@@ -1,98 +1,99 @@
-当出现形如「给定 $n$ 个整数，求这 $n$ 个整数能拼凑出多少的其他整数（$n$ 个整数可以重复取）」，以及「给定 $n$ 个整数，求这 $n$ 个整数不能拼凑出的最小（最大）的整数」，或者「至少要拼几次才能拼出模 $K$ 余 $p$ 的数」的问题时可以使用同余最短路的方法．
+Problems in the following forms can be solved using the method of **congruence shortest path**:
+- Given $n$ integers, how many other integers can be formed using them (each integer can be used repeatedly)?
+- Given $n$ integers, find the smallest (or largest) integer that cannot be formed?
+- How many operations are needed at minimum to form a number with remainder $p$ modulo $K$?
 
-同余最短路利用同余来构造一些状态，可以达到优化空间复杂度的目的．
+Congruence shortest path uses congruences to construct states, achieving optimization of space complexity.
 
-类比 [差分约束](./diff-constraints.md) 方法，利用同余构造的这些状态可以看作单源最短路中的点．同余最短路的状态转移通常是这样的 $f(i+y) = f(i) + y$，类似单源最短路中 $f(v) = f(u) +edge(u,v)$．
+Analogous to the [difference constraints](./diff-constraints.md) method, the states constructed using congruences can be viewed as nodes in single-source shortest path. The state transitions in congruence shortest path are typically $f(i+y) = f(i) + y$, similar to $f(v) = f(u) + edge(u, v)$ in single-source shortest path.
 
-## 例题
+## Examples
 
-### 例题一
+### Example 1
 
-???+ note "[P3403 跳楼机](https://www.luogu.com.cn/problem/P3403)"
-    题目大意：给定 $x，y，z，h$，对于 $k \in [1,h]$，有多少个 $k$ 能够满足 $ax+by+cz=k$．（$0\leq a,b,c$，$1\le x,y,z\le 10^5$，$h\le 2^{63}-1$）
+???+ note "[P3403 Building](https://www.luogu.com.cn/problem/P3403)"
+    Problem: Given $x, y, z, h$, for $k \in [1, h]$, how many values of $k$ satisfy $ax + by + cz = k$? ($0 \leq a, b, c$, $1 \leq x, y, z \leq 10^5$, $h \leq 2^{63} - 1$)
 
-不妨假设 $x < y < z$．
+    Assume $x < y < z$.
 
-令 $d_i$ 为只通过 **操作 2** 和 **操作 3**，需满足 $p\bmod x = i$ 能够达到的最低楼层 $p$，即 **操作 2** 和 **操作 3** 操作后能得到的模 $x$ 下与 $i$ 同余的最小数，用来计算该同余类满足条件的数个数．
+    Let $d_i$ be the minimum floor reachable using **operation 2** and **operation 3** such that $p \bmod x = i$. That is, the minimum number congruent to $i$ modulo $x$ that can be obtained, used to count how many numbers in this congruence class satisfy the conditions.
 
-可以得到两个状态：
+    We have two state transitions:
 
--   $i \xrightarrow{y} (i+y) \bmod x$
+    - $i \xrightarrow{y} (i + y) \bmod x$
+    - $i \xrightarrow{z} (i + z) \bmod x$
 
--   $i \xrightarrow{z} (i+z) \bmod x$
+    Note that we typically take the modulus using the smallest number among $a_i$, which is $x$ in this case, to minimize space complexity (smallest residue system).
 
-注意通常选取一组 $a_i$ 中最小的那个数对它取模，也就是此处的 $x$，这样可以尽量减小空间复杂度（剩余系最小）．
+    This is equivalent to adding edges in shortest path:
 
-那么实际上相当于执行了最短路中的建边操作：
+    `add(i, (i + y) % x, y)`
+    `add(i, (i + z) % x, z)`
 
-`add(i, (i+y) % x, y)`
+    Then we only need to find $d_0, d_1, d_2, \dots, d_{x-1}$ by running a single shortest path computation.
 
-`add(i, (i+z) % x, z)`
-
-接下来只需要求出 $d_0, d_1, d_2, \dots, d_{x-1}$，只需要跑一次最短路就可求出相应的 $d_i$．
-
-??? example "基于最短路的实现"
+??? example "Shortest Path Implementation"
     ```cpp
     --8<-- "docs/graph/code/mod-shortest-path/mod-shortest-path_1.cpp"
     ```
 
-但是事实上也不需要进行正常的最短路求解，注意到有两个特殊的性质：
+    However, we don't actually need a full shortest path computation. Two special properties apply:
 
-首先，只有两种边权，且对于每一条路径，由于加法交换律，走两种边权的顺序是无影响的．因此可以考虑做两次最短路，每次只建出一类边权的边；
+    First, there are only two edge weights, and due to the commutativity of addition, the order of traversing edges does not matter. Therefore, we can run two separate shortest path computations, each using only one type of edge weight.
 
-其次，对于只有一类边权的图，每个点 $u$ 都有一个入度（来自 $(u-y) \bmod x$）和一个出度（来自 $(u+y) \bmod x$），因此整个图必然由若干个环构成．并且可以证明共有 $\gcd(x,y)$ 个等长的环．
+    Second, in a graph with only one type of edge weight, each node $u$ has one in-degree (from $(u - y) \bmod x$) and one out-degree (from $(u + y) \bmod x$), so the entire graph consists of several cycles. It can be proven that there are $\gcd(x, y)$ cycles of equal length.
 
-???+ note "证明"
-    设 $d=\gcd(x,y)$，设 $x=da,y=db$，有 $\gcd(a,b)=1$．
-    
-    考虑从 $u$ 出发走 $k$ 步，到达 $(u+ky) \bmod x$．若成环，则 $ky \equiv 0 \pmod x$，即有 $kb \equiv 0 \pmod a$．
-    
-    由于 $\gcd(a,b)=1$，最小的 $k=a$，即环长为 $a = \dfrac{x}{d}$．由于是从任意点开始，故每个可能的环长相等，环的数量为 $d$．
+???+ note "Proof"
+    Let $d = \gcd(x, y)$, with $x = da, y = db$, so $\gcd(a, b) = 1$.
 
-并且，边权为正，绕环两圈后，一定不能继续松弛．直接循环更新一遍就行了．这样处理就不会受限于最短路的复杂度，可以做到 $O(x)$．
+    Starting from $u$, after $k$ steps we reach $(u + ky) \bmod x$. For a cycle to form, we need $ky \equiv 0 \pmod x$, i.e., $kb \equiv 0 \pmod a$.
 
-与差分约束问题相同，当存在一组解 $\{a_1,a_2,\cdots,a_n\}$ 时，$\{a_1+d,a_2+d,\cdots,a_n+d\}$ 同样为一组解，因此在该题让 $i=1$ 作为源点，此时源点处的 $dis_{1}=1$ 在已知范围内最小，因此得到的也是一组最小的解．
+    Since $\gcd(a, b) = 1$, the smallest such $k$ is $k = a$, so the cycle length is $a = \frac{x}{d}$. Since we can start from any point, all cycles have the same length, and there are $d$ cycles.
 
-答案即为：
+    Moreover, since edge weights are positive, after traversing a cycle twice, no further relaxation is possible. We can simply iterate and update — this achieves $O(x)$ time complexity without being bound by shortest path complexity.
 
-$$
-\sum_{i=0}^{x-1}\left(\frac{h-d_i}{x} + 1\right)
-$$
+    Similar to difference constraints, when a solution $\{a_1, a_2, \cdots, a_n\}$ exists, $\{a_1 + d, a_2 + d, \cdots, a_n + d\}$ is also a solution. So in this problem, we use $i = 1$ as the source, where $dis_1 = 1$ is the minimum value in the known range, giving us a minimal solution.
 
-加 1 是由于 $d_i$ 所在楼层也算一次．
+    The answer is:
 
-代码实现上注意到 $h$ 的范围是 $h \leq 2^{63}-1$，所以在求解最短路之前 $d_i$ 的初始值应至少设为 $2^{63}$，这超过了 C++ 中 `long long` 的最大值．所以可以使用 `unsigned long long` 或者先把 $h \gets h - 1$，然后把最低楼层设为 $0$ 层，其他代码无异．
+    $$
+    \sum_{i=0}^{x-1}\left(\frac{h - d_i}{x} + 1\right)
+    $$
 
-??? example "基于环优化的实现"
+    The $+1$ is because the floor at $d_i$ also counts as one.
+
+    Note that since $h \leq 2^{63} - 1$, the initial value of $d_i$ should be set to at least $2^{63}$ before computing shortest paths, which exceeds the maximum value of `long long` in C++. We can use `unsigned long long` instead, or first set $h \gets h - 1$ and the minimum floor to $0$.
+
+??? example "Cycle Optimization Implementation"
     ```cpp
     --8<-- "docs/graph/code/mod-shortest-path/mod-shortest-path_2.cpp"
     ```
 
-### 例题二
+### Example 2
 
 ???+ note "[ARC084B Small Multiple](https://atcoder.jp/contests/arc084/tasks/arc084_b)"
-    题目大意：给定 $n$，求 $n$ 的倍数中，数位和最小的那一个的数位和．（$1\le n\le 10^5$）
+    Problem: Given $n$, find the minimum digit sum among all multiples of $n$. ($1 \leq n \leq 10^5$)
 
-本题可以使用循环卷积优化完全背包在 $O(n\log^2 n)$ 的时间内解决，但我们希望得到线性的算法．
+    This problem can be solved using circular convolution to optimize knapsack in $O(n \log^2 n)$ time, but we aim for a linear algorithm.
 
-观察到任意一个正整数都可以从 $1$ 开始，按照某种顺序执行乘 $10$、加 $1$ 的操作，最终得到，而其中加 $1$ 操作的次数就是这个数的数位和．这提示我们使用最短路．
+    Observe that any positive integer can be obtained from $1$ by repeatedly applying operations of multiplying by $10$ and adding $1$ in some order. The number of times $1$ is added is the digit sum of the number. This suggests using shortest path.
 
-对于所有 $0\le k\le n-1$，从 $k$ 向 $10k$ 连边权为 $0$ 的边；从 $k$ 向 $k+1$ 连边权为 $1$ 的边．（点的编号均在模 $n$ 意义下）
+    For all $0 \leq k \leq n - 1$, add an edge of weight $0$ from $k$ to $10k$, and an edge of weight $1$ from $k$ to $k + 1$. (Node indices are taken modulo $n$)
 
-每个 $n$ 的倍数在这个图中都对应了 $1$ 号点到 $0$ 号点的一条路径，求出 $1$ 到 $0$ 的最短路即可．某些路径不合法（如连续走了 $10$ 条边权为 $1$ 的边），但这些路径产生的答案一定不优，不影响答案．
+    Each multiple of $n$ corresponds to a path from node $1$ to node $0$ in this graph. Finding the shortest path from $1$ to $0$ gives the answer. Some paths are invalid (e.g., taking $10$ consecutive edges of weight $1$), but such paths never produce optimal answers.
 
-时间复杂度 $O(n)$．
+    Time complexity: $O(n)$.
 
-## 习题
+## Exercises
 
-[洛谷 P3403 跳楼机](https://www.luogu.com.cn/problem/P3403)
+[Luogu P3403 Building](https://www.luogu.com.cn/problem/P3403)
 
-[洛谷 P2662 牛场围栏](https://www.luogu.com.cn/problem/P2662)
+[Luogu P2662 Cow Fence](https://www.luogu.com.cn/problem/P2662)
 
-[\[国家集训队\] 墨墨的等式](https://www.luogu.com.cn/problem/P2371)
+[National Training Team] Momo's Equation](https://www.luogu.com.cn/problem/P2371)
 
-[「NOIP2018」货币系统](https://loj.ac/problem/2951)
+[「NOIP2018」Currency System](https://loj.ac/problem/2951)
 
 [AGC057D - Sum Avoidance](https://atcoder.jp/contests/agc057/tasks/agc057_d)
 
-[「THUPC 2023 初赛」背包](https://loj.ac/p/6872)
+[「THUPC 2023 Prelim」Knapsack](https://loj.ac/p/6872)

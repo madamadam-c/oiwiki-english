@@ -1,21 +1,21 @@
 author: Marcythm, partychicken, Xeonacid, hhc0001
 
-## 概述
+## Overview
 
-优化 dp 时，不止可以从转移过程入手，加速转移．有时，也可以从状态定义入手，通过改变设计状态的方式实现复杂度上的优化．
+When optimizing DP, we do not have to optimize only the transition process. Sometimes we can also start from the state definition and reduce complexity by changing how states are designed.
 
-令人比较头疼的是，这类优化大多不具有通用性，即不能很套路地应用于多个题目中．因此，下文将从具体例题出发，力求提供思路上的启发，希望可以对读者有一定帮助．
+The difficult part is that most optimizations of this kind are not general: they usually cannot be mechanically applied to many different problems. Therefore, the following sections use concrete examples to provide ideas and intuition that may help readers.
 
-## 例 1
+## Example 1
 
-???+ note "题面"
-    给定两个长度分别为 $n,m$ 且仅由小写字母构成的字符串 $A,B$, 求 $A,B$ 的最长公共子序列．$(n\le 10^6,m\le 10^3)$
+???+ note "Problem Statement"
+    Given two strings $A,B$ of lengths $n,m$, respectively, containing only lowercase letters, find the longest common subsequence of $A$ and $B$. $(n\le 10^6,m\le 10^3)$
 
-### 朴素的解法
+### Naive Solution
 
-您一眼秒了它，这不是板子吗？
+At first glance, this is just a template problem.
 
-定义状态 $f_{i,j}$ 为 $A$ 的前 $i$ 位与 $B$ 的前 $j$ 位最长公共子序列，则有
+Define state $f_{i,j}$ as the LCS length between the first $i$ characters of $A$ and the first $j$ characters of $B$. Then:
 
 $$
 f_{i,j}=
@@ -25,66 +25,66 @@ f_{i-1,j-1}+1 & ,A_i = B_j
 \end{cases}
 $$
 
-上述做法的时间复杂度 $O(nm)$，无法通过本题．
+This approach has time complexity $O(nm)$ and cannot pass this problem.
 
-### 更优的解法
+### Better Solution
 
-我们仔细一想，发现了一个性质：最终答案不会超过 $m$．
+Think more carefully: the final answer cannot exceed $m$.
 
-我们又仔细一想，发现 LCS 满足贪心的性质．
+Think again: LCS has a greedy property.
 
-更改状态定义 $f_{i,j}$ 为与 $B$ 前 $i$ 位的最长公共子序列长度为 $j$ 的 $A$ 的最短前缀长度（即将朴素做法的答案与第一维状态对调）
+Change the state definition. Let $f_{i,j}$ be the shortest prefix length of $A$ such that its LCS with the first $i$ characters of $B$ has length $j$. In other words, swap the answer of the naive method with the first dimension of the state.
 
-可以通过预处理 $A$ 的每一位的下一个 $a,b,\cdots,z$ 的出现位置进行 $O(1)$ 的顺推转移．
+By preprocessing, for every position of $A$, the next occurrence position of each of `a,b,\cdots,z` can be queried in $O(1)$, allowing forward transitions.
 
-复杂度 $O(m^2+26n)$，可以通过本题．
+The complexity is $O(m^2+26n)$, which can pass this problem.
 
-## 例 2
+## Example 2
 
-???+ note "题面"
-    给定一个 $n$ 个点的无权有向图，判断该图是否存在哈密顿回路．$(2\le n\le 20)$
+???+ note "Problem Statement"
+    Given an unweighted directed graph with $n$ vertices, determine whether it has a Hamiltonian cycle. $(2\le n\le 20)$
 
-### 朴素的解法
+### Naive Solution
 
-看到数据范围，我们考虑状压．
+Seeing the constraints, consider bitmask DP.
 
-设 $f_{s,i}$ 表示从点 $1$ 出发，仅经过点集 $s$ 中的点能否到达点 $i$．记 $g$ 为原图的邻接矩阵．则有
+Let $f_{s,i}$ denote whether vertex $i$ can be reached from vertex $1$ by visiting only vertices in set $s$. Let $g$ be the adjacency matrix of the original graph. Then:
 
 $$
 f_{s, i} = \bigvee_{j\in s, j\neq i}f_{s \setminus \{i\}, j}\wedge g_{j, i} \left(i\in s\right)
 $$
 
-时间复杂度 $O(n^2 \times 2^n)$，写得好看或许能过，但是并不优美．
+The time complexity is $O(n^2\times2^n)$. With a careful implementation it may pass, but it is not elegant.
 
-### 更优的解法
+### Better Solution
 
-上面的状态设计中，每个 $dp$ 值只代表一个 `bool` 值，这让我们觉得有些浪费．
+In the state design above, each DP value represents only one `bool`, which feels wasteful.
 
-我们可以考虑对于每个状态 $s$ 将 $f_{s,1},f_{s,2},\dots,f_{s,n}$ 压成一个 `int`，发现我们可以将邻接矩阵同样压缩后进行 $O(1)$ 转移．
+For each state $s$, compress $f_{s,1},f_{s,2},\dots,f_{s,n}$ into one `int`. After similarly compressing the adjacency matrix, transitions can be done in $O(1)$.
 
-时间复杂度 $O(n^2/w\times 2^n)$, 可以通过这道题，其中 $w$ 为 `int` 的位数．
+The time complexity is $O(n^2/w\times2^n)$, where $w$ is the number of bits in an `int`, and this can pass the problem.
 
-## 例 3
+## Example 3
 
-???+ note "题面"
-    常规的背包问题．$n$ 为物品数量，$m$ 为背包容量，$v_i, w_i$ 为第 $i$ 个物品的体积、价值，$1 \le n \le 10^3$，$1 \le m, v_i \le \color{red}{10^{18}}$，$1 \le \sum w_i \le 10^3$．
+???+ note "Problem Statement"
+    A standard knapsack problem. Let $n$ be the number of items, $m$ the knapsack capacity, and $v_i,w_i$ the volume and value of the $i$-th item. $1\le n\le10^3$, $1\le m,v_i\le\color{red}{10^{18}}$, and $1\le\sum w_i\le10^3$.
 
-### 朴素的解法
+### Naive Solution
 
-这是一个模板背包题．
+This is a template knapsack problem.
 
-定义状态 $f_{i, j}$ 为选了前 $i$ 个物品，目前背包里塞了 $j$ 的容量的最大价值和．
+Define state $f_{i,j}$ as the maximum total value after considering the first $i$ items and currently using capacity $j$ in the knapsack.
 
-易得 $f_{i, j} = \max(f_{i - 1, j}, f_{i - 1, j - v_i} + w_i)$．
+It is easy to get $f_{i,j}=\max(f_{i-1,j},f_{i-1,j-v_i}+w_i)$.
 
-$v_i \le 10^{18}$，无法通过此题．
+Since $v_i\le10^{18}$, this cannot pass the problem.
 
-### 更优的解法
+### Better Solution
 
-交换答案和状态的第二维，设 $f_{i, j}$ 为选了前 $i$ 个物品，目前背包里的物品 **的价值为 $j$** 的最小体积和．
+Swap the answer with the second dimension of the state. Let $f_{i,j}$ be the minimum total volume after considering the first $i$ items and having total item **value $j$** in the knapsack.
 
-依然，易得 $f_{i, j} = \min(f_{i - 1, j}, f_{i - 1, j - w_i} + v_i)$．
+Similarly, $f_{i,j}=\min(f_{i-1,j},f_{i-1,j-w_i}+v_i)$.
 
-注意状态的第二维改变之后转移也要一起改变．
+Note that after changing the second dimension of the state, the transition must also be changed accordingly.
 
-时间复杂度 $O(n \sum w_i)$，可以通过此题．
+The time complexity is $O(n\sum w_i)$, which can pass this problem.

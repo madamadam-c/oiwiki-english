@@ -1,43 +1,43 @@
-本页面将简要介绍字节顺序的概念和分类．
+This page briefly introduces the concept and classification of byte order.
 
-## 简介
+## Introduction
 
-字节顺序是跨越多字节的程序对象的存储规则，表示一个对象的字节的排列方法．
+Byte order is the storage rule for program objects that span multiple bytes; it describes how an object's bytes are arranged.
 
-## 分类
+## Classification
 
-字节顺序有两种，分为小端序（little endian）和大端序（big endian）．
+There are two byte orders: little endian and big endian.
 
-为方便介绍，接下来以一个位于 `0x100` 处，类型为 `int`，十六进制值为 `0x01234567` 的变量为例．其中 `0x01` 是最高位有效字节，`0x67` 是最低位有效字节．
+For convenience, we use a variable located at `0x100`, with type `int` and hexadecimal value `0x01234567`, as an example. Here `0x01` is the most significant byte, and `0x67` is the least significant byte.
 
-### 小端序
+### Little Endian
 
-小端序是指机器选择在内存中按照从 **最低** 有效字节到 **最高** 有效字节的顺序存储对象．
+Little endian means that the machine stores an object in memory from the **least** significant byte to the **most** significant byte.
 
-上文提到的变量表示如下：
+The variable mentioned above is represented as follows:
 
 | .... | 0x100 | 0x101 | 0x102 | 0x103 | .... |
 | ---- | ----- | ----- | ----- | ----- | ---- |
 | .... | 67    | 45    | 23    | 01    | .... |
 
-### 大端序
+### Big Endian
 
-大端序是指机器选择在内存中按照从 **最高** 有效字节到 **最低** 有效字节的顺序存储对象．
+Big endian means that the machine stores an object in memory from the **most** significant byte to the **least** significant byte.
 
-上文提到的变量表示如下：
+The variable mentioned above is represented as follows:
 
 | .... | 0x100 | 0x101 | 0x102 | 0x103 | .... |
 | ---- | ----- | ----- | ----- | ----- | ---- |
 | .... | 01    | 23    | 45    | 67    | .... |
 
-### 两种顺序的区别
+### Difference Between the Two Orders
 
-事实上，这两种字节顺序没有孰优孰劣之分．这两种顺序的名字「小端」和「大端」，正是出自《格列佛游记》一书．书中，小人国里两个派别交战不休的原因是无法就从小端还是大端剥鸡蛋达成一致．就和剥鸡蛋的争论一样，选择何种字节顺序的争论是非技术性的．
+In fact, neither byte order is inherently better than the other. The names "little endian" and "big endian" come from *Gulliver's Travels*. In the book, two factions in Lilliput are locked in conflict because they cannot agree on whether to crack eggs from the little end or the big end. Like the egg-cracking dispute, the choice of byte order is not a technical matter.
 
-当然，字节顺序的不一致会导致二进制数据在不同类型的机器之间进行传输时被反序．为了避免这件事情，网络应用程序建立了一套标准，保证发送过程中是使用约定好的网络标准，而不是不同机器的内部表示．
+Of course, inconsistent byte order can cause binary data to be reversed when transmitted between different types of machines. To avoid this, network applications established a standard that ensures data is sent using an agreed-upon network standard rather than the internal representation of different machines.
 
-## 顺序选择惯例
+## Common Order Choices
 
--   小端序：x86, ARM processors running Android, iOS, and Windows
+-   Little endian: x86, ARM processors running Android, iOS, and Windows
 
--   大端序：Sun, PPC Mac, Internet
+-   Big endian: Sun, PPC Mac, Internet

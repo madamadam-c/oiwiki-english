@@ -1,33 +1,33 @@
 author: GavinZhengOI, PlanariaIce
 
-## 简介
+## Introduction
 
-离散化是一种数据处理的技巧，本质上可以看成是一种 [哈希](../string/hash.md#hash-的思想)，其保证数据在哈希以后仍然保持原来的 [全/偏序](../math/order-theory.md#偏序集) 关系．
+Discretization is a data-processing technique. In essence, it can be viewed as a kind of [hashing](../string/hash.md#hash-的思想), while ensuring that after hashing, the data still preserves the original [total/partial order](../math/order-theory.md#偏序集) relationship.
 
-通俗地讲就是当有些数据因为本身很大或者类型不支持，自身无法作为数组的下标来方便地处理，而影响最终结果的只有元素之间的相对大小关系时，我们可以将原来的数据按照排名来处理问题，即离散化．
+Informally, when some data cannot be conveniently used as array indices because the values themselves are too large or their type is unsupported, and only the relative order between elements affects the final result, we can process the original data by rank. This is discretization.
 
-用来离散化的可以是大整数、浮点数、字符串等等．
+Objects used for discretization can be large integers, floating-point numbers, strings, and so on.
 
-## 实现
+## Implementation
 
-将一个数组离散化，并进行查询是比较常用的应用场景．
+Discretizing an array and performing queries is a common use case.
 
-### 方法一
+### Method 1
 
-通常原数组中会有重复的元素，一般把相同的元素离散化为相同的数据．
+Usually the original array contains duplicate elements, and identical elements are generally discretized to the same value.
 
-方法如下：
+The method is as follows:
 
-1.  创建原数组的副本．
+1.  Create a copy of the original array.
 
-2.  将副本中的值从小到大排序．
+2.  Sort the values in the copy from small to large.
 
-3.  将排序好的副本去重．
+3.  Remove duplicates from the sorted copy.
 
-4.  查找原数组的每一个元素在副本中的位置，位置即为排名，将其作为离散化后的值．
+4.  Find the position of each element of the original array in the copy. This position is its rank and is used as the discretized value.
 
 ```cpp
-// arr[i] 为初始数组,下标范围为 [1, n]
+// arr[i] is the initial array, with index range [1, n]
 
 for (int i = 1; i <= n; ++i)  // step 1
   tmp[i] = arr[i];
@@ -37,30 +37,30 @@ for (int i = 1; i <= n; ++i)                              // step 4
   arr[i] = std::lower_bound(tmp + 1, tmp + len + 1, arr[i]) - tmp;
 ```
 
-参考实现中使用的 STL 算法可参考 [STL 算法](../lang/csl/algorithm.md)．
+The STL algorithms used in the reference implementation can be found in [STL Algorithms](../lang/csl/algorithm.md).
 
-同样地，我们也可以对 [std::vector](../lang/csl/sequence-container.md#vector) 进行离散化：
+Similarly, we can also discretize a [std::vector](../lang/csl/sequence-container.md#vector):
 
 ```cpp
 // std::vector<int> arr;
-std::vector<int> tmp(arr);  // tmp 是 arr 的一个副本
+std::vector<int> tmp(arr);  // tmp is a copy of arr
 std::sort(tmp.begin(), tmp.end());
 tmp.erase(std::unique(tmp.begin(), tmp.end()), tmp.end());
 for (int i = 0; i < n; ++i)
   arr[i] = std::lower_bound(tmp.begin(), tmp.end(), arr[i]) - tmp.begin();
 ```
 
-### 方法二
+### Method 2
 
-根据题目要求，有时候会把相同的元素根据输入顺序离散化为不同的数据．
+Depending on problem requirements, sometimes identical elements must be discretized to different values according to input order.
 
-此时再用 `std::lower_bound()` 函数实现就有些困难了，需要换一种思路：
+At this point, implementing it with `std::lower_bound()` becomes somewhat difficult, so we need a different idea:
 
-1.  创建原数组的副本，同时记录每个元素出现的位置．
+1.  Create a copy of the original array while recording the position where each element appears.
 
-2.  将副本按值从小到大排序，当值相同时，按出现顺序从小到大排序．
+2.  Sort the copy by value from small to large. If values are equal, sort by occurrence order from small to large.
 
-3.  将离散化后的数字放回原数组．
+3.  Put the discretized numbers back into the original array.
 
 ```cpp
 struct Data {
@@ -68,27 +68,27 @@ struct Data {
 
   bool operator<(const Data& o) const {
     if (val == o.val)
-      return idx < o.idx;  // 当值相同时，先出现的元素离散化后的值更小
+      return idx < o.idx;  // when values are equal, earlier elements get smaller discretized values
     return val < o.val;
   }
-} tmp[MAXN];  // 也可以使用 std::pair
+} tmp[MAXN];  // std::pair can also be used
 
 for (int i = 1; i <= n; ++i) tmp[i] = Data{i, arr[i]};
 std::sort(tmp + 1, tmp + n + 1);
 for (int i = 1; i <= n; ++i) arr[tmp[i].idx] = i;
 ```
 
-### 复杂度
+### Complexity
 
-对于方法一，去重复杂度为 $O(n)$，排序复杂度为 $O(n \log n)$，最后的 $n$ 次查找复杂度为 $O(n \log n)$．
+For Method 1, deduplication complexity is $O(n)$, sorting complexity is $O(n \log n)$, and the final $n$ searches have complexity $O(n \log n)$.
 
-对于方法二，排序复杂度为 $O(n \log n)$．
+For Method 2, sorting complexity is $O(n \log n)$.
 
-故两种方法的总时间复杂度都为 $O(n \log n)$．
+Therefore, the total time complexity of both methods is $O(n \log n)$.
 
-空间复杂度为 $O(n)$．
+The space complexity is $O(n)$.
 
-## 习题
+## Exercises
 
--   [\[HAOI2014\] 贴海报](https://www.luogu.com.cn/problem/P3740)
--   [\[NOI2015\] 程序自动分析](https://www.luogu.com.cn/problem/P1955)
+-   [\[HAOI2014\] Posting Posters](https://www.luogu.com.cn/problem/P3740)
+-   [\[NOI2015\] Automatic Program Analysis](https://www.luogu.com.cn/problem/P1955)

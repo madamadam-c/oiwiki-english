@@ -1,439 +1,439 @@
-前置知识：[离散对数](./discrete-logarithm.md)
+Prerequisites: [Discrete Logarithm](./discrete-logarithm.md)
 
-本文讨论模意义下的高次剩余和单位根，并介绍模意义下开方运算的算法．
+This article discusses $k$-th power residues and roots of unity modulo $m$, and presents algorithms for taking $k$-th roots modulo $m$.
 
-## 高次剩余
+## $k$-th Power Residues
 
-模运算下的高次剩余，可以认为是在讨论模意义下开高次方的可行性．它是 [二次剩余](./quad-residue.md) 的推广．
+The study of $k$-th power residues modulo $m$ is essentially concerned with the feasibility of taking $k$-th roots modulo $m$. It is a generalization of [quadratic residues](./quad-residue.md).
 
-???+ abstract "$k$ 次剩余"
-    令整数 $k\geq 2$，整数 $a$ 和正整数 $m$ 互素．若存在整数 $x$ 使得
+???+ abstract "$k$-th Residue"
+    Let $k \ge 2$ be an integer, and let $a$ and $m$ be coprime positive integers. If there exists an integer $x$ such that
     
     $$
-    x^k\equiv a\pmod m,
+    x^k \equiv a \pmod m,
     $$
     
-    则称 $a$ 为模 $m$ 的 **$k$ 次剩余**（$k$-th residue），$x$ 为 $a$ 模 $m$ 的 **$k$ 次方根**（$k$-th root）；否则称 $a$ 为模 $m$ 的 **$k$ 次非剩余**（$k$-th nonresidue）．
+    then $a$ is called a **$k$-th residue** modulo $m$, and $x$ is a **$k$-th root** of $a$ modulo $m$. Otherwise, $a$ is called a **$k$-th nonresidue** modulo $m$.
 
-也就是说，$a$ 模 $m$ 的 $k$ 次方根存在，当且仅当 $a$ 是模 $m$ 的 $k$ 次剩余．
+That is, a $k$-th root of $a$ modulo $m$ exists if and only if $a$ is a $k$-th residue modulo $m$.
 
-### 性质
+### Properties
 
-类似二次剩余，可以讨论 $k$ 次剩余的判定、个数以及 $k$ 次剩余类的个数问题．和其他 [同余方程](./congruence-equation.md) 问题一样，可以通过 [中国剩余定理](./crt.md) 将它们转化为素数幂模的情形．根据原根的有无，这进一步区分为奇素数幂模和模数为 $2$ 的幂次的情形．
+Similar to quadratic residues, we can discuss the determination, number, and classification of $k$-th residues. As with other [congruence equations](./congruence-equation.md), we can use the [Chinese Remainder Theorem](./crt.md) to reduce them to the case of prime power moduli. Depending on the existence of primitive roots, this is further divided into odd prime power moduli and powers of $2$.
 
-奇数幂模的情形较为简单．事实上，对于所有原根存在的情形，都有如下结论：
+The case of odd prime powers is relatively simple. In fact, for all moduli where primitive roots exist, we have the following result:
 
-???+ note "定理"
-    设整数 $k\geq 2$，整数 $a$ 和正整数 $m$ 互素．设模 $m$ 的原根存在，且 $g$ 是模 $m$ 的一个原根．记 $d=\gcd(k,\varphi(m))$ 且 $d'=\dfrac{\varphi(m)}{d}$，其中，$\varphi(m)$ 是 [欧拉函数](./euler-totient.md)．那么，有：
+???+ note "Theorem"
+    Let $k \ge 2$ be an integer, and let $a$ and $m$ be coprime positive integers. Suppose a primitive root modulo $m$ exists, and let $g$ be such a primitive root. Let $d = \gcd(k, \varphi(m))$ and $d' = \dfrac{\varphi(m)}{d}$, where $\varphi(m)$ is the [Euler totient](./euler-totient.md). Then:
     
-    1.  $a$ 为模 $m$ 的 $k$ 次剩余，当且仅当
+    1. $a$ is a $k$-th residue modulo $m$ if and only if
     
         $$
         a^{d'} \equiv 1 \pmod m.
         $$
-    2.  当 $a$ 为模 $m$ 的 $k$ 次剩余时，同余意义下，$a$ 模 $m$ 恰有 $d$ 个互不相同的 $k$ 次方根，且它们具有形式
+    2. When $a$ is a $k$-th residue, there are exactly $d$ distinct $k$-th roots of $a$ modulo $m$ (up to congruence), and they have the form
     
         $$
-        x \equiv g^{y_0+id'}\pmod{\varphi(m)},~0\le y_0 < d',~i=0,1,\cdots,d-1.
+        x \equiv g^{y_0 + i d'} \pmod{\varphi(m)},~0 \le y_0 < d',~i = 0,1,\cdots,d-1.
         $$
-    3.  模 $m$ 的 $k$ 次剩余类的个数为 $d'$，且它们的全体就是
+    3. The number of $k$-th residue classes modulo $m$ is $d'$, and they are precisely
     
         $$
-        \{g^{di}\bmod m : 0 \le i < d'\}.
+        \{g^{d i} \bmod m : 0 \le i < d'\}.
         $$
 
-??? note "证明"
-    因为 $a\perp m$，所以 $x\perp m$．因为 $g$ 是模 $m$ 的原根，所以，$x$ 和 $a$ 均与某个 $g$ 的幂次同余．设 $x\equiv g^y\pmod m$，方程 $x^k\equiv a\pmod m$ 就等价于
+??? note "Proof"
+    Since $a \perp m$, we have $x \perp m$. Since $g$ is a primitive root modulo $m$, both $x$ and $a$ are congruent to some powers of $g$. Let $x \equiv g^y \pmod m$. The equation $x^k \equiv a \pmod m$ is equivalent to
     
     $$
-    g^{ky} \equiv g^{\operatorname{ind}_g a}\pmod m.
+    g^{k y} \equiv g^{\operatorname{ind}_g a} \pmod m,
     $$
     
-    其中，$\operatorname{ind}_g a$ 是离散对数．根据 [阶的性质](./primitive-root.md#幂的循环结构) 和 $\delta_m(g)=\varphi(m)$，这等价于同余方程
+    where $\operatorname{ind}_g a$ is the discrete logarithm. By the [properties of order](./primitive-root.md#幂的循环结构) and $\delta_m(g) = \varphi(m)$, this is equivalent to the linear congruence
     
     $$
-    ky \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
+    k y \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
     $$
     
-    这是关于 $y$ 的 [线性同余方程](./linear-equation.md)．应用该页面对其解结构的分析，就可以知道方程有解当且仅当 $d\mid\operatorname{ind}_g a$，且通解形式为
+    This is a [linear congruence](./linear-equation.md) in $y$. Applying the analysis of its solution structure from that page, we know the equation has a solution if and only if $d \mid \operatorname{ind}_g a$, and the general solution has the form
     
     $$
-    y = y_0 + id' \pmod{\varphi(m)},~0\le y_0 < d',~i=0,1,\cdots,d-1.
+    y = y_0 + i d' \pmod{\varphi(m)},~0 \le y_0 < d',~i = 0,1,\cdots,d-1.
     $$
     
-    由此，就几乎可以得到本定理的全部内容；唯一需要额外说明的是判别式 $a^{d'} \equiv 1 \pmod m$．由 [阶的性质 3](./primitive-root.md#ord-prop-3) 可知
+    From this, almost all of the theorem follows. The only remaining item is the criterion $a^{d'} \equiv 1 \pmod m$. By [property 3 of order](./primitive-root.md#ord-prop-3),
     
     $$
     \delta_m(a) = \delta_m(g^{\operatorname{ind}_g a}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_g a)} = \dfrac{\varphi(m)}{\operatorname{ind}_g a}.
     $$
     
-    又已知方程有解当且仅当 $d\mid \operatorname{ind}_g a$，亦即 $\delta_m(a)\mid d'$．由 [阶的性质 2](./primitive-root.md#ord-prop-2) 可知，这就等价于该判别式．
+    Since the equation has a solution if and only if $d \mid \operatorname{ind}_g a$, i.e., $\delta_m(a) \mid d'$, by [property 2 of order](./primitive-root.md#ord-prop-2), this is equivalent to the criterion.
 
-模数为 $2$ 的幂次的情形较为特殊．为处理这种情形，需要用到关于模 $2^e$ 既约剩余系结构的一个 [结论](./primitive-root.md#mod-pow-2)：所有奇数 $a$ 都唯一地同余于某个 $(-1)^s5^r\bmod 2^e$ 形式的整数，其中，$s\in\{0,1\}$ 且 $0\le r < 2^{e-2}$．借助这一结果，可以得到如下结论：
+The case of powers of $2$ is special. To handle this case, we use a [result](./primitive-root.md#mod-pow-2) about the structure of the reduced residue system modulo $2^e$: every odd $a$ is uniquely congruent to some integer of the form $(-1)^s 5^r \bmod 2^e$, where $s \in \{0,1\}$ and $0 \le r < 2^{e-2}$. Using this, we obtain:
 
-???+ note "定理"
-    设整数 $k\ge 2$，奇数 $a$ 和正整数 $m=2^e$ 且 $e \ge 2$．那么，当 $k$ 是奇数时，有：
+???+ note "Theorem"
+    Let $k \ge 2$ be an integer, let $a$ be odd, and let $m = 2^e$ with $e \ge 2$. When $k$ is odd:
     
-    1.  $a$ 恒为模 $m$ 的 $k$ 次剩余．
-    2.  $a$ 模 $m$ 的 $k$ 次方根有且仅有一个．
-    3.  模 $m$ 的 $k$ 次剩余类个数为 $2^{e-1}$，且它们就是全体既约剩余类．
+    1. $a$ is always a $k$-th residue modulo $m$.
+    2. $a$ has exactly one $k$-th root modulo $m$.
+    3. The number of $k$-th residue classes modulo $m$ is $2^{e-1}$, which are all the reduced residue classes.
     
-    当 $k$ 是偶数时，记 $d=\gcd(k,2^{e-2})$ 且 $d'=\dfrac{2^{e-2}}{d}$，有：
+    When $k$ is even, let $d = \gcd(k, 2^{e-2})$ and $d' = \dfrac{2^{e-2}}{d}$:
     
-    1.  $a$ 为模 $m$ 的 $k$ 次剩余，当且仅当 $a\equiv 1\pmod 4$ 且 $a^{d'}\equiv 1\pmod m$．
-    2.  当 $a$ 为模 $m$ 的 $k$ 次剩余时，同余意义下，$a$ 模 $m$ 恰有 $2d$ 个互不相同的 $k$ 次方根，且它们具有形式
-    
-        $$
-        x \equiv \pm 5^{y_0 + id'} \pmod{2^{e-1}},~ 0 \le y_0 < d',~i = 0, 1,\cdots,d-1. 
-        $$
-    3.  模 $m$ 的 $k$ 次剩余类的个数为 $d'$，且它们的全体就是
+    1. $a$ is a $k$-th residue modulo $m$ if and only if $a \equiv 1 \pmod 4$ and $a^{d'} \equiv 1 \pmod m$.
+    2. When $a$ is a $k$-th residue, there are exactly $2d$ distinct $k$-th roots of $a$ modulo $m$, and they have the form
     
         $$
-        \{5^{di}\bmod m : 0 \le i < d'\}.
+        x \equiv \pm 5^{y_0 + i d'} \pmod{2^{e-1}},~0 \le y_0 < d',~i = 0,1,\cdots,d-1.
+        $$
+    3. The number of $k$-th residue classes modulo $m$ is $d'$, and they are precisely
+    
+        $$
+        \{5^{d i} \bmod m : 0 \le i < d'\}.
         $$
 
-??? note "证明"
-    因为 $a\perp m$，所以 $x\perp m$．因为 $x$ 和 $a$ 都是奇数，由前述结论可知，可以设 $a\equiv (-1)^s5^r\pmod{2^e}$ 且 $x=(-1)^z5^{y}\pmod{2^e}$．因为表示是唯一的，所以同余方程 $x^k\equiv a\pmod{2^e}$ 等价于 [线性同余方程](./linear-equation.md) 组
+??? note "Proof"
+    Since $a \perp m$, we have $x \perp m$. Since both $x$ and $a$ are odd, by the above result, we can write $a \equiv (-1)^s 5^r \pmod{2^e}$ and $x \equiv (-1)^z 5^y \pmod{2^e}$. Because the representation is unique, the congruence $x^k \equiv a \pmod{2^e}$ is equivalent to the system of [linear congruences](./linear-equation.md)
     
     $$
     \begin{aligned}
-    kz &\equiv s \pmod{2},\\
-    ky &\equiv r \pmod{2^{e-2}}.
+    k z &\equiv s \pmod{2},\\
+    k y &\equiv r \pmod{2^{e-2}}.
     \end{aligned}
     $$
     
-    结合该页面对于线性同余方程解的分析，就可以得到同余方程 $x^k\equiv a\pmod{2^e}$ 解的结构．根据 $k$ 的奇偶性不同，可以分为两种情形：
+    Applying the analysis of linear congruences, we obtain the solution structure of $x^k \equiv a \pmod{2^e}$. Depending on the parity of $k$, there are two cases:
     
-    -   当 $k$ 是奇数时，因为 $\gcd(k,2)=\gcd(k,2^{e-2})=1$，所以两个线性同余方程对于所有 $s,r$ 都有解，故而原同余方程对于所有奇数 $a$ 总是有解．
-    -   当 $k$ 是偶数时，第一个方程有解当且仅当 $2\mid s$，第二个方程有解当且仅当 $d=\gcd(k,2^{e-2})\mid r$．将两者结合就得到 $k$ 次剩余类的全体形式．直接计算可知，第一个条件等价于 $a\equiv 1\pmod 4$；重复奇素数幂情形的分析可知，第二个条件等价于 $a^{d'}=1$．将两点结合起来就得到定理中的判定方法．两个线性同余方程的通解也是已知的：
+    - When $k$ is odd, since $\gcd(k, 2) = \gcd(k, 2^{e-2}) = 1$, both linear congruences have solutions for all $s, r$. Hence the original congruence always has a solution for all odd $a$.
+    - When $k$ is even, the first equation has a solution if and only if $2 \mid s$, and the second has a solution if and only if $d = \gcd(k, 2^{e-2}) \mid r$. Combining these gives the full set of $k$-th residue classes. The first condition is equivalent to $a \equiv 1 \pmod 4$; repeating the analysis for odd prime powers, the second condition is equivalent to $a^{d'} = 1$. Together, these give the criterion in the theorem. The general solutions to the two linear congruences are also known:
     
         $$
         \begin{aligned}
-        z &\equiv0,1\pmod 2, \\
-        y &\equiv y_0 + id' \pmod{2^{e-2}},~ 0\le y_0 < 2^{e-2}.
+        z &\equiv 0, 1 \pmod 2,\\
+        y &\equiv y_0 + i d' \pmod{2^{e-2}},~0 \le y_0 < 2^{e-2}.
         \end{aligned}
         $$
     
-        将两者结合就得到原方程的通解．
+        Combining them gives the general solution to the original equation.
 
-这就完全解决了不同模数下 $k$ 次剩余的判定问题．二次剩余中的 Legendre 记号和二次互反律等内容也可以推广到高次剩余的情形，但这并不容易，需要用到 [分圆域](../algebra/field-theory.md#分圆域) 等概念．在代数数论中，二次互反律最终可以推广到 [Artin 互反律](https://en.wikipedia.org/wiki/Artin_reciprocity)．
+This completely solves the determination of $k$-th residues for different moduli. The Legendre symbol and quadratic reciprocity from quadratic residues can be generalized to $k$-th residues, but this is not easy and requires concepts like [cyclotomic fields](../algebra/field-theory.md#分圆域). In algebraic number theory, quadratic reciprocity ultimately generalizes to [Artin reciprocity](https://en.wikipedia.org/wiki/Artin_reciprocity).
 
-## 单位根
+## Roots of Unity
 
-作为 $k$ 次方根的特殊情形，本节讨论 $k$ 次（本原）单位根的概念．它可以看作是复数域 $\mathbf C$ 中 $k$ 次 [单位根](../complex.md#单位根) 的概念在模 $m$ 既约剩余系 $\mathbf Z_m^*$ 中的对应．当模数 $m$ 合适时，用模 $m$ 的 $k$ 次本原单位根代替复数根 $\omega_k$ 可以加速计算．
+As a special case of $k$-th roots, this section discusses the concept of $k$-th (primitive) roots of unity modulo $m$. It can be seen as the analogue in the reduced residue system $\mathbb{Z}_m^*$ of the concept of $k$-th roots of unity in the complex numbers $\mathbb{C}$. When the modulus $m$ is suitable, using $k$-th primitive roots of unity modulo $m$ instead of the complex root $\omega_k$ can accelerate computations.
 
-类似于复数域的情形，有如下定义：
+Similar to the complex case, we have:
 
-???+ abstract "模 $m$ 的 $k$ 次单位根"
-    对于模数 $m$，元素 $1$ 的 $k$ 次方根称为 **模 $m$ 的 $k$ 次单位根**（$k$-th root of unity modulo $m$）．特别地，如果 $x$ 是模 $m$ 的一个 $k$ 次单位根，且它不是模 $m$ 的任何 $k' < k$ 次单位根，那么，也称 $x$ 为 **模 $m$ 的 $k$ 次本原单位根**（$k$-th primitive root of unity modulo $m$）．
+???+ abstract "$k$-th Root of Unity Modulo $m$"
+    For modulus $m$, a $k$-th root of $1$ is called a **$k$-th root of unity modulo $m**. In particular, if $x$ is a $k$-th root of unity modulo $$ and is not a $k'$-th root of unity for any $k' < k$, then $x$ is called a **$k$-th primitive root of unity modulo $m**.
 
-比较 [原根的定义](./primitive-root.md#原根) 可知，原根 $g$ 就是模 $m$ 的 $\varphi(m)$ 次本原单位根，其中，$\varphi(m)$ 是 [欧拉函数](./euler-totient.md)．
+Comparing with the [definition of primitive roots](./primitive-root.md#原根), a primitive root $g$ is a $\varphi(m)$-th primitive root of unity modulo $m$, where $\varphi(m)$ is the [Euler totient](./euler-totient.md).
 
-当模 $m$ 的 $k$ 次本原单位根存在时，它的代数性质和 $k$ 次本原单位复根 $\omega_k$ 一致，可以代替 $\omega_k$ 进行各种计算．例如，将它应用于 [快速傅里叶变换](../poly/fft.md) 中，就得到有限域[^fnnt]上的 [快速数论变换](../poly/ntt.md)．
+When $k$-th primitive roots of unity modulo $m$ exist, their algebraic properties match those of the primitive $k$-th roots of unity $\omega_k$ in the complex numbers, and they can replace $\omega_k$ in various computations. For example, applying them to the [Fast Fourier Transform](../poly/fft.md) yields the [Number Theoretic Transform](../poly/ntt.md) over finite fields[^fnnt].
 
-### 性质
+### Properties
 
-复数域中，任意次（本原）单位根都存在．但是，数论中的（本原）单位根并非如此．
+In the complex numbers, (primitive) roots of unity exist for any order. However, this is not the case in number theory.
 
-???+ note "性质"
-    对于模数 $m$，设 $\lambda(m)$ 为它的 [Carmichael 函数](./primitive-root.md#carmichael-函数)，有：
+???+ note "Properties"
+    For modulus $m$, let $\lambda(m)$ be its [Carmichael function](./primitive-root.md#carmichael-函数):
     
-    1.  所有与 $m$ 互素的整数 $a$ 都是模 $m$ 的 $\delta_m(a)$ 次本原单位根，其中，$\delta_m(a)$ 是 $a$ 模 $m$ 的 [阶](./primitive-root.md#阶)．
-    2.  元素 $a$ 是模 $m$ 的 $k$ 次单位根，且 $k'$ 是 $k$ 的任意倍数，那么 $a$ 也是模 $m$ 的 $k'$ 次单位根．
-    3.  元素 $a$ 是模 $m$ 的 $k$ 次（本原）单位根，那么元素 $a^{\ell}$ 是模 $m$ 的 $\dfrac{k}{\gcd(k,\ell)}$ 次（本原，相应地）单位根．
-    4.  当 $k'$ 遍历 $k$ 的因数，所有模 $m$ 的 $k'$ 次本原单位根恰构成模 $m$ 的 $k$ 次单位根的一个划分．而且，对于 $\ell\perp k$，映射 $x\mapsto x^\ell$ 给出 $k$ 次单位根之间的双射，且保持上述划分不变：它将 $k'\mid k$ 次本原单位根仍然映射到 $k'$ 次本原单位根．
-    5.  模 $m$ 的 $k$ 次本原单位根存在，当且仅当 $k\mid\lambda(m)$．特别地，模 $m$ 的 $\lambda(m)$ 次本原单位根存在，称为 **模 $m$ 的 $\lambda$‑原根**．
-    6.  元素 $a$ 是模 $m$ 的 $k$ 次单位根，当且仅当 $a^k\equiv 1\pmod{m}$ 且对于任意素因子 $p\mid k$ 都有 $a^{k/p}\not\equiv 1\pmod{m}$．
+    1. Every integer $a$ coprime with $m$ is a $\delta_m(a)$-th primitive root of unity modulo $m$, where $\delta_m(a)$ is the [order](./primitive-root.md#阶) of $a$ modulo $m$.
+    2. If $a$ is a $k$-th root of unity modulo $m$ and $k'$ is any multiple of $k$, then $a$ is also a $k'$-th root of unity modulo $m$.
+    3. If $a$ is a $k$-th (primitive) root of unity modulo $m$, then $a^\ell$ is a $\dfrac{k}{\gcd(k,\ell)}$-th (primitive, respectively) root of unity modulo $m$.
+    4. As $k'$ ranges over the divisors of $k$, the $k'$-th primitive roots of unity modulo $m$ form a partition of the $k$-th roots of unity. Moreover, for $\ell \perp k$, the map $x \mapsto x^\ell$ gives a bijection between $k$-th roots of unity that preserves the above partition: it maps $k'$-th primitive roots to $k'$-th primitive roots for $k' \mid k$.
+    5. A $k$-th primitive root of unity modulo $m$ exists if and only if $k \mid \lambda(m)$. In particular, a $\lambda(m)$-th primitive root of unity modulo $m$ exists, called a **$\lambda$-primitive root** modulo $m$.
+    6. An element $a$ is a $k$-th root of unity modulo $m$ if and only if $a^k \equiv 1 \pmod{m}$ and for every prime divisor $p \mid k$, $a^{k/p} \not\equiv 1 \pmod{m}$.
 
-??? note "证明"
-    根据阶的定义，所有与 $m$ 互素的整数 $a$ 都是模 $m$ 的 $\delta_m(a)$ 次本原单位根，其中，$\delta_m(a)$ 是 $a$ 模 $m$ 的阶．反过来，如果 $a$ 是模 $m$ 的 $k$ 次单位根，那么 $\gcd(a^k,m)=1$，所以 $\gcd(a,m)=1$．因此，$a$ 是模 $m$ 的（本原）单位根，当且仅当 $a$ 与 $m$ 互素．这就是性质 1．
+??? note "Proof"
+    By the definition of order, every integer $a$ coprime with $m$ is a $\delta_m(a)$-th primitive root of unity modulo $m$. Conversely, if $a$ is a $k$-th root of unity modulo $m$, then $\gcd(a^k, m) = 1$, so $\gcd(a, m) = 1$. Hence $a$ is a (primitive) root of unity modulo $m$ if and only if $a$ is coprime to $m$. This is property 1.
     
-    直接验证定义可知，只要 $k\mid k'$，就可以从 $a^k\equiv 1\pmod m$ 推出 $a^{k'}\equiv 1\pmod m$，这就是性质 2．根据 [阶的性质](./primitive-root.md#ord-prop-3) 可知
+    By direct verification of the definition, if $k \mid k'$, then $a^k \equiv 1 \pmod m$ implies $a^{k'} \equiv 1 \pmod m$, which is property 2. By [property of order](./primitive-root.md#ord-prop-3),
     
     $$
     \delta(a^\ell) = \dfrac{\delta_m(a)}{\gcd(\delta_m(a),\ell)}.
     $$
     
-    如果 $a$ 是模 $m$ 的 $k$ 次本原单位根，那么，$\delta_m(a)=k$，直接代入上式就得到 $a^\ell$ 是模 $m$ 的 $\dfrac{k}{\gcd(k,\ell)}$ 次本原单位根．如果 $a$ 只是模 $m$ 的 $k$ 次单位根，设它是 $k'\mid k$ 次本原单位根，故而 $a^\ell$ 是模 $m$ 的 $\dfrac{k'}{\gcd(k',\ell)}$ 次本原单位根．由于 $k'\mid k$，有
+    If $a$ is a $k$-th primitive root of unity modulo $m$, then $\delta_m(a) = k$. Substituting gives $a^\ell$ is a $\dfrac{k}{\gcd(k,\ell)}$-th primitive root of unity. If $a$ is merely a $k$-th root of unity, let it be a $k'$-th primitive root of unity for some $k' \mid k$. Then $a^\ell$ is a $\dfrac{k'}{\gcd(k',\ell)}$-th primitive root of unity. Since $k' \mid k$,
     
     $$
     \dfrac{k'}{\gcd(k',\ell)} \mid \dfrac{k}{\gcd(k,\ell)},
     $$
     
-    再由性质 2，就得到 $a^\ell$ 是模 $m$ 的 $\dfrac{k}{\gcd(k,\ell)}$ 次单位根．这就是性质 3．
+    and by property 2, $a^\ell$ is a $\dfrac{k}{\gcd(k,\ell)}$-th root of unity. This is property 3.
     
-    对于 $k'\mid k$，由性质 2，模 $m$ 的 $k'$ 次本原单位根必然是模 $m$ 的 $k$ 次单位根．它们两两不交，故而构成划分．而对于 $\ell\perp k$，总有 $\ell\perp k'$，因此对于模 $m$ 的 $k'$ 次本原单位根 $a$，总有 $a^\ell$ 是模 $m$ 的 $k'$ 次本原单位根．取 $\ell'=\ell^{-1}\bmod k$，可以验证 $x\mapsto x^\ell$ 和 $x\mapsto x^{\ell'}$ 互为逆映射，因此，$x\mapsto x^\ell$ 是双射．这就是性质 4．
+    For $k' \mid k$, by property 2, a $k'$-th primitive root of unity modulo $m$ is necessarily a $k$-th root of unity. They are pairwise disjoint, forming a partition. For $\ell \perp k$, we always have $\ell \perp k'$, so for a $k'$-th primitive root of unity $a$ modulo $m$, $a^\ell$ is also a $k'$-th primitive root of unity. Taking $\ell' = \ell^{-1} \bmod k$, we can verify that $x \mapsto x^\ell$ and $x \mapsto x^{\ell'}$ are inverse maps, so $x \mapsto x^\ell$ is a bijection. This is property 5.
     
-    根据 Carmichael 函数的性质可知，模 $m$ 的 $\lambda(m)$ 次本原单位根总是存在的，设它为 $a$，且 $\delta_m(a)=\lambda(m)$．对于 $k\mid\lambda(m)$，设 $k'=\dfrac{\lambda(m)}{k}$，总有
-    
-    $$
-    \delta_m(a^{k'}) = \dfrac{\lambda(m)}{(\lambda(m),k')} = \dfrac{\lambda(m)}{k'} = k.
-    $$
-    
-    因此，$a^{k'}$ 是 $k$ 次本原单位根．而根据 Carmichael 函数的定义，所有 $x\perp m$ 的阶都是 $\lambda(m)$ 的因子．这就得到性质 5．
-    
-    几乎重复 [原根判定定理](./primitive-root.md#原根判定定理) 的证明，就可以得到性质 6．这一判别方法实际上在验证 $\delta_m(a)=k$．
-
-从这些性质可以看出，相对于原根存在的情形，模 $m$ 的 $\lambda$‑原根起到了类似的基础作用．与原根不同的是，$\lambda$‑原根的幂次并不能用于生成模 $m$ 的全体单位根．尽管如此，由于 $\lambda$‑原根的密度并不低[^lambda-density]，如果确实需要找到 $k$ 次本原单位根，可以首先通过随机方法找到一个 $\lambda$‑原根，再通过求幂次得到一个 $k$ 次本原单位根．
-
-如果已知 $a$ 模 $m$ 的一个 $k$ 次方根，可以通过模 $m$ 的全体 $k$ 次单位根生成 $a$ 模 $m$ 的全体 $k$ 次方根．
-
-???+ note "定理"
-    设 $x$ 是 $a$ 模 $m$ 的一个 $k$ 次方根，当 $r$ 遍历模 $m$ 的全体 $k$ 次单位根时，$xr$ 遍历 $a$ 模 $m$ 的全体 $k$ 次方根．
-
-??? note "证明"
-    对于 $a$ 模 $m$ 的两个 $k$ 次方根 $x,y$，设 $r=x^{-1}y\bmod m$，那么 $r$ 满足 $r^k\equiv 1\pmod m$，是模 $m$ 的 $k$ 次方根．反过来，只要 $r$ 是模 $m$ 的 $k$ 次单位根，那么，$(xr)^{k}= x^kr^k\equiv a\pmod m$，也就是说，$xr$ 是模 $m$ 的 $k$ 次方根．
-
-利用 $k$ 次单位根生成全体 $k$ 次方根，就类似于利用齐次线性方程组的解生成非齐次线性方程组的通解一样．
-
-前面讨论的是一般情形．仅对于原根存在的情形，单位根的结构更为简单：
-
-???+ note "定理"
-    对于模数 $m$，设模 $m$ 的原根存在，且 $a$ 是模 $m$ 的 $k$ 次本原单位根．那么，$b$ 是模 $m$ 的 $k$ 次单位根，当且仅当它可以表示为 $a$ 的幂次．
-
-??? note "证明"
-    设 $g$ 是模 $m$ 的原根，那么，所有与 $m$ 互素的元素都可以表示为 $g$ 的幂次．那么，$a$ 是模 $m$ 的 $k$ 次本原单位根，当且仅当
+    By properties of the Carmichael function, a $\lambda(m)$-th primitive root of unity modulo $m$ always exists. Let it be $a$, with $\delta_m(a) = \lambda(m)$. For $k \mid \lambda(m)$, let $k' = \dfrac{\lambda(m)}{k}$. Then
     
     $$
-    \delta_m(a) = \delta_m(g^{\operatorname{ind}_ga}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_ga)} = k.
+    \delta_m(a^{k'}) = \dfrac{\lambda(m)}{(\lambda(m), k')} = \dfrac{\lambda(m)}{k'} = k.
     $$
     
-    类似地，$b$ 是模 $m$ 的 $k$ 次单位根，当且仅当
+    Thus $a^{k'}$ is a $k$-th primitive root of unity. And by the definition of the Carmichael function, the order of all $x \perp m$ divides $\lambda(m)$. This yields property 5.
+    
+    Property 6 follows by essentially repeating the proof of the [primitive root test](./primitive-root.md#原根判定定理). This criterion actually verifies $\delta_m(a) = k$.
+
+From these properties, we can see that relative to the case where primitive roots exist, the $\lambda$-primitive root modulo $m$ plays a similar fundamental role. Unlike primitive roots, the powers of a $\lambda$-primitive root do not generate all roots of unity modulo $m$. Nevertheless, since the density of $\lambda$-primitive roots is not low[^lambda-density], if one genuinely needs to find a $k$-th primitive root, one can first find a $\lambda$-primitive root by random methods, then obtain a $k$-th primitive root by taking powers.
+
+If one $k$-th root of $a$ modulo $m$ is known, the set of all $k$-th roots of $a$ modulo $m$ can be generated from the set of all $k$-th roots of unity modulo $m$.
+
+???+ note "Theorem"
+    Let $x$ be a $k$-th root of $a$ modulo $m$. As $r$ ranges over all $k$-th roots of unity modulo $m$, $xr$ ranges over all $k$-th roots of $a$ modulo $m$.
+
+??? note "Proof"
+    For two $k$-th roots $x, y$ of $a$ modulo $m$, let $r = x^{-1} y \bmod m$. Then $r$ satisfies $r^k \equiv 1 \pmod m$, i.e., it is a $k$-th root of unity. Conversely, if $r$ is a $k$-th root of unity modulo $m$, then $(xr)^k = x^k r^k \equiv a \pmod m$, so $xr$ is a $k$-th root.
+
+Generating all $k$-th roots from $k$-th roots of unity is analogous to generating the general solution of an inhomogeneous linear equation from the solution of the homogeneous one.
+
+The above discusses the general case. Only when primitive roots exist is the structure of roots of unity simpler:
+
+???+ note "Theorem"
+    For modulus $m$, suppose a primitive root modulo $m$ exists, and let $a$ be a $k$-th primitive root of unity modulo $m$. Then $b$ is a $k$-th root of unity modulo $m$ if and only if it can be expressed as a power of $a$.
+
+??? note "Proof"
+    Let $g$ be a primitive root modulo $m$. Then every element coprime to $m$ can be expressed as a power of $g$. So $a$ is a $k$-th primitive root of unity modulo $m$ if and only if
     
     $$
-    \delta_m(b) = \delta_m(g^{\operatorname{ind}_gb}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_gb)} = k' \mid k.
+    \delta_m(a) = \delta_m(g^{\operatorname{ind}_g a}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_g a)} = k.
     $$
     
-    所以，有
+    Similarly, $b$ is a $k$-th root of unity modulo $m$ if and only if
     
     $$
-    \gcd(\varphi(m),\operatorname{ind}_ga) \mid \gcd(\varphi(m),\operatorname{ind}_gb)\mid \operatorname{ind}_gb.
+    \delta_m(b) = \delta_m(g^{\operatorname{ind}_g b}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_g b)} = k' \mid k.
     $$
     
-    根据对线性同余方程的 [分析](./linear-equation.md) 可知，这一条件就等价于方程
+    Hence,
     
     $$
-    (\operatorname{ind}_ga) x \equiv \operatorname{ind}_gb \pmod{\varphi(m)}
+    \gcd(\varphi(m),\operatorname{ind}_g a) \mid \gcd(\varphi(m),\operatorname{ind}_g b) \mid \operatorname{ind}_g b.
     $$
     
-    有解．将这一条件对 $g$ 取幂，就得到 $a^x\equiv b\pmod{m}$，亦即 $b$ 可以表示为 $a$ 的幂次．
-
-这一定理说明，原根存在时，全体 $k$ 次单位根呈现 [循环群](../algebra/group-theory.md#循环群) 的结构，而 $k$ 次本原单位根则是该循环群的生成元．稍后将会看到，Tonelli–Shanks 算法正是利用这一点，加速了开方运算中离散对数部分的计算．
-
-## 模意义下开方
-
-最后，本文讨论 $k$ 次方根的求法．对于 $k=2$ 的情形，有 [很多高效算法](./quad-residue.md#模意义下开平方) 可以用于模意义下开平方运算．但是，对于一般的 $k$，并没有已知的多项式时间算法．本节将介绍两种常见算法，分别可以在 $O(m^{1/2})$ 和 $O(m^{1/4+\varepsilon})$ 时间内求出一个 $k$ 次方根．利用中国剩余定理总是可以将问题转换为素数幂模的情形，因此，本节主要讨论素数幂模情形的解法．
-
-### 朴素算法
-
-前文对于 $k$ 次剩余性质的 [分析](#性质) 实际上已经指出了一种求解素数幂模下 $k$ 次方根的方法．严格来说，前文解决的情形是被开方数 $a$ 与模数 $m$ 互素的情形．算法过程总结如下：
-
--   当 $m=p^e$ 是奇素数幂时，设模 $m$ 的一个原根是 $g$．那么，方程 $x^k\equiv a\pmod m$ 可以转化为线性同余方程
-
+    By the [analysis of linear congruences](./linear-equation.md), this condition is equivalent to the equation
+    
     $$
-    ky \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
+    (\operatorname{ind}_g a) x \equiv \operatorname{ind}_g b \pmod{\varphi(m)}
     $$
+    
+    having a solution. Exponentiating this condition with base $g$ gives $a^x \equiv b \pmod m$, i.e., $b$ can be expressed as a power of $a$.
 
-    其中，$\operatorname{ind}_g a$ 可以通过 [BSGS 算法](./discrete-logarithm.md#大步小步算法) 求出，而 [线性同余方程](./linear-equation.md) 的全体解容易求出．由此，就可以得到 $a$ 的全部 $k$ 次方根 $x\equiv g^y\pmod m$．
+This theorem shows that when primitive roots exist, all $k$-th roots of unity form a [cyclic group](../algebra/group-theory.md#循环群), and the $k$-th primitive roots of unity are generators of this cyclic group. Later, we will see that the Tonelli-Shanks algorithm uses this to accelerate the discrete logarithm computation in root extraction.
 
-    除此之外，还有另一种相仿的思路．同样是设 $x\equiv g^y\pmod m$，还可以通过变形
+## Computing $k$-th Roots Modulo $m$
 
+Finally, we discuss methods for finding $k$-th roots. For $k = 2$, there are [many efficient algorithms](./quad-residue.md#模意义下开平方) for computing square roots modulo $m$. However, for general $k$, no polynomial-time algorithm is known. This section introduces two common algorithms that can find a $k$-th root in $O(m^{1/2})$ and $O(m^{1/4+\varepsilon})$ time respectively. Since the Chinese Remainder Theorem can always reduce the problem to prime power moduli, this section focuses on solving the prime power case.
+
+### Naive Algorithm
+
+The analysis of $k$-th residue properties above already points to a method for finding $k$-th roots modulo prime powers. Strictly speaking, the above solved the case where the radicand $a$ is coprime to the modulus $m$. The algorithm process is summarized as follows:
+
+- When $m = p^e$ is an odd prime power, let $g$ be a primitive root modulo $m$. Then the equation $x^k \equiv a \pmod m$ can be transformed into the linear congruence
+    
     $$
-    x^k \equiv (g^k)^y \equiv a \pmod m
+    k y \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
     $$
-
-    转化为求底数为 $g^k$ 时 $a$ 的离散对数．这同样可以通过 BSGS 算法找到一组特解．它的通解可以通过前文的解的表达式求出，也就是将特解与全体 $k$ 次单位根逐一相乘得到．
-
-    无论采用哪种思路，原根已知时，该算法求出单个解的复杂度都是 $O(m^{1/2})$．因为可以在 $o(m^{1/2})$ 时间内找到一个原根，所以，总的时间复杂度仍然是 $O(m^{1/2})$．
-
--   当 $m=2^e$ 且 $e\in\mathbf N_+$ 时，可以首先求出 $a\equiv (-1)^s5^r\pmod m$ 中的 $s,r$．这两个指数中，$s$ 可以在 $O(1)$ 时间内确定：
-
+    
+    Here, $\operatorname{ind}_g a$ can be found using the [BSGS algorithm](./discrete-logarithm.md#大步小步算法), and the solutions to the [linear congruence](./linear-equation.md) are easy to find. From this, we obtain all $k$-th roots $x \equiv g^y \pmod m$ of $a$.
+    
+    There is another similar approach. Also let $x \equiv g^y \pmod m$, but by rewriting
+    
     $$
-    s = \begin{cases}0, & a\equiv 1\pmod 4, \\ 1, & a\equiv 3\pmod 4.\end{cases}
+    x^k \equiv (g^k)^y \equiv a \pmod m,
     $$
+    
+    we transform it into finding the discrete logarithm of $a$ with base $g^k$. This can also be solved by the BSGS algorithm to find a particular solution. Its general solution can be obtained from the expression in the previous section, i.e., by multiplying the particular solution by all $k$-th roots of unity.
+    
+    Regardless of which approach is used, when the primitive root is known, the complexity of finding a single solution is $O(m^{1/2})$. Since a primitive root can be found in $o(m^{1/2})$ time, the overall time complexity remains $O(m^{1/2})$.
 
-    而 $r=\operatorname{ind}_5((-1)^sa)$ 可以通过 BSGS 算法在 $O(m^{1/2})$ 时间内求出．接下来，只需要求解线性同余方程组：
-
+- When $m = 2^e$ with $e \in \mathbb{N}_+$, we can first find $s, r$ in $a \equiv (-1)^s 5^r \pmod m$. Among these two exponents, $s$ can be determined in $O(1)$ time:
+    
+    $$
+    s = \begin{cases}0, & a \equiv 1 \pmod 4,\\ 1, & a \equiv 3 \pmod 4.\end{cases}
+    $$
+    
+    And $r = \operatorname{ind}_5((-1)^s a)$ can be found using the BSGS algorithm in $O(m^{1/2})$ time. Next, we just need to solve the system of linear congruences:
+    
     $$
     \begin{aligned}
-    kz &\equiv s \pmod{2},\\
-    ky &\equiv r \pmod{2^{e-2}}.
+    k z &\equiv s \pmod{2},\\
+    k y &\equiv r \pmod{2^{e-2}}.
     \end{aligned}
     $$
+    
+    The general solution $(z, y)$ is easy to find, and $x = (-1)^z 5^y$ is the desired root. The complexity of finding a single solution is still $O(m^{1/2})$.
 
-    这个线性方程组的通解 $(z,y)$ 容易求出，而 $x=(-1)^z5^y$ 就是所求的方根．这一算法求出单个解的复杂度仍然是 $O(m^{1/2})$．
+Of course, for the case of no solution, we can quickly determine this in $O(\log m)$ time using the criteria described above, without needing to determine it during the solving process.
 
-当然，对于无解的情形，其实可以通过前文叙述的判别方法在 $O(\log m)$ 时间内快速判断，而无需在求解过程中判断．
+Reference implementation for finding $k$-th roots modulo a prime (note: this is for demonstration only, as the time complexity is too high to pass):
 
-求素数模 $k$ 次方根的参考实现如下：（代码仅作示意，由于时间复杂度过高，无法通过本题）
-
-??? example "模板题 [Library Checker - Kth Root (Mod)](https://judge.yosupo.jp/problem/kth_root_mod) 参考实现"
+??? example "Template Problem [Library Checker - Kth Root (Mod)](https://judge.yosupo.jp/problem/kth_root_mod) Reference Implementation"
     ```cpp
     --8<-- "docs/math/code/residue/bsgs-mod-p.cpp"
     ```
 
-### 改良 Tonelli–Shanks 算法
+### Improved Tonelli-Shanks Algorithm
 
-将用于模意义下开平方的 [Tonelli–Shanks 算法](./quad-residue.md#tonellishanks-算法) 做适当推广，就可以解决素数幂模下开方运算．一种较为直接的推广方式是 Adleman–Manders–Miller 算法[^amm]，但是它的复杂度仍然不够优秀[^amm-comp]．本节介绍由 sugarknri、Min\_25、37zigen 等人提出的改良 Tonelli–Shanks 算法．它可以在 $O(m^{1/4+\varepsilon})$ 时间内求出一个 $k$ 次方根．
+By appropriately generalizing the [Tonelli-Shanks algorithm](./quad-residue.md#tonellishanks-算法) for computing square roots modulo $m$, we can solve the root extraction problem for prime power moduli. A direct generalization is the Adleman-Manders-Miller algorithm[^amm], but its complexity is still not excellent[^amm-comp]. This section introduces the improved Tonelli-Shanks algorithm proposed by sugarknri, Min_25, 37zigen, etc. It can find a $k$-th root in $O(m^{1/4+\varepsilon})$ time.
 
-Tonelli–Shanks 算法的核心想法是，将离散对数的求解放到阶为 $2^e$ 的群里，进而降低时间复杂度．类似地，对于任意素数幂 $p^e$ 阶群内的离散对数，同样可以较为高效地求解，但是算法的复杂度为 $\Omega\left(\sqrt{p}\right)$．Adleman–Manders–Miller 算法将 $k$ 次方根的求解分拆为多个素数幂阶群内离散对数的计算，但是受限于 $k$ 的最大素因子 $p_\text{max}(k)$ 的大小，算法复杂度仍然为 $\Omega\left(\sqrt{p_\text{max}(k)}\right)$．本节算法进一步改良了这一过程，避免了对较大的素因子计算离散对数，进而将整体复杂度控制到 $O(m^{1/4+\varepsilon})$．
+The core idea of Tonelli-Shanks is to place the discrete logarithm computation in a group of order $2^e$, thereby reducing the time complexity. Similarly, discrete logarithms in groups of order $p^e$ (prime power) can be solved relatively efficiently, but the complexity is $\Omega(\sqrt{p})$. The Adleman-Manders-Miller algorithm breaks the $k$-th root extraction into computing discrete logarithms in several prime power order groups, but limited by the largest prime factor $p_\text{max}(k)$ of $k$, the complexity is still $\Omega(\sqrt{p_\text{max}(k)})$. This algorithm further improves on this process, avoiding computing discrete logarithms for large prime factors, thereby controlling the overall complexity at $O(m^{1/4+\varepsilon})$.
 
-#### 过程
+#### Process
 
-考虑素数幂模 $m$ 下 $a$ 的 $k$ 次方根的计算，即求解同余方程：
+Consider computing a $k$-th root of $a$ modulo a prime power $m$, i.e., solving:
 
 $$
 x^k \equiv a \pmod m.
 $$
 
-特别地，对于 $m=2^e$ 的情形，还需要保证 $a\equiv 1\pmod{4}$，进而 $a$ 可以写成 $g=5$ 的幂次．类似前文讨论，模 $2^e$ 下 $k$ 次方根的计算总是可以转化为这样的情形．处理模 $2^e$ 的情形时，本节提到的 $\varphi(m)$ 都应换作 $\delta_m(5)=2^{e-2}$．
+In particular, for $m = 2^e$, we also need to ensure $a \equiv 1 \pmod 4$, so $a$ can be written as a power of $g = 5$. Similar to the previous discussion, computing $k$-th roots modulo $2^e$ can always be reduced to this case. When handling the case of $2^e$, all $\varphi(m)$ mentioned in this section should be replaced with $\delta_m(5) = 2^{e-2}$.
 
-首先，问题可以转化为开方次数整除 $\varphi(m)$ 的情形．设 $d=\gcd(k,\varphi(m))$．那么，由 $k$ 次剩余的性质可知，当 $a$ 模 $m$ 是 $k$ 次剩余时，$a$ 总是模 $m$ 的 $\dfrac{\varphi(m)}{d}$ 次单位根．根据单位根的性质，对于任意 $\ell\perp\dfrac{\varphi(m)}{d}$，映射 $x\mapsto x^{\ell}$ 都是 $\dfrac{\varphi(m)}{d}$ 次单位根之间的双射．因此，可以取
-
-$$
-\ell = \left(\dfrac{k}{d}\right)^{-1}\bmod\dfrac{\varphi(m)}{d}.
-$$
-
-将原来的同余方程两侧同时取 $\ell$ 次幂，就得到
+First, the problem can be reduced to the case where the root order divides $\varphi(m)$. Let $d = \gcd(k, \varphi(m))$. Then, by the properties of $k$-th residues, when $a$ is a $k$-th residue modulo $m$, $a$ is always a $\dfrac{\varphi(m)}{d}$-th root of unity modulo $m$. By the properties of roots of unity, for any $\ell \perp \dfrac{\varphi(m)}{d}$, the map $x \mapsto x^\ell$ is a bijection between $\dfrac{\varphi(m)}{d}$-th roots of unity. Therefore, we can take
 
 $$
-x^d\equiv x^{k\ell} \equiv a^{\ell} =: b \pmod{m}.
+\ell = \left(\dfrac{k}{d}\right)^{-1} \bmod \dfrac{\varphi(m)}{d}.
 $$
 
-最左侧同余号利用了 [欧拉定理](./fermat.md#欧拉定理) 和如下同余关系：（$c\in\mathbf Z$）
+Raising both sides of the original congruence to the $\ell$-th power gives
 
 $$
-k\ell = d\left(\frac{k}{d}\ell\right) = d\left(c\dfrac{\varphi(m)}{d}+1\right) \equiv d \pmod{\varphi(m)}.
+x^d \equiv x^{k\ell} \equiv a^\ell =: b \pmod m.
 $$
 
-对于转化后的问题，考虑 $d$ 的素因数分解：
+The left congruence uses [Euler's theorem](./fermat.md#欧拉定理) and the following congruence ($c \in \mathbb{Z}$):
 
 $$
-d = \prod_{p\in\mathbf P}p^e.
+k\ell = d\left(\frac{k}{d}\ell\right) = d\left(c\frac{\varphi(m)}{d} + 1\right) \equiv d \pmod{\varphi(m)}.
 $$
 
-可以从 $b=a^\ell$ 开始，对每个 $p^e\neq 1$，依次开 $p^e$ 次方，最后就能得到 $b$ 的 $d$ 次方根，也就是 $a$ 的 $k$ 次方根．
+For the transformed problem, consider the prime factorization of $d$:
 
-最后，问题转化为如何求如下方程的解：
+$$
+d = \prod_{p \in \mathbb{P}} p^e.
+$$
+
+Starting from $b = a^\ell$, for each $p^e \neq 1$, we can successively take $p^e$-th roots, finally obtaining a $d$-th root of $b$, which is a $k$-th root of $a$.
+
+Finally, the problem reduces to solving:
 
 $$
 x^{p^e} \equiv b \pmod m.
 $$
 
-不妨设 $\varphi(m)=p^sr$ 且 $p\perp r$．设 $q\in\mathbf N_+$ 是方程 $qr\equiv -1\pmod{p^e}$ 的解．那么，因为 $b$ 是 $rp^{s-e}$ 次单位根，所以 $b^{qr}$ 一定是 $p^{s-e}$ 次单位根．又设 $\zeta$ 是模 $m$ 的 $p^s$ 次本原单位根．那么，$\zeta^{p^e}$ 是 $p^{s-e}$ 次本原单位根，进而存在 $h\in\mathbf N$ 使得 $b^{qr}\equiv \zeta^{hp^{e}}\pmod{m}$．所以，直接验证可知
+Let $\varphi(m) = p^s r$ with $p \perp r$. Let $q \in \mathbb{N}_+$ be a solution to $qr \equiv -1 \pmod{p^e}$. Then, since $b$ is an $r p^{s-e}$-th root of unity, $b^{qr}$ is definitely a $p^{s-e}$-th root of unity. Let $\zeta$ be a $p^s$-th primitive root of unity modulo $m$. Then $\zeta^{p^e}$ is a $p^{s-e}$-th primitive root, so there exists $h \in \mathbb{N}$ such that $b^{qr} \equiv \zeta^{h p^e} \pmod m$. Then, direct verification shows
 
 $$
-x\equiv b^{(qr+1)/p^e}\zeta^{-h} \pmod{m}
+x \equiv b^{(qr+1)/p^e} \zeta^{-h} \pmod m
 $$
 
-是 $b$ 模 $m$ 的 $p^e$ 次方根．
+is a $p^e$-th root of $b$ modulo $m$.
 
-为了计算 $x$，需要找到模 $m$ 的一个 $p$ 次非剩余 $\eta$．为此，由前文性质，只需要随机 $\eta\perp m$ 并验证 $\eta^{\varphi(m)/p}\bmod{m}\neq 1$ 即可．这样的数的密度是
-
-$$
-\dfrac{\varphi(m)}{m}\left(1-\dfrac{1}{p}\right) \ge \dfrac{1}{4}.
-$$
-
-因此，期望随机不超过 $4$ 个整数就能找到它．注意到，$\eta^{rp^{s-1}}\not\equiv 1\pmod m$ 且 $\eta^{rp^s}\equiv 1\pmod m$，所以，如果设 $\zeta=\eta^r\bmod m$ 和 $\xi=\eta^{rp^{s-1}}\bmod m$，那么它们分别是 $p^s$ 次和 $p$ 次本原单位根．
-
-最后，需要计算 $h\in\mathbf N$．显然，可以取 $h < p^{s-e}$．考虑 $h$ 的 $p$ 进制表示：
+To compute $x$, we need to find a $p$-th non-residue $\eta$ modulo $m$. By the properties above, we can randomly choose $\eta \perp m$ and verify that $\eta^{\varphi(m)/p} \bmod m \neq 1$. The density of such numbers is
 
 $$
-h = \sum_{j=0}^{s-e-1}h_jp^j = h_0 + h_1p + h_2p^2 +\cdots.
+\frac{\varphi(m)}{m}\left(1 - \frac{1}{p}\right) \ge \frac{1}{4}.
 $$
 
-逐位计算这些数位．当前 $j$ 个数位都计算完成时，必然有
+Therefore, on average, we need to try at most 4 random numbers. Note that $\eta^{r p^{s-1}} \not\equiv 1 \pmod m$ and $\eta^{r p^s} \equiv 1 \pmod m$. So if we let $\zeta = \eta^r \bmod m$ and $\xi = \eta^{r p^{s-1}} \bmod m$, they are a $p^s$-th and $p$-th primitive root of unity respectively.
+
+Finally, we need to compute $h \in \mathbb{N}$. Obviously, we can take $h < p^{s-e}$. Consider the $p$-ary representation of $h$:
 
 $$
-\left(b^{qr}\zeta^{-p^e(h_0+h_1p+\cdots + h_{j-1}p^{j-1})}\right)^{p^{s-e-j-1}} \equiv \zeta^{h_jp^{s-1}} \equiv \xi^{h_j} \pmod{m}.
+h = \sum_{j=0}^{s-e-1} h_j p^j = h_0 + h_1 p + h_2 p^2 + \cdots.
 $$
 
-故而，$h_j$ 可以通过计算关于 $\xi$ 的离散对数求出．为了获得更好的时间复杂度，需要使用 BSGS 算法．总共需要计算 $(s-e)$ 次离散对数，设预处理 $B$ 个 $\xi$ 的幂次，则单次求解离散对数的时间复杂度为 $O(p/B)$，总的时间复杂度为
+Compute these digits one by one. When the first $j$ digits have been computed, we must have
 
 $$
-O\left(B+(s-e)\dfrac{p}{B}\right).
+\left(b^{qr} \zeta^{-p^e(h_0 + h_1 p + \cdots + h_{j-1} p^{j-1})}\right)^{p^{s-e-j-1}} \equiv \zeta^{h_j p^{s-1}} \equiv \xi^{h_j} \pmod m.
 $$
 
-当 $B=\sqrt{(s-e)p}$ 时，总的时间复杂度最低，为 $O\left(\sqrt{(s-e)p}\right)$．得到 $h$ 之后，代入前文 $x$ 的表达式，就可以找到一个特解．
-
-#### 时间复杂度
-
-这一算法的时间复杂度为 $O(m^{1/4+\varepsilon})$．本节讨论复杂度时，总是假设单次乘法需要 $O(1)$ 时间，且计算幂次时，总是应用欧拉定理降幂，则涉及的单个幂的计算总是可以在 $O(\log m)$ 时间内完成．
-
-先考虑单个 $p^e$ 次方根的计算．找到 $p$ 次非剩余只需要验证期望 $O(1)$ 个数，总时间复杂度为 $O(\log m)$．计算 $s,r,\zeta,\eta,b^{qr}$ 各只需要 $O(\log m)$ 时间．计算 $h$ 时，单个数位需要通过 $O(\log m)$ 时间计算幂次，总共 $(s-e)$ 位，故而总的时间复杂度为 $O((s-e)\log m)$．前文已经说明，计算离散对数的部分预处理和 $(s-e)$ 次查询的总时间为 $O\left(\sqrt{(s-e)p}\right)$．因为 $s-e\in O(\log m)$，所以单个 $p^e$ 次方根的计算的时间复杂度为 $O(p^{1/2+\varepsilon})$．特别地，当 $s=e$ 时，时间复杂度可以进一步减少为 $O(\log m)$．
-
-进而，可以考虑算法总的时间复杂度．计算 $\varphi(m),d,\ell$ 的时间复杂度均为 $O(\log m)$．紧接着需要做素因数分解 $d=\prod_p{p^e}$，这一步利用 [Pollard Rho 算法](./pollard-rho.md#pollard-rho-算法) 可以在 $O(m^{1/4})$ 时间内完成．最后，依次求 $p^e$ 次方根的总时间复杂度为
+Therefore, $h_j$ can be found by computing a discrete logarithm with respect to $\xi$. To achieve better time complexity, we use the BSGS algorithm. We need to compute $(s-e)$ discrete logarithms in total. If we preprocess $B$ powers of $\xi$, the time for a single discrete logarithm is $O(p/B)$, and the total time complexity is
 
 $$
-O\left(\sum_{e < s}p^{1/2+\varepsilon}\right).
+O\left(B + (s-e) \frac{p}{B}\right).
 $$
 
-由于满足 $e < s$ 的素因子 $p$ 至少在 $\varphi(m)$ 中出现 $2$ 次，必然有 $p < m^{1/2}$．故而，总时间复杂度为 $O(m^{1/4+\varepsilon})$．
+When $B = \sqrt{(s-e)p}$, the total time complexity is $O\left(\sqrt{(s-e)p}\right)$. After obtaining $h$, substituting into the expression for $x$ gives a particular solution.
 
-事实上，在这一情景中，无需使用 Pollard Rho 算法分解素因数，仍然可以获得 $O(m^{1/4+\varepsilon})$ 的时间复杂度．事实上，只需要对 $d$ 暴力试除进行分解，并只枚举到不超过 $m^{1/4}$ 的素因子．设去除这些小素因子后得到的整数为 $z$．那么，对于 $z$ 的素因子 $p > m^{1/4}$，必然有 $\nu_p(\varphi(m)) < 4$，其中，$\nu_p(n)$ 表示 $n$ 的素因数分解中 $p$ 的次数．由于只需要考虑
+#### Time Complexity
+
+The time complexity of this algorithm is $O(m^{1/4+\varepsilon})$. In this section, we always assume a single multiplication takes $O(1)$ time, and when computing powers, we always apply Euler's theorem for reduction, so each power computation can be done in $O(\log m)$ time.
+
+First, consider computing a single $p^e$-th root. Finding a $p$-th non-residue only requires testing an expected $O(1)$ numbers, with total time complexity $O(\log m)$. Computing $s, r, \zeta, \eta, b^{qr}$ each takes $O(\log m)$ time. When computing $h$, each digit requires $O(\log m)$ time for power computation, and there are $(s-e)$ digits in total, so the time complexity is $O((s-e) \log m)$. As shown earlier, the total time for preprocessing and $(s-e)$ queries for discrete logarithms is $O\left(\sqrt{(s-e)p}\right)$. Since $s-e \in O(\log m)$, the time complexity for a single $p^e$-th root is $O(p^{1/2+\varepsilon})$. In particular, when $s = e$, the time complexity can be further reduced to $O(\log m)$.
+
+Now consider the total time complexity of the algorithm. Computing $\varphi(m), d, \ell$ each takes $O(\log m)$ time. Next, we need to factor $d = \prod_p p^e$. This step can be done in $O(m^{1/4})$ time using the [Pollard Rho algorithm](./pollard-rho.md#pollard-rho-算法). Finally, the total time complexity for sequentially computing $p^e$-th roots is
 
 $$
-1 \le e = \nu_p(d) < s = \nu_p(\varphi(m)) < 4
+O\left(\sum_{e < s} p^{1/2+\varepsilon}\right).
 $$
 
-的情形，满足该条件的素因子 $p$ 至多只能有一个；否则，它们在 $\varphi(m)$ 中的次数都不小于 $2$，总的乘积必然超过 $m$．要分离出这个（可能存在的）唯一的大素因子，只需要计算
+Since for any prime factor $p$ with $e < s$, $p$ appears at least twice in $\varphi(m)$, we must have $p < m^{1/2}$. Therefore, the total time complexity is $O(m^{1/4+\varepsilon})$.
+
+In fact, in this setting, we can still achieve $O(m^{1/4+\varepsilon})$ time complexity without using Pollard Rho for factorization. In fact, we just need to naively trial-divide $d$ and only enumerate prime factors up to $m^{1/4}$. Let $z$ be the integer after removing these small prime factors. Then for any prime factor $p > m^{1/4}$ of $z$, we must have $\nu_p(\varphi(m)) < 4$, where $\nu_p(n)$ denotes the exponent of $p$ in the prime factorization of $n$. Since we only need to consider
 
 $$
-p^\star=\gcd\left(z,\dfrac{\varphi(m)}{z}\right) = \prod_{p : \nu_p(d) < \nu_p(\varphi(m))}p^{\min\{\nu_p(d),\nu_p(\varphi(m))-\nu_p(d)\}}.
+1 \le e = \nu_p(d) < s = \nu_p(\varphi(m)) < 4,
 $$
 
-枚举 $\nu_p(d),\nu_p(\varphi(m))$ 的所有可能性可知，乘积中 $p$ 的次数一定是 $1$，因此这样算出来的就是唯一的大素因子 $p^\star$（如果存在的话）．至于剩余的部分 $z/p^\star$，因为其中只能包含若干满足 $e=s$ 的素因子，所以无需继续分解．
+there can be at most one such prime factor; otherwise, their product in $\varphi(m)$ would exceed $m$. To isolate this (possibly existing) unique large prime factor, we just need to compute
 
-求素数模 $k$ 次方根的参考实现如下：
+$$
+p^\star = \gcd\left(z, \frac{\varphi(m)}{z}\right) = \prod_{p: \nu_p(d) < \nu_p(\varphi(m))} p^{\min\{\nu_p(d), \nu_p(\varphi(m)) - \nu_p(d)\}}.
+$$
 
-??? example "模板题 [Library Checker - Kth Root (Mod)](https://judge.yosupo.jp/problem/kth_root_mod) 参考实现"
+Enumerating all possibilities for $\nu_p(d), \nu_p(\varphi(m))$, the exponent of $p$ in this product is always 1, so what we compute is the unique large prime factor $p^\star$ (if it exists). As for the remaining part $z/p^\star$, since it can only contain prime factors with $e = s$, no further factorization is needed.
+
+Reference implementation for finding $k$-th roots modulo a prime:
+
+??? example "Template Problem [Library Checker - Kth Root (Mod)](https://judge.yosupo.jp/problem/kth_root_mod) Reference Implementation"
     ```cpp
     --8<-- "docs/math/code/residue/tonelli-shanks-mod-p.cpp"
     ```
 
-### 一般情形的处理
+### Handling the General Case
 
-考虑一般的情形，仍然设模数 $m$ 是素数幂 $p^e$，但是 $\gcd(a,m)>1$．如果 $a\equiv 0\pmod{m}$，那么
-
-$$
-x = p^{\lceil e/k \rceil}\ell\pmod{p^e},~\ell=0,1,\cdots,p^{e-\lceil e/k\rceil}-1
-$$
-
-都是原方程的解．接下来，考察 $a\not\equiv 0\pmod{m}$ 的情形．设 $a = p^sa'$ 且 $p\perp a'$．于是，设 $x=p^zx'$ 且 $p\perp x'$，就有
+Consider the general case, still with modulus $m = p^e$ a prime power, but $\gcd(a, m) > 1$. If $a \equiv 0 \pmod m$, then
 
 $$
-x^k = p^{kz}(x')^k\equiv p^sa'\pmod{p^e}.
+x = p^{\lceil e/k \rceil} \ell \pmod{p^e},~\ell = 0, 1, \cdots, p^{e - \lceil e/k \rceil} - 1
 $$
 
-由于 $(x')^k\perp p$，所以该式成立当且仅当 $kz = s$ 且 $(x')^k\equiv a'\pmod{p^{e-s}}$．当且仅当 $k\mid s$ 时，第一个方程有解 $z=\dfrac{s}{k}$；而第二个方程的求解已经解决．需要注意的是，因为第二个方程的通解的模数与原方程通解的模数并不相同，所以第二个方程的每一个解 $x'$，都对应原方程的若干解：
+are all solutions to the original equation. Next, consider the case $a \not\equiv 0 \pmod m$. Let $a = p^s a'$ with $p \perp a'$. Then let $x = p^z x'$ with $p \perp x'$. We have
 
 $$
-x \equiv p^{s/k}(x' + \ell p^{e-s})\pmod{p^e},~\ell = 0,1,\cdots, p^{s-s/k}-1.
+x^k = p^{kz} (x')^k \equiv p^s a' \pmod{p^e}.
 $$
 
-求解任一模数下全体 $k$ 次方根的参考实现如下：
+Since $(x')^k \perp p$, this holds if and only if $k z = s$ and $(x')^k \equiv a' \pmod{p^{e-s}}$. The first equation has a solution $z = \dfrac{s}{k}$ if and only if $k \mid s$; the solution of the second equation has already been solved. Note that because the modulus of the general solution to the second equation differs from that of the original equation, each solution $x'$ of the second equation corresponds to several solutions of the original equation:
 
-??? example "模板题 [Luogu P5668【模板】N 次剩余](https://www.luogu.com.cn/problem/P5668) 参考代码"
-    === "朴素算法"
+$$
+x \equiv p^{s/k}(x' + \ell p^{e-s}) \pmod{p^e},~\ell = 0, 1, \cdots, p^{s - s/k} - 1.
+$$
+
+Reference implementation for finding all $k$-th roots for any modulus:
+
+??? example "Template Problem [Luogu P5668 [Template] K-th Residue](https://www.luogu.com.cn/problem/P5668) Reference Implementation"
+    === "Naive Algorithm"
         ```cpp
         --8<-- "docs/math/code/residue/bsgs.cpp"
         ```
     
-    === "改良 Tonelli–Shanks 算法"
+    === "Improved Tonelli-Shanks Algorithm"
         ```cpp
         --8<-- "docs/math/code/residue/tonelli-shanks.cpp"
         ```
 
-## 参考资料与注释
+## References and Notes
 
--   冯克勤．初等数论及其应用．
--   [Root of unity modulo n - Wikipedia](https://en.wikipedia.org/wiki/Root_of_unity_modulo_n)
--   [No.981 一般冪乗根 解説 by 37zigen](https://yukicoder.me/problems/no/981/editorial)
+- 冯克勤. 初等数论及其应用.
+- [Root of unity modulo n - Wikipedia](https://en.wikipedia.org/wiki/Root_of_unity_modulo_n)
+- [No.981 General Power Root Explanation by 37zigen](https://yukicoder.me/problems/no/981/editorial)
 
-[^fnnt]: 实际上，模数 $m$ 未必是素数．只要 $a$ 是模 $m$ 的 $k=2^e$ 次本原单位根，就可以用于模 $m$ 的快速数论变换．但是，由于通常需要处理的 $2^e$ 比较大，这意味着模数 $m$ 中的每个素因子都是 $c2^e+1$ 形式．因此，单个素因子就很大，而模数 $m$ 通常会更大，因而一般模数的情形并没有素数模的情形常用．
+[^fnnt]: In fact, the modulus $m$ need not be prime. As long as $a$ is a $2^e$-th primitive root of unity modulo $m$, it can be used for the Number Theoretic Transform modulo $m$. However, since the $2^e$ that needs to be handled is usually large, this means every prime factor of $m$ is of the form $c 2^e + 1$. Thus a single prime factor is large, and $m$ is usually even larger, so the general modulus case is not as commonly used as the prime modulus case.
 
-[^lambda-density]: 根据 [原根个数相关结论](./primitive-root.md#原根个数) 可知，$\lambda$‑原根的数量恰为 $\varphi(\lambda(m))$，其中，$\varphi(\cdot)$ 和 $\lambda(\cdot)$ 分别是欧拉函数和 Carmichael 函数．因为对于几乎所有整数 $m$，都有 $\lambda(m)/m = \exp(-(1+o(1))\log\log m\log\log\log m)$，而存在 $C > 0$，使得对于整数 $m > 2$，都有 $\varphi(m)/m = C / \log\log m$，所以，对于几乎所有整数 $m$，都有 $\varphi(\lambda(m))/m = \exp(-(1+o(1))\log\log m\log\log\log m)$．其中，指数部分系数中的 $o(1)$ 吸收了因子 $\varphi(\lambda(m))/\lambda(m)$ 的贡献．故而，$\lambda$‑原根可以在期望 $\exp((1+o(1))\log\log m\log\log\log m)$ 次内找到．关于欧拉函数的估计，可以参考论文 Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94．关于 Carmichael 函数的估计，可以参考论文 Erdos, Paul, Carl Pomerance, and Eric Schmutz. "Carmichael’s lambda function." Acta Arith 58, no. 4 (1991): 363-385．
+[^lambda-density]: From the [results on the number of primitive roots](./primitive-root.md#原根个数), the number of $\lambda$-primitive roots is exactly $\varphi(\lambda(m))$, where $\varphi(\cdot)$ and $\lambda(\cdot)$ are the Euler function and Carmichael function respectively. Since for almost all integers $m$, $\lambda(m)/m = \exp(-(1+o(1))\log\log m \log\log\log m)$, and there exists $C > 0$ such that for integers $m > 2$, $\varphi(m)/m = C / \log\log m$, for almost all integers $m$, we have $\varphi(\lambda(m))/m = \exp(-(1+o(1))\log\log m \log\log\log m)$. The $o(1)$ in the exponent absorbs the contribution from the factor $\varphi(\lambda(m))/\lambda(m)$. Therefore, a $\lambda$-primitive root can be found in expected $\exp((1+o(1))\log\log m \log\log\log m)$ attempts. For estimates of the Euler function, see Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94. For estimates of the Carmichael function, see Erdos, Paul, Carl Pomerance, and Eric Schmutz. "Carmichael's lambda function." Acta Arith 58, no. 4 (1991): 363-385.
 
-[^amm]: 原始论文参见 Adleman, Leonard, Kenneth Manders, and Gary Miller. "On taking roots in finite fields." In 18th Annual Symposium on Foundations of Computer Science (sfcs 1977), pp. 175-178. IEEE Computer Society, 1977．一个更易读的介绍可见于 Cao, Zhengjun, Qian Sha, and Xiao Fan. "Adleman-Manders-Miller root extraction method revisited." In International Conference on Information Security and Cryptology, pp. 77-85. Berlin, Heidelberg: Springer Berlin Heidelberg, 2011．
+[^amm]: The original paper is Adleman, Leonard, Kenneth Manders, and Gary Miller. "On taking roots in finite fields." In 18th Annual Symposium on Foundations of Computer Science (sfcs 1977), pp. 175-178. IEEE Computer Society, 1977. A more readable introduction can be found in Cao, Zhengjun, Qian Sha, and Xiao Fan. "Adleman-Manders-Miller root extraction method revisited." In International Conference on Information Security and Cryptology, pp. 77-85. Berlin, Heidelberg: Springer Berlin Heidelberg, 2011.
 
-[^amm-comp]: 由于这一算法要求 $k$ 是素数，所以最差情形中，它需要对 $\varphi(m)$ 的最大素因子 $p$ 求 $a$ 模 $m$ 的 $p$ 次方根．这一过程中，需要对 $p$ 次本原单位根求 $a$ 模 $m$ 的离散对数．即使应用 BSGS 算法，这一过程也需要 $O(\sqrt{p})$ 时间．但是，论文 Fouvry, Étienne. "Theoreme de Brun-Titchmarsh; application au theoreme de Fermat." Inventiones mathematicae 79, no. 2 (1985): 383-407 指出，存在正密度的素数 $m$，使得 $\varphi(m)=m-1$ 的最大素因子 $p=\Omega(m^{2/3})$．这意味着这一算法的复杂度至少为 $\Omega(m^{1/3})$，劣于文中介绍的改良 Tonelli–Shanks 算法．
+[^amm-comp]: Since this algorithm requires $k$ to be prime, in the worst case, we need to find a $p$-th root of $a$ modulo $m$ for the largest prime factor $p$ of $\varphi(m)$. This process requires computing discrete logarithms modulo $p$-th primitive roots of unity. Even with the BSGS algorithm, this takes $O(\sqrt{p})$ time. However, the paper Fouvry, Étienne. "Théorème de Brun-Titchmarsh; application au théorème de Fermat." Inventiones mathematicae 79, no. 2 (1985): 383-407 shows that there exists a positive density of primes $m$ such that the largest prime factor $p$ of $\varphi(m) = m-1$ is $\Omega(m^{2/3})$. This means the complexity of this algorithm is at least $\Omega(m^{1/3})$, which is worse than the improved Tonelli-Shanks algorithm presented here.

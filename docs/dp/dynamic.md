@@ -1,55 +1,61 @@
-前置知识：[矩阵](../math/linear-algebra/matrix.md)，[树链剖分](../graph/hld.md)．
+Prerequisites: [Matrices](../math/linear-algebra/matrix.md), [Heavy-Light Decomposition](../graph/hld.md).
 
-动态 DP 问题是猫锟在 WC2018 讲的黑科技，一般用来解决树上的带有点权（边权）修改操作的 DP 问题．
+Dynamic DP is an advanced technique introduced by Maokun in WC2018. It is generally used to solve DP problems on trees with point-weight or edge-weight modification operations.
 
-## 例子
+## Example
 
-以这道模板题为例子讲解一下动态 DP 的过程．
+Use the following template problem to explain the process of dynamic DP.
 
-???+ note "例题 [洛谷 P4719【模板】动态 DP](https://www.luogu.com.cn/problem/P4719)"
-    给定一棵 $n$ 个点的树，点带点权．有 $m$ 次操作，每次操作给定 $x,y$ 表示修改点 $x$ 的权值为 $y$．你需要在每次操作之后求出这棵树的最大权独立集的权值大小．
+???+ note "Example Problem [Luogu P4719 [Template] Dynamic DP](https://www.luogu.com.cn/problem/P4719)"
+    Given a tree with $n$ nodes, where nodes have weights, there are $m$ operations. Each operation gives $x,y$, meaning the weight of node $x$ is changed to $y$. After each operation, find the weight of the maximum-weight independent set of the tree.
 
-### 广义矩阵乘法
+### Generalized Matrix Multiplication
 
-定义广义矩阵乘法 $A\times B=C$ 为：
+Define generalized matrix multiplication $A\times B=C$ as:
 
 $$
 C_{i,j}=\max_{k=1}^{n}(A_{i,k}+B_{k,j})
 $$
 
-相当于将普通的矩阵乘法中的乘变为加，加变为 $\max$ 操作．
+This is equivalent to replacing multiplication in ordinary matrix multiplication with addition, and replacing addition with the $\max$ operation.
 
-同时广义矩阵乘法满足结合律，所以可以使用矩阵快速幂．
+Generalized matrix multiplication also satisfies associativity, so fast matrix exponentiation can be used.
 
-### 不带修改操作
+### Without Modification Operations
 
-令 $f_{i,0}$ 表示不选择 $i$ 的最大答案，$f_{i,1}$ 表示选择 $i$ 的最大答案．
+Let $f_{i,0}$ denote the maximum answer when $i$ is not selected, and let $f_{i,1}$ denote the maximum answer when $i$ is selected.
 
-则有 DP 方程：
+The DP equation is:
 
 $$
-\begin{cases}f_{i,0}=\sum_{son}\max(f_{son,0},f_{son,1})\\f_{i,1}=w_i+\sum_{son}f_{son,0}\end{cases}
+\begin{cases}
+f_{i,0}=\sum_{son}\max(f_{son,0},f_{son,1})\\
+f_{i,1}=w_i+\sum_{son}f_{son,0}
+\end{cases}
 $$
 
-答案就是 $\max(f_{root,0},f_{root,1})$.
+The answer is $\max(f_{root,0},f_{root,1})$.
 
-### 带修改操作
+### With Modification Operations
 
-首先将这棵树进行树链剖分，假设有这样一条重链：
+First perform heavy-light decomposition on the tree. Suppose there is a heavy chain like this:
 
 ![](./images/dynamic.png)
 
-设 $g_{i,0}$ 表示不选择 $i$ 且只允许选择 $i$ 的轻儿子所在子树的最大答案，$g_{i,1}$ 表示不考虑 $son_i$ 的情况下选择 $i$ 的最大答案，$son_i$ 表示 $i$ 的重儿子．
+Let $g_{i,0}$ denote the maximum answer when $i$ is not selected and only subtrees of light children of $i$ may be selected. Let $g_{i,1}$ denote the maximum answer when $i$ is selected without considering $son_i$, where $son_i$ is the heavy child of $i$.
 
-假设我们已知 $g_{i,0/1}$ 那么有 DP 方程：
+Assuming $g_{i,0/1}$ is known, the DP equation is:
 
 $$
-\begin{cases}f_{i,0}=g_{i,0}+\max(f_{son_i,0},f_{son_i,1})\\f_{i,1}=g_{i,1}+f_{son_i,0}\end{cases}
+\begin{cases}
+f_{i,0}=g_{i,0}+\max(f_{son_i,0},f_{son_i,1})\\
+f_{i,1}=g_{i,1}+f_{son_i,0}
+\end{cases}
 $$
 
-答案是 $\max(f_{root,0},f_{root,1})$.
+The answer is $\max(f_{root,0},f_{root,1})$.
 
-可以构造出矩阵：
+We can construct the matrix:
 
 $$
 \begin{bmatrix}
@@ -64,27 +70,27 @@ f_{i,0}\\f_{i,1}
 \end{bmatrix}
 $$
 
-注意，我们这里使用的是广义乘法规则．
+Note that generalized multiplication is used here.
 
-可以发现，修改操作时只需要修改 $g_{i,1}$ 和每条往上的重链即可．
+It can be seen that a modification only needs to change $g_{i,1}$ and every upward heavy chain.
 
-### 具体思路
+### Detailed Approach
 
-1.  DFS 预处理求出 $f_{i,0/1}$ 和 $g_{i,0/1}$.
+1.  Run DFS preprocessing to compute $f_{i,0/1}$ and $g_{i,0/1}$.
 
-2.  对这棵树进行树链剖分（注意，因为我们对一个点进行询问需要计算从该点到该点所在的重链末尾的区间矩阵乘，所以对于每一个点记录 $End_i$ 表示 $i$ 所在的重链末尾节点编号），每一条重链建立线段树，线段树维护 $g$ 矩阵和 $g$ 矩阵区间乘积．
+2.  Perform heavy-light decomposition on the tree. Note that querying a point requires computing the interval matrix product from that point to the end of its heavy chain, so for each point record $End_i$, the node number of the end of the heavy chain containing $i$. Build a segment tree for each heavy chain; the segment tree maintains the $g$ matrix and interval products of $g$ matrices.
 
-3.  修改时首先修改 $g_{i,1}$ 和线段树中 $i$ 节点的矩阵，计算 $top_i$ 矩阵的变化量，修改到 $fa_{top_i}$ 矩阵．
+3.  During modification, first modify $g_{i,1}$ and the matrix of node $i$ in the segment tree. Compute the change in the matrix of $top_i$, and apply it to the matrix of $fa_{top_i}$.
 
-4.  查询时就是 1 到其所在的重链末尾的区间乘，最后取一个 $\max$ 即可．
+4.  A query is the interval product from node 1 to the end of its heavy chain, followed by taking a $\max$.
 
-??? note "代码实现"
+??? note "Code Implementation"
     ```cpp
     --8<-- "docs/dp/code/dynamic/dynamic_1.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [SPOJ GSS3 - Can you answer these queries III](https://www.spoj.com/problems/GSS3/)
--   [「NOIP2018」保卫王国](https://loj.ac/p/2955)
--   [「SDOI2017」切树游戏](https://loj.ac/p/2269)
+-   [NOIP2018 Defense of the Kingdom](https://loj.ac/p/2955)
+-   [SDOI2017 Tree Cutting Game](https://loj.ac/p/2269)

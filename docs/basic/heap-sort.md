@@ -1,26 +1,26 @@
-本页面将简要介绍堆排序．
+This page briefly introduces heap sort.
 
-## 定义
+## Definition
 
-堆排序（英语：Heapsort）是指利用 [二叉堆](../ds/binary-heap.md) 这种数据结构所设计的一种排序算法．堆排序的适用数据结构为数组．
+Heapsort (English: Heapsort) is a sorting algorithm that uses the data structure of [binary heap](../ds/binary-heap.md). The applicable data structure for heapsort is an array.
 
-## 过程
+## Process
 
-堆排序的本质是建立在堆上的选择排序．
+The essence of heapsort is selection sort based on a heap.
 
-### 排序
+### Sorting
 
-首先建立大顶堆，然后将堆顶的元素取出，作为最大值，与数组尾部的元素交换，并维持残余堆的性质；
+First, build a max heap, then take out the element at the root as the maximum value, swap it with the element at the end of the array, and maintain the property of the remaining heap;
 
-之后将堆顶的元素取出，作为次大值，与数组倒数第二位元素交换，并维持残余堆的性质；
+Then take out the element at the root as the second largest value, swap it with the second-to-last element of the array, and maintain the property of the remaining heap;
 
-以此类推，在第 $n-1$ 次操作后，整个数组就完成了排序．
+And so on, after $n-1$ operations, the entire array is sorted.
 
-### 在数组上建立二叉堆
+### Building a Binary Heap on an Array
 
-从根节点开始，依次将每一层的节点排列在数组里．
+Starting from the root node, arrange the nodes of each level in the array in order.
 
-于是有数组中下标为 `i` 的节点，对应的父结点、左子结点和右子结点如下：
+Thus, for a node with index `i` in the array, its parent, left child, and right child are as follows:
 
 ```cpp
 iParent(i) = (i - 1) / 2;
@@ -28,35 +28,35 @@ iLeftChild(i) = 2 * i + 1;
 iRightChild(i) = 2 * i + 2;
 ```
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-同选择排序一样，由于其中交换位置的操作，所以是不稳定的排序算法．
+Like selection sort, it is an unstable sorting algorithm due to the swapping of positions.
 
-### 时间复杂度
+### Time Complexity
 
-堆排序的最优时间复杂度、平均时间复杂度、最坏时间复杂度均为 $O(n\log n)$．
+The optimal time complexity, average time complexity, and worst-case time complexity of heapsort are all $O(n\log n)$.
 
-### 空间复杂度
+### Space Complexity
 
-由于可以在输入数组上建立堆，所以这是一个原地算法．
+Since the heap can be built on the input array, this is an in-place algorithm.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
     void sift_down(int arr[], int start, int end) {
-      // 计算父结点和子结点的下标
+      // Calculate indices of parent and child nodes
       int parent = start;
       int child = parent * 2 + 1;
-      while (child <= end) {  // 子结点下标在范围内才做比较
-        // 先比较两个子结点大小，选择最大的
+      while (child <= end) {  // Only compare when child index is in range
+        // First compare the two children, choose the larger one
         if (child + 1 <= end && arr[child] < arr[child + 1]) child++;
-        // 如果父结点比子结点大，代表调整完毕，直接跳出函数
+        // If parent is larger than child, adjustment is done, exit the function
         if (arr[parent] >= arr[child])
           return;
-        else {  // 否则交换父子内容，子结点再和孙结点比较
+        else {  // Otherwise swap parent and child, then compare child with grandchild
           swap(arr[parent], arr[child]);
           parent = child;
           child = parent * 2 + 1;
@@ -65,9 +65,9 @@ iRightChild(i) = 2 * i + 2;
     }
     
     void heap_sort(int arr[], int len) {
-      // 从最后一个节点的父节点开始 sift down 以完成堆化 (heapify)
+      // Start from the parent of the last node and sift down to complete heapify
       for (int i = (len - 1 - 1) / 2; i >= 0; i--) sift_down(arr, i, len - 1);
-      // 先将第一个元素和已经排好的元素前一位做交换，再重新调整（刚调整的元素之前的元素），直到排序完毕
+      // First swap the first element with the element before the sorted portion, then readjust (elements before the just adjusted element) until sorted
       for (int i = len - 1; i > 0; i--) {
         swap(arr[0], arr[i]);
         sift_down(arr, 0, i - 1);
@@ -78,29 +78,29 @@ iRightChild(i) = 2 * i + 2;
 === "Python"
     ```python
     def sift_down(arr, start, end):
-        # 计算父结点和子结点的下标
+        # Calculate indices of parent and child nodes
         parent = int(start)
         child = int(parent * 2 + 1)
-        while child <= end:  # 子结点下标在范围内才做比较
-            # 先比较两个子结点大小，选择最大的
+        while child <= end:  # Only compare when child index is in range
+            # First compare the two children, choose the larger one
             if child + 1 <= end and arr[child] < arr[child + 1]:
                 child += 1
-            # 如果父结点比子结点大，代表调整完毕，直接跳出函数
+            # If parent is larger than child, adjustment is done, exit the function
             if arr[parent] >= arr[child]:
                 return
-            else:  # 否则交换父子内容，子结点再和孙结点比较
+            else:  # Otherwise swap parent and child, then compare child with grandchild
                 arr[parent], arr[child] = arr[child], arr[parent]
                 parent = child
                 child = int(parent * 2 + 1)
     
     
     def heap_sort(arr, len):
-        # 从最后一个节点的父节点开始 sift down 以完成堆化 (heapify)
+        # Start from the parent of the last node and sift down to complete heapify
         i = (len - 1 - 1) / 2
         while i >= 0:
             sift_down(arr, i, len - 1)
             i -= 1
-        # 先将第一个元素和已经排好的元素前一位做交换，再重新调整（刚调整的元素之前的元素），直到排序完毕
+        # First swap the first element with the element before the sorted portion, then readjust (elements before the just adjusted element) until sorted
         i = len - 1
         while i > 0:
             arr[0], arr[i] = arr[i], arr[0]
@@ -108,6 +108,6 @@ iRightChild(i) = 2 * i + 2;
             i -= 1
     ```
 
-## 外部链接
+## External Links
 
--   [堆排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E5%A0%86%E6%8E%92%E5%BA%8F)
+-   [Heapsort - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Heapsort)

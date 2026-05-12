@@ -1,138 +1,135 @@
-## 简介
+## Introduction
 
-Code::Blocks 是一个使用 C++ 开发的开源集成开发环境（IDE），采用 wxWidgets 作为图形界面库．该项目始于 2001 年，目前由官方社区维护，主要用于 C、C++ 和 Fortran 等编程语言的开发．[^ref1]
+Code::Blocks is an open-source integrated development environment (IDE) developed using C++ and using wxWidgets as its GUI library. The project started in 2001 and is currently maintained by the official community. It is primarily used for development of programming languages such as C, C++, and Fortran.[^ref1]
 
-优点：
+Advantages:
 
--   **轻量和高效**：Code::Blocks 资源占用少且启动迅速，适合资源有限的环境以及偏好轻量级 IDE 的开发者，也适合入门级开发者学习和使用．
+-   **Lightweight and Efficient**: Code::Blocks has low resource usage and fast startup speed, suitable for resource-limited environments and developers who prefer lightweight IDEs. It is also suitable for beginner developers to learn and use.
+-   **Cross-platform Compatibility**: Supports multiple operating systems such as Windows, Linux, and macOS, providing a consistent user experience, allowing developers to work seamlessly across different platforms.
+-   **Wide Compiler Support**: Supports multiple compilers including GCC, MSVC (Microsoft Visual C++), Digital Mars, and Borland C++ 5.5, allowing developers to choose the most suitable compilation tool based on project needs.
 
--   **跨平台兼容性**：支持 Windows、Linux 和 macOS 等多种操作系统，提供了一致的用户体验，使得开发者可以无缝地在不同平台上工作．
+Disadvantages:
 
--   **广泛的编译器支持**：支持包括 GCC、MSVC (Microsoft Visual C++)、Digital Mars 和 Borland C++ 5.5 在内的多种编译器，允许开发者根据项目需求选择最合适的编译工具．
+-   **Limited Functionality**: Compared to IDEs like CLion or Eclipse, built-in functions and tools are relatively basic, which may not be sufficient for complex project needs.
+-   **Weak Plugin Ecosystem**: Although it supports plugin extension functions, the number and quality of third-party plugins are limited, and the plugin ecosystem is relatively weak.
 
-缺点：
+## Installation
 
--   **功能范围有限**：相比于 CLion 或 Eclipse 等 IDE，内置功能和工具较为基础，可能不足以满足复杂项目的需求．
+See [Code::Blocks Official Website](https://www.codeblocks.org/downloads/), choose to download the binary installer (Binary Release), or download the source code to compile and install (Source Code). Then, according to your needs and operating system, choose the appropriate installer and complete the installation following the installation wizard.
 
--   **插件生态较弱**：尽管支持插件扩展功能，但第三方插件数量和质量有限，插件生态相对较弱．
-
-## 安装
-
-参见 [Code::Blocks 官方网站](https://www.codeblocks.org/downloads/)，选择下载二进制安装程序（Binary Release），或者下载源代码编译安装（Source Code），然后根据需求和操作系统选择合适的安装程序，按照安装向导完成安装即可．
-
-???+ note "下载包含 MinGW 的安装包"
-    对于 Windows 用户，如果不希望手动配置编译器，建议下载包含 MinGW 的安装程序，例如 `codeblocks-xxxxmingw-setup.exe`，该版本已经包括了 GCC 编译器，无需额外安装和配置即可开始开发 C 和 C++ 项目．
+???+ note "Download Installer with MinGW"
+    For Windows users who do not want to manually configure the compiler, it is recommended to download the installer that includes MinGW, such as `codeblocks-xxxxmingw-setup.exe`. This version already includes the GCC compiler, so no additional installation and configuration is needed to start developing C and C++ projects.
 
 ![CodeBlocks DownLoad](./images/codeblocks-1.png)
 
-## 配置
+## Configuration
 
-如果安装时选择了不包含 MinGW 的安装程序，或者需要使用其他编译器，则需要手动安装和配置编译器，然后设置 Code::Blocks 以使用该编译器．
+If you chose an installer without MinGW during installation, or need to use another compiler, you need to manually install and configure the compiler, then set up Code::Blocks to use that compiler.
 
-### 工具链安装
+### Toolchain Installation
 
-参考本站的 [编译器](../compiler.md) 安装指南，下载并安装你需要的编译器．
+Refer to this site's [Compiler](../compiler.md) installation guide to download and install the compiler you need.
 
-### 工具链设置
+### Toolchain Settings
 
-当第一次启动 Code::Blocks 时，软件会自动扫描系统中已安装的编译器，如果没有找到编译器，可以通过以下步骤手动添加：
+When you first start Code::Blocks, the software will automatically scan for installed compilers in the system. If no compiler is found, you can manually add one by following these steps:
 
-1.  打开 Code::Blocks，点击菜单栏的 `Settings -> Compiler`，打开编译器设置对话框（如下图所示）．![CodeBlocks Compiler Settings](./images/codeblocks-2.png)
-2.  在 `Selected compiler` 下拉框中选择需要配置的编译器，例如 `GNU GCC Compiler`．
-3.  在 `Toolchain executables` 选项卡中，单击 `Auto-detect` 按钮，Code::Blocks 将自动扫描系统中已安装的编译器．
-4.  如果自动扫描失败，你可以手动设置编译器路径．在 `Compiler's installation directory` 中输入编译器的安装路径，例如 `C:\MinGW\bin`．
-5.  设置完成后，点击 `OK` 保存设置，现在你可以使用该编译器来编译和运行项目．
+1.  Open Code::Blocks, click `Settings -> Compiler` in the menu bar to open the compiler settings dialog (as shown in the figure below).![CodeBlocks Compiler Settings](./images/codeblocks-2.png)
+2.  In the `Selected compiler` dropdown, select the compiler you need to configure, for example `GNU GCC Compiler`.
+3.  In the `Toolchain executables` tab, click the `Auto-detect` button. Code::Blocks will automatically scan for installed compilers in the system.
+4.  If automatic scanning fails, you can manually set the compiler path. In `Compiler's installation directory`, enter the compiler's installation path, for example `C:\MinGW\bin`.
+5.  After completing the settings, click `OK` to save. Now you can use this compiler to compile and run projects.
 
-## 使用
+## Usage
 
-Code::Blocks 内置项目管理器，支持用户自定义构建项目，你可以在 `Project -> Build options` 中设置编译选项，选择编译器、编译选项、链接选项等，也可以在 `Project -> Properties` 中设置项目属性，例如项目名称、路径、文件列表等．
+Code::Blocks has a built-in project manager that supports user-defined project building. You can set compile options in `Project -> Build options`, selecting compiler, compile options, link options, etc. You can also set project properties in `Project -> Properties`, such as project name, path, file list, etc.
 
-??? note "配置 Makefile"
-    Code::Blocks 默认不需要编写 Makefile，如果需要使用自定义的 Makefile，可以在 `Project -> Properties` 中勾选 `This is a custom Makefile` 选项，然后在 `Project -> Build options` 中设置 Makefile 的路径．
+??? note "Configuring Makefile"
+    Code::Blocks does not require writing a Makefile by default. If you need to use a custom Makefile, you can check the `This is a custom Makefile` option in `Project -> Properties`, then set the Makefile path in `Project -> Build options`.
 
-### 创建项目
+### Creating Projects
 
-Code::Blocks 支持的编程语言包括 C、C++ 和 Fortran 等，当启动 Code::Blocks 后，可以通过 `File -> New -> Project` 创建新项目，选择项目类型和模板，然后按照向导的指示，设置项目名称、路径、编译器等，最后点击 `Finish` 完成项目创建．
+Code::Blocks supports programming languages including C, C++, and Fortran. When starting Code::Blocks, you can create a new project via `File -> New -> Project`. Choose the project type and template, then follow the wizard's instructions to set the project name, path, compiler, etc. Finally, click `Finish` to complete the project creation.
 
-Code::Blocks 也支持单文件的编译和运行，可以通过 `File -> New -> File` 创建新文件，编写代码并保存后，点击工具栏上的 `Build and run` 按钮，或者按下 `F9` 键，自动编译和运行当前文件．
+Code::Blocks also supports compiling and running single files. You can create a new file via `File -> New -> File`, write code and save it, then click the `Build and run` button on the toolbar, or press `F9`, to automatically compile and run the current file.
 
-### 构建和运行
+### Building and Running
 
-以一个简单的 Console Application 项目为例，接下来介绍如何构建和运行项目：
+Take a simple Console Application project as an example. Here's how to build and run the project:
 
-1.  项目创建完成后，你会看到一个默认的 `main.cpp` 文件，你可以在该文件中编写代码，然后保存文件．
-2.  编写完代码后，点击工具栏上的 `Build and run` 按钮，或者按下 `F9` 键，Code::Blocks 将自动编译和运行项目．
-3.  编译和运行后，输出窗口中会显示程序的输出结果，你可以在输出窗口中查看程序的输出，根据需要调整代码．
-4.  如果只需要编译项目，而不运行，可以点击工具栏上的 `Build` 按钮，或者按下 `Ctrl + F9` 键，Code::Blocks 将只编译项目，不运行程序．
+1.  After the project is created, you will see a default `main.cpp` file. You can write code in this file and save it.
+2.  After writing the code, click the `Build and run` button on the toolbar, or press `F9`. Code::Blocks will automatically compile and run the project.
+3.  After compiling and running, the output window will display the program's output. You can view the output in the output window and adjust the code as needed.
+4.  If you only need to compile the project without running, you can click the `Build` button on the toolbar, or press `Ctrl + F9`. Code::Blocks will only compile the project without running the program.
 
-### 调试
+### Debugging
 
-Code::Blocks 内置了调试器，你可以在 `Debug` 菜单中设置和启动调试器，帮助你定位和解决程序中的错误．
+Code::Blocks has a built-in debugger. You can set and start the debugger in the `Debug` menu to help you locate and resolve errors in the program.
 
-同理，以一个简单的 Console Application 项目为例，接下来介绍如何调试项目：
+Similarly, take a simple Console Application project as an example. Here's how to debug the project:
 
-1.  **设置断点**：在需要调试的代码行左侧单击鼠标左键，设置断点，程序将在断点处停止执行．
-2.  **启动调试器**：点击工具栏上的 `Debug` 按钮，或者按下 `F8` 键，Code::Blocks 将自动编译并启动调试器．
-3.  **调试程序**：在调试器中，你可以单步执行程序，查看变量值、调用栈等，帮助你定位和解决程序中的错误．
-4.  **停止调试**：调试完成后，你可以点击工具栏上的 `Stop` 按钮，或者按下 `Shift + F8`，停止调试器．
+1.  **Set Breakpoints**: Click the left side of the code line you need to debug to set a breakpoint. The program will stop executing at the breakpoint.
+2.  **Start Debugger**: Click the `Debug` button on the toolbar, or press `F8`. Code::Blocks will automatically compile and start the debugger.
+3.  **Debug Program**: In the debugger, you can step through the program, view variable values, call stack, etc., helping you locate and resolve errors in the program.
+4.  **Stop Debugging**: After debugging is complete, click the `Stop` button on the toolbar, or press `Shift + F8`, to stop the debugger.
 
-## 自定义设置
+## Custom Settings
 
-Code::Blocks 提供了丰富的设置选项，可以帮助调整编辑器的行为，以下是一些常用的设置：
+Code::Blocks provides rich setting options to help adjust the editor's behavior. Here are some commonly used settings:
 
-### 界面设置
+### Interface Settings
 
-1.  在 `Settings -> Editor` 中，可以设置编辑器的字体、颜色、缩进、自动补全等选项．
-2.  在 `Settings -> Environment` 中，可以设置 Code::Blocks 的全局行为，例如自动保存、自动备份、自动提示等．
-3.  在 `View` 菜单中，可以调整编辑器的布局，例如打开/关闭文件浏览器、工具栏、状态栏、输出窗口等．
+1.  In `Settings -> Editor`, you can set the editor's font, color, indentation, auto-completion, etc.
+2.  In `Settings -> Environment`, you can set Code::Blocks' global behavior, such as auto-save, auto-backup, auto-hints, etc.
+3.  In the `View` menu, you can adjust the editor's layout, such as opening/closing the file browser, toolbar, status bar, output window, etc.
 
-### 插件设置
+### Plugin Settings
 
-Code::Blocks 支持插件来扩展功能，可以通过 `Settings -> Plugins` 查看和安装可用的插件，例如 DoxyBlocks、wxSmith 等，以下是一些常用的插件：
+Code::Blocks supports plugins to extend functionality. You can view and install available plugins via `Settings -> Plugins`, such as DoxyBlocks, wxSmith, etc. Here are some commonly used plugins:
 
--   **DoxyBlocks**：著名的文档生成工具 Doxygen 的集成插件，可以直接在 Code::Blocks 中生成项目文档．
--   **wxSmith**：用于开发 wxWidgets 应用程序的插件，提供了可视化的界面设计工具，允许快速创建和布局 GUI 界面，简化开发流程．
--   **Thread Search**：支持多线程搜索的插件，可以在项目中快速搜索和替换符号和文本，适用于大型项目的开发．
+-   **DoxyBlocks**: An integration plugin for the famous documentation generation tool Doxygen. You can directly generate project documentation in Code::Blocks.
+-   **wxSmith**: A plugin for developing wxWidgets applications. It provides a visual interface design tool that allows quick creation and layout of GUI interfaces, simplifying the development process.
+-   **Thread Search**: A plugin that supports multi-threaded searching. It can quickly search and replace symbols and text in projects, suitable for large project development.
 
-插件的安装和使用方法请参考 [Code::Blocks 的插件文档](https://wiki.codeblocks.org/index.php/Code::Blocks_Plugins)，根据插件的需求和功能，选择合适的插件安装和使用．
+For plugin installation and usage, refer to [Code::Blocks's Plugin Documentation](https://wiki.codeblocks.org/index.php/Code::Blocks_Plugins). Based on the plugin's requirements and functionality, choose the appropriate plugin to install and use.
 
-???+ warning "注意"
-    Code::Blocks 的插件相对单一和基础，且大部分插件已经集成到软件中，第三方插件的数量和质量有限，建议根据实际需求选择合适的插件．
+???+ warning "Note"
+    Code::Blocks' plugins are relatively simple and basic, and most plugins are already integrated into the software. The number and quality of third-party plugins are limited. It is recommended to choose appropriate plugins based on actual needs.
 
-### 快捷键设置
+### Shortcut Settings
 
-你可以通过 `Settings -> Editor -> Keyboard shortcuts` 选项卡查看和修改快捷键设置，根据自己的习惯调整快捷键．
+You can view and modify shortcut settings via `Settings -> Editor -> Keyboard shortcuts` tab, adjusting shortcuts according to your habits.
 
-以下是一些常用的快捷键：
+Here are some commonly used shortcuts:
 
-| 功能         | 快捷键                 |
+| Function         | Shortcut                 |
 | ---------- | ------------------- |
-| 新建文件       | `Ctrl + Shift + N`  |
-| 打开文件       | `Ctrl + O`          |
-| 保存当前文件     | `Ctrl + S`          |
-| 全部保存       | `Ctrl + Shift + S`  |
-| 关闭当前文件     | `Ctrl + W`          |
-| 关闭所有文件     | `Ctrl + Shift + W`  |
-| 构建和运行当前项目  | `F9`                |
-| 只构建当前项目    | `Ctrl + F9`         |
-| 只编译当前项目    | `Ctrl + Shift + F9` |
-| 运行当前项目     | `Ctrl + F10`        |
-| 调试：开始/继续   | `F8`                |
-| 调试：停止      | `Shift + F8`        |
-| 调试：下一步     | `F7`                |
-| 调试：进入      | `Shift + F7`        |
-| 调试：跳出      | `Ctrl + F7`         |
-| 调试：切换断点    | `F5`                |
-| 查找         | `Ctrl + F`          |
-| 查找并替换      | `Ctrl + R`          |
-| 转到指定行      | `Ctrl + G`          |
-| 转到匹配的括号    | `Ctrl + B`          |
-| 全屏切换       | `F11`               |
-| 开关所有折叠     | `Ctrl + Shift + -`  |
-| 展开所有折叠     | `Ctrl + Shift + +`  |
-| 选择下一个匹配项   | `Ctrl + E`          |
-| 选择跳到下一个匹配项 | `Ctrl + Shift + E`  |
+| New file       | `Ctrl + Shift + N`  |
+| Open file       | `Ctrl + O`          |
+| Save current file     | `Ctrl + S`          |
+| Save all       | `Ctrl + Shift + S`  |
+| Close current file     | `Ctrl + W`          |
+| Close all files     | `Ctrl + Shift + W`  |
+| Build and run current project  | `F9`                |
+| Build current project    | `Ctrl + F9`         |
+| Compile current project    | `Ctrl + Shift + F9` |
+| Run current project     | `Ctrl + F10`        |
+| Debug: Start/Continue   | `F8`                |
+| Debug: Stop      | `Shift + F8`        |
+| Debug: Step     | `F7`                |
+| Debug: Step Into      | `Shift + F7`        |
+| Debug: Step Out      | `Ctrl + F7`         |
+| Debug: Toggle breakpoint    | `F5`                |
+| Find         | `Ctrl + F`          |
+| Find and replace      | `Ctrl + R`          |
+| Go to specified line      | `Ctrl + G`          |
+| Go to matching bracket    | `Ctrl + B`          |
+| Toggle fullscreen       | `F11`               |
+| Toggle all folds     | `Ctrl + Shift + -`  |
+| Expand all folds     | `Ctrl + Shift + +`  |
+| Select next match   | `Ctrl + E`          |
+| Select and go to next match | `Ctrl + Shift + E`  |
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: [Code::Blocks - 维基百科](https://zh.wikipedia.org/wiki/Code::Blocks)
+[^ref1]: [Code::Blocks - Wikipedia](https://en.wikipedia.org/wiki/Code::Blocks)

@@ -1,124 +1,124 @@
 author: leoleoasd, yzxoi, Estrella-Explore
 
-本页面将简要介绍构造题这类题型．
+This page briefly introduces construction problems.
 
-## 引入
+## Introduction
 
-构造题是比赛中常见的一类题型．
+Construction problems are a common type of problem in competitions.
 
-从形式上来看，问题的答案往往具有某种规律性，使得在问题规模迅速增大的时候，仍然有机会比较容易地得到答案．
+In terms of form, the answers to such problems often have some regularity, making it possible to find answers relatively easily even when the problem scale grows rapidly.
 
-这要求解题时要思考问题规模增长对答案的影响，这种影响是否可以推广．例如，在设计动态规划方法的时候，要考虑从一个状态到后继状态的转移会造成什么影响．
+This requires thinking about how the growth of problem scale affects the answer, and whether this effect can be generalized. For example, when designing a dynamic programming method, consider what impact the transition from one state to subsequent states will have.
 
-## 特点
+## Characteristics
 
-构造题一个很显著的特点就是高自由度，也就是说一道题的构造方式可能有很多种，但是会有一种较为简单的构造方式满足题意．看起来是放宽了要求，让题目变的简单了，但很多时候，正是这种高自由度导致题目没有明确思路而无从下手．
+A very notable characteristic of construction problems is high flexibility, meaning there may be many ways to construct a solution for a given problem, but there will be a relatively simple construction method that satisfies the requirements. It seems to relax the requirements and make the problem easier, but often, it is precisely this high flexibility that leads to having no clear approach and not knowing where to start.
 
-构造题另一个特点就是形式灵活，变化多样．并不存在一个通用解法或套路可以解决所有构造题，甚至很难找出解题思路的共性．
+Another characteristic of construction problems is flexible form and diverse variations. There is no general solution or pattern that can solve all construction problems, and it is even difficult to find commonality in the problem-solving approach.
 
-## 例题
+## Example Problems
 
-下面将列举一些例题帮助读者体会构造题的一些思想内涵，给予思路上的启发．建议大家深入思考后再查看题解，也欢迎大家参与分享有趣的构造题．
+Below, some example problems are listed to help readers understand the ideas behind construction problems and provide inspiration for approaches. It is recommended to think deeply before looking at the solution, and everyone is welcome to share interesting construction problems.
 
-### 例题 1
+### Example 1
 
 ???+ note "[Codeforces Round #384 (Div. 2) C.Vladik and fractions](http://codeforces.com/problemset/problem/743/C)"
-    构造一组 $x,y,z$，使得对于给定的 $n$，满足 $\dfrac{1}{x}+\dfrac{1}{y}+\dfrac{1}{z}=\dfrac{2}{n}$
+    Construct a set of $x,y,z$ such that for a given $n$, $\dfrac{1}{x}+\dfrac{1}{y}+\dfrac{1}{z}=\dfrac{2}{n}$
 
-??? note "解题思路"
-    从样例二可以看出本题的构造方法．
+??? note "Solution Idea"
+    The construction method can be seen from sample 2.
     
-    显然 $n,n+1,n(n+1)$ 为一组合法解．特殊地，当 $n=1$ 时，无解，这是因为 $n+1$ 与 $n(n+1)$ 此时相等．
+    Obviously $n,n+1,n(n+1)$ is a valid solution. Special case: when $n=1$, there is no solution, because at this time $n+1$ equals $n(n+1)$.
     
-    至于构造思路是怎么产生的，大概就是观察样例加上一点点数感了吧．此题对于数学直觉较强的人来说并不难．
+    As for how the construction idea came about, it is probably a matter of observing the samples plus a bit of number sense. This problem is not difficult for those with strong mathematical intuition.
 
-### 例题 2
+### Example 2
 
 ???+ note "[Luogu P3599 Koishi Loves Construction](https://www.luogu.com.cn/problem/P3599)"
-    Task1：试判断能否构造并构造一个长度为 $n$ 的 $1\dots n$ 的排列，满足其 $n$ 个前缀和在模 $n$ 的意义下互不相同
+    Task1: Try to determine if it is possible to construct and construct a permutation of length $n$ of $1\dots n$, such that its $n$ prefix sums are all distinct under modulo $n$
     
-    Task2：试判断能否构造并构造一个长度为 $n$ 的 $1\dots n$ 的排列，满足其 $n$ 个前缀积在模 $n$ 的意义下互不相同
+    Task2: Try to determine if it is possible to construct and construct a permutation of length $n$ of $1\dots n$, such that its $n$ prefix products are all distinct under modulo $n$
 
-??? note "解题思路"
-    对于 task1：
+??? note "Solution Idea"
+    For task1:
     
-    当 $n$ 为奇数时，无法构造出合法解；
+    When $n$ is odd, it is impossible to construct a valid solution;
     
-    当 $n$ 为偶数时，可以构造一个形如 $n,1,n-2,3,\cdots$ 这样的数列．
+    When $n$ is even, a sequence of the form $n,1,n-2,3,\cdots$ can be constructed.
     
-    首先，我们可以发现 $n$ 必定出现在数列的第一位，否则 $n$ 出现前后的两个前缀和必然会陷入模意义下相等的尴尬境地；
+    First, we can find that $n$ must appear at the first position of the sequence, otherwise the two prefix sums before and after $n$ will inevitably fall into the awkward situation of being equal under modulo;
     
-    然后，我们考虑构造出整个序列的方式：
+    Then, consider how to construct the entire sequence:
     
-    考虑通过构造前缀和序列的方式来获得原数列，可以发现前缀和序列两两之间的差在模意义下不能相等，因为前缀和序列的差分序列对应着原来的排列．
+    Consider obtaining the original sequence by constructing the prefix sum sequence. It can be found that the differences between pairs of prefix sums cannot be equal under modulo, because the difference sequence of the prefix sum sequence corresponds to the original permutation.
     
-    因此我们尝试以前缀和数列在模意义下为
+    Therefore, we try to construct the sequence with the prefix sum sequence under modulo being
     
     $$
     0,1,-1,2,-2,\cdots
     $$
     
-    这样的形式来构造这个序列，不难发现它完美地满足所有限制条件．
+    It is not difficult to find that it perfectly satisfies all constraints.
     
-    对于 task2：
+    For task2:
     
-    当 $n$ 为除 $4$ 以外的合数时，无法构造出合法解
+    When $n$ is a composite number other than $4$, it is impossible to construct a valid solution
     
-    当 $n$ 为质数或 $4$ 时，可以构造一个形如 $1,\dfrac{2}{1},\dfrac{3}{2},\cdots,\dfrac{n-1}{n-2},n$ 这样的数列
+    When $n$ is a prime number or $4$, a sequence of the form $1,\dfrac{2}{1},\dfrac{3}{2},\cdots,\dfrac{n-1}{n-2},n$ can be constructed
     
-    先考虑什么时候有解：
+    First consider when there is a solution:
     
-    显然，当 $n$ 为合数时无解．因为对于一个合数来说，存在两个比它小的数 $p,q$ 使得 $p\times q \equiv 0 \pmod n$，如 $(3\times6)\%9=0$．那么，当 $p,q$ 均出现过后，数列的前缀积将一直为 $0$，故合数时无解．特殊地，我们可以发现 $4=2\times 2$，无满足条件的 $p,q$，因此存在合法解．
+    Obviously, when $n$ is a composite number, there is no solution. Because for a composite number, there exist two numbers $p,q$ smaller than it such that $p\times q \equiv 0 \pmod n$, such as $(3\times6)\%9=0$. Then, after both $p$ and $q$ have appeared, the prefix products of the sequence will always be $0$, so there is no solution for composite numbers. Special case: we can find that $4=2\times 2$, there is no $p,q$ satisfying the condition, so there is a valid solution.
     
-    我们考虑如何构造这个数列：
+    Consider how to construct this sequence:
     
-    和 task1 同样的思路，我们发现 $1$ 必定出现在数列的第一位，否则 $1$ 出现前后的两个前缀积必然相等；而 $n$ 必定出现在数列的最后一位，因为 $n$ 出现位置后的所有前缀积在模意义下都为 $0$．分析题目给出的几组样例以后发现，所有样例中均有一组合法解满足前缀积在模意义下为 $1,2,3,\cdots,n$，因此我们可以构造出上文所述的数列来满足这个条件．那么我们只需证明这 $n$ 个数互不相同即可．
+    Using the same approach as task1, we find that $1$ must appear at the first position of the sequence, otherwise the two prefix products before and after $1$ must be equal; and $n$ must appear at the last position of the sequence, because all prefix products after $n$ appears are $0$ under modulo. After analyzing the sample cases given in the problem, we find that all samples have a valid solution where the prefix products under modulo are $1,2,3,\cdots,n$, so we can construct the sequence described above to satisfy this condition. Then we only need to prove these $n$ numbers are all different.
     
-    我们发现这些数均为 $1 \cdots n-2$ 的逆元 $+1$，因此各不相同，此题得解．
+    We find that these numbers are all the inverses of $1\cdots n-2$ plus $1$, so they are all different. This problem is solved.
 
-### 例题 3
+### Example 3
 
 ???+ note "[AtCoder Grand Contest 032 B](https://atcoder.jp/contests/agc032/tasks/agc032_b)"
-    给定一个整数 $N$，试构造一个节点数为 $N$ 无向图．令节点编号为 $1\ldots N$，要求其满足以下条件：
+    Given an integer $N$, construct an undirected graph with $N$ nodes. Let node numbers be $1\ldots N$, and it must satisfy the following conditions:
     
-    -   这是一个简单连通图．
-    -   存在一个整数 $S$ 使得对于任意节点，与其相邻节点的下标和为 $S$．
+    -   This is a simple connected graph.
+    -   There exists an integer $S$ such that for any node, the sum of the indices of its adjacent nodes is $S$.
     
-    保证输入数据有解．
+    The input data is guaranteed to have a solution.
 
-??? note "解题思路"
-    通过分析 $n=3,4,5$ 的情况，我们可以找到一个构造思路．
+??? note "Solution Idea"
+    By analyzing the cases for $n=3,4,5$, we can find a construction approach.
     
-    构造一个完全 $k$ 分图，保证这 $k$ 部分和相等．则每个点的 $S$ 均相等，为 $\dfrac{(k-1)\sum_{i=1}^{n}i}{k}$．
+    Construct a complete $k$-partite graph, ensuring that these $k$ parts have equal sums. Then $S$ is equal for every node, being $\dfrac{(k-1)\sum_{i=1}^{n}i}{k}$.
     
-    如果 $n$ 为偶数，那么我们可以前后两两配对，即 $\{1,n\},\{2,n-1\}\cdots$
+    If $n$ is even, we can pair them front and back, i.e., $\{1,n\},\{2,n-1\}\cdots$
     
-    如果 $n$ 为奇数，那么我们可以把 $n$ 单拿出来作为一组，剩余的 $n-1$ 个两两配对，即 $\{n\},\{1,n-1\},\{2,n-2\}\cdots$
+    If $n$ is odd, we can take out $n$ as a single group, and pair the remaining $n-1$ nodes in pairs, i.e., $\{n\},\{1,n-1\},\{2,n-2\}\cdots$
     
-    这样构造出的图在 $n\ge 3$ 时连通性易证，在此不加赘述．
+    The connectivity of the graph constructed this way is easy to prove when $n\ge 3$, and will not be elaborated here.
     
-    此题得解．
+    This problem is solved.
 
-### 例题 4
+### Example 4
 
-???+ note "[BZOJ 4971「Lydsy1708 月赛」记忆中的背包](https://vjudge.net/problem/BZOJ-4971)"
-    经过一天辛苦的工作，小 Q 进入了梦乡．他脑海中浮现出了刚进大学时学 01 背包的情景，那时还是大一萌新的小 Q 解决了一道简单的 01 背包问题．这个问题是这样的：
+???+ note "[BZOJ 4971「Lydsy1708 Monthly Contest」Backpack in Memory](https://vjudge.net/problem/BZOJ-4971)"
+    After a day of hard work, Little Q fell into a dream. In his mind, the scene of learning the 0-1 backpack problem when he just entered university appeared. At that time, as a freshman, Little Q solved a simple 0-1 backpack problem. The problem is as follows:
     
-    给定 $n$ 个物品，每个物品的体积分别为 $v_1,v_2,…,v_n$，请计算从中选择一些物品（也可以不选），使得总体积恰好为 $w$ 的方案数．因为答案可能非常大，你只需要输出答案对 $P$ 取模的结果．
+    Given $n$ items, with volumes $v_1,v_2,…,v_n$ respectively, please calculate the number of ways to select some items (or select none) such that the total volume is exactly $w$. Since the answer may be very large, you only need to output the answer modulo $P$.
     
-    因为长期熬夜刷题，他只看到样例输入中的 $w$ 和 $P$，以及样例输出是 $k$，看不清到底有几个物品，也看不清每个物品的体积是多少．直到梦醒，小 Q 也没有看清 $n$ 和 $v$，请写一个程序，帮助小 Q 一起回忆曾经的样例输入．
+    Due to long-term late-night problem-solving, he only saw $w$ and $P$ in the sample input, and the sample output is $k$. He couldn't see how many items there were or what the volume of each item was. Until he woke up, Little Q still couldn't see $n$ and $v$. Please write a program to help Little Q recall the original sample input.
 
-??? note "解题思路"
-    这道题是自由度最高的构造题之一了．这就导致了没有头绪，难以入手的情况．
+??? note "Solution Idea"
+    This is one of the construction problems with the highest flexibility. This leads to having no clue and being difficult to start.
     
-    首先，不难发现模数是假的．由于我们自由构造数据，我们一定可以让方案数不超过模数．
+    First, it is not difficult to find that the modulus is fake. Since we can construct data freely, we can always make the number of solutions not exceed the modulus.
     
-    通过奇怪的方式，我们想到可以通过构造 $n$ 个 代价为 $1$ 的小物品和几个代价大于 $\dfrac{w}{2}$ 的大物品．
+    Through some strange approach, we think of constructing $n$ small items with cost $1$ and several large items with cost greater than $\dfrac{w}{2}$.
     
-    由于大物品只能取一件，所以每个代价为 $x$ 的大物品对方案数的贡献为 $\dbinom{n}{w-x}$．
+    Since only one large item can be taken, the contribution of each large item with cost $x$ to the number of solutions is $\dbinom{n}{w-x}$.
     
-    令 $f_{i,j}$ 表示有 $i$ 个 $1$，方案数为 $j$ 的最小大物品数．
+    Let $f_{i,j}$ represent the minimum number of large items when there are $i$ ones and the number of solutions is $j$.
     
-    用 dp 预处理出 $f$，通过计算可知只需预处理 $i\le 20$ 的所有值即可．
+    Use DP to precompute $f$. Through calculation, it can be seen that only all values for $i\le 20$ need to be precomputed.
     
-    此题得解．
+    This problem is solved.

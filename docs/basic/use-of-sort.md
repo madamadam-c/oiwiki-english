@@ -1,24 +1,24 @@
-本页面将简要介绍排序的用法．
+This page will briefly introduce the usage of sorting.
 
-## 理解数据的特点
+## Understanding Data Characteristics
 
-使用排序处理数据有利于理解数据的特点，方便我们之后的分析与视觉化．像一些生活中的例子比如词典，菜单，如果不是按照一定顺序排列的话，人们想要找到自己需要的东西的时间就会大大增加．
+Using sorting to process data helps understand the characteristics of the data, making subsequent analysis and visualization easier. Similar real-life examples include dictionaries and menus—if not arranged in a certain order, the time people need to find what they need would greatly increase.
 
-计算机需要处理大规模的数据，排序后，人们可以根据数据的特点和需求来设计计算机的后续处理流程．
+Computers need to handle large-scale data. After sorting, people can design subsequent processing workflows for the computer based on the characteristics and requirements of the data.
 
-## 降低时间复杂度
+## Reducing Time Complexity
 
-使用排序预处理可以降低求解问题所需要的时间复杂度，通常是一个以空间换取时间的平衡．如果一个排序好的列表需要被多次分析的话，只需要耗费一次排序所需要的资源是很划算的，因为之后的每次分析都可以减少很多时间．
+Using sorting as preprocessing can reduce the time complexity needed to solve a problem, usually trading space for time. If a sorted list needs to be analyzed multiple times, spending resources on sorting only once is very cost-effective, as each subsequent analysis can save a lot of time.
 
-???+ note "示例：检查给定数列中是否有相等的元素"
-    考虑一个数列，你需要检查其中是否有元素相等．
-    
-    一个朴素的做法是检查每一个数对，并判断这一对数是否相等．时间复杂度是 $O(n^2)$．
-    
-    我们不妨先对这一列数排序，之后不难发现：如果有相等的两个数，它们一定在新数列中处于相邻的位置上．这时，只需要 $O(n)$ 地扫一遍新数列了．
-    
-    总的时间复杂度是排序的复杂度 $O(n\log n)$．
+???+ note "Example: Checking whether there are equal elements in a given sequence"
+    Consider a sequence, and you need to check whether any elements are equal.
 
-## 作为查找的预处理
+    A naive approach is to check every pair of numbers and determine whether the pair is equal. The time complexity is $O(n^2)$.
 
-排序是 [二分查找](./binary.md) 所要做的预处理工作．在排序后使用二分查找，可以以 $O(\log n)$ 的时间在序列中查找指定的元素．
+    Let's sort the sequence first. It's not hard to find that if two numbers are equal, they must be adjacent to each other in the new sequence. Then we only need to scan through the new sequence in $O(n)$ time.
+
+    The total time complexity is the complexity of sorting, $O(n\log n)$.
+
+## As Preprocessing for Searching
+
+Sorting is the preprocessing work for [binary search](./binary.md). After sorting, using binary search allows finding a specified element in the sequence in $O(\log n)$ time.

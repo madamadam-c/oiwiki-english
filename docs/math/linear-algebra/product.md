@@ -1,46 +1,46 @@
-本文介绍向量之间的简单运算．
+This article introduces simple operations between vectors.
 
-在本文之前，特别说明一下翻译的相关问题．由于历史原因，数学学科和物理学科关于「inner product」和「outer product」两个词汇有着五花八门的翻译．
+Before this article, a note on translation. Due to historical reasons, mathematics and physics have various translations for "inner product" and "outer product".
 
-在物理学科，一般翻译成「标积」和「矢积」，表示运算的结果为标量和矢量．高中数学课本上「数量积」和「向量积」也采用了这种意译的办法．
+In physics, they are generally translated as "scalar product" and "vector product", indicating that the results are scalar and vector quantities. High school mathematics textbooks also use "dot product" and "cross product" with this approach.
 
-在数学学科，通常也可以翻译成「内积」和「外积」，是两个名词的直译．「点乘」和「叉乘」是根据运算符号得来的俗称，这种俗称也很常见．
+In mathematics, they are usually translated as "inner product" and "outer product", which are direct translations of the two terms. "Dot product" and "cross product" are colloquial names derived from the operation symbols, and are also common.
 
-在「点乘」运算中，经常省略运算的点符号，在线性代数中更是会直接看作矩阵乘法，不写点符号．
+In the "dot product" operation, the dot symbol is often omitted. In linear algebra, it's often treated as matrix multiplication without the dot symbol.
 
-## 内积
+## Inner Product
 
-内积的概念 **对于任意维数的向量都适用**．
+The concept of inner product **applies to vectors of any dimension**.
 
-### 定义
+### Definition
 
-内积有不同但等价的定义方法，下面介绍其中一些．
+There are different but equivalent ways to define inner product. Some are introduced below.
 
-#### 几何定义
+#### Geometric Definition
 
-在 $n$ 维欧氏空间 $\mathbf{R}^n$ 下，已知两个向量 $\boldsymbol{a}, \boldsymbol{b}$，它们的夹角为 $\theta$，那么：
+In $n$-dimensional Euclidean space $\mathbf{R}^n$, given two vectors $\boldsymbol{a}, \boldsymbol{b}$, with angle $\theta$ between them:
 
 $$
 \boldsymbol{a} \cdot \boldsymbol{b} = |\boldsymbol{a}| |\boldsymbol{b}| \cos \theta
 $$
 
-就是这两个向量的 **内积**，也叫 **点积** 或 **数量积**．其中称 $|\boldsymbol{b}|\cos \theta$ 为 $\boldsymbol{b}$ 在 $\boldsymbol{a}$ 方向上的投影．内积的几何意义即为：内积 $\boldsymbol{a} \cdot \boldsymbol{b}$ 等于 $\boldsymbol{a}$ 的模与 $\boldsymbol{b}$ 在 $\boldsymbol{a}$ 方向上的投影的乘积．
+This is the **inner product** (also called **dot product** or **scalar product**) of the two vectors. Here $|\boldsymbol{b}|\cos \theta$ is called the projection of $\boldsymbol{b}$ onto the direction of $\boldsymbol{a}$. The geometric meaning of inner product is: $\boldsymbol{a} \cdot \boldsymbol{b}$ equals the product of the magnitude of $\boldsymbol{a}$ and the projection of $\boldsymbol{b}$ onto $\boldsymbol{a}$.
 
-#### 代数定义
+#### Algebraic Definition
 
-在 $n$ 维欧氏空间 $\mathbf{R}^n$ 下，已知两个向量 $\boldsymbol{a} = (a_1, a_2, \dots, a_n), \boldsymbol{b} = (b_1, b_2, \dots, b_n)$，那么：
+In $n$-dimensional Euclidean space $\mathbf{R}^n$, given two vectors $\boldsymbol{a} = (a_1, a_2, \dots, a_n), \boldsymbol{b} = (b_1, b_2, \dots, b_n)$:
 
 $$
 \boldsymbol{a} \cdot \boldsymbol{b} = \sum_{i = 1}^{n} a_i b_i
 $$
 
-就是这两个向量的 **内积**，也叫 **点积** 或 **数量积**．内积的几何定义与代数定义在欧氏空间下是等价的，而后者更方便使用．
+This is the **inner product** (also called **dot product** or **scalar product**) of the two vectors. The geometric and algebraic definitions are equivalent in Euclidean space, and the latter is more convenient to use.
 
-在不引起混淆的情况下，内积的点号可以省略不写．如果在向量的右上角有上角标 $2$，表示向量与自身内积的简写，即 **向量模长的平方**，省略模长记号．该上角标 $2$ 不可以理解为向量的平方，这是因为，向量内积的结果为标量，不存在除了 $2$ 以外任何个数的向量的内积．同理，向量模长平方的平方，不可以简写为上角标 $4$，而是必须将上角标 $2$ 的结果视为一个整体，以此类推．
+When it does not cause confusion, the dot in inner product can be omitted. If a vector has a superscript $2$ in the upper right corner, it represents the abbreviation of the inner product of the vector with itself, i.e., **the square of the vector's magnitude**, omitting the magnitude symbol. This superscript $2$ cannot be interpreted as the square of the vector, because the result of a vector inner product is a scalar, and there is no inner product of any number of vectors other than $2$. Similarly, the square of the square of the vector's magnitude cannot be abbreviated as superscript $4$, but rather the result of superscript $2$ must be treated as a whole, and so on.
 
-### 性质
+### Properties
 
-可以发现，内积得到的结果是一个标量，其特别之处在于，它是关于两个向量分别都线性的双线性运算．具体而言，内积满足：
+One can see that the result of an inner product is a scalar. Its special property is that it is a bilinear operation that is linear in each argument separately. Specifically, inner product satisfies:
 
 $$
 \begin{aligned}
@@ -51,47 +51,47 @@ $$
 \end{aligned}
 $$
 
-内积还满足交换律，即：
+Inner product also satisfies the commutative law:
 
 $$
 \boldsymbol{a} \cdot \boldsymbol{b} = \boldsymbol{b} \cdot \boldsymbol{a}
 $$
 
-### 应用
+### Applications
 
-下面介绍内积运算的一些常见应用．
+Some common applications of inner product are introduced below.
 
-1.  判定两向量垂直：
+1.  Determining perpendicular vectors:
 
     $$
     \boldsymbol{a} \perp \boldsymbol{b} \iff \boldsymbol{a} \cdot \boldsymbol{b} = 0
     $$
 
-    即互相垂直的两个向量的内积，结果为 $0$；向量与零向量内积，结果为 $0$．如果使用内积为零作为垂直的定义，则可以得出零向量与任何向量都垂直．
+    That is, the inner product of two perpendicular vectors is $0$; the inner product of any vector with the zero vector is $0$. If we use zero inner product as the definition of perpendicularity, we can conclude that the zero vector is perpendicular to any vector.
 
-2.  判定两向量共线：
+2.  Determining collinear vectors:
 
     $$
     \exists\lambda \in \mathbf{R} (\boldsymbol{a} = \lambda \boldsymbol{b}) \iff |\boldsymbol{a} \cdot \boldsymbol{b}| = |\boldsymbol{a}| |\boldsymbol{b}|
     $$
 
-3.  计算向量的模：
+3.  Computing the magnitude of a vector:
 
     $$
     |\boldsymbol a| = \sqrt{\boldsymbol{a} \cdot \boldsymbol{a}}
     $$
 
-4.  计算两向量的夹角：
+4.  Computing the angle between two vectors:
 
     $$
     \theta = \arccos \frac{\boldsymbol{a} \cdot \boldsymbol{b}}{|\boldsymbol a| |\boldsymbol b|}
     $$
 
-## 二阶与三阶行列式
+## 2×2 and 3×3 Determinants
 
-二阶与三阶行列式，可以作为行列式的较为简单的情形特殊定义．在微积分的最后一个部分场论部分，格林公式用到了二阶行列式，高斯公式用到了点乘，斯托克斯公式用到了三阶行列式．
+The $2 \times 2$ and $3 \times 3$ determinants can be defined as special simple cases of determinants. In the final part of calculus, Green's formula uses $2 \times 2$ determinants, Gauss's formula uses dot products, and Stokes' formula uses $3 \times 3$ determinants.
 
-二阶行列式可以视为四元函数，其定义为：
+The $2 \times 2$ determinant can be viewed as a function of four numbers:
 
 $$
 \begin{vmatrix}
@@ -100,7 +100,7 @@ $$
 \end{vmatrix}=ad-bc
 $$
 
-三阶行列式可以视为九元函数，其定义为：
+The $3 \times 3$ determinant can be viewed as a function of nine numbers:
 
 $$
 \begin{vmatrix}
@@ -110,34 +110,34 @@ $$
 \end{vmatrix}=aei+dhc+gbf-ahf-dbi-gec
 $$
 
-一种特殊的记忆方法是采用「对角线法则」，对角线法则只适用于二阶与三阶行列式．
+A special memory method uses the "diagonal rule", which only applies to $2 \times 2$ and $3 \times 3$ determinants.
 
-特别注意：四阶行列式展开后共有 24 项，并且副对角线一项的符号为正．如果强行应用三阶行列式的「对角线法则」，不仅项数不够，副对角线一项的符号也不正确，因此三阶行列式的「对角线法则」不适用于更高阶的行列式，更高阶的行列式也不适合使用直接展开法计算．
+**Special note:** A $4 \times 4$ determinant expands to 24 terms, and the term from the secondary diagonal has a positive sign. If one attempts to apply the "diagonal rule" for $3 \times 3$ determinants to higher-order ones, not only are there insufficient terms, but the sign of the secondary diagonal term is also incorrect. Therefore, the "diagonal rule" for $3 \times 3$ determinants does not apply to higher-order determinants, and higher-order determinants are not suitable for direct expansion.
 
-## 外积
+## Cross Product
 
-外积是 **三维向量特有的运算**．
+The cross product is an operation **specific to three-dimensional vectors**.
 
-在物理学中，三维向量为默认与空间位置相关的向量，一律采用粗体表示．然而，物理学中与相对论相关的四维向量不会采用粗体，而是使用特殊的记号与下标．
+In physics, three-dimensional vectors are considered by default as vectors associated with spatial position, and are always in bold. However, in relativity, four-dimensional vectors are not in bold but use special notations and subscripts.
 
-在线性代数中，所有的向量都会用粗体表示，并且由于麻烦，并且线性代数中大多为向量与矩阵的运算，很难造成歧义，在手写时可以省略向量记号不写．
+In linear algebra, all vectors are in bold, and since it's cumbersome and most operations in linear algebra involve vectors and matrices, which rarely cause ambiguity, the vector notation can be omitted when writing by hand.
 
-### 定义
+### Definition
 
-外积有不同但等价的定义方法，下面介绍其中一些．
+There are different but equivalent ways to define cross product. Some are introduced below.
 
-#### 几何定义
+#### Geometric Definition
 
-在三维欧氏空间 $\mathbf{R}^3$ 下，定义向量 $\boldsymbol{a}, \boldsymbol{b}$ 的外积为一个向量，记为 $\boldsymbol{a} \times \boldsymbol{b}$，其模与方向定义如下：
+In three-dimensional Euclidean space $\mathbf{R}^3$, define the cross product of vectors $\boldsymbol{a}, \boldsymbol{b}$ as a vector, denoted $\boldsymbol{a} \times \boldsymbol{b}$, with magnitude and direction defined as follows:
 
-1.  $|\boldsymbol{a} \times \boldsymbol{b}| = |\boldsymbol{a}| |\boldsymbol{b}| \sin \langle \boldsymbol{a}, \boldsymbol{b} \rangle$；
-2.  $\boldsymbol{a} \times \boldsymbol{b}$ 与 $\boldsymbol{a}, \boldsymbol{b}$ 都垂直，且 $\boldsymbol{a}, \boldsymbol{b}, \boldsymbol{a} \times \boldsymbol{b}$ 的方向符合右手法则．
+1.  $|\boldsymbol{a} \times \boldsymbol{b}| = |\boldsymbol{a}| |\boldsymbol{b}| \sin \langle \boldsymbol{a}, \boldsymbol{b} \rangle$;
+2.  $\boldsymbol{a} \times \boldsymbol{b}$ is perpendicular to both $\boldsymbol{a}$ and $\boldsymbol{b}$, and the direction of $\boldsymbol{a}, \boldsymbol{b}, \boldsymbol{a} \times \boldsymbol{b}$ follows the right-hand rule.
 
-注意到外积的模，联想到三角形面积计算公式 $S=\frac{1}{2}ab\sin C$，可以发现外积的几何意义是：**$|\boldsymbol{a} \times \boldsymbol{b}|$ 是以 $\boldsymbol{a}, \boldsymbol{b}$ 为邻边的平行四边形的面积**．
+Notice that the magnitude of the cross product, recalling the triangle area formula $S=\frac{1}{2}ab\sin C$, reveals the geometric meaning: **$|\boldsymbol{a} \times \boldsymbol{b}|$ is the area of the parallelogram with $\boldsymbol{a}, \boldsymbol{b}$ as adjacent sides**.
 
-#### 代数定义
+#### Algebraic Definition
 
-在三维欧氏空间 $\mathbf{R}^3$ 下，定义向量 $\boldsymbol{a} = (x_1, y_1, z_1), \boldsymbol{b} = (x_2, y_2, z_2)$ 的外积为一个向量 $\boldsymbol{c}$，记作 $\boldsymbol{c} = \boldsymbol{a} \times \boldsymbol{b}$，其结果可以使用三阶行列式表示：
+In three-dimensional Euclidean space $\mathbf{R}^3$, define vectors $\boldsymbol{a} = (x_1, y_1, z_1), \boldsymbol{b} = (x_2, y_2, z_2)$. The cross product is a vector $\boldsymbol{c}$, denoted $\boldsymbol{c} = \boldsymbol{a} \times \boldsymbol{b}$, which can be expressed using a $3 \times 3$ determinant:
 
 $$
 \begin{vmatrix}
@@ -147,7 +147,7 @@ $$
 \end{vmatrix}
 $$
 
-其中 $\boldsymbol{i}, \boldsymbol{j}, \boldsymbol{k}$ 表示朝向为坐标轴 $x, y, z$ 的单位向量，并写在对应坐标处．展开得
+where $\boldsymbol{i}, \boldsymbol{j}, \boldsymbol{k}$ are unit vectors pointing along the $x, y, z$ axes, written at the corresponding coordinate positions. Expanding gives:
 
 $$
 \begin{aligned}
@@ -157,9 +157,9 @@ $$
 \end{aligned}
 $$
 
-### 性质
+### Properties
 
-1.  外积是关于两个向量分别都线性的双线性运算．具体而言，外积满足：
+1.  The cross product is bilinear, linear in each argument separately. Specifically, the cross product satisfies:
 
     $$
     \begin{aligned}
@@ -170,15 +170,15 @@ $$
     \end{aligned}
     $$
 
-    前两行性质亦可称为分配律，即外积对于向量加法满足乘法分配律．
+    The first two properties are also called the distributive law, i.e., cross product distributes over vector addition.
 
-2.  外积满足反交换律，即：
+2.  The cross product satisfies the anticommutative law:
 
     $$
     \boldsymbol a \times \boldsymbol b=-\boldsymbol b \times \boldsymbol a
     $$
 
-3.  根据上文内积与外积的几何定义：
+3.  From the geometric definitions of inner and cross product above:
 
     $$
     \begin{aligned}
@@ -188,55 +188,55 @@ $$
     \end{aligned}
     $$
 
-    可以写出恒等式：
+    We can write the identity:
 
     $$
     (\boldsymbol a\times \boldsymbol b) \cdot (\boldsymbol a\times \boldsymbol b) = |\boldsymbol a|^2 |\boldsymbol b|^2-{(\boldsymbol a \cdot \boldsymbol b)}^2
     $$
 
-4.  外积满足 Jacobi 恒等式：
+4.  The cross product satisfies the Jacobi identity:
 
     $$
     \boldsymbol a \times (\boldsymbol b \times \boldsymbol c) + \boldsymbol b \times (\boldsymbol c \times \boldsymbol a) + \boldsymbol c \times (\boldsymbol a \times \boldsymbol b) = \boldsymbol 0
     $$
 
-### 应用
+### Applications
 
-下面介绍外积运算的一些常见应用．
+Some common applications of cross product are introduced below.
 
-1.  判定两向量是否共线：
+1.  Determining whether two vectors are collinear:
 
     $$
     \exists\lambda \in \mathbf{R} (\boldsymbol{a} = \lambda \boldsymbol{b}) \iff \boldsymbol{a} \times \boldsymbol{b} = \boldsymbol{0}
     $$
 
-    即共线的两个三维向量的外积，结果为 $\boldsymbol 0$；三维向量与自身外积，结果为 $\boldsymbol 0$；三维向量与零向量外积，结果为 $\boldsymbol 0$．若使用外积为零作为两向量共线的定义，则可以得出零向量与任何向量都共线．
+    That is, the cross product of two collinear three-dimensional vectors is $\boldsymbol 0$; the cross product of a three-dimensional vector with itself is $\boldsymbol 0$; the cross product of a three-dimensional vector with the zero vector is $\boldsymbol 0$. If we use zero cross product as the definition of collinearity, we can conclude that the zero vector is collinear with any vector.
 
-2.  计算两向量张成的平行四边形面积：
+2.  Computing the area of the parallelogram spanned by two vectors:
 
     $$
     S \langle \boldsymbol a, \boldsymbol b \rangle = |\boldsymbol a \times \boldsymbol b|
     $$
 
-#### 二维向量的情形
+#### Two-Dimensional Vector Case
 
-对于二维向量，无法计算外积，但是仍然可以计算两向量张成的平行四边形面积：
+For two-dimensional vectors, cross product cannot be directly computed, but the area of the parallelogram spanned by two vectors can still be computed:
 
-记 $\boldsymbol{a} = (m, n), \boldsymbol{b} = (p, q)$，将平面直角坐标系扩充为空间直角坐标系，原平面位于新坐标系的 $xOy$ 平面，原本的坐标 $(m, n)$ 和 $(p, q)$ 变为 $(m, n, 0)$ 和 $(p, q, 0)$．
+Let $\boldsymbol{a} = (m, n), \boldsymbol{b} = (p, q)$. Extend the plane Cartesian coordinate system to a spatial Cartesian coordinate system, with the original plane in the $xOy$ plane of the new system, and original coordinates $(m, n)$ and $(p, q)$ become $(m, n, 0)$ and $(p, q, 0)$.
 
-那么两个向量的外积为 $(0, 0, mq - np)$，因此平行四边形的面积为 $|mq - np|$，可以视为二阶行列式运算结果的绝对值．
+Then the cross product of the two vectors is $(0, 0, mq - np)$, so the area of the parallelogram is $|mq - np|$, which can be viewed as the absolute value of the $2 \times 2$ determinant.
 
-此时，根据右手法则和 $z$ 坐标的符号，可以推断出 $\boldsymbol b$ 相对于 $\boldsymbol a$ 的方向，若在逆时针方向则 $z$ 坐标为正值，反之为负值，简记为 **顺负逆正**．
+At this point, according to the right-hand rule and the sign of the $z$ coordinate, we can determine the direction of $\boldsymbol b$ relative to $\boldsymbol a$. If it's counterclockwise, the $z$ coordinate is positive; otherwise, it's negative. This is briefly "negative when clockwise, positive when counterclockwise".
 
-## 混合积
+## Scalar Triple Product
 
-与外积一样，向量的混合积是 **三维向量特有的运算**．
+Like cross product, the scalar triple product of vectors is an operation **specific to three-dimensional vectors**.
 
-### 定义
+### Definition
 
-设 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 是三维空间中的三个向量，则 $(\boldsymbol a \times \boldsymbol b) \cdot \boldsymbol c$ 称为三个向量 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 的混合积，记作 $[\boldsymbol a \boldsymbol b \boldsymbol c]$ 或 $(\boldsymbol a, \boldsymbol b, \boldsymbol c)$ 或 $(\boldsymbol a \boldsymbol b \boldsymbol c)$ 或 $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)$．混合积的绝对值 $|(\boldsymbol a \times \boldsymbol b) \cdot \boldsymbol c|$ 的几何意义表示以 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 为棱的平行六面体的体积．
+Let $\boldsymbol a, \boldsymbol b, \boldsymbol c$ be three vectors in three-dimensional space. Then $(\boldsymbol a \times \boldsymbol b) \cdot \boldsymbol c$ is called the scalar triple product of the three vectors $\boldsymbol a, \boldsymbol b, \boldsymbol c$, denoted $[\boldsymbol a \boldsymbol b \boldsymbol c]$ or $(\boldsymbol a, \boldsymbol b, \boldsymbol c)$ or $(\boldsymbol a \boldsymbol b \boldsymbol c)$ or $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)$. The absolute value $|(\boldsymbol a \times \boldsymbol b) \cdot \boldsymbol c|$ represents the volume of the parallelepiped with edges $\boldsymbol a, \boldsymbol b, \boldsymbol c$.
 
-向量的混合积可以使用三阶行列式表示：
+The scalar triple product of vectors can be expressed using a $3 \times 3$ determinant:
 
 $$
 \begin{aligned}
@@ -250,9 +250,9 @@ $$
 \end{aligned}
 $$
 
-### 性质
+### Properties
 
-1.  混合积关于三个向量都分别线性，具体而言，有：
+1.  The scalar triple product is linear in each of the three vectors:
 
     $$
     \begin{aligned}
@@ -262,58 +262,58 @@ $$
     \end{aligned}
     $$
 
-2.  混合积具有反对称性，交换两个向量的位置会使混合积变成其相反数，因此有：
+2.  The scalar triple product is alternating: swapping two vectors changes the sign of the triple product:
 
     $$
     \det(\boldsymbol a, \boldsymbol b, \boldsymbol c) = \det(\boldsymbol b, \boldsymbol c, \boldsymbol a) = \det(\boldsymbol c, \boldsymbol a, \boldsymbol b) = -\det(\boldsymbol b, \boldsymbol a, \boldsymbol c) = -\det(\boldsymbol a, \boldsymbol c, \boldsymbol b)= -\det(\boldsymbol c, \boldsymbol b, \boldsymbol a)
     $$
 
-    据此还可以得到内积与外积有如下关系：
+    From this, we can also derive the following relationship between inner and cross product:
 
     $$
     (\boldsymbol a \times \boldsymbol b) \cdot \boldsymbol c = \boldsymbol a \cdot (\boldsymbol b \times \boldsymbol c)
     $$
 
-### 应用
+### Applications
 
-向量的混合积有如下常见应用．
+The scalar triple product has the following common applications.
 
-1.  计算四面体 $ABCD$ 的体积：
+1.  Computing the volume of tetrahedron $ABCD$:
 
     $$
     V=\frac{1}{6}\left|\det(\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD})\right|
     $$
 
-2.  判定 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 是否共面；
+2.  Determining whether $\boldsymbol a, \boldsymbol b, \boldsymbol c$ are coplanar;
 
-    三个三维向量 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 共面的充分必要条件是 $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)=0$．
+    Three three-dimensional vectors $\boldsymbol a, \boldsymbol b, \boldsymbol c$ are coplanar if and only if $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)=0$.
 
-3.  判定 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 构成的坐标系的手性；
+3.  Determining the handedness of the coordinate system formed by $\boldsymbol a, \boldsymbol b, \boldsymbol c$;
 
-    混合积 $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)$ 的符号是正还是负，取决于 $\boldsymbol a \times \boldsymbol b$ 与 $\boldsymbol c$ 形成的夹角是锐角还是钝角，即指向 $\boldsymbol a$ 与 $\boldsymbol b$ 张成平面的同侧还是异侧，这相当于 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 三个向量依序构成右手系还是左手系．具体而言：
+    The sign of $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c)$ depends on whether the angle between $\boldsymbol a \times \boldsymbol b$ and $\boldsymbol c$ is acute or obtuse, i.e., whether $\boldsymbol c$ is on the same side or opposite side of the plane spanned by $\boldsymbol a$ and $\boldsymbol b$. This corresponds to whether $\boldsymbol a, \boldsymbol b, \boldsymbol c$ in order form a right-handed or left-handed system. Specifically:
 
-    -   $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c) < 0$ 等价于 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 依序构成左手系；
-    -   $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c) > 0$ 等价于 $\boldsymbol a, \boldsymbol b, \boldsymbol c$ 依序构成右手系．
+    -   $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c) < 0$ is equivalent to $\boldsymbol a, \boldsymbol b, \boldsymbol c$ in order forming a left-handed system;
+    -   $\det(\boldsymbol a, \boldsymbol b, \boldsymbol c) > 0$ is equivalent to $\boldsymbol a, \boldsymbol b, \boldsymbol c$ in order forming a right-handed system.
 
-## 二重外积
+## Vector Triple Product
 
-三维向量的混合积是内积与外积的混搭，具有轮换对称性．三维向量和三维向量的外积还是三维向量，那么外积的外积是否存在相关结论？
+The scalar triple product of three-dimensional vectors is a combination of inner and cross product, and has cyclic symmetry. The cross product of two three-dimensional vectors is still a three-dimensional vector. So, is there a related conclusion for the cross product of a cross product?
 
-先证明一个引理．
+First, prove a lemma.
 
 $$
 (\boldsymbol a \times \boldsymbol b)\times \boldsymbol a = (\boldsymbol a \cdot \boldsymbol a) \boldsymbol b - (\boldsymbol a \cdot \boldsymbol b) \boldsymbol a
 $$
 
-证明：由右手定则，$\boldsymbol a \times \boldsymbol b$ 与 $\boldsymbol a$ 和 $\boldsymbol b$ 都垂直，待证等式左端与 $\boldsymbol a \times \boldsymbol b$ 垂直，因此待证等式左端与 $\boldsymbol a$ 和 $\boldsymbol b$ 共面．
+Proof: By the right-hand rule, $\boldsymbol a \times \boldsymbol b$ is perpendicular to both $\boldsymbol a$ and $\boldsymbol b$. The left side of the equation to be proved is perpendicular to $\boldsymbol a \times \boldsymbol b$, so the left side is coplanar with $\boldsymbol a$ and $\boldsymbol b$.
 
-因此可以假设：
+Therefore, we can assume:
 
 $$
 (\boldsymbol a \times \boldsymbol b)\times \boldsymbol a = \lambda \boldsymbol a + \mu \boldsymbol b
 $$
 
-根据混合积的相关结论，上式两端同时对于 $\boldsymbol a$ 和 $\boldsymbol b$ 分别做内积，有：
+Taking the inner product of both sides with $\boldsymbol a$ and $\boldsymbol b$ respectively, using the scalar triple product results:
 
 $$
 \begin{aligned}
@@ -323,13 +323,13 @@ $$
 \end{aligned}
 $$
 
-由前文推出的恒等式：
+From the identity derived earlier:
 
 $$
 (\boldsymbol a \times \boldsymbol b) \cdot (\boldsymbol a \times \boldsymbol b) = |\boldsymbol a|^2|\boldsymbol b|^2-(\boldsymbol a \cdot \boldsymbol b)^2
 $$
 
-可以解得：
+We can solve for:
 
 $$
 \begin{aligned}
@@ -338,25 +338,25 @@ $$
 \end{aligned}
 $$
 
-证毕．
+Q.E.D.
 
-在上文的证明中提到，$\boldsymbol a \times \boldsymbol b$ 与任意向量叉乘，得到的向量与 $\boldsymbol a$ 和 $\boldsymbol b$ 共面．接下来证明 **二重外积** 的结论：
+In the proof above, $\boldsymbol a \times \boldsymbol b$ is coplanar with any vector crossed with it. Next, we prove the **vector triple product** formula:
 
 $$
 (\boldsymbol a\times \boldsymbol b)\times \boldsymbol c=(\boldsymbol a \cdot \boldsymbol c)\boldsymbol b - (\boldsymbol b \cdot \boldsymbol c)\boldsymbol a
 $$
 
-上述共面性有助于二重外积结论的记忆．可见，上文的引理为二重外积的特殊情况．
+The coplanarity property above helps in memorizing the vector triple product formula. The lemma above is a special case of this formula.
 
-证明：这里只需考虑三个向量均为非零且不共线的情况，其他特例为显然的．
+Proof: Here we only need to consider the case where all three vectors are non-zero and not collinear; other special cases are obvious.
 
-三维向量 $\boldsymbol a$，$\boldsymbol b$ 和 $\boldsymbol a \times \boldsymbol b$ 不共面，因此可以假设：
+Vectors $\boldsymbol a$, $\boldsymbol b$, and $\boldsymbol a \times \boldsymbol b$ are not coplanar, so we can assume:
 
 $$
 \boldsymbol c = \alpha \boldsymbol a + \beta \boldsymbol b + \gamma(\boldsymbol a \times \boldsymbol b)
 $$
 
-所以有：
+Then:
 
 $$
 \begin{aligned}
@@ -365,7 +365,7 @@ $$
 \end{aligned}
 $$
 
-根据上文的引理有：
+From the lemma above:
 
 $$
 \begin{aligned}
@@ -376,7 +376,7 @@ $$
 \end{aligned}
 $$
 
-因此有：
+Therefore:
 
 $$
 \begin{aligned}
@@ -386,9 +386,9 @@ $$
 \end{aligned}
 $$
 
-证毕．
+Q.E.D.
 
-根据外积的反交换性，可以得到二重外积的两个公式：
+From the anticommutative property of cross product, we get two vector triple product formulas:
 
 $$
 \begin{aligned}
@@ -397,15 +397,15 @@ $$
 \end{aligned}
 $$
 
-可见，二重外积对于运算顺序有着严格的要求．
+As you can see, the vector triple product has strict requirements on the order of operations.
 
-借助混合积与二重外积，还可以证明拉格朗日的恒等式．
+Using the scalar triple product and vector triple product, we can also prove Lagrange's identity.
 
 $$
 (\boldsymbol a \times \boldsymbol b) \cdot (\boldsymbol c \times \boldsymbol d)=(\boldsymbol a \cdot \boldsymbol c)(\boldsymbol b \cdot \boldsymbol d)-(\boldsymbol a \cdot \boldsymbol d)(\boldsymbol b \cdot \boldsymbol c)
 $$
 
-证明：
+Proof:
 
 $$
 \begin{aligned}
@@ -417,10 +417,10 @@ $$
 \end{aligned}
 $$
 
-可见，前文的恒等式
+As you can see, the earlier identity:
 
 $$
 (\boldsymbol a \times \boldsymbol b) \cdot (\boldsymbol a \times \boldsymbol b) = |\boldsymbol a|^2|\boldsymbol b|^2 - (\boldsymbol a \cdot \boldsymbol b)^2
 $$
 
-是拉格朗日的恒等式的特殊情形．
+is a special case of Lagrange's identity.

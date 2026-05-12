@@ -1,198 +1,198 @@
 author: ouuan, akakw1, Ir1d, partychicken, Xeonacid
 
-本页面为 Emacs 的入门教程．
+This page is an introductory tutorial for Emacs.
 
-> 15 分钟入门 Emacs．
+> 15 minutes to get started with Emacs.
 
-## 简介
+## Introduction
 
-Emacs 是一款非常容易上手的编辑器，只需要简短的几行配置就能使用，但是想要非常熟练地使用 Emacs 进行各项工作还是需要一定的时间．
+Emacs is a very easy-to-use editor. With just a few lines of configuration, you can use it, but it takes a certain amount of time to become very proficient in using Emacs for various tasks.
 
-作为入门教程，这里仅介绍 Emacs 的基本功能，以及较方便地用 Emacs 编写、调试代码的方法．
+As an introductory tutorial, this only introduces the basic functions of Emacs and the methods to conveniently write and debug code with Emacs.
 
-## 入门
+## Getting Started
 
-### 命令
+### Commands
 
-命令在 Emacs 中有很大的作用．
+Commands play a big role in Emacs.
 
-使用 Application 键[^note1]（Windows 系统下 Emacs 未指定这个键，需要手动设置）或者快捷键 M-x（<kbd>Alt</kbd>+<kbd>x</kbd>）可以打开命令输入，输入完按下回车可以执行命令．
+You can use the Application key[^note1] (on Windows systems Emacs doesn't have this key assigned, you need to set it manually) or the shortcut `M-x` (<kbd>Alt</kbd>+<kbd>x</kbd>) to open the command input. After inputting, press Enter to execute the command.
 
-通常使用 `es` 或者 `eshell` 命令来打开 Eshell（类似一个终端）．
+Usually, the commands `es` or `eshell` are used to open Eshell (similar to a terminal).
 
-输入命令通常可以用快捷键代替．
+Input commands can usually be replaced with shortcuts.
 
-### 缓冲 (buffer)
+### Buffers
 
-缓冲即打开的文件和进程，在不保存的情况下，在缓冲中修改并不会修改到文件．
+Buffers are open files and processes. Without saving, modifications in the buffer will not modify the file.
 
-在缓冲区的底部点击缓冲的名字或者使用快捷键可以切换缓冲．
+You can switch buffers by clicking the buffer name at the bottom of the buffer area or using shortcuts.
 
-### 编译、调试和运行
+### Compiling, Debugging, and Running
 
-编译和调试功能的入口在顶部菜单栏的 Tools 下拉栏．使用者也可以通过命令或者自定义快捷键使用编译和调试功能．
+The entry point for compiling and debugging functions is in the Tools dropdown menu in the top menu bar. Users can also use commands or customize shortcuts to use the compiling and debugging functions.
 
-可以使用终端或 Eshell 运行程序．
+You can use the terminal or Eshell to run programs.
 
-按下 Tools 中的调试 (gud-gdb) 后，输入程序名（一般会自动输好，但如果中途将程序另存为或者打开了两个需要调试的程序，**自动输好的文件名可能会有误**）即可开始调试．
+After pressing Debug (gud-gdb) in Tools, input the program name (it is usually automatically filled, but if you save the program elsewhere midway or open two programs that need debugging, **the automatically filled filename may be wrong**) to start debugging.
 
-### 分屏
+### Split Windows
 
-这个功能能让使用者同时查看各个缓冲的内容，而不需要来回切换缓冲，方便测试、调试代码．
+This function allows users to view the contents of various buffers at the same time without switching back and forth, which is convenient for testing and debugging code.
 
-分屏功能可以同时显示多个窗口，用鼠标拖动窗口的边缘可以缩放窗口．
+Split windows can display multiple windows at the same time. You can resize the windows by dragging the edges of the windows.
 
-几个快捷键：
+Some shortcuts:
 
--   删除分屏 "C-x 0"：将这个分屏删去
--   横向分屏 "C-x 3"：将这个分屏横向分成两半
--   纵向分屏 "C-x 2"：将这个分屏纵向分成两半
+-   Delete split "C-x 0": Delete this split
+-   Split horizontally "C-x 3": Split this window horizontally into two
+-   Split vertically "C-x 2": Split this window vertically into two
 
-推荐的窗口布局为将窗口分为四块：先横向分，调整一块的宽度约为 3/4 屏，作为编辑窗口．将另一块横向分，一块作为调试和编译信息显示的窗口，另一块再纵向分，一块打开输入文件，一块打开输出文件．
+The recommended window layout is to divide the window into four parts: first split horizontally, adjust one part's width to about 3/4 of the screen as the editing window. Split the other part horizontally: one part as the window for debugging and compiling information display, and the other part split vertically: one part for opening the input file, one part for opening the output file.
 
 ![](./images/emacs.png)
 
-### 快捷键
+### Shortcuts
 
-Emacs 拥有极为丰富的快捷键，可以大幅提高工作的效率．使用者可以在配置中自定义快捷键或者设置快捷键的映射．
+Emacs has extremely rich shortcuts, which can greatly improve work efficiency. Users can customize shortcuts or set shortcut mappings in the configuration.
 
-由于快捷键过多，所以 Emacs 快捷键的使用与操作系统不同．
+Because there are too many shortcuts, the use of Emacs shortcuts is different from operating systems.
 
-为了方便描述，做如下约定：
+For convenience, the following conventions are made:
 
-| 字符 | 键位              |
+| Character | Key               |
 | -- | --------------- |
 | C  | <kbd>Ctrl</kbd> |
 | M  | <kbd>Alt</kbd>  |
-| ？  | 任意键位            |
+| ?  | Any key            |
 
-一般有以下三种：
+Generally there are three types:
 
--   `F?`、`ESC`：直接按下对应的功能键．
--   `M-?`、`C-?`、`C-M-?`：按下<kbd>Alt</kbd>或者<kbd>Ctrl</kbd>的同时按下 `?`．
--   `? ?`：先按下第一个 `?` 代表的键，松开再按下第二个 `?` 代表的键．
+-   `F?`, `ESC`: Directly press the corresponding function key.
+-   `M-?`, `C-?`, `C-M-?`: Press <kbd>Alt</kbd> or <kbd>Ctrl</kbd> together with `?`.
+-   `? ?`: First press the key represented by the first `?`, release, then press the key represented by the second `?`.
 
-下面是一些常用的快捷键：
+Below are some commonly used shortcuts:
 
--   `C-x h`：全选
--   `C-x left`、`C-x right`：切换到上/下一个缓冲
--   `C-x d`：打开一个目录
--   `C-x C-f`：打开一个文件（如果不存在文件则新建文件）
+-   `C-x h`: Select all
+-   `C-x left`, `C-x right`: Switch to previous/next buffer
+-   `C-x d`: Open a directory
+-   `C-x C-f`: Open a file (if the file doesn't exist, create a new file)
 
-## 个性化
+## Customization
 
-刚安装好的 Emacs 外观难看且不好使用，因此需要对其进行个性化设置．
+The freshly installed Emacs looks ugly and is not easy to use, so it needs to be customized.
 
-由于配置不好记，所以部分可以直接设置的部分建议不要记配置．
+Since configurations are hard to remember, it is recommended not to memorize the parts that can be set directly.
 
-### 直接设置
+### Direct Settings
 
--   Options：`Highlight Matching Parentheses` 高亮匹配括号
--   Options：`Blink Cursor` 设置光标闪烁
--   Options Show/Hide：`Tool Bar` 显示/不显示工具栏（默认显示，建议不显示）
--   Options：`Use CUA Keys` 勾选后可以使用 Ctrl + C,Ctrl + V 等快捷键进行复制粘贴
--   Options Customize-Emacs：`Custom Theme` 选择配色方案，选择完后需要点击保存
--   Options：`Save Options`  **保存配置**
+-   Options: `Highlight Matching Parentheses` highlight matching brackets
+-   Options: `Blink Cursor` set cursor blinking
+-   Options Show/Hide: `Tool Bar` show/hide toolbar (shown by default, recommended to hide)
+-   Options: `Use CUA Keys` after checking, you can use Ctrl + C, Ctrl + V and other shortcuts for copy and paste
+-   Options Customize-Emacs: `Custom Theme` select color scheme, after selection need to click save
+-   Options: `Save Options` **save configuration**
 
-### 配置
+### Configuration
 
-在 home 目录下显示隐藏文件（Windows 系统在 **用户目录** 的 `AppData\Roaming` 目录下），".emacs" 就是配置文件（如果没有说明之前没保存），打开修改即可．如果 Emacs 已打开，则需要重启 Emacs，配置才能生效．
+Show hidden files in the home directory (on Windows systems in the **user directory** `AppData\Roaming` directory), ".emacs" is the configuration file (if it doesn't exist, it means it wasn't saved before), open and modify it. If Emacs is already open, you need to restart Emacs for the configuration to take effect.
 
-考场推荐的配置如下．
+The recommended configuration for exams is as follows:
 
 ```text
-;;设置一键编译 可以自行添加参数 难背考场不建议使用 不建议依赖一键编译
+;;Set one-key compile can add parameters by yourself hard to memorize not recommended for exams don't rely on one-key compile
 (defun compile-file ()(interactive)(compile (format "g++ -o %s %s -g -lm -Wall" (file-name-sans-extension (buffer-name))(buffer-name))))
 (global-set-key [f9] 'compile-file)
-;;;;设置编译快捷键（如果设置了一键编译不要与一键编译冲突）
+;;;;Set compile shortcut (if one-key compile is set don't conflict with one-key compile)
 ;;(global-set-key [f9] 'compile)
 
-(global-set-key (kbd "C-a") 'mark-whole-buffer) ;;全选快捷键
-(global-set-key (kbd "C-z") 'undo) ;;撤销快捷键
-(global-set-key [f10] 'gud-gdb) ;;GDB调试快捷键
-(global-set-key (kbd "RET") 'newline-and-indent) ;;换行自动缩进
-(global-set-key (kbd "C-s") 'save-buffer) ;;设置保存快捷键
-(setq-default kill-ring-max 65535) ;;扩大可撤销记录
+(global-set-key (kbd "C-a") 'mark-whole-buffer) ;;Select all shortcut
+(global-set-key (kbd "C-z") 'undo) ;;Undo shortcut
+(global-set-key [f10] 'gud-gdb) ;;GDB debug shortcut
+(global-set-key (kbd "RET") 'newline-and-indent) ;;Newline auto indent
+(global-set-key (kbd "C-s") 'save-buffer) ;;Set save shortcut
+(setq-default kill-ring-max 65535) ;;Expand undo records
 
-;;C++ 代码风格 一般控制缩进规则
-;;;"bsd" 所有大括号换行
-;;;"java" 所有大括号不换行．else 接在右大括号后面
-;;;"awk" 只有命名空间旁、定义类、定义函数时的大括号换行．else 接在右大括号后面
-;;;"linux" 只有命名空间旁、定义类、定义函数时的大括号换行．else 接在右大括号后面．一般来说，这个风格应该有 8 格的空格缩进
+;;C++ code style generally controls indent rules
+;;;"bsd" all braces on new lines
+;;;"java" all braces on same line. else follows right brace
+;;;"awk" only braces next to namespace, class definition, function definition on new lines. else follows right brace
+;;;"linux" only braces next to namespace, class definition, function definition on new lines. else follows right brace generally this style should have 8 space indent
 (setq-default c-default-style "awk")
 ```
 
-??? note "完整配置"
+??? note "Full Configuration"
     ```text
-    ;;设置一键编译
+    ;;Set one-key compile
     (defun compile-file ()(interactive)(compile (format "g++ -o %s %s -g -lm -Wall" (file-name-sans-extension (buffer-name))(buffer-name))))
     (global-set-key [f9] 'compile-file)
-    ;;;;设置编译快捷键（如果设置了一键编译不要与一键编译冲突）
+    ;;;;Set compile shortcut (if one-key compile is set don't conflict with one-key compile)
     ;;(global-set-key [f9] 'compile)
     
-    ;;考场必备
-    (global-set-key (kbd "C-a") 'mark-whole-buffer) ;;全选快捷键
-    (global-set-key (kbd "C-z") 'undo) ;;撤销快捷键
-    (global-set-key [f10] 'gud-gdb) ;;GDB调试快捷键
-    (global-set-key (kbd "RET") 'newline-and-indent) ;;换行自动缩进
-    (global-set-key (kbd "C-s") 'save-buffer) ;;设置保存快捷键
-    (setq-default kill-ring-max 65535) ;;扩大可撤销记录
-    ;;(define-key key-translation-map [apps] (kbd "M-x")) ;; windows 系统下设置命令快捷键
+    ;;Exam essentials
+    (global-set-key (kbd "C-a") 'mark-whole-buffer) ;;Select all shortcut
+    (global-set-key (kbd "C-z") 'undo) ;;Undo shortcut
+    (global-set-key [f10] 'gud-gdb) ;;GDB debug shortcut
+    (global-set-key (kbd "RET") 'newline-and-indent) ;;Newline auto indent
+    (global-set-key (kbd "C-s") 'save-buffer) ;;Set save shortcut
+    (setq-default kill-ring-max 65535) ;;Expand undo records
+    ;;(define-key key-translation-map [apps] (kbd "M-x")) ;;Set command shortcut on windows system
     
-    ;;设置缩进
-    ;;;C++ 代码缩进长度．
+    ;;Set indent
+    ;;;C++ code indent length
     (setq-default c-basic-offset 4)
-    ;;;使用 tab 缩进
+    ;;;Use tab for indent
     (setq-default indent-tabs-mode t)
-    ;;;tab 的长度．务必和缩进长度一致
+    ;;;tab length must be consistent with indent length
     (setq-default default-tab-width 4)
     (setq-default tab-width 4)
     
-    ;;设置默认编码环境
+    ;;Set default encoding environment
     (set-language-environment "UTF-8")
     (set-default-coding-systems 'utf-8)
     
-    ;;不显示欢迎页面
+    ;;Don't show welcome page
     (setq-default inhibit-startup-screen t)
     
-    ;;设置标题
+    ;;Set title
     (setq-default frame-title-format "")
     
-    ;;显示行号
+    ;;Show line numbers
     (global-display-line-numbers-mode t)
     
-    ;;高亮
-    (global-hl-line-mode 1);;高亮当前行
-    (show-paren-mode t);;高亮匹配括号
-    (global-font-lock-mode t);;语法高亮
+    ;;Highlight
+    (global-hl-line-mode 1);;Highlight current line
+    (show-paren-mode t);;Highlight matching brackets
+    (global-font-lock-mode t);;Syntax highlight
     
-    ;;允许emacs和外部其他程序的粘贴 好像默认允许
+    ;;Allow emacs and external programs to paste seems allowed by default
     (setq-default x-select-enable-clipboard t)
     
-    ;;设置字体是 Ubuntu Mono 的 16 号，如果字体不存在会报错
+    ;;Set font to Ubuntu Mono 16, will report error if font doesn't exist
     (set-face-attribute 'default nil :font "Ubuntu Mono-16")
-    ;(set-face-attribute 'default nil :font "Consolas-16") ;; windows 系统请用这条
+    ;(set-face-attribute 'default nil :font "Consolas-16") ;;Use this for windows system
     
-    ;;鼠标滚轮支持
+    ;;Mouse wheel support
     (mouse-wheel-mode t)
     
-    ;;设置光标形状为竖线（默认为方块）
-    (setq-default cursor-type 'bar)
+    ;;Set cursor shape to vertical line (default is block)
+    (setq-default cursor-type 'bar')
     
-    ;;回答 yes/no 改成回答 y/n
+    ;;Change yes/no to y/n
     (fset 'yes-or-no-p 'y-or-n-p)
     
-    ;;透明度
+    ;;Transparency
     (set-frame-parameter (selected-frame) 'alpha (list 85 60))
     (add-to-list 'default-frame-alist (cons 'alpha (list 85 60)))
     
-    ;;减少页面滚动的行数，防止整页地滚动
+    ;;Reduce page scroll lines to prevent whole page scrolling
     (setq-default scroll-margin 3 scroll-conservatively 10000)
     
-    ;;优化文件树结构
+    ;;Optimize file tree structure
     (ido-mode t)
     
-    ;;配色方案
+    ;;Color scheme
     (setq default-frame-alist
              '((vertical-scroll-bars)
                (top . 25)
@@ -220,26 +220,26 @@ Emacs 拥有极为丰富的快捷键，可以大幅提高工作的效率．使�
     (custom-set-variables
      '(ansi-color-faces-vector
        [default default default italic underline success warning error])
-    ;;启动 Ctrl-x Ctrl-c Ctrl-v = 剪切 复制 粘贴
+    ;;Enable Ctrl-x Ctrl-c Ctrl-v = cut copy paste
      '(cua-mode t nil (cua-base))
      '(show-paren-mode t)
-    ;;隐藏工具栏
+    ;;Hide toolbar
      '(tool-bar-mode nil))
-    ;;关闭光标闪烁
+    ;;Turn off cursor blinking
      '(blink-cursor-mode nil)
     (custom-set-faces)
     ```
 
-### 拓展阅读
+### Extended Reading
 
-要以终端模式启动 Emacs，在启动时添加参数 `-nw`．Emacs 有多种变体，如采用 native-comp 来减少延迟的 [GCC Emacs](http://akrl.sdf.org/gccemacs.html) 及其纯 GTK 版本变体、针对 macOS 优化的 Emacs Macport．
+To start Emacs in terminal mode, add the parameter `-nw` when starting. Emacs has multiple variants, such as [GCC Emacs](http://akrl.sdf.org/gccemacs.html) which uses native-comp to reduce latency and its pure GTK version variant, and Emacs Macport optimized for macOS.
 
-Emacs 有中心化的软件仓库，配置后可通过 `M-x package-install` 来安装插件．使用 [镜像站](https://mirrors.bfsu.edu.cn/help/elpa/) 可以加快下载速度．
+Emacs has a centralized software repository. After configuration, you can install plugins via `M-x package-install`. Using [mirrors](https://mirrors.bfsu.edu.cn/help/elpa/) can speed up downloads.
 
-Emacs 可以使用语言服务器（Language Server Protocol）来提高编辑体验，目前推荐的 C++ 后端是 [Clangd](https://clangd.llvm.org/)．前端可以采用 [Eglot](https://github.com/joaotavora/eglot) 或 [Emacs LSP](https://emacs-lsp.github.io/lsp-mode/)，参阅 [此条目](https://github.com/joaotavora/eglot#historical-differences-to-lsp-modeel) 可能对选择前端有所帮助．
+Emacs can use the Language Server Protocol to improve the editing experience. The currently recommended C++ backend is [Clangd](https://clangd.llvm.org/). The frontend can use [Eglot](https://github.com/joaotavora/eglot) or [Emacs LSP](https://emacs-lsp.github.io/lsp-mode/). Refer to [this entry](https://github.com/joaotavora/eglot#historical-differences-to-lsp-modeel) which may help with choosing the frontend.
 
-拓展名为 `.org` 的 Org Mode 文档可以通过 [Pandoc](https://pandoc.org/) 转换为 Markdown 文档．
+Org Mode documents with the `.org` extension can be converted to Markdown documents via [Pandoc](https://pandoc.org/).
 
-## 参考资料与注释
+## References and Notes
 
-[^note1]: 该键的作用是调出鼠标右键菜单，一般为右<kbd>Ctrl</kbd>左边的第一个键．
+[^note1]: This key's function is to bring up the right-click menu, generally the first key to the left of the right <kbd>Ctrl</kbd>.

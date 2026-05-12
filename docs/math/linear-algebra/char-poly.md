@@ -1,38 +1,38 @@
-特征的这部分只研究方阵，即矩阵 $A$ 对应的线性变换将 $n$ 个向量映射到 $n$ 个向量．
+This section studies only square matrices, as linear transformations corresponding to a matrix $A$ map $n$ vectors to $n$ vectors.
 
-由于在实际问题中，经常要考虑连续进行重复的变换，如果只用「矩阵 $A$ 对应的线性变换将单位阵 $I$ 变换为 $A$」的描述，就会很抽象．此时最好的办法是找「不动点」，即变换当中不动的部分．
+In practical problems, we often consider repeated transformations. If we only describe that "the linear transformation corresponding to matrix $A$ maps the identity matrix $I$ to $A$", it becomes abstract. The best approach is to find "fixed points", i.e., parts that remain unchanged under the transformation.
 
-然而事实上，矩阵 $A$ 对应的线性变换很可能没有不动点，于是退而求其次，寻找共线或者类似于简单变形的部分．
+However, in practice, the linear transformation corresponding to matrix $A$ may have no fixed points, so we settle for finding parts that are collinear or undergo simple deformations.
 
-## 特征值与特征向量
+## Eigenvalues and Eigenvectors
 
-在矩阵 $A$ 对应的线性变换作用下，一些向量的方向不改变，只是伸缩了．
+Under the linear transformation corresponding to matrix $A$, some vectors do not change direction, only scale.
 
-设 $V$ 是 $F$ 上的线性空间，$T$ 是 $V$ 上的线性变换．若存在 $F$ 中的 $\lambda$ 与 $V$ 中的 **非零向量** $\xi$，使得：
+Let $V$ be a vector space over $F$, and $T$ be a linear transformation on $V$. If there exists $\lambda$ in $F$ and a **non-zero vector** $\xi$ in $V$ such that:
 
 $$
 T\xi=\lambda\xi
 $$
 
-则称 $\lambda$ 为 $T$ 的一个 **特征值**，而 $\xi$ 为 $T$ 的 **属于特征值 $\lambda$ 的一个特征向量**．
+then $\lambda$ is called an **eigenvalue** of $T$, and $\xi$ is called an **eigenvector of $T$ belonging to eigenvalue $\lambda$**.
 
-特征向量在同一直线上，在线性变换作用下保持方向不改变（压缩到零也认为是方向不改变）．特征向量不唯一，与特征向量共线的向量都是特征向量，但是规定零向量不是特征向量，拥有方向的向量自然是非零向量．特征向量的特征值就是它伸缩的倍数．
+Eigenvectors lie on the same line; under linear transformations, they maintain their direction (being compressed to zero is also considered as not changing direction). Eigenvectors are not unique; any vector collinear with an eigenvector is also an eigenvector. However, the zero vector is not an eigenvector. Vectors with direction are naturally non-zero. The eigenvalue of an eigenvector is the factor by which it is scaled.
 
-在实际应用中，一般对于拥有相同特征值的特征向量，会选取一组基作为它们全体的代表．
+In applications, for eigenvectors with the same eigenvalue, we typically select a basis as their representative set.
 
-设 $\alpha_1,\alpha_2,\cdots,\alpha_n$ 是 $V$ 的一组基，$T$ 在这组基下的矩阵为 $A$，即：
+Let $\alpha_1,\alpha_2,\cdots,\alpha_n$ be a basis of $V$, and $T$ have matrix $A$ with respect to this basis, i.e.:
 
 $$
 T(\alpha_1,\alpha_2,\cdots,\alpha_n)=(\alpha_1,\alpha_2,\cdots,\alpha_n)A
 $$
 
-设 $\lambda_0$ 是 $T$ 的一个特征值，$\xi$ 为 $T$ 的属于特征值 $\lambda_0$ 的一个特征向量，且有非零向量 $X$ 满足：
+Let $\lambda_0$ be an eigenvalue of $T$, and $\xi$ be an eigenvector of $T$ belonging to $\lambda_0$. Let a non-zero vector $X$ satisfy:
 
 $$
 \xi=(\alpha_1,\alpha_2,\cdots,\alpha_n)X
 $$
 
-于是有：
+Then we have:
 
 $$
 T\xi=\lambda_0\xi
@@ -54,13 +54,13 @@ $$
 (A-\lambda_0I)X=0
 $$
 
-所以相应的行列式也为 $0$．
+Therefore, the corresponding determinant is also $0$.
 
-## 特征多项式
+## Characteristic Polynomial
 
-考虑一个 $n\times n$ 的矩阵 $A$，其中 $n\geq 0\land n\in\mathbb{Z}$．设 $\lambda$ 为一个参量，矩阵 $\lambda I-A$ 称为 $A$ 的 **特征矩阵**．
+Consider an $n \times n$ matrix $A$, where $n \geq 0 \land n \in \mathbb{Z}$. Let $\lambda$ be a parameter. The matrix $\lambda I - A$ is called the **characteristic matrix** of $A$.
 
-特征矩阵的行列式称为 $A$ 的 **特征多项式**，展开为一个 $n$ 次多项式，根为 $A$ 的特征值，记为 $p_A(\lambda)$：
+The determinant of the characteristic matrix is called the **characteristic polynomial** of $A$. When expanded, it is an $n$-degree polynomial with roots equal to the eigenvalues of $A$, denoted $p_A(\lambda)$:
 
 $$
 p_A(\lambda)=\det(\lambda I_n-A)=\begin{vmatrix}
@@ -71,61 +71,61 @@ p_A(\lambda)=\det(\lambda I_n-A)=\begin{vmatrix}
 \end{vmatrix}
 $$
 
-其中 $I_n$ 为一个 $n\times n$ 的单位矩阵．一些地方会定义为 $p_A(\lambda)=\det(A-\lambda I_n)$ 与我们的定义仅相差了一个符号 $(-1)^n$，但采用这种定义得到的 $p_A(\lambda)$ 一定为首一多项式，而另外的定义则仅当 $n$ 为偶数时才是首一多项式．需要注意的是 $0\times 0$ 的矩阵行列式为 $1$ 是良定义的．
+where $I_n$ is an $n \times n$ identity matrix. Some sources define $p_A(\lambda)=\det(A-\lambda I_n)$, which differs from our definition by a sign $(-1)^n$, but using this definition ensures $p_A(\lambda)$ is always monic, whereas the other definition is monic only when $n$ is even. Note that the determinant of a $0 \times 0$ matrix is $1$, which is well-defined.
 
-相应于 $(\lambda_0 I-A)X=0$ 的非零解向量 $X$，称为 $A$ 的属于 $\lambda_0$ 的特征向量．
+The non-zero solution vectors $X$ of $(\lambda_0 I-A)X=0$ are called eigenvectors of $A$ belonging to $\lambda_0$.
 
-线性变换 $T$ 有特征值 $\lambda_0$ 等价于矩阵 $A$ 有特征值 $\lambda_0$．
+The linear transformation $T$ has eigenvalue $\lambda_0$ if and only if matrix $A$ has eigenvalue $\lambda_0$.
 
-线性变换 $T$ 有特征向量 $\xi$ 等价于矩阵 $A$ 有特征向量 $X$，其中有：
+The linear transformation $T$ has eigenvector $\xi$ if and only if matrix $A$ has eigenvector $X$, where:
 
 $$
 \xi=(\alpha_1,\cdots,\alpha_n)X
 $$
 
-根据代数基本定理，特征多项式可以分解为：
+By the fundamental theorem of algebra, the characteristic polynomial can be factored as:
 
 $$
 f(\lambda)=|\lambda I-A|={(\lambda-\lambda_1)}^{d_1}\cdots{(\lambda-\lambda_m)}^{d_m}
 $$
 
-称 $d_i$ 为特征值 $\lambda_i$ 的 **代数重数**．全体代数重数的和为空间维数 $n$．
+$d_i$ is called the **algebraic multiplicity** of eigenvalue $\lambda_i$. The sum of all algebraic multiplicities equals the dimension of the space $n$.
 
-### 求解矩阵的全部特征值及特征向量
+### Finding All Eigenvalues and Eigenvectors of a Matrix
 
-分为以下步骤：
+Follow these steps:
 
--   计算行列式 $|\lambda I-A|$．
--   求出多项式 $f(\lambda)=|\lambda I-A|$ 在域 $F$ 中的全部根，即 $A$ 的特征值．
--   对 $A$ 的每个特征值 $\lambda$，解齐次线性方程组 $(\lambda I-A)X=0$，求出它的一组基础解系 $X_1,\cdots,X_t$，则 $A$ 的属于 $\lambda$ 的全部特征向量为：
+-   Compute the determinant $|\lambda I-A|$.
+-   Find all roots of the polynomial $f(\lambda)=|\lambda I-A|$ in the field $F$, i.e., the eigenvalues of $A$.
+-   For each eigenvalue $\lambda$ of $A$, solve the homogeneous linear system $(\lambda I-A)X=0$, and find a fundamental set of solutions $X_1,\cdots,X_t$. Then all eigenvectors of $A$ belonging to $\lambda$ are:
 
 $$
 k_1X_1+k_2X_2+\cdots+k_tX_t
 $$
 
-该表达式中的 $k_i$ 不全为零．
+where not all $k_i$ are zero.
 
--   线性变换 $T$ 的属于 $\lambda$ 的特征向量为：
+-   The eigenvectors of linear transformation $T$ belonging to $\lambda$ are:
 
 $$
 \xi_i=(\alpha_1,\cdots,\alpha_n)X_i
 $$
 
-因此，属于 $\lambda$ 的全部特征向量为：
+Therefore, all eigenvectors belonging to $\lambda$ are:
 
 $$
 k_1\xi_1+k_2\xi_2+\cdots+k_t\xi_t
 $$
 
-该表达式中的 $k_i$ 不全为零．
+where not all $k_i$ are zero.
 
-特征值与特征向量是否存在，依赖于 $V$ 所在的域．
+The existence of eigenvalues and eigenvectors depends on the field of $V$.
 
-## 相似变换
+## Similar Transformations
 
-### 引入
+### Introduction
 
-若 $n\times n$ 的矩阵 $A$ 为上三角矩阵如
+If an $n \times n$ matrix $A$ is an upper triangular matrix, such as:
 
 $$
 A=
@@ -137,7 +137,7 @@ a_{1,1}&a_{1,2}&\cdots &a_{1,n}\\
 \end{bmatrix}
 $$
 
-那么
+Then
 
 $$
 \begin{aligned}
@@ -154,19 +154,19 @@ x-a_{1,1}&-a_{1,2}&\cdots &-a_{1,n}\\
 \end{aligned}
 $$
 
-可轻松求得，下三角矩阵也是类似的．但如果 $A$ 不属于这两种矩阵，则需要使用相似变换，使得矩阵变为容易求得特征多项式的形式．
+which can be easily obtained. Lower triangular matrices are similar. However, if $A$ is not one of these two types, we need to use similarity transformations to make the matrix easier for finding the characteristic polynomial.
 
-### 定义
+### Definition
 
-对于 $n\times n$ 的矩阵 $A$ 和 $B$，当存在 $n\times n$ 的可逆矩阵 $P$ 满足
+For $n \times n$ matrices $A$ and $B$, if there exists an invertible $n \times n$ matrix $P$ such that:
 
 $$
 B=P^{-1}AP
 $$
 
-则矩阵 $A$ 和 $B$ 相似，记变换 $A\mapsto P^{-1}AP$ 为相似变换．且 $A$ 和 $P^{-1}AP$ 有相同的特征多项式．
+then matrices $A$ and $B$ are similar. The transformation $A \mapsto P^{-1}AP$ is called a similarity transformation. Also, $A$ and $P^{-1}AP$ have the same characteristic polynomial.
 
-考虑
+Consider:
 
 $$
 \begin{aligned}
@@ -178,67 +178,67 @@ $$
 \end{aligned}
 $$
 
-得证，对于 $A\mapsto PAP^{-1}$ 也是一样的．另外 $p_A(0)=(-1)^n\cdot \det(A)$，因为 $p_A(0)=\det(-1\cdot I_nA)=\det(-1\cdot I_n)\cdot \det(A)$ 故 $\det(A)=\det(P^{-1}AP)$．
+The proof is complete. Similarly for $A \mapsto PAP^{-1}$. Also, $p_A(0)=(-1)^n\cdot \det(A)$, because $p_A(0)=\det(-1\cdot I_nA)=\det(-1\cdot I_n)\cdot \det(A)$, hence $\det(A)=\det(P^{-1}AP)$.
 
-定理：相似矩阵有相同的特征多项式及特征值，反之不然．
+**Theorem:** Similar matrices have the same characteristic polynomial and eigenvalues, but not conversely.
 
-定理表明，线性变换的矩阵的特征多项式与基的选取无关，而直接由线性变换决定，故可称之为线性变换的特征多项式．
+This theorem states that the characteristic polynomial of the matrix of a linear transformation is independent of the choice of basis, and is directly determined by the linear transformation itself. Hence, it can be called the characteristic polynomial of the linear transformation.
 
-矩阵 $A$ 的特征多项式 $f(\lambda)=|\lambda I-A|$ 是一个首一的多项式．根据韦达定理，它的 $n-1$ 次系数为：
+The characteristic polynomial $f(\lambda)=|\lambda I-A|$ of matrix $A$ is monic. By Vieta's formulas, the coefficient of the $(n-1)$-th degree term is:
 
 $$
 -(\lambda_1+\cdots+\lambda_n)=-(a_{11}+\cdots+a_{nn})=-tr A
 $$
 
-其中 $tr A$ 称为 $A$ 的迹，为 $A$ 的主对角线元素之和．
+where $tr A$ is called the trace of $A$, the sum of elements on the main diagonal.
 
-根据韦达定理，特征多项式的常数项为：
+By Vieta's formulas, the constant term of the characteristic polynomial is:
 
 $$
 {(-1)}^n|A|={(-1)}^n(\lambda_1\cdots\lambda_n)
 $$
 
-定理：相似的矩阵有相同的迹．
+**Theorem:** Similar matrices have the same trace.
 
-### 换位公式
+### Commutation Formula
 
-定理：无论矩阵 $A$ 和矩阵 $B$ 是否方阵，只要乘法能进行，则矩阵 $AB$ 的迹等于矩阵 $BA$ 的迹．
+**Theorem:** Regardless of whether matrices $A$ and $B$ are square or not, as long as multiplication is possible, the trace of $AB$ equals the trace of $BA$.
 
-一种证法是直接展开，即证毕．另一种证法用到换位公式．
+One proof is direct expansion, which completes the proof. Another proof uses the commutation formula.
 
-定理：设 $A$ 为 $m$ 行 $n$ 列矩阵，设 $B$ 为 $n$ 行 $m$ 列矩阵，则有：
+**Theorem:** Let $A$ be an $m \times n$ matrix, and $B$ be an $n \times m$ matrix. Then:
 
 $$
 \lambda^n|\lambda I_m-AB|=\lambda^m|\lambda I_n-BA|
 $$
 
-该公式表明 $AB$ 与 $BA$ 有相同的非零特征值．
+This formula shows that $AB$ and $BA$ have the same non-zero eigenvalues.
 
-### 舒尔（Schur）引理
+### Schur's Lemma
 
-任意的 $n$ 阶矩阵 $A$ 都相似于一个上三角阵，即存在满秩阵 $P$，使得 $P^{-1}AP$ 为上三角阵，它的主对角线上元素为 $A$ 的全部特征值．
+Any $n \times n$ matrix $A$ is similar to an upper triangular matrix. That is, there exists a full-rank matrix $P$ such that $P^{-1}AP$ is an upper triangular matrix, with its main diagonal elements being all eigenvalues of $A$.
 
-推论：设 $A$ 的 $n$ 个特征值为 $\lambda_1,\cdots,\lambda_n$，$\phi(x)$ 为任一多项式，则矩阵多项式 $\phi(A)$ 的 $n$ 个特征值为：
+**Corollary:** Let the $n$ eigenvalues of $A$ be $\lambda_1,\cdots,\lambda_n$, and $\phi(x)$ be any polynomial. Then the $n$ eigenvalues of the matrix polynomial $\phi(A)$ are:
 
 $$
 \phi(\lambda_1),\cdots,\phi(\lambda_n)
 $$
 
-特别地，$kA$ 的特征值为 $k\lambda_1,\cdots,k\lambda_n$，$A^m$ 的特征值为 ${\lambda_1}^m,\cdots,{\lambda_n}^m$．
+In particular, the eigenvalues of $kA$ are $k\lambda_1,\cdots,k\lambda_n$, and the eigenvalues of $A^m$ are ${\lambda_1}^m,\cdots,{\lambda_n}^m$.
 
-### 使用高斯消元进行相似变换
+### Similarity Transformations Using Gaussian Elimination
 
-对 $n\times n$ 的矩阵 $B$ 可以进行高斯消元，其基本操作为初等行变换．
+For an $n \times n$ matrix $B$, Gaussian elimination can be applied, with basic operations being elementary row operations.
 
-在对矩阵使用上述操作（左乘初等矩阵）后再右乘其逆矩阵即相似变换，左乘为行变换，易发现右乘即列变换．
+Performing these operations on a matrix (left multiplication by elementary matrices) followed by right multiplication by their inverses is a similarity transformation. Left multiplication corresponds to row operations; similarly, right multiplication corresponds to column operations.
 
-若能将矩阵通过相似变换变为上三角或下三角的形式，那么可以轻松求出其特征多项式．但若对主对角线上的元素应用变换 $A\mapsto T_{ij}(k)AT_{ij}(-k)$ 后会导致原本通过 $A\mapsto T_{ij}(k)A$ 将第 $i$ 行第 $j$ 列的元素消为零后右乘 $T_{ij}(-k)$ 即将 $A$ 的第 $i$ 列的 $-k$ 倍加到第 $j$ 列这一操作使得之前消为零的元素现在可能不为零，可能不能将其变为上三角或下三角形式．
+If a matrix can be transformed into an upper or lower triangular form via similarity transformations, then its characteristic polynomial can be easily obtained. However, if we apply the transformation $A\mapsto T_{ij}(k)AT_{ij}(-k)$ to elements on the subdiagonal, after eliminating element at row $i$, column $j$ of $A$ using $A\mapsto T_{ij}(k)A$, right multiplying by $T_{ij}(-k)$ will add $-k$ times column $i$ to column $j$, which may cause previously zeroed elements to become non-zero. This may prevent the matrix from being transformed into upper or lower triangular form.
 
-后文将说明对次对角线上的元素应用变换后得到的矩阵依然可以轻松得到其特征多项式．
+Later, we will show that after applying transformations to elements on the subdiagonal, the resulting matrix can still easily yield the characteristic polynomial.
 
-### 上 Hessenberg 矩阵
+### Upper Hessenberg Matrix
 
-对于 $n\gt 2$ 的形如
+For $n > 2$, matrices of the form:
 
 $$
 H=
@@ -251,11 +251,11 @@ H=
 \end{bmatrix}
 $$
 
-的矩阵我们称为上 Hessenberg 矩阵，其中 $\beta$ 为次对角线．
+are called upper Hessenberg matrices, where $\beta$ is the subdiagonal.
 
-我们使用相似变换将次对角线以下的元素消为零后即能得到上 Hessenberg 矩阵，而求出一个 $n\times n$ 上 Hessenberg 矩阵的特征多项式则可在 $O(n^3)$ 时间完成．
+We use similarity transformations to zero out all elements below the subdiagonal to obtain an upper Hessenberg matrix. Computing the characteristic polynomial of an $n \times n$ upper Hessenberg matrix can be done in $O(n^3)$ time.
 
-我们记 $H_i$ 为只保留 $H$ 的前 $i$ 行和前 $i$ 列的矩阵，记 $p_i(x)=\det(xI_i-H_i)$ 那么
+Let $H_i$ be the matrix consisting of only the first $i$ rows and first $i$ columns of $H$, and $p_i(x)=\det(xI_i-H_i)$. Then:
 
 $$
 H_0=
@@ -281,7 +281,7 @@ H_2=
 p_2(x)=\det(xI_2-H_2)=(x-\alpha_2)p_1(x)-\beta_2h_{12}p_0(x)
 $$
 
-在计算行列式时我们一般选择按零最多的行或列余子式展开，余子式即删除了当前选择的元素所在行和列之后的矩阵，在这里我们选择按最后一行进行展开，有
+When computing determinants, we generally expand along the row or column with the most zeros. A minor is the matrix obtained by deleting the row and column of the selected element. Here, we choose to expand along the last row:
 
 $$
 \begin{aligned}
@@ -301,7 +301,7 @@ x-\alpha_1&-h_{13}\\
 \end{aligned}
 $$
 
-观察并归纳，对 $2\leq i\leq n$ 有
+By observation and induction, for $2\leq i\leq n$:
 
 $$
 p_i(x)=(x-\alpha_i)p_{i-1}(x)-
@@ -312,35 +312,35 @@ p_i(x)=(x-\alpha_i)p_{i-1}(x)-
 p_{i-m-1}(x)
 $$
 
-至此完成了整个算法，该算法一般被称为 Hessenberg 算法．
+This completes the algorithm, commonly known as the Hessenberg algorithm.
 
-## Cayley–Hamilton 定理
+## Cayley–Hamilton Theorem
 
-对于任意的 $n$ 阶矩阵 $A$，特征多项式为 $f(\lambda)=|\lambda I-A|$，则必有 $f(A)=0$．
+For any $n \times n$ matrix $A$, with characteristic polynomial $f(\lambda)=|\lambda I-A|$, we have $f(A)=0$.
 
-对于线性变换 $T$ 有平行的结果：如果 $f(\lambda)$ 为 $T$ 的特征多项式，则 $f(T)$ 为零变换．
+For a linear transformation $T$, there is a parallel result: if $f(\lambda)$ is the characteristic polynomial of $T$, then $f(T)$ is the zero transformation.
 
-由本定理可知，对于任意的矩阵 $A$，必有可以使其零化的多项式．
+By this theorem, for any matrix $A$, there exists a polynomial that annihilates it.
 
-## 最小多项式
+## Minimal Polynomial
 
-设 $V$ 是一个 $n$ 维向量空间，由于线性变换对应的矩阵有 $n^2$ 个元素，一切线性变换构成 $n^2$ 维线性空间．
+Let $V$ be an $n$-dimensional vector space. Since the matrix corresponding to a linear transformation has $n^2$ elements, all linear transformations form an $n^2$-dimensional vector space.
 
-对于一个特定的线性变换 $T$，从作用 $0$ 次到作用 $n$ 次，总共 $n^2+1$ 个线性变换，它们对应的矩阵一定线性相关．于是存在非零多项式 $f$，使得 $f(T)$ 为零变换，称变换 $T$ 满足多项式 $f$．在 $T$ 满足的所有多项式 $f$ 中，存在次数最低的．
+For a specific linear transformation $T$, from the 0-th application to the $n$-th application, there are $n^2+1$ linear transformations. Their corresponding matrices are necessarily linearly dependent. Thus, there exists a non-zero polynomial $f$ such that $f(T)$ is the zero transformation. We say transformation $T$ satisfies polynomial $f$. Among all polynomials $f$ that $T$ satisfies, there exists one of minimum degree.
 
-可以将矩阵 $A$ 零化的最小次数的首一多项式称为 $A$ 的最小多项式，记为 $m_A(\lambda)$．
+The monic polynomial of minimum degree that annihilates matrix $A$ is called the minimal polynomial of $A$, denoted $m_A(\lambda)$.
 
-根据多项式的辗转相除法，最小多项式是唯一的，且可整除任一 $A$ 的零化多项式．特别地，最小多项式整除特征多项式．
+By the Euclidean algorithm for polynomials, the minimal polynomial is unique and divides any polynomial that annihilates $A$. In particular, the minimal polynomial divides the characteristic polynomial.
 
-定理：在不计重数的情况下，矩阵 $A$ 的特征多项式 $f(\lambda)$ 与最小多项式 $m_A(\lambda)$ 有相同的根．
+**Theorem:** (not counting multiplicities) the characteristic polynomial $f(\lambda)$ and minimal polynomial $m_A(\lambda)$ of matrix $A$ have the same roots.
 
-定理：矩阵 $A$ 的属于不同特征值的特征向量线性无关．
+**Theorem:** Eigenvectors of matrix $A$ belonging to distinct eigenvalues are linearly independent.
 
-## 应用
+## Applications
 
-在信息学中我们一般考虑 $(\mathbb{Z}/m\mathbb{Z})^{n\times n}$ 上的矩阵，通常 $m$ 为素数，进行上述相似变换是简单的，当 $m$ 为合数时，我们可以考虑类似辗转相除的方法来进行．
+In informatics, we usually consider matrices over $(\mathbb{Z}/m\mathbb{Z})^{n\times n}$, where $m$ is often a prime. Performing similarity transformations is straightforward in this case. When $m$ is composite, we can consider a method similar to the Euclidean algorithm.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <cassert>
     #include <iostream>
@@ -461,11 +461,11 @@ $$
     }
     ```
 
-上述 Hessenberg 算法不具有数值的稳定性，所以 $\mathbb{R}^{n\times n}$ 上的矩阵在使用前需要其他算法进行调整或改用其他具有数值稳定性的算法．
+The above Hessenberg algorithm does not have numerical stability, so matrices over $\mathbb{R}^{n\times n}$ need to be adjusted using other algorithms or alternative numerically stable algorithms before use.
 
-我们可以将特征多项式与常系数齐次线性递推联系起来，也可结合 Cayley–Hamilton 定理、多项式取模加速一些域上求矩阵幂次的算法．
+We can connect the characteristic polynomial with constant-coefficient homogeneous linear recurrences, and combine the Cayley–Hamilton theorem with polynomial modular arithmetic to accelerate algorithms for computing matrix powers over certain fields.
 
-Cayley–Hamilton 定理指出
+The Cayley–Hamilton theorem states:
 
 $$
 \begin{aligned}
@@ -474,11 +474,11 @@ p_A(A)&=A^n+c_1A^{n-1}+\cdots +c_{n-1}A+c_nI\\
 \end{aligned}
 $$
 
-其中 $O$ 为 $n\times n$ 的零矩阵，$A\in\mathbb{C}^{n\times n}$ 且 $p_A(x)=x^n+\sum_{i=1}^nc_ix^{n-i}\in\mathbb{C}[x]$ 为 $A$ 的特征多项式．
+where $O$ is the $n \times n$ zero matrix, $A\in\mathbb{C}^{n\times n}$, and $p_A(x)=x^n+\sum_{i=1}^nc_ix^{n-i}\in\mathbb{C}[x]$ is the characteristic polynomial of $A$.
 
-若我们要求 $A^K$ 其中 $K$ 较大，那么可以求出 $f(x)=x^K\bmod{p_A(x)}$ 后利用 $f(A)=A^K$．
+If we want to compute $A^K$ where $K$ is large, we can find $f(x)=x^K\bmod{p_A(x)}$ and then use $f(A)=A^K$.
 
-而 $\deg(f(x))\lt n$ 显然．我们令 $f(x)=\sum_{i=0}^{n-1}f_ix^i$ 且 $n=km$ 那么
+Since $\deg(f(x))\lt n$. Let $f(x)=\sum_{i=0}^{n-1}f_ix^i$ and $n=km$. Then:
 
 $$
 \begin{aligned}
@@ -489,10 +489,10 @@ f_{km-1}x^{km-1}+\cdots +f_1x+f_0&=(\cdots (f_{km-1}x^{k-1}+\cdots +f_{k(m-1)})x
 \end{aligned}
 $$
 
-令 $k=\sqrt{n}$ 可以发现计算 $f(A)$ 大约需要 $O(\sqrt{n})$ 次矩阵与矩阵的乘法．
+Let $k=\sqrt{n}$. We can see that computing $f(A)$ requires approximately $O(\sqrt{n})$ matrix-matrix multiplications.
 
-## 参考文献
+## References
 
--   Rizwana Rehman, Ilse C.F. Ipsen.[La Budde’s Method for Computing Characteristic Polynomials](https://ipsen.math.ncsu.edu/ps/charpoly3.pdf).
--   Marshall Law.[Computing Characteristic Polynomials of Matrices of Structured Polynomials](http://summit.sfu.ca/system/files/iritems1/17301/etd10125_.pdf).
--   Mike Paterson.[On the Number of Nonscalar Multiplications Necessary to Evaluate Polynomials](https://epubs.siam.org/doi/10.1137/0202007).
+-   Rizwana Rehman, Ilse C.F. Ipsen. [La Budde's Method for Computing Characteristic Polynomials](https://ipsen.math.ncsu.edu/ps/charpoly3.pdf).
+-   Marshall Law. [Computing Characteristic Polynomials of Matrices of Structured Polynomials](http://summit.sfu.ca/system/files/iritems1/17301/etd10125_.pdf).
+-   Mike Paterson. [On the Number of Nonscalar Multiplications Necessary to Evaluate Polynomials](https://epubs.siam.org/doi/10.1137/0202007).

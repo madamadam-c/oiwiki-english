@@ -1,84 +1,84 @@
-本页面将简要介绍贪心算法．
+This page briefly introduces greedy algorithms.
 
-## 引入
+## Introduction
 
-贪心算法（英语：greedy algorithm），是用计算机来模拟一个「贪心」的人做出决策的过程．这个人十分贪婪，每一步行动总是按某种指标选取最优的操作．而且他目光短浅，总是只看眼前，并不考虑以后可能造成的影响．
+Greedy algorithm (English: greedy algorithm) is a way to simulate with a computer a "greedy" person making decisions. This person is very greedy, always choosing the optimal operation according to some metric at each step. And he is short-sighted, only looking at the present, not considering the impact it may have in the future.
 
-可想而知，并不是所有的时候贪心法都能获得最优解，所以一般使用贪心法的时候，都要确保自己能证明其正确性．
+As can be imagined, greedy does not always obtain the optimal solution, so when using greedy algorithm, one must usually ensure one can prove its correctness.
 
-## 解释
+## Explanation
 
-### 适用范围
+### Scope of Application
 
-贪心算法在有最优子结构的问题中尤为有效．最优子结构的意思是问题能够分解成子问题来解决，子问题的最优解能递推到最终问题的最优解．[^ref1]
+Greedy algorithm is particularly effective in problems with optimal substructure. Optimal substructure means the problem can be decomposed into subproblems to solve, and the optimal solution of subproblems can be extrapolated to the optimal solution of the final problem.[^ref1]
 
-### 证明
+### Proof
 
-贪心算法有两种证明方法：反证法和归纳法．一般情况下，一道题只会用到其中的一种方法来证明．
+There are two proof methods for greedy algorithms: proof by contradiction and mathematical induction. Generally, a problem will only use one of these methods for proof.
 
-1.  反证法：如果交换方案中任意两个元素/相邻的两个元素后，答案不会变得更好，那么可以推定目前的解已经是最优解了．
-2.  归纳法：先算得出边界情况（例如 $n = 1$）的最优解 $F_1$，然后再证明：对于每个 $n$，$F_{n+1}$ 都可以由 $F_{n}$ 推导出结果．
+1.  Proof by contradiction: If swapping any two elements/adjacent elements in the solution does not make the answer better, then it can be concluded that the current solution is already optimal.
+2.  Mathematical induction: First calculate the optimal solution for edge cases (for example, $n = 1$) as $F_1$, then prove: for each $n$, $F_{n+1}$ can be derived from $F_n$.
 
-## 要点
+## Key Points
 
-### 常见题型
+### Common Problem Types
 
-在提高组难度以下的题目中，最常见的贪心有两种．
+In problems at the improvement level and below, the two most common greedy approaches are:
 
--   「我们将 XXX 按照某某顺序排序，然后按某种顺序（例如从小到大）选择．」．
--   「我们每次都取 XXX 中最大/小的东西，并更新 XXX．」（有时「XXX 中最大/小的东西」可以优化，比如用优先队列维护）
+-   "We sort XXX according to some order, then select in a certain order (for example, from small to large)."
+-   "We always take the largest/smallest thing from XXX, and update XXX." (Sometimes "the largest/smallest thing in XXX" can be optimized, such as using a priority queue to maintain)
 
-二者的区别在于一种是离线的，先处理后选择；一种是在线的，边处理边选择．
+The difference between the two is that one is offline, processing then selecting; the other is online, processing while selecting.
 
-### 排序解法
+### Sorting Solution
 
-用排序法常见的情况是输入一个包含几个（一般一到两个）权值的数组，通过排序然后遍历模拟计算的方法求出最优值．
+A common situation for the sorting method is inputting an array containing a few (generally one or two) weight values, and using sorting then traversal simulation to calculate the optimal value.
 
-### 后悔解法
+### Regret Solution
 
-思路是无论当前的选项是否最优都接受，然后进行比较，如果选择之后不是最优了，则反悔，舍弃掉这个选项；否则，正式接受．如此往复．
+The idea is to accept the current choice whether it is optimal or not, then compare. If after making the choice it is no longer optimal, regret, discard this choice; otherwise, formally accept it. Repeat this process.
 
-## 区别
+## Differences
 
-### 与动态规划的区别
+### Difference from Dynamic Programming
 
-贪心算法与动态规划的不同在于它对每个子问题的解决方案都做出选择，不能回退．动态规划则会保存以前的运算结果，并根据以前的结果对当前进行选择，有回退功能．
+The difference between greedy algorithm and dynamic programming is that it makes a choice for each subproblem and cannot go back. Dynamic programming saves previous computation results and makes selections based on previous results, having the ability to go back.
 
-## 例题详解
+## Example Problem Explanation
 
-### 邻项交换法的例题
+### Example of Adjacent Exchange Method
 
-???+ note "[NOIP 2012 国王游戏](https://www.luogu.com.cn/problem/P1080)"
-    恰逢 H 国国庆，国王邀请 n 位大臣来玩一个有奖游戏．首先，他让每个大臣在左、右手上面分别写下一个整数，国王自己也在左、右手上各写一个整数．然后，让这 n 位大臣排成一排，国王站在队伍的最前面．排好队后，所有的大臣都会获得国王奖赏的若干金币，每位大臣获得的金币数分别是：排在该大臣前面的所有人的左手上的数的乘积除以他自己右手上的数，然后向下取整得到的结果．
+???+ note "[NOIP 2012 King's Game](https://www.luogu.com.cn/problem/P1080)"
+    It is the National Day of Country H. The king invites n ministers to play a prize game. First, he asks each minister to write an integer on their left and right hand. The king also writes an integer on his left and right hand. Then, these n ministers line up, with the king at the very front of the queue. After lining up, all ministers receive some gold coins from the king. The number of gold coins each minister receives is: the product of all the numbers on the left hands of everyone in front of that minister, divided by the number on their own right hand, floored.
     
-    国王不希望某一个大臣获得特别多的奖赏，所以他想请你帮他重新安排一下队伍的顺序，使得获得奖赏最多的大臣，所获奖赏尽可能的少．注意，国王的位置始终在队伍的最前面．
+    The king does not want any minister to receive too many rewards, so he asks you to help rearrange the order of the queue, so that the minister who receives the most reward gets as few rewards as possible. Note: the king's position is always at the very front of the queue.
 
-??? note "解题思路"
-    设排序后第 $i$ 个大臣左右手上的数分别为 $a_i, b_i$．考虑通过邻项交换法推导贪心策略．
+??? note "Solution Idea"
+    Let $a_i, b_i$ be the numbers on the left and right hand of the $i$-th minister after sorting. Consider deriving the greedy strategy using the adjacent exchange method.
     
-    用 $s$ 表示第 $i$ 个大臣前面所有人的 $a_i$ 的乘积，那么第 $i$ 个大臣得到的奖赏就是 $\dfrac{s} {b_i}$，第 $i + 1$ 个大臣得到的奖赏就是 $\dfrac{s \cdot a_i} {b_{i+1}}$．
+    Let $s$ be the product of $a_i$ of all ministers in front of the $i$-th minister. Then the reward for the $i$-th minister is $\dfrac{s} {b_i}$, and the reward for the $i+1$-th minister is $\dfrac{s \cdot a_i} {b_{i+1}}$.
     
-    如果我们交换第 $i$ 个大臣与第 $i + 1$ 个大臣，那么此时的第 $i$ 个大臣得到的奖赏就是 $\dfrac{s} {b_{i+1}}$，第 $i + 1$ 个大臣得到的奖赏就是 $\dfrac{s \cdot a_{i+1}} {b_i}$．
+    If we swap the $i$-th minister with the $i+1$-th minister, then the reward for the $i$-th minister becomes $\dfrac{s} {b_{i+1}}$, and the reward for the $i+1$-th minister becomes $\dfrac{s \cdot a_{i+1}} {b_i}$.
     
-    如果交换前更优当且仅当
+    The swap is better if and only if
     
     $$
     \max \left(\dfrac{s} {b_i}, \dfrac{s \cdot a_i} {b_{i+1}}\right)  < \max \left(\dfrac{s} {b_{i+1}}, \dfrac{s \cdot a_{i+1}} {b_i}\right)
     $$
     
-    提取出相同的 $s$ 并约分得到
+    Extract the common $s$ and simplify to get
     
     $$
     \max \left(\dfrac{1} {b_i}, \dfrac{a_i} {b_{i+1}}\right)  < \max \left(\dfrac{1} {b_{i+1}}, \dfrac{a_{i+1}} {b_i}\right)
     $$
     
-    然后分式化成整式得到
+    Then convert fractions to integers to get
     
     $$
     \max (b_{i+1}, a_i\cdot b_i)  < \max (b_i, a_{i+1}\cdot b_{i+1})
     $$
     
-    实现的时候我们将输入的两个数用一个结构体来保存并重载运算符：
+    In implementation, we use a struct to store the two input numbers and overload the operator:
     
     ```cpp
     struct uv {
@@ -90,18 +90,17 @@
     };
     ```
 
-### 后悔法的例题
+### Example of Regret Method
 
-???+ note "[「USACO09OPEN」工作调度 Work Scheduling](https://www.luogu.com.cn/problem/P2949)"
-    约翰的工作日从 $0$ 时刻开始，有 $10^9$ 个单位时间．在任一单位时间，他都可以选择编号 $1$ 到 $N$ 的 $N(1 \leq N \leq 10^5)$ 项工作中的任意一项工作来完成．工作 $i$ 的截止时间是 $D_i(1 \leq D_i \leq 10^9)$，完成后获利是 $P_i( 1\leq P_i\leq 10^9 )$．在给定的工作利润和截止时间下，求约翰能够获得的利润最大为多少．
+???+ note "[「USACO09OPEN」Work Scheduling](https://www.luogu.com.cn/problem/P2949)"
+    John's workday starts at time $0$ and has $10^9$ time units. At any time unit, he can choose to complete any of $N (1 \leq N \leq 10^5)$ jobs numbered $1$ to $N$. Job $i$ has a deadline $D_i (1 \leq D_i \leq 10^9)$ and a profit $P_i (1 \leq P_i \leq 10^9)$. Given the job profits and deadlines, find the maximum profit John can obtain.
 
-??? note "解题思路"
-    1.  先假设每一项工作都做，将各项工作按截止时间排序后入队；
-    2.  在判断第 `i` 项工作做与不做时，若其截至时间符合条件，则将其与队中报酬最小的元素比较，若第 `i` 项工作报酬较高（后悔），则 `ans += a[i].p - q.top()`．  
-        用优先队列（小根堆）来维护队首元素最小．
-    3.  当 `a[i].d<=q.size()` 可以这么理解从 0 开始到 `a[i].d` 这个时间段只能做 `a[i].d` 个任务，而若 `q.size()>=a[i].d` 说明完成 `q.size()` 个任务时间大于等于 `a[i].d` 的时间，所以当第 `i` 个任务获利比较大的时候应该把最小的任务从优先级队列中换出．
+??? note "Solution Idea"
+    1.  First assume we do every job, sort all jobs by deadline and add them to the queue;
+    2.  When determining whether to do the $i$-th job or not, if its deadline meets the condition, compare it with the job with the smallest profit in the queue. If the $i$-th job has higher profit (regret), then `ans += a[i].p - q.top()`. Use a priority queue (min-heap) to maintain the smallest element at the front of the queue.
+    3.  `a[i].d<=q.size()` can be understood as: from 0 to `a[i].d`, only `a[i].d` tasks can be done. And if `q.size()>=a[i].d`, it means completing `q.size()` tasks takes time greater than or equal to `a[i].d` time. So when the $i$-th task has relatively high profit, the smallest task should be replaced out of the priority queue.
 
-??? note "参考代码"
+??? note "Reference Code"
     === "C++"
         ```cpp
         --8<-- "docs/basic/code/greedy/greedy_1.cpp"
@@ -112,16 +111,16 @@
         --8<-- "docs/basic/code/greedy/greedy_1.py"
         ```
 
-??? note "复杂度分析"
-    -   空间复杂度：当输入 $n$ 个任务时使用 $n$ 个 $a$ 数组元素，优先队列中最差情况下会储存 $n$ 个元素，则空间复杂度为 $O(n)$．
-    -   时间复杂度：`std::sort` 的时间复杂度为 $O(n\log n)$，维护优先队列的时间复杂度为 $O(n\log n)$，综上所述，时间复杂度为 $O(n\log n)$．
+??? note "Complexity Analysis"
+    -   Space Complexity: When input is $n$ tasks, using $n$ array elements for $a$, the priority queue may store $n$ elements in the worst case, so the space complexity is $O(n)$.
+    -   Time Complexity: The time complexity of `std::sort` is $O(n\log n)$, and maintaining the priority queue has time complexity $O(n\log n)$. In summary, the time complexity is $O(n\log n)$.
 
-## 习题
+## Practice Problems
 
--   [P1209\[USACO1.3\] 修理牛棚 Barn Repair - 洛谷](https://www.luogu.com.cn/problem/P1209)
--   [P2123 皇后游戏 - 洛谷](https://www.luogu.com.cn/problem/P2123)
--   [LeetCode 上标签为贪心算法的题目](https://leetcode-cn.com/tag/greedy/)
+-   [P1209[USACO1.3] Barn Repair - Luogu](https://www.luogu.com.cn/problem/P1209)
+-   [P2123 Queen's Game - Luogu](https://www.luogu.com.cn/problem/P2123)
+-   [Problems tagged greedy on LeetCode](https://leetcode.com/tag/greedy/)
 
-## 参考资料与注释
+## References and Notes
 
-[^ref1]: [贪心算法 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95)
+[^ref1]: [Greedy algorithm - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Greedy_algorithm)

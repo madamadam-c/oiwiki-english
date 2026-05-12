@@ -1,5 +1,5 @@
-**图论 (Graph theory)** 是数学的一个分支，图是图论的主要研究对象．**图 (Graph)** 是由若干给定的顶点及连接两顶点的边所构成的图形，这种图形通常用来描述某些事物之间的某种特定关系．顶点用于代表事物，连接两顶点的边则用于表示两个事物间具有这种关系．
+**Graph theory** is a branch of mathematics, and graphs are the main objects of study in graph theory. A **graph** is a structure consisting of a set of given vertices and edges connecting pairs of vertices; such structures are typically used to describe certain specific relationships between objects. Vertices represent objects, and edges represent the existence of such relationships between two objects.
 
-## 参考资料
+## References
 
-[图论 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/图论)
+[Graph theory - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Graph_theory)

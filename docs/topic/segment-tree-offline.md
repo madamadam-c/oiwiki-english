@@ -1,37 +1,37 @@
 author: xiezheyuan
 
-线段树与离线询问结合的问题在 OI 领域也有出现．这种技巧又被称为线段树分治．
+Problems combining segment trees with offline queries also appear in OI. This technique is also called segment-tree divide and conquer.
 
-假如你需要维护一些信息，这些信息会在某一个时间段内出现，要求在离线的前提下回答某一个时刻的信息并，则可以考虑使用线段树分治的技巧．
+If you need to maintain information that appears during certain time intervals, and you need to answer the combined information at some time under an offline setting, you can consider using segment-tree divide and conquer.
 
-实际上线段树分治常有以下用途：
+In practice, segment-tree divide and conquer often has the following uses:
 
-1.  用原本不支持删除但是支持撤销的数据结构来模拟删除操作．如朴素的并查集无法高效支持删边操作．
-2.  不同属性的数据分别计算．如需要求出除了某一种颜色外，其他颜色数据的答案．
+1.  Simulating deletion operations with a data structure that originally does not support deletion but supports rollback. For example, a naive DSU cannot efficiently support edge deletion.
+2.  Computing data with different attributes separately. For example, computing the answer for all colors except one specified color.
 
-如果大家现在不明白没有关系，这两种用途我们都会在例题中阐述．
+It is fine if these are not clear yet; both uses will be explained in the examples.
 
-## 过程
+## Procedure
 
-首先我们建立一个线段树来维护时刻，每一个节点维护一个 `vector` 来存储位于这一段时刻的信息．
+First build a segment tree over time. Each node maintains a `vector` storing the information that exists during this time interval.
 
-插入一个信息到线段树中和普通线段树的区间修改是类似的．
+Inserting information into the segment tree is similar to a normal segment tree range update.
 
-然后我们考虑如何处理每一个时间段的信息并．考虑从根节点开始分治，维护当前的信息并，然后每到一个节点的时候将这个节点的所有信息进行合并．回溯时撤销这一部分的贡献．最后到达叶子节点时的信息并就是对应的答案．
+Then consider how to process the combined information over every time interval. Start divide-and-conquer from the root, maintain the current combined information, and when visiting a node, merge all information stored at that node. When backtracking, undo this part of the contribution. Finally, when a leaf is reached, the current combined information is the answer for that time.
 
-如果更改信息的时间复杂度为 $O(T(n))$，可以通过设置一个栈保留更改，以 $O(T(n))$ 的时间复杂度撤销．撤销不维持均摊复杂度．
+If changing information has time complexity $O(T(n))$, we can keep the changes on a stack and undo them in $O(T(n))$ time. Rollback does not preserve amortized complexity.
 
-整个分治流程的总时间复杂度是 $O(n\log n(T(n) + M(n)))$ 的，其中 $O(M(n))$ 为合并信息的时间复杂度，空间复杂度为 $O(n\log n)$．
+The total time complexity of the whole divide-and-conquer process is $O(n\log n(T(n) + M(n)))$, where $O(M(n))$ is the time complexity of merging information, and the space complexity is $O(n\log n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #define ls (i << 1)
     #define rs (i << 1 | 1)
     #define mid ((l + r) >> 1)
     
-    vector<Object> tree[N << 2];  // 线段树
+    vector<Object> tree[N << 2];  // Segment tree
     
-    void update(int ql, int qr, Object obj, int i, int l, int r) {  // 插入
+    void update(int ql, int qr, Object obj, int i, int l, int r) {  // Insert
       if (ql <= l && r <= qr) {
         tree[i].push_back(obj);
         return;
@@ -40,108 +40,108 @@ author: xiezheyuan
       if (qr > mid) update(ql, qr, obj, rs, mid + 1, r);
     }
     
-    stack<Object> sta;  // 用于撤销的栈
-    Object now;         // 当前的信息并
-    Object ans[N];      // 答案
+    stack<Object> sta;  // Stack for rollback
+    Object now;         // Current merged information
+    Object ans[N];      // Answers
     
     void solve(int i, int l, int r) {
-      auto lvl = sta.size();  // 记录一下应当撤销到第几个
-      for (Object x : tree[i]) sta.push(now), now = Merge(now, x);  // 合并信息
+      auto lvl = sta.size();  // Record the rollback point
+      for (Object x : tree[i]) sta.push(now), now = Merge(now, x);  // Merge information
       if (l == r)
-        ans[i] = now;  // 记录一下答案
+        ans[i] = now;  // Record the answer
       else
-        solve(ls, l, mid), solve(rs, mid + 1, r);  // 分治
-      while (sta.size() != lvl) {                  // 撤销信息
+        solve(ls, l, mid), solve(rs, mid + 1, r);  // Divide and conquer
+      while (sta.size() != lvl) {                  // Roll back information
         now = sta.top();
         sta.pop();
       }
     }
     ```
 
-## 例题
+## Examples
 
-???+ note "[luogu P5787 二分图/【模板】线段树分治](https://www.luogu.com.cn/problem/P5787)"
-    你需要维护一个 $n$ 个点 $m$ 条边的无向图．第 $i$ 条边为 $(x_i,y_i)$，出现的时刻为 $[l_i,r_i)$，其余时刻消失．
+???+ note "[Luogu P5787 Bipartite Graph / Template Segment-Tree Divide and Conquer](https://www.luogu.com.cn/problem/P5787)"
+    Maintain an undirected graph with $n$ vertices and $m$ edges. The $i$-th edge is $(x_i,y_i)$ and exists during time interval $[l_i,r_i)$; it disappears at all other times.
     
-    对于每一个时刻，若此时该图为二分图，输出 `Yes`，否则输出 `No`．
+    For every time, output `Yes` if the graph is bipartite at that time, otherwise output `No`.
     
-    ??? note "解题思路"
-        使用种类并查集来维护一个图是否是二分图，然后就可以套用线段树分治了．
+    ??? note "Solution"
+        Use species DSU to maintain whether a graph is bipartite, then apply segment-tree divide and conquer.
         
-        注意可撤销的并查集不能路径压缩，只能按秩合并．
+        Note that rollback DSU cannot use path compression; it can only use union by rank.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/topic/code/segment-tree-offline/segment-tree-offline_1.cpp"
         ```
 
-???+ note "颜色限制 restriction"
-    一个 $n$ 点 $m$ 边的无向图，有 $k$ 种颜色编号为 $0\sim k-1$，每条边有一种颜色．
+???+ note "Color Restriction"
+    Given an undirected graph with $n$ vertices and $m$ edges. There are $k$ colors numbered $0\sim k-1$, and every edge has one color.
     
-    对于每种颜色，请判断假如删去所有这种颜色的边，得到的图是否连通？是否是一棵树？
+    For each color, determine whether deleting all edges of this color makes the resulting graph connected, and whether it makes the resulting graph a tree.
     
-    输出满足删去后图连通的颜色数和删去后图是树的颜色数．
+    Output the number of colors for which the graph is connected after deletion, and the number of colors for which the graph is a tree after deletion.
     
-    ??? note "解题思路"
-        对于每一种颜色，建立一个时间，在这个时间内没有这个颜色的边，其他边都有．用一个并查集维护一下即可．
+    ??? note "Solution"
+        For each color, create a time during which edges of this color do not exist and all other edges do. Maintain this with a DSU.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/topic/code/segment-tree-offline/segment-tree-offline_2.cpp"
         ```
 
-???+ note "[luogu P4219 \[BJOI2014\] 大融合](https://www.luogu.com.cn/problem/P4219)"
-    需要维护一个 $n$ 个点的森林，初始时是散点．
+???+ note "[Luogu P4219 \[BJOI2014\] Great Fusion](https://www.luogu.com.cn/problem/P4219)"
+    Maintain a forest with $n$ vertices, initially all isolated.
     
-    有 $q$ 个操作，支持：
+    There are $q$ operations:
     
-    -   `A x y` 连边 $(x,y)$．
-    -   `Q x y` 输出经过边 $(x,y)$ 的路径数．
+    -   `A x y` adds an edge $(x,y)$.
+    -   `Q x y` outputs the number of paths passing through edge $(x,y)$.
     
-    允许离线．
+    Offline processing is allowed.
     
-    ??? note "解题思路"
-        考虑允许离线，因此可以想到线段树分治．
+    ??? note "Solution"
+        Since offline processing is allowed, segment-tree divide and conquer is natural.
         
-        然后考虑如何支持 Q 操作．如果不存在 $(x,y)$ 这条边，答案就是 $x$ 所在连通块大小乘上 $y$ 所在连通块大小．可以用并查集维护．
+        Then consider how to support Q operations. If edge $(x,y)$ does not exist, the answer is the size of the connected component containing $x$ multiplied by the size of the connected component containing $y$. This can be maintained with DSU.
         
-        因此你可以将 Q 拆成三个时间 $k-1,k,k+1$．其中 $k-1$ 是这条边的终止时刻，$k+1$ 是这条边的起始时刻．这样 $k$ 就没有这条边，正好回答询问．
+        Therefore, split Q into three times: $k-1,k,k+1$. Here $k-1$ is the end time of this edge, and $k+1$ is the start time of this edge. Thus at time $k$, this edge is absent, which is exactly when the query should be answered.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/topic/code/segment-tree-offline/segment-tree-offline_3.cpp"
         ```
 
-???+ note "[luogu P2056 \[ZJOI2007\] 捉迷藏](https://www.luogu.com.cn/problem/P2056)"
-    出一个 $n$ 个点的树，每个点有黑白两种颜色．初始时每个点都是黑色的．$q$ 次操作，支持：
+???+ note "[Luogu P2056 \[ZJOI2007\] Hide and Seek](https://www.luogu.com.cn/problem/P2056)"
+    Given a tree with $n$ vertices. Each vertex has one of two colors, black or white. Initially every vertex is black. There are $q$ operations:
     
-    -   `C x` 将第 $x$ 个点的颜色反转．
-    -   `G` 询问树上两个黑色点的最远距离．特别地，若不存在黑色点，输出 $-1$．
+    -   `C x` flips the color of vertex $x$.
+    -   `G` queries the farthest distance between two black vertices in the tree. In particular, if no black vertex exists, output $-1$.
     
-    允许离线．
+    Offline processing is allowed.
     
-    ??? note "解题思路"
-        首先考虑如何维护树上点集的直径，有下面的推论：
+    ??? note "Solution"
+        First consider how to maintain the diameter of a set of vertices. We use the following conclusion:
         
-        > 对于一个集合 $S$ 和只有一个点的集合 $\{P\}$．若集合 $S$ 的直径为 $(U,V)$．则点集 $S\cap\{P\}$ 的直径只可能为 $(U,V),(U,P)$ 或 $(V,P)$．
+        > For a set $S$ and a singleton set $\{P\}$, if the diameter of $S$ is $(U,V)$, then the diameter of the point set $S\cap\{P\}$ can only be one of $(U,V),(U,P)$, or $(V,P)$.
         
-        然后考虑解决原问题．我们可以考虑维护黑色点集，维护每一个点在黑色点集中的若干个时间段（具体你开一个桶记录一下上一次进入黑色点集的时刻即可）．
+        Now solve the original problem. Maintain the set of black vertices, and maintain several time intervals during which each vertex belongs to the black set (specifically, use a bucket to record the last time it entered the black set).
         
-        然后就自然地想到离线，将所有时间刻插入到线段树中．然后在线段树上分治，每次线段树上的点会记录当前时间段点集新增的点，新增点可以使用上面的推论，找到新点集直径的两个端点．
+        Then naturally process offline: insert all time intervals into the segment tree. Perform divide and conquer on the segment tree; each segment-tree node records the vertices newly added during the current time interval. For each newly added vertex, use the conclusion above to find the two endpoints of the new vertex-set diameter.
         
-        撤销是平凡的，开一个栈记录一下直径端点的变化即可．
+        Rollback is straightforward: use a stack to record changes to the diameter endpoints.
     
-    ??? note "参考代码"
+    ??? note "Reference Code"
         ```cpp
         --8<-- "docs/topic/code/segment-tree-offline/segment-tree-offline_4.cpp"
         ```
 
-## 习题
+## Exercises
 
--   [CF601E A Museum Robbery](https://codeforces.com/problemset/problem/601/E) 线段树分治 + 背包 dp．
--   [CF19E Fairy](https://codeforces.com/problemset/problem/19/E) 线段树分治 + 种类并查集．
--   [luogu P5227 \[AHOI2013\] 连通图](https://www.luogu.com.cn/problem/P5227) 线段树分治 + 并查集．
--   [luogu P4319 变化的道路](https://www.luogu.com.cn/problem/P4319) 线段树分治 + Link Cut Tree 维护最小生成树．
--   [luogu P3733 \[HAOI2017\] 八纵八横](https://www.luogu.com.cn/problem/P3733) 线段树分治 + 线性基．
+-   [CF601E A Museum Robbery](https://codeforces.com/problemset/problem/601/E): segment-tree divide and conquer + knapsack DP.
+-   [CF19E Fairy](https://codeforces.com/problemset/problem/19/E): segment-tree divide and conquer + species DSU.
+-   [Luogu P5227 \[AHOI2013\] Connected Graph](https://www.luogu.com.cn/problem/P5227): segment-tree divide and conquer + DSU.
+-   [Luogu P4319 Changing Roads](https://www.luogu.com.cn/problem/P4319): segment-tree divide and conquer + Link-Cut Tree to maintain the minimum spanning tree.
+-   [Luogu P3733 \[HAOI2017\] Eight Verticals and Eight Horizontals](https://www.luogu.com.cn/problem/P3733): segment-tree divide and conquer + linear basis.
 
-**本页面部分内容参考自博文 [Deleting from a data structure](https://cp-algorithms.com/data_structures/deleting_in_log_n.html)，版权协议为 CC-BY-SA 4.0．**
+**Part of this page refers to the blog post [Deleting from a data structure](https://cp-algorithms.com/data_structures/deleting_in_log_n.html), licensed under CC-BY-SA 4.0.**

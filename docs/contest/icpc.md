@@ -1,58 +1,58 @@
 author: NachtgeistW, Ir1d, Xeonacid, H-J-Granger, abc1763613206, YuzhenQin
 
-## 赛事介绍
+## Contest Introduction
 
 ### ICPC
 
-**ICPC**（英文：International Collegiate Programming Contest，中文：国际大学生程序设计竞赛）由 ICPC 基金会（英文：ICPC Foundation）举办，是最具影响力的大学生计算机竞赛．由于以前 ACM 赞助这个竞赛，也有很多人习惯叫它 ACM 竞赛．
+**ICPC** (International Collegiate Programming Contest) is organized by the ICPC Foundation and is the most influential collegiate programming contest. Since ACM used to sponsor this contest, many people are also accustomed to calling it the ACM Contest.
 
-ICPC 主要分为区域赛（Regionals）和总决赛（World Finals）两部分．
+ICPC is mainly divided into two parts: Regionals and World Finals.
 
-官网地址：<https://icpc.global>
+Official website: <https://icpc.global>
 
 ### CCPC
 
-官网地址：<https://ccpc.io>
+Official website: <https://ccpc.io>
 
-中国大学生程序设计竞赛．
+Chinese Collegiate Programming Contest.
 
-和 ICPC 显著的区别是很多学校是不报销的．
+A notable difference from ICPC is that many universities do not reimburse expenses.
 
-## 赛制介绍
+## Contest Format
 
-一般是三个人组成一队使用一台机器，在比赛时有多次提交机会．比赛实时评测并返回结果，如果提交的结果错误会有 20 分钟的罚时，错误次数越多，加罚的时间也越长．每个题目只有在所有数据点全部正确后才能得到分数．比赛排名根据做题数来评判，做题数相同的，根据总用时来评判．总用时是每题用时的和．每题的用时是从比赛开始到做出该题的分钟数与该题的罚时之和．
+Generally, three people form a team and share one computer during the contest, with multiple submission opportunities. The contest is judged in real time and returns results; if a submission is incorrect, there is a 20-minute penalty, and the more incorrect submissions, the longer the added penalty. Each problem only receives credit when all test cases are correct. Contest rankings are determined first by the number of problems solved; teams with the same number of problems solved are ranked by total time. Total time is the sum of the time for each problem. The time for each problem is the number of minutes from the start of the contest to the correct submission plus the penalty for that problem.
 
-一些 ICPC 相关赛事中，比赛结束前一小时进行封榜，封榜后的提交和排名将无法被其他选手看见．
+In some ICPC-related contests, the scoreboard is frozen one hour before the end of the contest, and submissions and ranking changes after the freeze cannot be seen by other contestants.
 
-在 ICPC 相关赛事中，选手允许带一定量的纸质资料．
+In ICPC-related contests, contestants are allowed to bring a certain amount of printed materials.
 
-除 ICPC 和 CCPC 外，众多比赛也采用该赛制，如 LeetCode 周赛及全国编程大赛、牛客小白赛练习赛挑战赛等．
+Besides ICPC and CCPC, many other contests also adopt this format, such as LeetCode Weekly Contests and National Programming Contests, Nowcoder Beginner Contests, Practice Contests, Challenge Contests, etc.
 
-## 赛季赛程
+## Season Schedule
 
--   ICPC/CCPC 网络赛（8 月底至 9 月初）
--   ICPC/CCPC 区域赛（9 月底至 11 月底）
--   ICPC EC Final/CCPC Final（12 月中旬）
--   ICPC World Finals（次年 4 月至 6 月）
+- ICPC/CCPC Online Contests (late August to early September)
+- ICPC/CCPC Regionals (late September to late November)
+- ICPC EC Final/CCPC Final (mid-December)
+- ICPC World Finals (April to June of the following year)
 
-## 训练指南
+## Training Guide
 
-### 多校联合训练
+### Multi-University Training
 
-暑期在 [HDU OJ](http://acm.hdu.edu.cn) 举行的训练赛．有奖金，题目质量高，历经多年积累已有丰富资源．
+Joint training contests held during the summer on [HDU OJ](http://acm.hdu.edu.cn). There are prizes, the problems are of high quality, and years of accumulation have yielded abundant resources.
 
-OJ 里查询用的关键词：`Multi-University Training Contest`．
+Search keyword on the OJ: `Multi-University Training Contest`.
 
-### 国内区域赛
+### Domestic Regionals
 
-在 [Virtual Judge](https://vjudge.net/) 里可以搜到精选题集．
+Selected problem sets can be found on [Virtual Judge](https://vjudge.net/).
 
-### 训练营
+### Training Camps
 
--   寒假的时候头条/清华/CCPC (Wannafly Camp) 举办的 Camp
--   Wannafly Camp
+- Camps held during winter break by Toutiao/Tsinghua/CCPC (Wannafly Camp)
+- Wannafly Camp
 
-## 训练资源
+## Training Resources
 
--   QOJ：<https://qoj.ac>
--   Codeforces Gym：<https://codeforces.com/gyms>
+- QOJ: <https://qoj.ac>
+- Codeforces Gym: <https://codeforces.com/gyms>

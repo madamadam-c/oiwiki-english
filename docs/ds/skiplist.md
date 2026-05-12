@@ -1,36 +1,36 @@
-跳表 (Skip List) 是由 William Pugh 发明的一种查找数据结构，支持对数据的快速查找，插入和删除．
+A skip list is a search data structure invented by William Pugh. It supports fast search, insertion, and deletion of data.
 
-跳表的期望空间复杂度为 $O(n)$，跳表的查询，插入和删除操作的期望时间复杂度都为 $O(\log n)$．
+The expected space complexity of a skip list is $O(n)$, and the expected time complexity of search, insertion, and deletion is $O(\log n)$.
 
-## 基本思想
+## Basic Idea
 
-顾名思义，跳表是一种类似于链表的数据结构．更加准确地说，跳表是对有序链表的改进．
+As the name suggests, a skip list is a data structure similar to a linked list. More precisely, it is an improvement over an ordered linked list.
 
-为方便讨论，后续所有有序链表默认为 **升序** 排序．
+For convenience, all ordered linked lists discussed below are assumed to be sorted in **ascending** order.
 
-一个有序链表的查找操作，就是从头部开始逐个比较，直到当前节点的值大于或者等于目标节点的值．很明显，这个操作的复杂度是 $O(n)$．
+Searching in an ordered linked list means comparing nodes one by one from the head until the value of the current node is greater than or equal to the target value. Clearly, this operation has complexity $O(n)$.
 
-跳表在有序链表的基础上，引入了 **分层** 的概念．首先，跳表的每一层都是一个有序链表，特别地，最底层是初始的有序链表．每个位于第 $i$ 层的节点有 $p$ 的概率出现在第 $i+1$ 层，$p$ 为常数．
+A skip list introduces the concept of **layers** on top of an ordered linked list. First, every layer of a skip list is an ordered linked list; in particular, the bottom layer is the original ordered linked list. Each node on layer $i$ has probability $p$ of appearing on layer $i+1$, where $p$ is a constant.
 
-记在 $n$ 个节点的跳表中，期望包含 $\frac{1}{p}$ 个元素的层为第 $L(n)$ 层，易得 $L(n) = \log_{\frac{1}{p}}n$．
+In a skip list with $n$ nodes, let the layer expected to contain $\frac{1}{p}$ elements be layer $L(n)$. It is easy to obtain $L(n) = \log_{\frac{1}{p}}n$.
 
-在跳表中查找，就是从第 $L(n)$ 层开始，水平地逐个比较直至当前节点的下一个节点大于等于目标节点，然后移动至下一层．重复这个过程直至到达第一层且无法继续进行操作．此时，若下一个节点是目标节点，则成功查找；反之，则元素不存在．这样一来，查找的过程中会跳过一些没有必要的比较，所以相比于有序链表的查询，跳表的查询更快．可以证明，跳表查询的平均复杂度为 $O(\log n)$．
+Searching in a skip list starts from layer $L(n)$, compares horizontally until the next node of the current node is greater than or equal to the target node, and then moves down one layer. This process is repeated until the first layer is reached and no further operation can be performed. At that point, if the next node is the target node, the search succeeds; otherwise, the element does not exist. In this way, unnecessary comparisons are skipped during the search, so searching in a skip list is faster than searching in an ordered linked list. It can be proved that the average complexity of skip-list search is $O(\log n)$.
 
-## 复杂度证明
+## Complexity Proof
 
-### 空间复杂度
+### Space Complexity
 
-对于一个节点而言，节点的最高层数为 $i$ 的概率为 $p^{i-1}(1 - p)$．所以，跳表的期望层数为 $\sum_{i\ge 1} ip^{i - 1}(1-p) = \frac{1}{1 - p}$，且因为 $p$ 为常数，所以跳表的 **期望空间复杂度** 为 $O(n)$．
+For a node, the probability that its highest level is $i$ is $p^{i-1}(1 - p)$. Therefore, the expected number of levels of a skip list is $\sum_{i\ge 1} ip^{i - 1}(1-p) = \frac{1}{1 - p}$. Since $p$ is a constant, the **expected space complexity** of a skip list is $O(n)$.
 
-在最坏的情况下，每一层有序链表等于初始有序链表，即跳表的 **最差空间复杂度** 为 $O(n \log n)$．
+In the worst case, the ordered linked list on every layer is the same as the original ordered linked list, so the **worst-case space complexity** of a skip list is $O(n \log n)$.
 
-### 时间复杂度
+### Time Complexity
 
-从后向前分析查找路径，这个过程可以分为从最底层爬到第 $L(n)$ 层和后续操作两个部分．在分析时，假设一个节点的具体信息在它被访问之前是未知的．
+Analyze the search path backward. This process can be divided into two parts: climbing from the bottom layer to layer $L(n)$, and the subsequent operations. During the analysis, assume that the detailed information of a node is unknown before it is visited.
 
-假设当前我们处于一个第 $i$ 层的节点 $x$，我们并不知道 $x$ 的最大层数和 $x$ 左侧节点的最大层数，只知道 $x$ 的最大层数至少为 $i$．如果 $x$ 的最大层数大于 $i$，那么下一步应该是向上走，这种情况的概率为 $p$；如果 $x$ 的最大层数等于 $i$，那么下一步应该是向左走，这种情况概率为 $1-p$．
+Suppose we are currently on layer $i$ at a node $x$. We do not know the maximum level of $x$ or the maximum level of the node to the left of $x$; we only know that the maximum level of $x$ is at least $i$. If the maximum level of $x$ is greater than $i$, the next step should move upward, which happens with probability $p$; if the maximum level of $x$ equals $i$, the next step should move left, which happens with probability $1-p$.
 
-令 $C(i)$ 为在一个无限长度的跳表中向上爬 $i$ 层的期望代价，那么有：
+Let $C(i)$ be the expected cost of climbing up $i$ layers in an infinite skip list. Then:
 
 $$
 \begin{aligned}
@@ -39,23 +39,23 @@ C(i) & = (1-p)(1+C(i)) + p(1+C(i-1))
 \end{aligned}
 $$
 
-解得 $C(i)=\frac{i}{p}$．
+Solving gives $C(i)=\frac{i}{p}$.
 
-由此可以得出：在长度为 $n$ 的跳表中，从最底层爬到第 $L(n)$ 层的期望步数存在上界 $\frac{L(n) - 1}{p}$．
+Thus, in a skip list of length $n$, the expected number of steps to climb from the bottom layer to layer $L(n)$ has upper bound $\frac{L(n) - 1}{p}$.
 
-现在只需要分析爬到第 $L(n)$ 层后还要再走多少步．易得，到了第 $L(n)$ 层后，向左走的步数不会超过第 $L(n)$ 层及更高层的节点数总和，而这个总和的期望为 $\frac{1}{p}$．所以到了第 $L(n)$ 层后向左走的期望步数存在上界 $\frac{1}{p}$．同理，到了第 $L(n)$ 层后向上走的期望步数存在上界 $\frac{1}{p}$．
+It remains to analyze how many more steps are needed after reaching layer $L(n)$. After reaching layer $L(n)$, the number of left moves is at most the total number of nodes on layer $L(n)$ and higher layers, whose expectation is $\frac{1}{p}$. Therefore, after reaching layer $L(n)$, the expected number of left moves has upper bound $\frac{1}{p}$. Similarly, the expected number of upward moves after reaching layer $L(n)$ also has upper bound $\frac{1}{p}$.
 
-所以，跳表查询的期望查找步数为 $\frac{L(n) - 1}{p} + \frac{2}{p}$，又因为 $L(n)=\log_{\frac{1}{p}}n$，所以跳表查询的 **期望时间复杂度** 为 $O(\log n)$．
+Therefore, the expected number of search steps in a skip list is $\frac{L(n) - 1}{p} + \frac{2}{p}$. Since $L(n)=\log_{\frac{1}{p}}n$, the **expected time complexity** of skip-list search is $O(\log n)$.
 
-在最坏的情况下，每一层有序链表等于初始有序链表，查找过程相当于对最高层的有序链表进行查询，即跳表查询操作的 **最差时间复杂度** 为 $O(n)$．
+In the worst case, the ordered linked list on every layer is the same as the original ordered linked list, and the search process is equivalent to searching the ordered linked list on the top layer. Thus, the **worst-case time complexity** of skip-list search is $O(n)$.
 
-插入操作和删除操作就是进行一遍查询的过程，途中记录需要修改的节点，最后完成修改．易得每一层至多只需要修改一个节点，又因为跳表期望层数为 $\log_{\frac{1}{p}}n$，所以插入和修改的 **期望时间复杂度** 也为 $O(\log n)$．
+Insertion and deletion each perform one search, record the nodes that need modification along the way, and finally complete the modification. Each layer needs to modify at most one node, and the expected number of levels of a skip list is $\log_{\frac{1}{p}}n$, so the **expected time complexity** of insertion and modification is also $O(\log n)$.
 
-## 具体实现
+## Implementation Details
 
-### 获取节点的最大层数
+### Getting the Maximum Level of a Node
 
-模拟以 $p$ 的概率往上加一层，最后和上限值取最小．
+Simulate adding one more level with probability $p$, then take the minimum with the upper bound.
 
 ```cpp
 int randomLevel() {
@@ -66,38 +66,38 @@ int randomLevel() {
 }
 ```
 
-### 查询
+### Search
 
-查询跳表中是否存在键值为 `key` 的节点．具体实现时，可以设置两个哨兵节点以减少边界条件的讨论．
+Search whether a node with key `key` exists in the skip list. In an implementation, two sentinel nodes can be used to reduce boundary-condition handling.
 
 ```cpp
 V& find(const K& key) {
   SkipListNode<K, V>* p = head;
 
-  // 找到该层最后一个键值小于 key 的节点，然后走向下一层
+  // Find the last node on this layer whose key is less than key, then move down.
   for (int i = level; i >= 0; --i) {
     while (p->forward[i]->key < key) {
       p = p->forward[i];
     }
   }
-  // 现在是小于，所以还需要再往后走一步
+  // It is still less than key, so move one more step forward.
   p = p->forward[0];
 
-  // 成功找到节点
+  // Successfully found the node.
   if (p->key == key) return p->value;
 
-  // 节点不存在，返回 INVALID
+  // The node does not exist; return INVALID.
   return tail->value;
 }
 ```
 
-### 插入
+### Insertion
 
-插入节点 `(key, value)`．插入节点的过程就是先执行一遍查询的过程，中途记录新节点是要插入哪一些节点的后面，最后再执行插入．每一层最后一个键值小于 `key` 的节点，就是需要进行修改的节点．
+Insert node `(key, value)`. The insertion process first performs a search, records which nodes the new node should be inserted after, and finally performs the insertion. The last node on each layer whose key is less than `key` is the node that needs modification.
 
 ```cpp
 void insert(const K &key, const V &value) {
-  // 用于记录需要修改的节点
+  // Records the nodes that need modification.
   SkipListNode<K, V> *update[MAXL + 1];
 
   SkipListNode<K, V> *p = head;
@@ -105,27 +105,27 @@ void insert(const K &key, const V &value) {
     while (p->forward[i]->key < key) {
       p = p->forward[i];
     }
-    // 第 i 层需要修改的节点为 p
+    // The node to modify on layer i is p.
     update[i] = p;
   }
   p = p->forward[0];
 
-  // 若已存在则修改
+  // If it already exists, modify it.
   if (p->key == key) {
     p->value = value;
     return;
   }
 
-  // 获取新节点的最大层数
+  // Get the maximum level of the new node.
   int lv = randomLevel();
   if (lv > level) {
     lv = ++level;
     update[lv] = head;
   }
 
-  // 新建节点
+  // Create a new node.
   SkipListNode<K, V> *newNode = new SkipListNode<K, V>(key, value, lv);
-  // 在第 0~lv 层插入新节点
+  // Insert the new node on layers 0 through lv.
   for (int i = lv; i >= 0; --i) {
     p = update[i];
     newNode->forward[i] = p->forward[i];
@@ -136,13 +136,13 @@ void insert(const K &key, const V &value) {
 }
 ```
 
-### 删除
+### Deletion
 
-删除键值为 `key` 的节点．删除节点的过程就是先执行一遍查询的过程，中途记录要删的节点是在哪一些节点的后面，最后再执行删除．每一层最后一个键值小于 `key` 的节点，就是需要进行修改的节点．
+Delete the node whose key is `key`. The deletion process first performs a search, records which nodes precede the node to delete, and finally performs the deletion. The last node on each layer whose key is less than `key` is the node that needs modification.
 
 ```cpp
 bool erase(const K &key) {
-  // 用于记录需要修改的节点
+  // Records the nodes that need modification.
   SkipListNode<K, V> *update[MAXL + 1];
 
   SkipListNode<K, V> *p = head;
@@ -150,41 +150,41 @@ bool erase(const K &key) {
     while (p->forward[i]->key < key) {
       p = p->forward[i];
     }
-    // 第 i 层需要修改的节点为 p
+    // The node to modify on layer i is p.
     update[i] = p;
   }
   p = p->forward[0];
 
-  // 节点不存在
+  // The node does not exist.
   if (p->key != key) return false;
 
-  // 从最底层开始删除
+  // Delete from the bottom layer upward.
   for (int i = 0; i <= level; ++i) {
-    // 如果这层没有 p 删除就完成了
+    // If this layer does not contain p, deletion is complete.
     if (update[i]->forward[i] != p) {
       break;
     }
-    // 断开 p 的连接
+    // Disconnect p.
     update[i]->forward[i] = p->forward[i];
   }
 
-  // 回收空间
+  // Reclaim memory.
   delete p;
 
-  // 删除节点可能导致最大层数减少
+  // Deleting a node may reduce the maximum level.
   while (level > 0 && head->forward[level] == tail) --level;
 
-  // 跳表长度
+  // Skip-list length.
   --length;
   return true;
 }
 ```
 
-### 完整代码
+### Complete Code
 
-下列代码是用跳表实现的 map．未经正经测试，仅供参考．
+The following code is a map implemented with a skip list. It has not been thoroughly tested and is for reference only.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     #include <cassert>
     #include <climits>
@@ -360,17 +360,17 @@ bool erase(const K &key) {
     }
     ```
 
-## 跳表的随机访问优化
+## Random-Access Optimization for Skip Lists
 
-访问跳表中第 $k$ 个节点，相当于访问初始有序链表中的第 $k$ 个节点，很明显这个操作的时间复杂度是 $O(n)$ 的，并不足够优秀．
+Accessing the $k$-th node in a skip list is equivalent to accessing the $k$-th node in the original ordered linked list. Clearly, this operation has time complexity $O(n)$, which is not good enough.
 
-跳表的随机访问优化就是对每一个前向指针，再多维护这个前向指针的长度．假设 $A$ 和 $B$ 都是跳表中的节点，其中 $A$ 为跳表的第 $a$ 个节点，$B$ 为跳表的第 $b$ 个节点 $(a < b)$，且在跳表的某一层中 $A$ 的前向指针指向 $B$，那么这个前向指针的长度为 $b - a$．
+The random-access optimization for skip lists maintains, for every forward pointer, the length of that forward pointer. Suppose $A$ and $B$ are both nodes in the skip list, where $A$ is the $a$-th node and $B$ is the $b$-th node $(a < b)$, and the forward pointer of $A$ on some layer points to $B$. Then the length of this forward pointer is $b - a$.
 
-现在访问跳表中的第 $k$ 个节点，就可以从顶层开始，水平地遍历该层的链表，直到当前节点的位置加上当前节点在该层的前向指针长度大于等于 $k$，然后移动至下一层．重复这个过程直至到达第一层且无法继续行操作．此时，当前节点就是跳表中第 $k$ 个节点．
+Now, to access the $k$-th node in the skip list, start from the top layer and traverse that layer horizontally until the current node's position plus the length of its forward pointer on that layer is greater than or equal to $k$, then move down one layer. Repeat this process until the first layer is reached and no further operation can be performed. At that point, the current node is the $k$-th node in the skip list.
 
-这样，就可以快速地访问到跳表的第 $k$ 个元素．可以证明，这个操作的时间复杂度为 $O(\log n)$．
+This makes it possible to quickly access the $k$-th element of a skip list. It can be proved that this operation has time complexity $O(\log n)$.
 
-## 参考资料
+## References
 
 1.  [Skip Lists: A Probabilistic Alternative to Balanced Trees](https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf)
 2.  [Skip List](https://en.wikipedia.org/wiki/Skip_list)

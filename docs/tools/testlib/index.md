@@ -1,18 +1,18 @@
 author: Xeonacid, sshwy
 
-如果你正在使用 C++ 出一道算法竞赛题目，Testlib 是编写相关程序（generator, validator, checker, interactor）时的优秀辅助工具．它是俄罗斯和其他一些国家的出题人的必备工具，许多比赛也都在用它：ROI、ICPC 区域赛、所有 Codeforces round……
+If you are using C++ to create an algorithm competition problem, Testlib is an excellent tool when writing related programs (generator, validator, checker, interactor). It is a must-have tool for problem setters in Russia and some other countries, and many competitions use it: ROI, ICPC regionals, all Codeforces rounds...
 
-Testlib 库仅有 `testlib.h` 一个文件，使用时仅需在所编写的程序开头添加 `#include "testlib.h"` 即可．
+The Testlib library consists of only one file `testlib.h`, and to use it, you only need to add `#include "testlib.h"` at the beginning of your program.
 
-Testlib 的具体用途：
+Specific uses of Testlib:
 
--   编写 [Generator](./generator.md)，即数据生成器．
--   编写 [Validator](./validator.md)，即数据校验器，判断生成数据是否符合题目要求，如数据范围、格式等．
--   编写 [Interactor](./interactor.md)，即交互器，用于交互题．
--   编写 [Checker](./checker.md)，即 [Special Judge](../special-judge.md)．
+-   Write [Generator](./generator.md), a data generator.
+-   Write [Validator](./validator.md), a data validator, to check if generated data meets problem requirements such as data range, format, etc.
+-   Write [Interactor](./interactor.md), an interactor for interactive problems.
+-   Write [Checker](./checker.md), a [Special Judge](../special-judge.md).
 
-Testlib 与 Codeforces 开发的 [Polygon](https://polygon.codeforces.com/) 出题平台完全兼容．
+Testlib is fully compatible with the [Polygon](https://polygon.codeforces.com/) problem creation platform developed by Codeforces.
 
-`testlib.h` 在 2005 年移植自 `testlib.pas`，并一直在更新．Testlib 与绝大多数编译器兼容，如 VC++ 和 GCC g++，并兼容 C++11．
+`testlib.h` was ported from `testlib.pas` in 2005 and has been continuously updated. Testlib is compatible with most compilers like VC++ and GCC g++, and is compatible with C++11.
 
-**本文主要翻译自 [Testlib - Codeforces](https://codeforces.com/testlib)．`testlib.h` 的 GitHub 存储库为 [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)．**
+**This article is mainly translated from [Testlib - Codeforces](https://codeforces.com/testlib). The GitHub repository for `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**

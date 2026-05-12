@@ -1,61 +1,61 @@
-## 前言
+## Preface
 
-1959 年，「支配」这一概念由 Reese T. Prosser 在 [一篇关于网络流的论文](http://portal.acm.org/ft_gateway.cfm?id=1460314&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747) 中提出，但并未提出具体的求解算法；直到 1969 年，Edward S. Lowry 和 C. W. Medlock 才首次提出了 [有效的求解算法](http://portal.acm.org/ft_gateway.cfm?id=362838&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747)．而目前使用最为广泛的 Lengauer–Tarjan 算法则由 Lengauer 和 Tarjan 于 1979 年在 [一篇论文](https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/a%20fast%20algorithm%20for%20finding.pdf) 中提出．
+The concept of "domination" was introduced by Reese T. Prosser in [a paper on network flow](http://portal.acm.org/ft_gateway.cfm?id=1460314&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747) in 1959, but no specific algorithm was proposed; it was not until 1969 that Edward S. Lowry and C. W. Medlock first proposed [an effective algorithm](http://portal.acm.org/ft_gateway.cfm?id=362838&type=pdf&coll=GUIDE&dl=GUIDE&CFID=79528182&CFTOKEN=33765747). The most widely used Lengauer–Tarjan algorithm was proposed by Lengauer and Tarjan in 1979 in [a paper](https://www.cs.princeton.edu/courses/archive/fall03/cs528/handouts/a%20fast%20algorithm%20for%20finding.pdf).
 
-在 OI 界中，支配树的概念最早在 [ZJOI2012 灾难](https://www.luogu.com.cn/problem/P2597) 中被引入，当时也被称为「灭绝树」；陈孙立也在 2020 年的国家集训队论文中介绍了这一算法．
+In the OI community, the concept of a dominator tree was first introduced in [ZJOI2012 Disaster](https://www.luogu.com.cn/problem/P2597), where it was also called an "extinction tree"; Chen Sunli also introduced this algorithm in a 2020 national training team paper.
 
-目前支配树在竞赛界并不流行，其相关习题并不多见；但支配树在工业上，尤其是编译器相关领域，已有广泛运用．
+Currently, dominator trees are not popular in competitive programming, and related practice problems are rare; however, dominator trees are widely used in industry, especially in compiler-related fields.
 
-本文将介绍支配树的概念及几种求解方法．
+This article introduces the concept of dominator trees and several methods for solving them.
 
-## 支配关系
+## Domination Relation
 
-我们在任意的一个有向图上钦定一个入口结点 $s$，对于一个结点 $u$，若从 $s$ 到 $u$ 的每一条路径都经过某一个结点 $v$，那么我们称 $v$  **支配**  $u$，也称 $v$ 是 $u$ 的一个 **支配点**，记作 $v\ dom\ u$．
+Consider an arbitrary directed graph with a designated entry node $s$. For a node $u$, if every path from $s$ to $u$ passes through a node $v$, then we say $v$ **dominates** $u$, and $v$ is called a **dominator** of $u$, denoted $v\ dom\ u$.
 
-对于从 $s$ 出发无法到达的结点，讨论其支配关系是没有意义的，因此在没有特殊说明的情况下，本文默认 $s$ 能到达图上任何一个结点．
+Nodes unreachable from $s$ have no meaningful domination relation; therefore, unless otherwise specified, we assume $s$ can reach every node in the graph.
 
 ![](images/dom-tree1.png)
 
-例如这张有向图中，$2$ 被 $1$ 支配，$3$ 被 $1, 2$ 支配，4 被 $1, 2, 3$ 支配，5 被 $1, 2$ 支配，etc．
+For example, in this directed graph, $2$ is dominated by $1$, $3$ is dominated by $1$ and $2$, $4$ is dominated by $1$, $2$, and $3$, $5$ is dominated by $1$ and $2$, etc.
 
-### 引理
+### Lemmas
 
-在下文的引理中，默认 $u, v, w\ne s$
+In the lemmas below, assume $u, v, w \ne s$.
 
-**引理 1：** $s$ 是其所有结点的支配点；任意一个结点都是其自身的支配点．
+**Lemma 1:** $s$ dominates all nodes; every node dominates itself.
 
-**证明：** 显然任何一条从 $s$ 到 $u$ 的路径都必须经过 $s$ 和 $u$ 这两个结点．
+**Proof:** Obviously, every path from $s$ to $u$ must pass through both $s$ and $u$.
 
-**引理 2：** 仅考虑简单路径得出的支配关系与考虑所有路径得出的关系相同．
+**Lemma 2:** The domination relation derived from simple paths is the same as that derived from all paths.
 
-**证明：** 对于非简单路径，我们设两次经过某个结点之间经过的所有结点的点集为 $S$，若将 $S$ 中的结点删去，便能将每个非简单路径与一个简单路径对应．
+**Proof:** For non-simple paths, let $S$ be the set of nodes traversed between two visits to the same node. If we delete all nodes in $S$, each non-simple path can be mapped to a simple path.
 
-在 $S$ 中，在非简单路径而不在简单路径上的点一定不可能成为支配点，因为至少有一条 $s$ 到 $u$ 的简单路径不包括这个点；同时在简单路径和非简单路径上的点只需在简单路径上讨论即可．
+Nodes in $S$ that appear on non-simple paths but not on simple paths cannot be dominators, because there exists at least one simple path from $s$ to $u$ that does not include this node; meanwhile, nodes on both simple and non-simple paths only need to be discussed on simple paths.
 
-综上，删去非简单路径对支配关系没有影响．
+Therefore, removing non-simple paths does not affect the domination relation.
 
-**引理 3：** 如果 $u$  $dom$  $v$，$v$  $dom$  $w$，则 $u$  $dom$  $w$．
+**Lemma 3:** If $u\ dom\ v$ and $v\ dom\ w$, then $u\ dom\ w$.
 
-**证明：** 经过 $w$ 的路径必定经过 $v$，经过 $v$ 的路径必定经过 $u$，因此经过 $w$ 的路径必定经过 $u$，即 $u \ dom \ w$．
+**Proof:** Paths passing through $w$ must pass through $v$, and paths passing through $v$ must pass through $u$, so paths passing through $w$ must pass through $u$, i.e., $u\ dom\ w$.
 
-**引理 4：** 如果 $u \ dom \ v$，$v \ dom\ u$，则 $u=v$．
+**Lemma 4:** If $u\ dom\ v$ and $v\ dom\ u$, then $u = v$.
 
-**证明：** 假设 $u \ne v$，则任意一个到达 $v$ 的路径都已经到达过 $u$，同时任意一个到达 $u$ 的路径都已经到达过 $v$，矛盾．
+**Proof:** Assume $u \ne v$. Then every path reaching $v$ has already passed through $u$, and every path reaching $u$ has already passed through $v$, a contradiction.
 
-**引理 5：** 若 $u \ne v \ne w$,$u \ dom \ w$ 且 $v \ dom \ w$，则有 $u \ dom \ v$ 或 $v \ dom \ u$．
+**Lemma 5:** If $u \ne v \ne w$, $u\ dom\ w$ and $v\ dom\ w$, then either $u\ dom\ v$ or $v\ dom\ u$.
 
-**证明：** 考虑一条 $s \rightarrow \dots \rightarrow u \rightarrow \dots \rightarrow v \rightarrow \dots \rightarrow w$ 的路径，若 $u$,$v$ 不存在支配关系，则一定存在一条不经过 $u$ 的从 $s$ 到 $v$ 的路径，即存在一条 $s \rightarrow \dots \rightarrow v \rightarrow \dots \rightarrow w$ 的路径，与 $u\ dom\ w$ 矛盾．
+**Proof:** Consider a path $s \rightarrow \dots \rightarrow u \rightarrow \dots \rightarrow v \rightarrow \dots \rightarrow w$. If $u$ and $v$ have no domination relation, then there exists a path from $s$ to $v$ that does not pass through $u$, i.e., a path $s \rightarrow \dots \rightarrow v \rightarrow \dots \rightarrow w$, contradicting $u\ dom\ w$.
 
-### 求解支配关系
+### Solving Domination Relations
 
-#### 结点删除法
+#### Node Deletion Method
 
-一个和定义等价的结论：如果我们删去图中的某一个结点后，有一些结点变得不可到达，那么这个被删去的结点支配这些变得不可到达的结点．
+An equivalent condition to the definition: if we delete a node from the graph and some nodes become unreachable, then the deleted node dominates those unreachable nodes.
 
-因此我们只要尝试将每一个结点删去后 dfs 即可，代码复杂度为 $O(n^3)$．下面给出核心代码．
+Therefore, we can try deleting each node and running a DFS, with time complexity $O(n^3)$. The core code is given below.
 
 ```cpp
-// 假设图中有 n 个结点, 起始点 s = 1
+// Assume the graph has n nodes, start node s = 1
 std::bitset<N> vis;
 std::vector<int> edge[N];
 std::vector<int> dom[N];
@@ -83,29 +83,31 @@ void getdom() {
 }
 ```
 
-#### 数据流迭代法
+#### Dataflow Iteration Method
 
-数据流迭代法也是 OI 中不常见的一个知识点，这里先做简要介绍．
+The dataflow iteration method is also an uncommon topic in OI. Here we give a brief introduction.
 
-数据流分析是编译原理中的概念，用于分析数据如何在程序执行路径上的流动；而数据流迭代法是在程序的流程图的结点上列出方程并不断迭代求解，从而求得程序的某些点的数据流值的一种方法．这里我们就是把有向图看成了一个程序流程图．
+Dataflow analysis is a concept in compiler theory, used to analyze how data flows along program execution paths; the dataflow iteration method lists equations on nodes of a program's flow graph and iteratively solves them to obtain dataflow values at certain points. Here, we treat the directed graph as a program flow graph.
 
-这个问题中，方程为：
+In this problem, the equation is:
 
 $$
+
 dom(u)=\{u\} \cup \left(\bigcap_{v\in pre(u)}{dom(v)}\right)
+
 $$
 
-其中 $pre(u)$ 定义为 $u$ 的前驱结点组成的点集．这个方程可以通过引理 3 得到．
+where $pre(u)$ is the set of predecessor nodes of $u$. This equation can be derived from Lemma 3.
 
-翻译成人话就是，一个点的支配点的点集为它所有前驱结点的支配点集的交集，再并上它本身．根据这个方程将每个结点上的支配点集不断迭代直至答案不变即可．
+In plain terms, the set of dominators of a node is the intersection of the dominator sets of all its predecessor nodes, union with itself. Based on this equation, we iteratively update the dominator set for each node until the answer stabilizes.
 
-为了提高效率，我们希望每轮迭代时，当前迭代的结点的所有前驱结点尽可能都已经执行完了这次迭代，因此我们要利用深度优先排序得出这个图的逆后序，根据这个顺序进行迭代．
+To improve efficiency, we want each predecessor of the current node to have already completed this iteration. Therefore, we use depth-first ordering to get the reverse postorder of the graph and iterate in that order.
 
-下面给出核心代码的参考实现．这里需要预先处理每个点的前驱结点集和图的逆后序，但这不是本文讨论的主要内容，故这里不提供参考实现．
+The reference implementation of the core code is given below. Here, the predecessor set of each node and the reverse postorder of the graph need to be preprocessed, but this is not the main topic of this article, so no reference implementation is provided here.
 
 ```cpp
-std::vector<int> pre[N];  // 每个结点的前驱结点
-std::vector<int> ord;     // 图的逆后序
+std::vector<int> pre[N];  // Predecessor nodes of each node
+std::vector<int> ord;     // Reverse postorder of the graph
 std::bitset<N> dom[N];
 std::vector<int> Dom[N];
 
@@ -136,25 +138,25 @@ void getdom() {
 }
 ```
 
-不难看出上述算法的复杂度为 $O(n^2)$．
+The time complexity of this algorithm is $O(n^2)$.
 
-## 支配树
+## Dominator Tree
 
-上一节我们发现，除 $s$ 外，一个点的支配点至少有两个，$s$ 和其自身．
+In the previous section, we found that for every node except $s$, there are at least two dominators: $s$ and the node itself.
 
-我们将任意一个结点 $u$ 的支配点中，除自身外与自己距离最近的结点 $v$ 称作 $u$ 的直接支配点，记作 $idom(u) = v$．显然除了 $s$ 没有直接支配点外，每个结点都有唯一一个直接支配点．
+Among the dominators of an arbitrary node $u$, the dominator $v$ that is closest to $u$ (excluding $u$ itself) is called the **immediate dominator** of $u$, denoted $idom(u) = v$. Obviously, except for $s$ which has no immediate dominator, every node has exactly one immediate dominator.
 
-我们考虑对于除 $s$ 外每一个结点 $u$ 从 $idom(u)$ 向 $u$ 连边，便构成了一个有 $n$ 个结点，$n - 1$ 条边的有向图．根据引理 3 和引理 4，我们知道支配关系一定不会构成循环，也就是这些边一定不构成环，因此我们得到的图事实上是一棵树．我们称这颗树为原图的 **支配树**．
+If we draw an edge from $idom(u)$ to $u$ for every node $u \ne s$, we get a directed graph with $n$ nodes and $n - 1$ edges. By Lemma 3 and Lemma 4, the domination relation never forms a cycle, so these edges never form a cycle, and the resulting graph is a tree. We call this tree the **dominator tree** of the original graph.
 
-## 求解支配树
+## Solving Dominator Trees
 
-### 根据 dom 求解
+### Solving from Dom Sets
 
-不妨考虑某个结点的支配点集 $\{s_1, s_2, \dots, s_k\}$，则一定存在一条路径 $s \rightarrow \dots \rightarrow s_1 \rightarrow \dots \rightarrow s_2 \rightarrow \dots \rightarrow \dots \rightarrow s_k \rightarrow\dots \rightarrow u$．显然 $u$ 的直接支配点为 $s_k$．因此直接支配点的定义等价于：
+Consider the dominator set $\{s_1, s_2, \dots, s_k\}$ of some node $u$. There must exist a path $s \rightarrow \dots \rightarrow s_1 \rightarrow \dots \rightarrow s_2 \rightarrow \dots \rightarrow \dots \rightarrow s_k \rightarrow\dots \rightarrow u$. Clearly, the immediate dominator of $u$ is $s_k$. Therefore, the definition of immediate dominator is equivalent to:
 
-对于一个结点 $u$ 的支配点集 $S$，若 $v \in S$ 满足 $\forall w \in S\setminus\{u,v\}, w\ dom \ v$，则 $idom(u)=v$．
+For a node $u$ with dominator set $S$, if $v \in S$ satisfies $\forall w \in S\setminus\{u,v\}, w\ dom\ v$, then $idom(u)=v$.
 
-因此，利用前文所述的算法得到每个结点的支配点集之后，我们根据上述定义便能很轻松地得到每个点的直接支配点，从而构造出支配树．下面给出参考代码．
+Therefore, after obtaining the dominator set of each node using the algorithm described earlier, we can easily obtain the immediate dominator of each node according to the above definition, and thus construct the dominator tree. The reference code is given below.
 
 ```cpp
 std::bitset<N> dom[N];
@@ -177,31 +179,31 @@ void getidom() {
 }
 ```
 
-### 树上的特例
+### Special Case: Trees
 
-显然树型图的支配树就是它本身．
+Clearly, the dominator tree of a tree graph is itself.
 
-### DAG 上的特例
+### Special Case: DAGs
 
-我们发现 DAG 有一个很好的性质：根据拓扑序求解，先求得的解不会对后续的解产生影响．我们可以利用这个特点快速求得 DAG 的支配树．
+We observe that DAGs have a nice property: when solving by topological order, the solutions obtained earlier do not affect subsequent solutions. We can use this property to efficiently compute the dominator tree of a DAG.
 
-???+ warning "提醒"
-    值得注意的是此处的 DAG 只能有一个起点，如果有多个起点，受起点支配的点在支配树上出现有多个父亲的情况，从而使支配关系不能简单的用支配树来表达．
+???+ warning "Note"
+    It is important to note that the DAG here can only have one source. If there are multiple sources, nodes dominated by different sources may have multiple parents in the dominator tree, making the domination relation not expressible simply as a dominator tree.
 
-**引理 6：** 在有向图上，$v\ dom\ u$ 当且仅当 $\forall w \in pre(u), v\ dom \ w$．
+**Lemma 6:** In a directed graph, $v\ dom\ u$ if and only if $\forall w \in pre(u), v\ dom\ w$.
 
-**证明：** 首先来证明充分性．考虑任意一条从 $s$ 到 $u$ 的路径都一定经过一个结点 $w \in pre(u)$，而 $v$ 支配这个结点，因此任意一条从 $s$ 到 $u$ 的路径都一定经过 $v$，因此我们得到 $v \ dom \ u$．
+**Proof:** First, we prove sufficiency. Consider any path from $s$ to $u$. It must pass through some node $w \in pre(u)$. Since $v$ dominates this node, any path from $s$ to $u$ must pass through $v$, so we get $v\ dom\ u$.
 
-然后是必要性．如果 $\exists w\in pre(u)$，$v$ 不支配 $w$，则一定有一条不经过 $v$ 的路径 $s \rightarrow \cdots \rightarrow w \rightarrow \cdots \rightarrow u$，因此 $v$ 不支配 $u$．
+Now for necessity. If $\exists w\in pre(u)$ such that $v$ does not dominate $w$, then there exists a path $s \rightarrow \cdots \rightarrow w \rightarrow \cdots \rightarrow u$ that does not pass through $v$, so $v$ does not dominate $u$.
 
-我们发现，$u$ 的支配点一定是其所有前驱结点在支配树上的公共祖先，那么显然 $u$ 的直接支配点是所有前驱结点在支配树上的 LCA．考虑倍增求解 LCA 可以支持每次添加一个结点，上述算法显然是可行的．
+We find that the dominator of $u$ must be a common ancestor of all its predecessors in the dominator tree. Therefore, the immediate dominator of $u$ is the LCA of all predecessors in the dominator tree. Considering using binary lifting to compute LCA, we can support adding one node at a time, so the above algorithm is clearly feasible.
 
-下面给出参考实现：
+The reference implementation is given below:
 
 ```cpp
 std::stack<int> sta;
-std::vector<int> e[N], g[N], tree[N];  // g 是原图的反图，tree 是支配树
-int n, s, in[N], tpn[N], dep[N], idom[N];  // n 为总点数，s 为起始点，in 为入度
+std::vector<int> e[N], g[N], tree[N];  // g is the reverse graph, tree is the dominator tree
+int n, s, in[N], tpn[N], dep[N], idom[N];  // n is total nodes, s is start node, in is indegree
 int fth[N][17];
 
 void topo(int s) {
@@ -263,55 +265,55 @@ void build() {
 
 ```
 
-### Lengauer–Tarjan 算法
+### Lengauer–Tarjan Algorithm
 
-Lengauer–Tarjan 算法是求解支配树最有名的算法之一，可以在 $O(n\alpha(n, m))$ 的时间复杂度内求出一个有向图的支配树．这一算法引入了 **半支配点** 的概念，并通过半支配点辅助求得直接支配点．
+The Lengauer–Tarjan algorithm is one of the most famous algorithms for solving dominator trees, computing the dominator tree of a directed graph in $O(n\alpha(n, m))$ time. This algorithm introduces the concept of **semi-dominators** and uses them to find immediate dominators.
 
-#### 约定
+#### Conventions
 
-首先，我们从 $s$ 出发对这个有向图进行 dfs，所经过的点和边形成了一颗树 $T$．我们称走过的边为树边，其余的为非树边；令 $dfn(u)$ 表示结点 $u$ 被第几个遍历到；定义 $u<v$ 当且仅当 $dfn(u) < dfn(v)$．
+First, we perform a DFS from $s$ on this directed graph. The traversed nodes and edges form a tree $T$. We call traversed edges tree edges and the rest non-tree edges. Let $dfn(u)$ denote the order in which node $u$ is visited; define $u < v$ if and only if $dfn(u) < dfn(v)$.
 
-#### 半支配点
+#### Semi-Dominators
 
-一个结点 $u$ 的半支配点，是满足从这个结点 $v$ 出发有一条路径，路径上除了 $u, v$ 之外每个结点都大于 $u$ 的结点中最小的那一个．形式化的说，$u$ 的半支配点 $sdom(u)$ 定义为：
+The semi-dominator of a node $u$ is the smallest node $v$ such that there is a path from $v$ to $u$ where, except for $u$ and $v$, every node on the path is greater than $u$. Formally, the semi-dominator $sdom(u)$ of $u$ is defined as:
 
 $sdom(u) = \min(v|\exists v=v_0 \rightarrow v_1 \rightarrow\dots \rightarrow v_k = u, \forall 1\le i\le k - 1, v_i > u)$
 
-我们发现半支配点有一些有用的性质：
+We observe that semi-dominators have some useful properties:
 
-**引理 7：** 对于任意结点 $u$，$sdom(u) < u$．
+**Lemma 7:** For any node $u$, $sdom(u) < u$.
 
-**证明：** 根据定义不难发现，$u$ 在 $T$ 上的父亲 $fa(u)$ 也满足成为半支配点的条件，且 $fa(u) < u$，因此任何大于 $u$ 的结点都不可能成为其半支配点．
+**Proof:** By definition, the parent $fa(u)$ of $u$ in $T$ also satisfies the condition to be a semi-dominator, and $fa(u) < u$. Therefore, no node greater than $u$ can be its semi-dominator.
 
-**引理 8：** 对于任意结点 $u$，$idom(u)$ 是其在 $T$ 上的祖先．
+**Lemma 8:** For any node $u$, $idom(u)$ is an ancestor of $u$ in $T$.
 
-**证明：** $T$ 上从 $s$ 到 $u$ 的路径对应了原图上的一条路径，则 $idom(u)$ 必定在这个路径上．
+**Proof:** The path from $s$ to $u$ in $T$ corresponds to a path in the original graph, so $idom(u)$ must be on this path.
 
-**引理 9：** 对于任意结点 $u$，$sdom(u)$ 是其在 $T$ 上的祖先．
+**Lemma 9:** For any node $u$, $sdom(u)$ is an ancestor of $u$ in $T$.
 
-**证明：** 假设 $sdom(u)$ 不是 $u$ 的祖先，那么 $sdom(u)$ 不可能连向任何 $\mathrm{dfs}$ 序大于等于 $u$ 的结点（否则这个点应在 $sdom(u)$ 的子树内而非其他子树内），矛盾．
+**Proof:** Suppose $sdom(u)$ is not an ancestor of $u$. Then $sdom(u)$ cannot connect to any node with DFS order greater than or equal to $u$ (otherwise this node should be in the subtree of $sdom(u)$ rather than another subtree), a contradiction.
 
-**引理 10：** 对于任意结点 $u$，$idom(u)$ 是 $sdom(u)$ 的祖先．
+**Lemma 10:** For any node $u$, $idom(u)$ is an ancestor of $sdom(u)$.
 
-**证明：** 考虑可以从 $s$ 到 $sdom(u)$ 再从定义中的路径走到 $u$．根据定义，$sdom(u)$ 到 $u$ 的路径上的点均不支配 $u$，故 $idom(u)$ 一定是 $sdom(u)$ 的祖先．
+**Proof:** Consider that we can go from $s$ to $sdom(u)$, then along the path in the definition to $u$. By definition, nodes on the path from $sdom(u)$ to $u$ do not dominate $u$, so $idom(u)$ must be an ancestor of $sdom(u)$.
 
-**引理 11：** 对于任意结点 $u \ne v$ 满足 $v$ 是 $u$ 的祖先，则要么有 $v$ 是 $idom(u)$ 的祖先，要么 $idom(u)$ 是 $idom(v)$ 的祖先．
+**Lemma 11:** For any nodes $u \ne v$ where $v$ is an ancestor of $u$, either $v$ is an ancestor of $idom(u)$, or $idom(u)$ is an ancestor of $idom(v)$.
 
-**证明：** 对于任意在 $v$ 和 $idom(v)$ 之间的结点 $w$，根据直接支配点的定义，一定存在一条不经过 $w$ 的，从 $s$ 到 $idom(v)$ 再到 $v$ 的路径．因此这些结点 $w$ 一定不是 $idom(u)$，因此 $idom(u)$ 要么是 $v$ 的后代，要么是 $idom(v)$ 的祖先．
+**Proof:** For any node $w$ between $v$ and $idom(v)$, by the definition of immediate dominator, there exists a path from $s$ to $idom(v)$ then to $v$ that does not pass through $w$. Therefore, these nodes $w$ are not $idom(u)$. So $idom(u)$ is either a descendant of $v$ or an ancestor of $idom(v)$.
 
-根据以上引理，我们可以得到以下定理：
+From the above lemmas, we can derive the following theorem:
 
-**定理 1：** 一个点 $u$ 的半支配点是其前驱与其支配点在 $T$ 上的，大于 $u$ 的所有祖先的半支配点中最小的节点．形式化地说，$sdom(u)=\min(\{v|\exists v \rightarrow u, v < u \} \cup \{sdom(w) | w > u\ and\ \exists w \rightarrow \dots \rightarrow v \rightarrow u \})$．
+**Theorem 1:** The semi-dominator of a node $u$ is the minimum among the semi-dominators of all ancestors of $u$'s predecessors and $u$'s dominators in $T$ that are greater than $u$. Formally, $sdom(u)=\min(\{v|\exists v \rightarrow u, v < u \} \cup \{sdom(w) | w > u\ and\ \exists w \rightarrow \dots \rightarrow v \rightarrow u \})$.
 
-**证明：** 令 $x$ 等于上式右侧．
+**Proof:** Let $x$ equal the right side of the equation.
 
-我们首先证明 $sdom(u) \le x$．根据引理 7 我们知道这个命题等价于证明上述的两种都满足成为半支配点的条件．$x$ 是 $u$ 的前驱时的情况是显然的，对于后半部分，我们考虑将半支配点定义中所述路径 $x=v_0\rightarrow\dots\rightarrow v_j=w$ 和 $T$ 上的一条满足 $\forall i\in[j, k-1], v_i\ge w > u$ 的路径 $w=v_j \rightarrow\dots\rightarrow v_k=v$ 以及路径 $v \rightarrow u$ 拼接，从而我们构造出一条满足半支配点定义的路径．
+First, we prove $sdom(u) \le x$. By Lemma 7, this statement is equivalent to proving that both cases in the definition satisfy the semi-dominator condition. When $x$ is a predecessor of $u$, this is obvious. For the second part, consider the path $x=v_0\rightarrow\dots\rightarrow v_j=w$ from the semi-dominator definition and a path $w=v_j \rightarrow\dots\rightarrow v_k=v$ in $T$ satisfying $\forall i\in[j, k-1], v_i\ge w > u$, along with the path $v \rightarrow u$. Concatenating these gives a path satisfying the semi-dominator definition.
 
-然后我们证明 $sdom(u)\ge x$．考虑 $u$ 到其半支配点的定义中所述路径 $sdom(u)=v_0\rightarrow v_1 \rightarrow\dots\rightarrow v_k=u$．不难看出 $k=1$ 和 $k > 1$ 分别对应了定义中的两个选取方法．若 $k = 1$，则存在有向边 $sdom(u) \rightarrow u$，根据引理 7 即可得证；若 $k>1$，令 $j$ 是满足 $j \ge 1$ 且 $v_j$ 是 $v_{k-1}$ 在 $T$ 上祖先的最小数．考虑到 $k$ 满足上述条件，这样的 $j$ 一定存在．
+Then we prove $sdom(u)\ge x$. Consider the path $sdom(u)=v_0\rightarrow v_1 \rightarrow\dots\rightarrow v_k=u$ from $u$ to its semi-dominator. It is clear that $k=1$ and $k > 1$ correspond to the two selection methods in the definition. If $k = 1$, there is a directed edge $sdom(u) \rightarrow u$, which proves the case by Lemma 7. If $k>1$, let $j$ be the minimum index satisfying $j \ge 1$ and $v_j$ is an ancestor of $v_{k-1}$ in $T$. Since $k$ satisfies the above condition, such $j$ must exist.
 
-考虑证明 $v_0 \rightarrow \dots \rightarrow v_j$ 是满足成为 $v_j$ 半支配点条件的一条路径，即证明 $\forall i \in [1, j), v_i>v_j$．若不是，则令 $i$ 为满足 $v_i < v_j$ 中使 $v_i$ 最小的数，根据引理 11 我们知道 $v_i$ 是 $v_j$ 的祖先，这和 $j$ 的定义矛盾．于是 $sdom(v_j)\le sdom(u)$．综上 $sdom(u) \le x$，故 $x=sdom(u)$．
+To prove $v_0 \rightarrow \dots \rightarrow v_j$ is a path satisfying the semi-dominator condition for $v_j$, we need $\forall i \in [1, j), v_i>v_j$. If not, let $i$ be the smallest index such that $v_i < v_j$. By Lemma 11, $v_i$ is an ancestor of $v_j$, which contradicts the definition of $j$. Thus $sdom(v_j)\le sdom(u)$. Since $sdom(v_j) \le x$ and $v_j$'s semi-dominator is at least $x$ (as $v_j \le u$), we have $sdom(u)\le x$. Therefore $x=sdom(u)$.
 
-根据定理 1 我们便可以求出每个点的半支配点了．不难发现计算半支配点的复杂度瓶颈在第二种情况上，我们考虑利用带权并查集优化，每次路径压缩时更新最小值即可．
+By Theorem 1, we can compute the semi-dominator of each node. The bottleneck in computing semi-dominators is the second case. We use a weighted union-find with path compression and update the minimum during compression.
 
 ```cpp
 void dfs(int u) {
@@ -364,52 +366,54 @@ void getsdom() {
 
 ```
 
-#### 求解直接支配点
+#### Computing Immediate Dominators
 
-##### 转化为 DAG
+##### Transforming to a DAG
 
-可是我还是不知道半支配点有什么用！
+But I still don't know what semi-dominators are for!
 
-我们考虑在 $T$ 上对每一个 $u$ 加入 $sdom(u) \rightarrow u$ 的有向边．根据引理 9，新得到的这张图 $G$ 一定是有向无环图；又根据引理 10，我们还发现这样加边不会改变支配关系，因此我们把原图转化为了一张 DAG，利用上文的算法求解即可．
+Consider adding directed edges $sdom(u) \rightarrow u$ for every $u$ in $T$. By Lemma 9, the resulting graph $G$ must be a DAG; and by Lemma 10, adding these edges does not change the domination relation. So we transform the original graph into a DAG and can use the algorithm above to solve it.
 
-##### 通过半支配点求解
+##### Solving via Semi-Dominators
 
-建一堆图也太不优雅了！
+Building a bunch of graphs is not elegant!
 
-**定理 2：** 对于任意节点 $u$，若 $T$ 上从 $sdom(u)$ 到 $w$ 的路径上的任意节点 $v$ 都满足 $sdom(v)\ge sdom(w)$，则 $idom(u) =sdom(u)$．
+**Theorem 2:** For any node $u$, if every node $v$ on the path from $sdom(u)$ to $w$ in $T$ satisfies $sdom(v) \ge sdom(w)$, then $idom(u) = sdom(u)$.
 
-**证明：** 根据引理 10 我们知道 $idom(u)$ 是 $sdom(u)$ 或其祖先，因此只需证明 $sdom(u) \ dom \ u$．
+**Proof:** By Lemma 10, we know $idom(u)$ is $sdom(u)$ or its ancestor, so we only need to prove $sdom(u)\ dom\ u$.
 
-考虑任意一条 $s$ 到 $u$ 的路径 $P$，我们需要证明 $sdom(u)$ 一定在 $P$ 中．令 $v$ 为 $P$ 中最后一个满足 $v<sdom(u)$ 的节点．如果 $v$ 不存在则必有 $sdom(u)=idom(u) =s$，否则令 $w$ 是 $P$ 中 $v$ 之后在 DFS 树中从 $sdom(u)$ 到 $u$ 的路径上的第一个点．
+Consider any path $P$ from $s$ to $u$. We need to prove $sdom(u)$ is in $P$. Let $v$ be the last node in $P$ satisfying $v < sdom(u)$. If $v$ does not exist, then $sdom(u) = idom(u) = s$. Otherwise, let $w$ be the first node on the path in the DFS tree from $sdom(u)$ to $u$ that appears after $v$ in $P$.
 
-我们接下来证明 $sdom(w)\le v <sdom(v)$．考虑 $T$ 上 $v$ 到 $w$ 的路径 $v = v_0 \rightarrow \dots v_k = w$，若不成立，则存在 $i\in[1, k- 1], v_i < w$．此时一定存在某个 $j\in [i, k - 1]$ 满足 $v_j$ 是 $w$ 的祖先．由 $v$ 的取值可知 $sdom(u)\le v_j$，于是 $v_j$ 也在 DFS 树中从 $sdom(u)$ 到 $u$ 的路径上，与 $w$ 的定义矛盾，因此 $sdom(w)\le v < sdom(v)$，结合定理的条件有 $y=sdom(u)$，即路径 $P$ 包含 $sdom(u)$．
+Next, we prove $sdom(w) \le v < sdom(v)$. Consider the path $v = v_0 \rightarrow \dots \rightarrow v_k = w$ in $T$. If the statement does not hold, there exists $i \in [1, k-1]$ such that $v_i < w$. Then there exists $j \in [i, k-1]$ such that $v_j$ is an ancestor of $w$. By the definition of $v$, we know $sdom(u) \le v_j$. So $v_j$ is also on the path from $sdom(u)$ to $u$ in the DFS tree, contradicting the definition of $w$. Therefore $sdom(w) \le v < sdom(v)$. By the condition of the theorem, $y = sdom(u)$, i.e., path $P$ contains $sdom(u)$.
 
-**定理 3：** 对于任意节点 $u$，$T$ 上从 $sdom(u)$ 到 $u$ 的路径上的所有节点中半支配点最小的节点 $v$ 一定满足 $sdom(v)\le sdom(u)$ 和 $idom(v) = idom(u)$．
+**Theorem 3:** For any node $u$, among all nodes on the path from $sdom(u)$ to $u$ in $T$, the node $v$ with the minimum semi-dominator satisfies $sdom(v) \le sdom(u)$ and $idom(v) = idom(u)$.
 
-**证明：** 考虑到 $u$ 本身也满足 $v$ 的条件，因此 $sdom(v)\le sdom(u)$．
+**Proof:** Since $u$ itself satisfies the condition for $v$, we have $sdom(v) \le sdom(u)$.
 
-由于 $idom(u)$ 是 $v$ 在 $T$ 上的祖先，由引理 11 可知 $idom(u)$ 也是 $idom(v)$ 的祖先，因此只需证明 $idom(v)$ 支配 $u$．
+Since $idom(u)$ is an ancestor of $v$ in $T$, by Lemma 11, $idom(u)$ is also an ancestor of $idom(v)$. So we only need to prove $idom(v)$ dominates $u$.
 
-考虑任意一条 $s$ 到 $u$ 的路径 $P$，我们需要证明 $sdom(u)$ 一定在 $P$ 中．令 $x$ 为 $P$ 中最后一个满足 $x<sdom(u)$ 的节点．如果 $x$ 不存在则必有 $sdom(u)=idom(u) =s$，否则令 $y$ 是 $P$ 中 $x$ 之后在 DFS 树中从 $sdom(u)$ 到 $u$ 的路径上的第一个点．
+Consider any path $P$ from $s$ to $u$. We need to prove $sdom(u)$ is in $P$. Let $x$ be the last node in $P$ satisfying $x < sdom(u)$. If $x$ does not exist, then $sdom(u) = idom(u) = s$. Otherwise, let $y$ be the first node on the path in the DFS tree from $sdom(u)$ to $u$ that appears after $x$ in $P$.
 
-与定理 2 的证明过程同理，我们可以得到 $sdom(y) \le x$．根据引理 10 有 $sdom(y)\le x<idom(v) \le sdom(v)$．至此，由 $v$ 的定义可知 $y$ 不能是 $sdom(u)$ 的后代；另一方面，$y$ 不能既是 $idom(v)$ 的后代也是 $v$ 的祖先，否则沿 DFS 树从 $s$ 到 $sdom(y)$ 再沿 P 走到 $y$，最后沿 DFS 树走到 $v$ 的这条路径不经过 $idom(v)$，与支配点的定义矛盾．因此 $y=idom(v)$，即 $P$ 包含 $idom(v)$．
+By the same reasoning as in the proof of Theorem 2, we get $sdom(y) \le x$. By Lemma 10, $sdom(y) \le x < idom(v) \le sdom(v)$. From the definition of $v$, we know $y$ cannot be a descendant of $sdom(u)$. On the other hand, $y$ cannot be both a descendant of $idom(v)$ and an ancestor of $v$, otherwise the path from $s$ to $sdom(y)$ along the DFS tree, then along $P$ to $y$, and finally along the DFS tree to $v$ would not pass through $idom(v)$, contradicting the definition of dominator. Therefore $y = idom(v)$, i.e., $P$ contains $idom(v)$.
 
-根据以上两个定理我们能够得到 $sdom(u)$ 与 $idom(u)$ 之间的关系．
+From the above two theorems, we can obtain the relationship between $sdom(u)$ and $idom(u)$.
 
-令 $v$ 是满足 $v$ 在 $sdom(u)$ 与 $u$ 之间的结点的所有节点中，$sdom(v)$ 最小的一个节点，那么：
+Let $v$ be the node with the minimum $sdom(v)$ among all nodes between $sdom(u)$ and $u$. Then:
 
 $$
+
 idom(u) =
-\left\{ 
-\begin{aligned} 
+\left\{
+\begin{aligned}
 & sdom(u), &\text{if}\ sdom(u) = sdom(v)
 \\
 &idom(v), &\text{otherwise}
 \end{aligned}
 \right.
+
 $$
 
-只要对上面求解半支配点的代码稍作修改即可．
+The semi-dominator computation code can be slightly modified to compute this.
 
 ```cpp
 struct E {
@@ -495,24 +499,24 @@ void tar(int st) {
 
 ```
 
-## 例题
+## Problems
 
-### [洛谷 P5180【模板】支配树](https://www.luogu.com.cn/problem/P5180)
+### [Luogu P5180 Template Dominator Tree](https://www.luogu.com.cn/problem/P5180)
 
-可以仅求解支配关系，求解过程中记录各个点支配了多少节点，也可以建出支配树求解每个节点的 size．
+You can solve only the domination relation, recording how many nodes each node dominates during the process. Alternatively, you can build the dominator tree and compute the size of each node.
 
-这里给出后一种解法的代码．
+The code for the second approach is given below.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/dom-tree/dom-tree_1.cpp"
     ```
 
-### [ZJOI2012 灾难](https://www.luogu.com.cn/problem/P2597)
+### [ZJOI2012 Disaster](https://www.luogu.com.cn/problem/P2597)
 
-在 DAG 上求支配树然后求节点 size 即可．
+Compute the dominator tree on the DAG and then compute the node sizes.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/graph/code/dom-tree/dom-tree_2.cpp"
     ```

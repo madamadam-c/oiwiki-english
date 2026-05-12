@@ -1,14 +1,14 @@
-形式幂级数的复合和复合逆也是常见的形式幂级数操作，对于没有特殊性质的 $f$ 之前我们一直使用的多是 $O\left(n^2\right)$ 的算法来计算 $f(g) \bmod{x^n}$ 其中 $f\in\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack,g\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$，但是因为效率较低应用较少．我们介绍 Kinoshita–Li 的 $O\left(\mathsf{M}\left(n\right)\log n\right)$ 的算法，其中 $O\left(\mathsf{M}\left(n\right)\right)$ 为两个次数为 $O\left( n\right)$ 的多项式相乘的时间．
+Composition and composition inverse of formal power series are also common operations on formal power series. For $f$ without special properties, we have been using $O\left(n^2\right)$ algorithms to compute $f(g) \bmod{x^n}$ where $f\in\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack,g\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$, but due to low efficiency, they are less used. We introduce the Kinoshita–Li algorithm with $O\left(\mathsf{M}\left(n\right)\log n\right)$ time, where $O\left(\mathsf{M}\left(n\right)\right)$ is the time to multiply two polynomials of degree $O\left( n\right)$.
 
-## 形式幂级数/多项式的复合
+## Composition of Formal Power Series/Polynomials
 
-若要计算 $f\left(g\left(x\right)\right)\bmod{x^n}$ 那么需要 $f\left(g\left(x\right)\right)$ 的每一项系数都是有限项之和，所以之前要求 $f(x)\in\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack,g(x)\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$，而如果 $f(x),g(x)\in\mathbb{C}\left\lbrack x\right\rbrack$ 也可以满足这个条件．因为我们需要将 $f\left(g\left(x\right)\right)$ 的系数截断，不妨直接考虑 $f(x),g(x)$ 都是多项式的情况．对于 $f(x)=\sum_{j=0}^{n-1}f_jx^j$，有
+To compute $f\left(g\left(x\right)\right)\bmod{x^n}$, since each coefficient of $f\left(g\left(x\right)\right)$ is a finite sum, we need $f(x)\in\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack,g(x)\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$. If $f(x),g(x)\in\mathbb{C}\lbrack x\rbrack$, this condition can also be satisfied. Since we need to truncate coefficients of $f\left(g\left(x\right)\right)$, we can directly consider the case where both $f(x)$ and $g(x)$ are polynomials. For $f(x)=\sum_{j=0}^{n-1}f_jx^j$:
 
 $$
 f\left(g\left(x\right)\right)=\sum_{j=0}^{n-1}f_jg\left(x\right)^j
 $$
 
-我们考虑环 $\mathbb{C}\left\lbrack x\right\rbrack\left(\left( y\right)\right)$ 上的有理函数
+We consider the rational function on ring $\mathbb{C}\lbrack x\rbrack\left(\left( y\right)\right)$:
 
 $$
 \begin{aligned}
@@ -17,7 +17,7 @@ f\left(g\left(x\right)\right)&=\left\lbrack y^0\right\rbrack\frac{f\left(y^{-1}\
 \end{aligned}
 $$
 
-根据 [常系数齐次线性递推](./linear-recurrence.md) 中提到的 Bostan–Mori 算法，Kinoshita 和 Li 指出可以将其修改为二元形式：
+According to the Bostan–Mori algorithm mentioned in [Constant-Coefficient Homogeneous Linear Recurrence](./linear-recurrence.md), Kinoshita and Li point out that it can be modified to a bivariate form:
 
 $$
 \begin{aligned}
@@ -27,13 +27,13 @@ $$
 \end{aligned}
 $$
 
-这样递归的计算在 $n=1$ 时我们只需计算
+For recursive calculation, when $n=1$, we only need to compute:
 
 $$
 \frac{P(y)}{Q(x,y)}\bmod{x}=\frac{P(y)}{Q(0,y)}\in\mathbb{C}\left(\left( y\right)\right)
 $$
 
-在计算 $\dfrac{P(y)}{V(z,y)}\bmod{z^{\left\lceil n/2\right\rceil}}\in\mathbb{C}\left\lbrack z\right\rbrack\left(\left( y\right)\right)$ 时我们不需要保留所有 $y$ 的系数，因为最后我们只需要提取 $y^0$ 的系数，所以 $y^{>0}$ 的系数是不需要的，而因为求出前者之后需要将其乘以若干个形如 $Q(-x,y)\in\mathbb{C}\left\lbrack x,y\right\rbrack$ 的「**多项式**」，所以只需要保留对于 $y^0$ 有贡献的系数即可．我们准备好给出伪代码：
+When computing $\dfrac{P(y)}{V(z,y)}\bmod{z^{\left\lceil n/2\right\rceil}}\in\mathbb{C}\left\lbrack z\right\rbrack\left(\left( y\right)\right)$, we don't need to keep all coefficients of $y$, because at the end we only need to extract the coefficient of $y^0$, so coefficients of $y^{>0}$ are not needed. And since after obtaining the former, we need to multiply it by several polynomials of the form $Q(-x,y)\in\mathbb{C}\lbrack x,y\rbrack$, we only need to keep coefficients that contribute to $y^0$. Let's prepare the pseudocode:
 
 $$
 \begin{array}{ll}
@@ -51,19 +51,19 @@ $$
 \end{array}
 $$
 
-那么我们有
+Then we have:
 
 $$
 f\left(g\left(x\right)\right)\bmod{x^n}=\operatorname{\mathsf{Comp}}\left(f\left(y^{-1}\right),1-y\cdot g(x),\max\left\lbrace 1+\deg f,n\right\rbrace ,1\right)\bmod{x^n}
 $$
 
-注意第三个参数是因为 $g(0)$ 可能不为零，如果 $\deg f\geq n$ 此时不能截断 $f(x)$ 来计算 $f\left(g(x)\right)$，我们也可以选择计算 $f(g)=f\circ \left(x+g(0)\right)\circ \left(g-g(0)\right)$，此时可以取 $F:=f\left(x+g(0)\right)\bmod{x^n}$ 和 $G:=g-g(0)$ 转而计算 $\operatorname{\mathsf{Comp}}\left(F\left(y^{-1}\right),1-y\cdot G(x),n,1\right)$．
+Note that the third parameter is because $g(0)$ may be non-zero. If $\deg f\geq n$, we cannot truncate $f(x)$ to compute $f\left(g(x)\right)$. We can also choose to compute $f(g)=f\circ \left(x+g(0)\right)\circ \left(g-g(0)\right)$. At this point, we can take $F:=f\left(x+g(0)\right)\bmod{x^n}$ and $G:=g-g(0)$, and then compute $\operatorname{\mathsf{Comp}}\left(F\left(y^{-1}\right),1-y\cdot G(x),n,1\right)$.
 
-另外因为调用的限制最后递归终止时的 $Q(0,y)^{-1}$ 是可以直接导出的，不需要使用形式幂级数的乘法逆元算法来计算，我们只需计算一次乘法然后提取需要的系数．
+Also, due to the limitation of the call, the $Q(0,y)^{-1}$ when the recursion finally ends can be directly derived and does not need to use the formal power series multiplicative inverse algorithm to compute. We only need to compute once and extract the required coefficients.
 
-## 常见的特殊形式复合
+## Common Special Form Compositions
 
-我们常用的 [多项式初等函数](./elementary-func.md) 都可以通过复合计算：
+Common [polynomial elementary functions](./elementary-func.md) can all be computed via composition:
 
 $$
 \begin{aligned}
@@ -74,54 +74,54 @@ g(0)=1&,\space g^e=1+\dfrac{e}{1}(g-1)+\dfrac{e(e-1)}{2}(g-1)^2+\cdots
 \end{aligned}
 $$
 
-在复合逆的计算中我们也会用到求幂函数．
+Power function is also used in computing composition inverse.
 
-### Kronecker 代换
+### Kronecker Substitution
 
-在分析时间复杂度之前我们先考虑如何作二元多项式乘法，一种想法是将系数「打包」，这一方法由 Kronecker 在 1882 年通过 $y\mapsto x^N$ 将 $R\left\lbrack x,y\right\rbrack$ 上的乘法缩减为 $R\left\lbrack x\right\rbrack$ 上的乘法，但是要求 $N$ 足够大．
+Before analyzing time complexity, let's consider how to do bivariate polynomial multiplication. One idea is to "pack" the coefficients. This method was proposed by Kronecker in 1882 to reduce multiplication on $R\lbrack x,y\rbrack$ to multiplication on $R\lbrack x\rbrack$, but it requires $N$ to be large enough.
 
-不妨设 $\deg_x \left(AB\right)<N$，那么我们计算 $A\left(x,x^N\right)B\left(x,x^N\right)$ 之后仍然可以还原出 $A(x,y)B(x,y)$ 且「打包」和「拆包」的时间为线性．
+Assume $\deg_x \left(AB\right)<N$. After computing $A\left(x,x^N\right)B\left(x,x^N\right)$, we can still restore $A(x,y)B(x,y)$, and the time for "packing" and "unpacking" is linear.
 
-我们使用 Kronecker 代换再计算一元多项式乘法即可，不难发现在 $n$ 为二的幂时上述算法可以在 $O\left(\mathsf{M}\left(n\right)\log n\right)$ 时间完成，因为每一次递归中 $y$ 的次数翻倍，但是 $x$ 的次数减半．
+Using Kronecker substitution and then computing one-variable polynomial multiplication, we can find that when $n$ is a power of 2, the above algorithm can complete in $O\left(\mathsf{M}\left(n\right)\log n\right)$ time, because in each recursion the degree of $y$ doubles, but the degree of $x$ halves.
 
-??? note "模板（[P5373【模板】多项式复合函数](https://www.luogu.com.cn/problem/P5373)）"
-    代码相对于原算法作了一些简化及修改，使得代码更短．
+??? note "Template ([P5373【Template】Polynomial Composition Function](https://www.luogu.com.cn/problem/P5373))"
+    The code has made some simplifications and modifications compared to the original algorithm to make it shorter.
     
     ```cpp
     --8<-- "docs/math/code/poly/comp-rev/comp_1.cpp"
     ```
 
-## 形式幂级数的复合逆
+## Composition Inverse of Formal Power Series
 
-现给出 $f\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$ 且 $f'(0)\neq 0$，求出 $g(x)\bmod{x^n}$ 满足 $f(g)\equiv g(f)\equiv x\pmod{x^n}$．
+Given $f\in x\mathbb{C}\left\lbrack\left\lbrack x\right\rbrack\right\rbrack$ with $f'(0)\neq 0$, find $g(x)\bmod{x^n}$ such that $f(g)\equiv g(f)\equiv x\pmod{x^n}$.
 
-根据 [Lagrange 反演](./lagrange-inversion.md)，对于 $n>1,k\geq 0$ 我们有
+According to [Lagrange Inversion](./lagrange-inversion.md), for $n>1,k\geq 0$:
 
 $$
 \left\lbrack x^{n-1}\right\rbrack f(x)^k=\frac{k}{n-1}\left\lbrack x^{n-1-k}\right\rbrack \left(\frac{g(x)}{x}\right)^{-(n-1)}
 $$
 
-也就是我们如果能对 $k=0,1,\dots ,n-1$ 求出 $\left\lbrack x^{n-1}\right\rbrack f(x)^k$，那么就可以求出其复合逆．
+That is, if we can compute $\left\lbrack x^{n-1}\right\rbrack f(x)^k$ for $k=0,1,\dots ,n-1$, then we can find its composition inverse.
 
-Kinoshita 和 Li 指出我们可以考虑二元有理函数
+Kinoshita and Li point out that we can consider the bivariate rational function:
 
 $$
 \frac{1}{1-y\cdot f(x)}=\sum_{j\geq 0}f(x)^jy^j
 $$
 
-且这个问题有一个更一般的形式即 Power Projection 问题：我们考虑计算
+And this problem has a more general form: the Power Projection problem. We consider computing:
 
 $$
 u:=\left\lbrack x^{n-1}\right\rbrack\frac{P(x,y)}{Q(x,y)}\bmod{y^m}
 $$
 
-当 $n-1=0$ 时显然有 $u=\dfrac{P(0,y)}{Q(0,y)}\bmod{y^m}$，否则我们有
+When $n-1=0$, obviously $u=\dfrac{P(0,y)}{Q(0,y)}\bmod{y^m}$. Otherwise:
 
 $$
 \frac{P(x,y)}{Q(x,y)}=\frac{P(x,y)Q(-x,y)}{Q(x,y)Q(-x,y)}=\frac{U_e\left(x^2,y\right)+xU_o\left(x^2,y\right)}{V\left(x^2,y\right)}
 $$
 
-那么
+Then:
 
 $$
 \begin{aligned}
@@ -136,7 +136,7 @@ u&=\begin{cases}
 \end{aligned}
 $$
 
-我们给出其伪代码：
+We give its pseudocode:
 
 $$
 \begin{array}{ll}
@@ -159,7 +159,7 @@ $$
 \end{array}
 $$
 
-同样的我们也可以直接导出 $Q(0,y)^{-1}$ 而不需要计算形式幂级数的乘法逆元，那么复合逆的算法就是
+Similarly, we can also directly derive $Q(0,y)^{-1}$ without computing formal power series multiplicative inverse. Then the composition inverse algorithm is:
 
 $$
 \begin{array}{ll} &\textbf{Algorithm }\operatorname{\mathsf{Rev}}(f(x),n)\text{:} \\
@@ -174,18 +174,18 @@ $$
 \end{array}
 $$
 
-??? note "模板（[P5809【模板】多项式复合逆](https://www.luogu.com.cn/problem/P5809)）"
-    代码相对于原算法作了一些简化及修改，使得代码更短．
+??? note "Template ([P5809【Template】Polynomial Composition Inverse](https://www.luogu.com.cn/problem/P5809))"
+    The code has made some simplifications and modifications compared to the original algorithm to make it shorter.
     
     ```cpp
     --8<-- "docs/math/code/poly/comp-rev/rev_1.cpp"
     ```
 
-### 由转置原理导出
+### Derived from Transposition Principle
 
-Power Projection 问题是 Modular Composition 的转置，Kinoshita 和 Li 指出我们前文的复合算法可以由 Power Projection 算法直接转置得到．同样的，如果优化可以应用于 Power Projection 算法，其也可以应用于 Modular Composition 算法．我们省略细节．
+The Power Projection problem is the transpose of Modular Composition. Kinoshita and Li point out that our composition algorithm above can be directly transposed from the Power Projection algorithm. Similarly, if optimization can be applied to the Power Projection algorithm, it can also be applied to the Modular Composition algorithm. We omit the details.
 
-## 参考文献
+## References
 
 1.  Yasunori Kinoshita, Baitian Li.[Power Series Composition in Near-Linear Time](https://arxiv.org/abs/2404.05177). FOCS 2024.
 2.  Alin Bostan, Ryuhei Mori.[A Simple and Fast Algorithm for Computing the N-th Term of a Linearly Recurrent Sequence](https://arxiv.org/abs/2008.08822). SOSA 2021: 118-132

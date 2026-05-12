@@ -1,57 +1,57 @@
 author: Tiphereth-A, ShaoChenHeng, Enter-tainer, ksyx, c-forrest, StudyingFather, H-J-Granger, iamtwz, imp2002, Ir1d, kenlig, LeBronGod, Marcythm, MegaOwIer, NachtgeistW, ouuan, Patchouliys, Soohti, TianKong-y, sun2snow
 
-## 引入
+## Introduction
 
-概率 DP 用于解决概率问题与期望问题，建议先对 [概率 & 期望](../math/probability/exp-var.md) 的内容有一定了解．一般情况下，解决概率问题需要顺序循环，而解决期望问题使用逆序循环．如果定义的状态转移方程存在后效性问题，还需要用到 [高斯消元](../math/numerical/gauss.md) 来优化．概率 DP 也会结合其他知识进行考察，例如 [状态压缩](./state.md)、树上进行 DP 转移等．
+Probability DP is used to solve probability and expectation problems. It is recommended to first understand [probability and expectation](../math/probability/exp-var.md). In general, probability problems are solved with forward iteration, while expectation problems use reverse iteration. If the defined transition equation has aftereffects, [Gaussian elimination](../math/numerical/gauss.md) may be needed for optimization. Probability DP is also often combined with other techniques, such as [state compression](./state.md) and DP transitions on trees.
 
-## 概率 DP
+## Probability DP
 
-这类题目采用顺推，也就是从初始状态推向结果．同一般的 DP 类似，难点依然是对状态转移方程的刻画，只是这类题目经过了概率论知识的包装．
+This type of problem uses forward transitions, from the initial state toward the result. As with ordinary DP, the main difficulty is still describing the state transition equation; the difference is that these problems are wrapped in probability theory.
 
-### 例题
+### Example Problem
 
 ???+ example "[Codeforces 148D Bag of mice](https://codeforces.com/problemset/problem/148/D)"
-    袋子里有 $w$ 只白鼠和 $b$ 只黑鼠，公主和龙轮流从袋子里抓老鼠．谁先抓到白色老鼠谁就赢，如果袋子里没有老鼠了并且没有谁抓到白色老鼠，那么算龙赢．公主每次抓一只老鼠，龙每次抓完一只老鼠之后会有一只老鼠跑出来．每次抓的老鼠和跑出来的老鼠都是随机的．公主先抓．问公主赢的概率．
+    A bag contains $w$ white mice and $b$ black mice. The princess and the dragon take turns drawing mice from the bag. Whoever first draws a white mouse wins. If the bag becomes empty and no one has drawn a white mouse, the dragon wins. The princess draws one mouse each turn. After the dragon draws one mouse, another mouse runs out. Each drawn mouse and escaping mouse is random. The princess goes first. Find the probability that the princess wins.
 
-??? note "解答"
-    设 $f_{i,j}$ 为轮到公主时袋子里有 $i$ 只白鼠，$j$ 只黑鼠，公主赢的概率．初始化边界，$f_{0,j}=0$ 因为没有白鼠了算龙赢，$f_{i,0}=1$ 因为抓一只就是白鼠，公主赢．
-    考虑 $f_{i,j}$ 的转移：
+??? note "Solution"
+    Let $f_{i,j}$ be the probability that the princess wins when it is her turn and the bag contains $i$ white mice and $j$ black mice. Initialize the boundary values: $f_{0,j}=0$, because if there are no white mice the dragon wins; $f_{i,0}=1$, because drawing one mouse must draw a white mouse, so the princess wins.
+    Consider transitions for $f_{i,j}$:
     
-    -   公主抓到一只白鼠，公主赢了．概率为 $\dfrac{i}{i+j}$．
-    -   公主抓到一只黑鼠，龙抓到一只白鼠，龙赢了．概率为 $\dfrac{j}{i+j}\cdot\dfrac{i}{i+j-1}$．
-    -   公主抓到一只黑鼠，龙抓到一只黑鼠，跑出来一只黑鼠，转移到 $f_{i,j-3}$．概率为 $\dfrac{j}{i+j}\cdot\dfrac{j-1}{i+j-1}\cdot\dfrac{j-2}{i+j-2}$．
-    -   公主抓到一只黑鼠，龙抓到一只黑鼠，跑出来一只白鼠，转移到 $f_{i-1,j-2}$．概率为 $\dfrac{j}{i+j}\cdot\dfrac{j-1}{i+j-1}\cdot\dfrac{i}{i+j-2}$．
+    -   The princess draws a white mouse and wins. The probability is $\dfrac{i}{i+j}$.
+    -   The princess draws a black mouse, then the dragon draws a white mouse and wins. The probability is $\dfrac{j}{i+j}\cdot\dfrac{i}{i+j-1}$.
+    -   The princess draws a black mouse, the dragon draws a black mouse, then a black mouse runs out, transitioning to $f_{i,j-3}$. The probability is $\dfrac{j}{i+j}\cdot\dfrac{j-1}{i+j-1}\cdot\dfrac{j-2}{i+j-2}$.
+    -   The princess draws a black mouse, the dragon draws a black mouse, then a white mouse runs out, transitioning to $f_{i-1,j-2}$. The probability is $\dfrac{j}{i+j}\cdot\dfrac{j-1}{i+j-1}\cdot\dfrac{i}{i+j-2}$.
     
-    考虑公主赢的概率，第二种情况不参与计算．并且要保证后两种情况合法，所以还要判断 $i,j$ 的大小，满足第三种情况至少要有 3 只黑鼠，满足第四种情况要有 1 只白鼠和 2 只黑鼠．
+    When computing the probability that the princess wins, the second case does not contribute. The last two cases must also be valid, so the sizes of $i$ and $j$ need to be checked. The third case requires at least 3 black mice, and the fourth case requires at least 1 white mouse and 2 black mice.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/probability/probability_1.cpp"
     ```
 
-### 习题
+### Exercises
 
 -   [POJ3071 Football](http://poj.org/problem?id=3071)
 -   [CodeForces 768D Jon and Orbs](https://codeforces.com/problemset/problem/768/D)
 
-## 期望 DP
+## Expectation DP
 
-### 例题
+### Example Problem
 
 ???+ example "[POJ2096 Collecting Bugs](http://poj.org/problem?id=2096)"
-    一个软件有 $s$ 个子系统，会产生 $n$ 种 bug．某人一天发现一个 bug，这个 bug 属于某种 bug 分类，也属于某个子系统．每个 bug 属于某个子系统的概率是 $\dfrac{1}{s}$，属于某种 bug 分类的概率是 $\dfrac{1}{n}$．求发现 $n$ 种 bug，且 $s$ 个子系统都找到 bug 的期望天数．
+    A software system has $s$ subsystems and can produce $n$ types of bugs. Someone finds one bug per day. Each bug belongs to one bug category and one subsystem. The probability that a bug belongs to any subsystem is $\dfrac{1}{s}$, and the probability that it belongs to any bug category is $\dfrac{1}{n}$. Find the expected number of days needed to discover all $n$ bug categories and bugs in all $s$ subsystems.
 
-??? note "解答"
-    令 $f_{i,j}$ 为已经找到 $i$ 种 bug 分类，$j$ 个子系统的 bug，达到目标状态的期望天数．这里的目标状态是找到 $n$ 种 bug 分类，$s$ 个子系统的 bug．那么就有 $f_{n,s}=0$，因为已经达到了目标状态，不需要用更多的天数去发现 bug 了，于是就以目标状态为起点开始递推，答案是 $f_{0,0}$．
+??? note "Solution"
+    Let $f_{i,j}$ be the expected number of days needed to reach the target state after already finding $i$ bug categories and bugs in $j$ subsystems. The target state is finding all $n$ bug categories and all $s$ subsystems. Thus $f_{n,s}=0$, because no additional days are needed after reaching the target state. We start the recurrence from the target state, and the answer is $f_{0,0}$.
     
-    考虑 $f_{i,j}$ 的状态转移：
+    Consider transitions for $f_{i,j}$:
     
-    -   $f_{i,j}$，发现一个 bug 属于已经发现的 $i$ 种 bug 分类，$j$ 个子系统，概率为 $p_1=\dfrac{i}{n}\cdot\dfrac{j}{s}$．
-    -   $f_{i,j+1}$，发现一个 bug 属于已经发现的 $i$ 种 bug 分类，不属于已经发现的子系统，概率为 $p_2=\dfrac{i}{n}\cdot(1-\dfrac{j}{s})$．
-    -   $f_{i+1,j}$，发现一个 bug 不属于已经发现 bug 分类，属于 $j$ 个子系统，概率为 $p_3=(1-\dfrac{i}{n})\cdot\dfrac{j}{s}$．
-    -   $f_{i+1,j+1}$，发现一个 bug 不属于已经发现 bug 分类，不属于已经发现的子系统，概率为 $p_4=(1-\dfrac{i}{n})\cdot(1-\dfrac{j}{s})$．
+    -   $f_{i,j}$: the new bug belongs to one of the already found $i$ bug categories and one of the already found $j$ subsystems, with probability $p_1=\dfrac{i}{n}\cdot\dfrac{j}{s}$.
+    -   $f_{i,j+1}$: the new bug belongs to an already found bug category but not an already found subsystem, with probability $p_2=\dfrac{i}{n}\cdot(1-\dfrac{j}{s})$.
+    -   $f_{i+1,j}$: the new bug does not belong to an already found bug category but belongs to an already found subsystem, with probability $p_3=(1-\dfrac{i}{n})\cdot\dfrac{j}{s}$.
+    -   $f_{i+1,j+1}$: the new bug belongs to neither an already found bug category nor an already found subsystem, with probability $p_4=(1-\dfrac{i}{n})\cdot(1-\dfrac{j}{s})$.
     
-    再根据期望的线性性质，就可以得到状态转移方程：
+    By linearity of expectation, the transition equation is:
     
     $$
     \begin{aligned}
@@ -60,22 +60,22 @@ author: Tiphereth-A, ShaoChenHeng, Enter-tainer, ksyx, c-forrest, StudyingFather
     \end{aligned}
     $$
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/probability/probability_2.cpp"
     ```
 
-???+ example "[「NOIP2016」换教室](http://uoj.ac/problem/262)"
-    牛牛要上 $n$ 个时间段的课，第 $i$ 个时间段在 $c_i$ 号教室，可以申请换到 $d_i$ 号教室，申请成功的概率为 $p_i$，至多可以申请 $m$ 节课进行交换．第 $i$ 个时间段的课上完后要走到第 $i+1$ 个时间段的教室，给出一张图 $v$ 个教室 $e$ 条路，移动会消耗体力，申请哪几门课程可以使他因在教室间移动耗费的体力值的总和的期望值最小，也就是求出最小的期望路程和．
+???+ example "[NOIP2016 Changing Classrooms](http://uoj.ac/problem/262)"
+    Niuniu has classes in $n$ time slots. The class in the $i$-th time slot is in classroom $c_i$. He may apply to switch it to classroom $d_i$, and the application succeeds with probability $p_i$. He may apply to switch at most $m$ classes. After finishing the class in the $i$-th time slot, he must walk to the classroom for the $(i+1)$-th time slot. Given a graph with $v$ classrooms and $e$ roads, movement consumes stamina. Determine which classes to apply to switch so that the expected total stamina spent moving between classrooms is minimized; equivalently, find the minimum expected total path length.
 
-??? note "解答"
-    对于这个无向连通图，先用 Floyd 求出最短路，为后续的状态转移带来便利．以移动一步为一个阶段（从第 $i$ 个时间段到达第 $i+1$ 个时间段就是移动了一步），那么每一步就有 $p_i$ 的概率到 $d_i$，不过在所有的 $d_i$ 中只能选 $m$ 个，有 $1-p_i$ 的概率到 $c_i$，求出在 $n$ 个阶段走完后的最小期望路程和．
+??? note "Solution"
+    For this undirected connected graph, first use Floyd-Warshall to compute all-pairs shortest paths, making later transitions convenient. Treat each move as a stage; moving from the $i$-th time slot to the $(i+1)$-th time slot is one move. At each step, there is probability $p_i$ of going to $d_i$, but at most $m$ of all $d_i$ can be chosen, and probability $1-p_i$ of going to $c_i$. We need the minimum expected total path length after $n$ stages.
     
-    定义 $f_{i,j,0/1}$ 为在第 $i$ 个时间段，连同这一个时间段已经用了 $j$ 次换教室的机会，在这个时间段换（1）或者不换（0）教室的最小期望路程和，那么答案就是 $\min \{f_{n,i,0},f_{n,i,1}\} ,i\in[0,m]$．注意边界 $f_{1,0,0}=f_{1,1,1}=0$．
+    Define $f_{i,j,0/1}$ as the minimum expected total path length at the $i$-th time slot, after using $j$ classroom-switch opportunities including this time slot, where this time slot is switched (1) or not switched (0). The answer is $\min \{f_{n,i,0},f_{n,i,1}\}$ for $i\in[0,m]$. Note the boundary values $f_{1,0,0}=f_{1,1,1}=0$.
     
-    考虑 $f_{i,j,0/1}$ 的状态转移：
+    Consider the transition for $f_{i,j,0/1}$:
     
-    -   如果这一阶段不换，即 $f_{i,j,0}$．可能是由上一次不换的状态转移来的，那么就是 $f_{i-1,j,0}+w_{c_{i-1},c_{i}}$, 也有可能是由上一次交换的状态转移来的，这里结合条件概率和全概率的知识分析可以得到 $f_{i-1,j,1}+w_{d_{i-1},c_{i}}\cdot p_{i-1}+w_{c_{i-1},c_{i}}\cdot (1-p_{i-1})$，状态转移方程就有：
+    -   If this stage is not switched, i.e. $f_{i,j,0}$, it may transition from the previous state where the previous class was not switched, giving $f_{i-1,j,0}+w_{c_{i-1},c_i}$. It may also transition from the previous state where the previous class was switched. Using conditional probability and total probability gives $f_{i-1,j,1}+w_{d_{i-1},c_i}\cdot p_{i-1}+w_{c_{i-1},c_i}\cdot (1-p_{i-1})$. Thus:
     
     $$
     \begin{aligned}
@@ -83,57 +83,57 @@ author: Tiphereth-A, ShaoChenHeng, Enter-tainer, ksyx, c-forrest, StudyingFather
     \end{aligned}
     $$
     
-    -   如果这一阶段交换，即 $f_{i,j,1}$．类似地，可能由上一次不换的状态转移来，也可能由上一次交换的状态转移来．那么遇到不换的就乘上 $(1-p_i)$，遇到交换的就乘上 $p_i$，将所有会出现的情况都枚举一遍出进行计算就好了．这里不再赘述各种转移情况，相信通过上一种阶段例子，这里的状态转移应该能够很容易写出来．
+    -   If this stage is switched, i.e. $f_{i,j,1}$, it may similarly transition from the previous non-switched state or previous switched state. When a class is not switched, multiply by $(1-p_i)$; when it is switched, multiply by $p_i$. Enumerate all possible cases and compute the result. The details are omitted here; after the previous example, the transition should be straightforward to write.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/probability/probability_3.cpp"
     ```
 
-比较这两个问题可以发现，DP 求期望题目在对具体是求一个值或是最优化问题上会对方程得到转移方式有一些影响，但无论是 DP 求概率还是 DP 求期望，总是离不开概率知识和列出、化简计算公式的步骤，在写状态转移方程时需要思考的细节也类似．
+Comparing these two problems, we can see that in expectation DP, whether the task is to compute a value or optimize a value affects how the transition equation is derived. However, whether we are computing probabilities or expectations with DP, the process always relies on probability knowledge and on writing and simplifying formulas. The details to consider when writing transition equations are similar.
 
-### 习题
+### Exercises
 
 -   [HDU3853 LOOPS](https://acm.hdu.edu.cn/showproblem.php?pid=3853)
 -   [HDU4035 Maze](https://acm.hdu.edu.cn/showproblem.php?pid=4035)
--   [「SCOI2008」奖励关](https://www.luogu.com.cn/problem/P2473)
+-   [SCOI2008 Bonus Level](https://www.luogu.com.cn/problem/P2473)
 
-## 有后效性 DP
+## DP with Aftereffects
 
-### 例题
+### Example Problem
 
 ???+ example "[CodeForces 24D Broken robot](https://codeforces.com/problemset/problem/24/D)"
-    给出一个 $n \times m$ 的矩阵区域．一个机器人初始在第 $x$ 行第 $y$ 列，每一步机器人会等概率地选择停在原地、左移一步、右移一步、下移一步．如果机器人在边界则不会往区域外移动，问机器人到达最后一行的期望步数．
+    Given an $n\times m$ grid. A robot starts at row $x$, column $y$. At each step, the robot chooses uniformly at random to stay in place, move left one cell, move right one cell, or move down one cell. If the robot is on the boundary, it will not move outside the grid. Find the expected number of steps for the robot to reach the last row.
 
-??? note "解答"
-    在 $m=1$ 时每次有 $\dfrac{1}{2}$ 的概率不动，有 $\dfrac{1}{2}$ 的概率向下移动一格，答案为 $2\cdot (n-x)$．
-    设 $f_{i,j}$ 为机器人机器人从第 i 行第 j 列出发到达第 $n$ 行的期望步数，最终状态为 $f_{n,j}=0$．
-    由于机器人会等概率地选择停在原地，左移一步，右移一步，下移一步，考虑 $f_{i,j}$ 的状态转移：
+??? note "Solution"
+    When $m=1$, at each step there is probability $\dfrac12$ of staying still and probability $\dfrac12$ of moving down one cell, so the answer is $2\cdot(n-x)$.
+    Let $f_{i,j}$ be the expected number of steps for the robot to reach row $n$ starting from row $i$, column $j$. The final state is $f_{n,j}=0$.
+    Since the robot chooses uniformly among staying still, moving left, moving right, and moving down, the transitions are:
     
     -   $f_{i,1}=\dfrac{1}{3}\cdot(f_{i+1,1}+f_{i,2}+f_{i,1})+1$
     -   $f_{i,j}=\dfrac{1}{4}\cdot(f_{i,j}+f_{i,j-1}+f_{i,j+1}+f_{i+1,j})+1$
     -   $f_{i,m}=\dfrac{1}{3}\cdot(f_{i,m}+f_{i,m-1}+f_{i+1,m})+1$
     
-    在行之间由于只能向下移动，是满足无后效性的．在列之间可以左右移动，在移动过程中可能产生环，不满足无后效性．
-    将方程变换后可以得到：
+    Between rows, movement is only downward, so there is no aftereffect. Between columns, the robot may move left or right, and cycles may occur during movement, so the process has aftereffects.
+    Rearranging the equations gives:
     
     -   $2f_{i,1}-f_{i,2}=3+f_{i+1,1}$
     -   $3f_{i,j}-f_{i,j-1}-f_{i,j+1}=4+f_{i+1,j}$
     -   $2f_{i,m}-f_{i,m-1}=3+f_{i+1,m}$
     
-    由于是逆序的递推，所以每一个 $f_{i+1,j}$ 是已知的．
-    由于有 $m$ 列，所以右边相当于是一个 $m$ 行的列向量，那么左边就是 $m$ 行 $m$ 列的矩阵．使用增广矩阵，就变成了 $m$ 行 $m+1$ 列的矩阵，然后进行 [高斯消元](../math/numerical/gauss.md) 即可解出答案．
+    Since this is a reverse recurrence, every $f_{i+1,j}$ is known.
+    There are $m$ columns, so the right-hand side is equivalent to a column vector with $m$ rows, and the left-hand side is an $m\times m$ matrix. Using an augmented matrix gives an $m\times(m+1)$ matrix. Then [Gaussian elimination](../math/numerical/gauss.md) solves for the answer.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/dp/code/probability/probability_4.cpp"
     ```
 
-### 习题
+### Exercises
 
 -   [HDU 4418 Time Travel](https://acm.hdu.edu.cn/showproblem.php?pid=4418)
--   [「HNOI2013」游走](https://loj.ac/problem/2383)
+-   [HNOI2013 Wandering](https://loj.ac/problem/2383)
 
-## 参考文献
+## References
 
-[kuangbin 概率 DP 总结](https://www.cnblogs.com/kuangbin/archive/2012/10/02/2710606.html)
+[kuangbin's Probability DP Summary](https://www.cnblogs.com/kuangbin/archive/2012/10/02/2710606.html)

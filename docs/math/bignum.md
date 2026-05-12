@@ -1,37 +1,37 @@
-> 太长不看版：结尾自取模板……
+> TL;DR: Template available at the end...
 
-## 定义
+## Definition
 
-高精度计算（Arbitrary-Precision Arithmetic），也被称作大整数（bignum）计算，运用了一些算法结构来支持更大整数间的运算（数字大小超过语言内建整型）．
+Arbitrary-Precision Arithmetic, also known as bignum computation, uses some algorithm structures to support operations between larger integers (numbers exceeding the built-in integer types of programming languages).
 
-## 引入
+## Introduction
 
-高精度问题包含很多小的细节，实现上也有很多讲究．
+High-precision computation involves many small details, and there are many nuances in implementation.
 
-所以今天就来一起实现一个简单的计算器吧．
+So today, let's implement a simple calculator together.
 
-???+ note "任务"
-    输入：一个形如 `a <op> b` 的表达式．
+???+ note "Task"
+    Input: An expression in the form `a <op> b`.
     
-    -   `a`、`b` 分别是长度不超过 $1000$ 的十进制非负整数；
-    -   `<op>` 是一个字符（`+`、`-`、`*` 或 `/`），表示运算．
-    -   整数与运算符之间由一个空格分隔．
+    -   `a` and `b` are non-negative integers in decimal with length not exceeding $1000$;
+    -   `<op>` is a character (`+`, `-`, `*`, or `/`), representing the operation.
+    -   There is a space between the integer and the operator.
     
-    输出：运算结果．
+    Output: The result of the operation.
     
-    -   对于 `+`、`-`、`*` 运算，输出一行表示结果；
-    -   对于 `/` 运算，输出两行分别表示商和余数．
-    -   保证结果均为非负整数．
+    -   For `+`, `-`, `*` operations, output one line representing the result;
+    -   For `/` operation, output two lines representing the quotient and remainder, respectively.
+    -   It is guaranteed that all results are non-negative integers.
 
-## 存储
+## Storage
 
-在平常的实现中，高精度数字利用字符串表示，每一个字符表示数字的一个十进制位．因此可以说，高精度数值计算实际上是一种特别的字符串处理．
+In normal implementations, high-precision numbers are represented using strings, where each character represents one decimal digit. Therefore, high-precision arithmetic is actually a special kind of string processing.
 
-读入字符串时，数字最高位在字符串首（下标小的位置）．但是习惯上，下标最小的位置存放的是数字的 **最低位**，即存储反转的字符串．这么做的原因在于，数字的长度可能发生变化，但我们希望同样权值位始终保持对齐（例如，希望所有的个位都在下标 `[0]`，所有的十位都在下标 `[1]`……）；同时，加、减、乘的运算一般都从个位开始进行（回想小学的竖式运算），这都给了「反转存储」以充分的理由．
+When reading a string, the most significant digit of the number is at the beginning of the string (small index position). However, by convention, the position with the smallest index stores the **least significant digit** of the number, i.e., the string is stored in reverse. The reason for doing this is that the length of the number may change, but we want digits of the same weight to remain aligned (for example, we want all units to be at index `[0]`, all tens at index `[1]`, etc.); at the same time, addition, subtraction, and multiplication operations generally start from the units digit (recalling elementary school vertical calculations), all of which give sufficient reason for "reversed storage".
 
-此后我们将一直沿用这一约定．定义一个常数 `LEN = 1004` 表示程序所容纳的最大长度．
+From now on, we will follow this convention. Define a constant `LEN = 1004` to represent the maximum length the program can accommodate.
 
-由此不难写出读入高精度数字的代码：
+From this, it is not difficult to write the code for reading high-precision numbers:
 
 ```cpp
 void clear(int a[]) {
@@ -45,14 +45,14 @@ void read(int a[]) {
   clear(a);
 
   int len = strlen(s);
-  // 如上所述，反转
+  // As described above, reverse
   for (int i = 0; i < len; ++i) a[len - i - 1] = s[i] - '0';
-  // s[i] - '0' 就是 s[i] 所表示的数码
-  // 有些同学可能更习惯用 ord(s[i]) - ord('0') 的方式理解
+  // s[i] - '0' is the digit represented by s[i]
+  // Some students may prefer to understand it as ord(s[i]) - ord('0')
 }
 ```
 
-输出也按照存储的逆序输出．由于不希望输出前导零，故这里从最高位开始向下寻找第一个非零位，从此处开始输出；终止条件 `i >= 1` 而不是 `i >= 0` 是因为当整个数字等于 $0$ 时仍希望输出一个字符 `0`．
+Output also follows the reverse order of storage. Since we don't want to output leading zeros, we start searching from the most significant digit downward to find the first non-zero digit, and start output from this position; the termination condition `i >= 1` instead of `i >= 0` is because when the entire number equals $0$, we still want to output a single character `0`.
 
 ```cpp
 void print(int a[]) {
@@ -64,7 +64,7 @@ void print(int a[]) {
 }
 ```
 
-拼起来就是一个完整的复读机程序咯．
+Putting it together, we get a complete echo program.
 
 ??? note "`copycat.cpp`"
     ```cpp
@@ -105,32 +105,32 @@ void print(int a[]) {
     }
     ```
 
-## 四则运算
+## Arithmetic Operations
 
-四则运算中难度也各不相同．最简单的是高精度加减法，其次是高精度—单精度（普通的 `int`）乘法和高精度—高精度乘法，最后是高精度—高精度除法．
+Among the four arithmetic operations, the difficulty varies. The simplest is high-precision addition and subtraction, followed by high-precision times single-precision (regular `int`) multiplication and high-precision times high-precision multiplication, and finally high-precision times high-precision division.
 
-我们将按这个顺序分别实现所有要求的功能．
+We will implement all required functions in this order.
 
-### 加法
+### Addition
 
-高精度加法，其实就是竖式加法啦．
+High-precision addition is actually vertical addition.
 
 ![](./images/plus.svg)
 
-也就是从最低位开始，将两个加数对应位置上的数码相加，并判断是否达到或超过 $10$．如果达到，那么处理进位：将更高一位的结果上增加 $1$，当前位的结果减少 $10$．
+That is, starting from the least significant digit, add the digits at corresponding positions of the two addends, and check if the sum reaches or exceeds $10$. If it does, handle the carry: increase the result at the next higher position by $1$, and decrease the current position's result by $10$.
 
 ```cpp
 void add(int a[], int b[], int c[]) {
   clear(c);
 
-  // 高精度实现中，一般令数组的最大长度 LEN 比可能的输入大一些
-  // 然后略去末尾的几次循环，这样一来可以省去不少边界情况的处理
-  // 因为实际输入不会超过 1000 位，故在此循环到 LEN - 1 = 1003 已经足够
+  // In high-precision implementations, we usually let the maximum array length LEN be slightly larger than possible inputs
+  // Then we can skip a few iterations at the end, which saves a lot of boundary condition handling
+  // Since the actual input won't exceed 1000 digits, iterating to LEN - 1 = 1003 is sufficient here
   for (int i = 0; i < LEN - 1; ++i) {
-    // 将相应位上的数码相加
+    // Add the digits at corresponding positions
     c[i] += a[i] + b[i];
     if (c[i] >= 10) {
-      // 进位
+      // Carry
       c[i + 1] += 1;
       c[i] -= 10;
     }
@@ -138,7 +138,7 @@ void add(int a[], int b[], int c[]) {
 }
 ```
 
-试着和上一部分结合，可以得到一个加法计算器．
+Try combining with the previous part, and we get an addition calculator.
 
 ??? note "`adder.cpp`"
     ```cpp
@@ -194,23 +194,23 @@ void add(int a[], int b[], int c[]) {
     }
     ```
 
-### 减法
+### Subtraction
 
-高精度减法，也就是竖式减法啦．
+High-precision subtraction is also vertical subtraction.
 
 ![](./images/subtraction.svg)
 
-从个位起逐位相减，遇到负的情况则向上一位借 $1$．整体思路与加法完全一致．
+Subtract digit by digit starting from the units place, and when encountering a negative result, borrow $1$ from the next higher place. The overall idea is completely consistent with addition.
 
 ```cpp
 void sub(int a[], int b[], int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
-    // 逐位相减
+    // Subtract digit by digit
     c[i] += a[i] - b[i];
     if (c[i] < 0) {
-      // 借位
+      // Borrow
       c[i + 1] -= 1;
       c[i] += 10;
     }
@@ -218,7 +218,7 @@ void sub(int a[], int b[], int c[]) {
 }
 ```
 
-将上一个程序中的 `add()` 替换成 `sub()`，就有了一个减法计算器．
+Replace the `add()` in the previous program with `sub()`, and we have a subtraction calculator.
 
 ??? note "`subtractor.cpp`"
     ```cpp
@@ -274,69 +274,69 @@ void sub(int a[], int b[], int c[]) {
     }
     ```
 
-试一试，输入 `1 2`——输出 `/9999999`，诶这个 **OI Wiki** 怎么给了我一份假的代码啊……
+Try it, input `1 2`—output `/9999999`, hey, why did this **OI Wiki** give me a fake code...
 
-事实上，上面的代码只能处理减数 $a$ 大于等于被减数 $b$ 的情况．处理被减数比减数小，即 $a<b$ 时的情况很简单．
+In fact, the code above can only handle the case where the subtrahend $a$ is greater than or equal to the minuend $b$. Handling the case where the minuend is smaller than the subtrahend, i.e., $a<b$, is very simple.
 
 $a-b=-(b-a)$
 
-要计算 $b-a$ 的值，因为有 $b>a$，可以调用以上代码中的 `sub` 函数，写法为 `sub(b,a,c)`．要得到 $a-b$ 的值，在得数前加上负号即可．
+To compute $b-a$, since $b>a$, we can call the `sub` function in the code above, writing `sub(b,a,c)`. To get the value of $a-b$, just add a negative sign in front of the result.
 
-### 乘法
+### Multiplication
 
-#### 高精度—单精度
+#### High-Precision Times Single-Precision
 
-高精度乘法，也就是竖……等会儿等会儿！
+High-precision multiplication is also vertical... wait wait wait!
 
-先考虑一个简单的情况：乘数中的一个是普通的 `int` 类型．有没有简单的处理方法呢？
+First consider a simple case: one of the multiplicands is a regular `int` type. Is there a simple handling method?
 
-一个直观的思路是直接将 $a$ 每一位上的数字乘以 $b$．从数值上来说，这个方法是正确的，但它并不符合十进制表示法，因此需要将它重新整理成正常的样子．
+An intuitive approach is to directly multiply each digit of $a$ by $b$. Numerically, this method is correct, but it doesn't conform to decimal representation, so we need to reorganize it into normal form.
 
-重整的方式，也是从个位开始逐位向上处理进位．但是这里的进位可能非常大，甚至远大于 $9$，因为每一位被乘上之后都可能达到 $9b$ 的数量级．所以这里的进位不能再简单地进行 $-10$ 运算，而是要通过除以 $10$ 的商以及余数计算．详见代码注释，也可以参考下图展示的一个计算高精度数 $1337$ 乘以单精度数 $42$ 的过程．
+The reorganization method also processes carries digit by digit from the least significant digit upward. But here the carry can be very large, even far exceeding $9$, because after being multiplied, each digit can reach a magnitude of $9b$. Therefore, the carry here can no longer simply perform $-10$ operations, but must be calculated using the quotient and remainder of division by $10$. See the code comments for details, or refer to the figure below showing the process of calculating the high-precision number $1337$ multiplied by the single-precision number $42$.
 
 ![](./images/multiplication-short.png)
 
-当然，也是出于这个原因，这个方法需要特别关注乘数 $b$ 的范围．若它和 $10^9$（或相应整型的取值上界）属于同一数量级，那么需要慎用高精度—单精度乘法．
+Also, for this reason, this method requires special attention to the range of the multiplicand $b$. If it is of the same order of magnitude as $10^9$ (or the upper bound of the corresponding integer type), then high-precision times single-precision multiplication must be used with caution.
 
 ```cpp
 void mul_short(int a[], int b, int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
-    // 直接把 a 的第 i 位数码乘以乘数，加入结果
+    // Directly multiply the i-th digit of a by the multiplicand and add to the result
     c[i] += a[i] * b;
 
     if (c[i] >= 10) {
-      // 处理进位
-      // c[i] / 10 即除法的商数成为进位的增量值
+      // Handle carry
+      // c[i] / 10 becomes the increment value of the carry
       c[i + 1] += c[i] / 10;
-      // 而 c[i] % 10 即除法的余数成为在当前位留下的值
+      // c[i] % 10 becomes the value left at the current position
       c[i] %= 10;
     }
   }
 }
 ```
 
-#### 高精度—高精度
+#### High-Precision Times High-Precision
 
-如果两个乘数都是高精度，那么竖式乘法又可以大显身手了．
+If both multiplicands are high-precision, then vertical multiplication can shine again.
 
-回想竖式乘法的每一步，实际上是计算了若干 $a \times b_i \times 10^i$ 的和．例如计算 $1337 \times 42$，计算的就是 $1337 \times 2 \times 10^0 + 1337 \times 4 \times 10^1$．
+Recalling each step of vertical multiplication, it actually computes the sum of several $a \times b_i \times 10^i$. For example, computing $1337 \times 42$ computes $1337 \times 2 \times 10^0 + 1337 \times 4 \times 10^1$.
 
-于是可以将 $b$ 分解为它的所有数码，其中每个数码都是单精度数，将它们分别与 $a$ 相乘，再向左移动到各自的位置上相加即得答案．当然，最后也需要用与上例相同的方式处理进位．
+Therefore, we can decompose $b$ into all its digits, where each digit is a single-precision number, multiply them with $a$ separately, then shift them left to their respective positions and add them to get the answer. Of course, we also need to handle carries at the end in the same way as in the previous example.
 
 ![](./images/multiplication-long.png)
 
-注意这个过程与竖式乘法不尽相同，我们的算法在每一步乘的过程中并不进位，而是将所有的结果保留在对应的位置上，到最后再统一处理进位，但这不会影响结果．
+Note that this process is not exactly the same as vertical multiplication. Our algorithm does not carry at each step of multiplication, but keeps all results in their corresponding positions and handles carries uniformly at the end. However, this does not affect the result.
 
 ```cpp
 void mul(int a[], int b[], int c[]) {
   clear(c);
 
   for (int i = 0; i < LEN - 1; ++i) {
-    // 这里直接计算结果中的从低到高第 i 位，且一并处理了进位
-    // 第 i 次循环为 c[i] 加上了所有满足 p + q = i 的 a[p] 与 b[q] 的乘积之和
-    // 这样做的效果和直接进行上图的运算最后求和是一样的，只是更加简短的一种实现方式
+    // Here we directly calculate the i-th digit from low to high in the result, and handle carries together
+    // The i-th iteration adds to c[i] the sum of products of all a[p] and b[q] where p + q = i
+    // The effect of doing this is the same as directly performing the calculation in the figure above and summing, just a more concise implementation
     for (int j = 0; j <= i; ++j) c[i] += a[j] * b[i - j];
 
     if (c[i] >= 10) {
@@ -347,30 +347,30 @@ void mul(int a[], int b[], int c[]) {
 }
 ```
 
-### 除法
+### Division
 
-高精度除法的一种实现方式就是竖式长除法．
+One implementation of high-precision division is long division.
 
 ![](./images/division.svg)
 
-竖式长除法实际上可以看作一个逐次减法的过程．例如上图中商数十位的计算可以这样理解：将 $45$ 减去三次 $12$ 后变得小于 $12$，不能再减，故此位为 $3$．
+Long division can actually be viewed as a successive subtraction process. For example, in the figure above, the calculation of the tens digit of the quotient can be understood as: subtract $12$ three times until it becomes less than $12$ and can no longer be subtracted, so this digit is $3$.
 
-为了减少冗余运算，我们提前得到被除数的长度 $l_a$ 与除数的长度 $l_b$，从下标 $l_a - l_b$ 开始，从高位到低位来计算商．这和手工计算时将第一次乘法的最高位与被除数最高位对齐的做法是一样的．
+To reduce redundant operations, we first obtain the lengths $l_a$ of the dividend and $l_b$ of the divisor, and start from index $l_a - l_b$, computing the quotient from high to low digits. This is the same as the manual calculation method where the highest digit of the first multiplication is aligned with the highest digit of the dividend.
 
-参考程序实现了一个函数 `greater_eq()` 用于判断被除数以下标 `last_dg` 为最低位，是否可以再减去除数而保持非负．此后对于商的每一位，不断调用 `greater_eq()`，并在成立的时候用高精度减法从余数中减去除数，也即模拟了竖式除法的过程．
+The reference program implements a function `greater_eq()` to determine whether, with the dividend starting from index `last_dg` as the lowest digit, we can subtract the divisor again while remaining non-negative. Then, for each digit of the quotient, we repeatedly call `greater_eq()`, and when it holds, we subtract the divisor from the remainder using high-precision subtraction, which simulates the process of vertical division.
 
 ```cpp
-// 被除数 a 以下标 last_dg 为最低位，是否可以再减去除数 b 而保持非负
-// len 是除数 b 的长度，避免反复计算
+// For dividend a, starting from index last_dg as the lowest digit, can we subtract divisor b again while remaining non-negative
+// len is the length of divisor b, to avoid repeated calculations
 bool greater_eq(int a[], int b[], int last_dg, int len) {
-  // 有可能被除数剩余的部分比除数长，这个情况下最多多出 1 位，故如此判断即可
+  // It's possible that the remaining part of the dividend is longer than the divisor; in this case, it can be at most 1 digit longer, so this check is sufficient
   if (a[last_dg + len] != 0) return true;
-  // 从高位到低位，逐位比较
+  // From high to low, compare digit by digit
   for (int i = len - 1; i >= 0; --i) {
     if (a[last_dg + i] > b[i]) return true;
     if (a[last_dg + i] < b[i]) return false;
   }
-  // 相等的情形下也是可行的
+  // In the case of equality, it's also feasible
   return true;
 }
 
@@ -383,19 +383,19 @@ void div(int a[], int b[], int c[], int d[]) {
     if (a[la - 1] != 0) break;
   for (lb = LEN - 1; lb > 0; --lb)
     if (b[lb - 1] != 0) break;
-  if (lb == 0) {  // 除数不能为零
+  if (lb == 0) {  // Divisor cannot be zero
     puts("> <");
     return;
   }
 
-  // c 是商
-  // d 是被除数的剩余部分，算法结束后自然成为余数
+  // c is the quotient
+  // d is the remaining part of the dividend, which naturally becomes the remainder after the algorithm ends
   for (int i = 0; i < la; ++i) d[i] = a[i];
   for (int i = la - lb; i >= 0; --i) {
-    // 计算商的第 i 位
+    // Compute the i-th digit of the quotient
     while (greater_eq(d, b, i, lb)) {
-      // 若可以减，则减
-      // 这一段是一个高精度减法
+      // If it can be subtracted, then subtract
+      // This segment is a high-precision subtraction
       for (int j = 0; j < lb; ++j) {
         d[i + j] -= b[j];
         if (d[i + j] < 0) {
@@ -403,17 +403,17 @@ void div(int a[], int b[], int c[], int d[]) {
           d[i + j] += 10;
         }
       }
-      // 使商的这一位增加 1
+      // Increase this digit of the quotient by 1
       c[i] += 1;
-      // 返回循环开头，重新检查
+      // Return to the beginning of the loop to check again
     }
   }
 }
 ```
 
-## 入门篇完成！
+## Introduction Section Complete!
 
-将上面介绍的四则运算的实现结合，即可完成开头提到的计算器程序．
+Combining the implementations of the four arithmetic operations described above, we can complete the calculator program mentioned at the beginning.
 
 ??? note "`calculator.cpp`"
     ```cpp
@@ -555,42 +555,42 @@ void div(int a[], int b[], int c[], int d[]) {
     }
     ```
 
-## 压位高精度
+## Compressed-Precision High-Precision
 
-### 引入
+### Introduction
 
-在一般的高精度加法，减法，乘法运算中，我们都是将参与运算的数拆分成一个个单独的数码进行运算．
+In general high-precision addition, subtraction, and multiplication operations, we split the numbers participating in operations into individual digits.
 
-例如计算 $8192\times 42$ 时，如果按照高精度乘高精度的计算方式，我们实际上算的是 $(8000+100+90+2)\times(40+2)$．
+For example, when computing $8192\times 42$, using the high-precision times high-precision calculation method, we actually compute $(8000+100+90+2)\times(40+2)$.
 
-在位数较多的时候，拆分出的数也很多，高精度运算的效率就会下降．
+When there are many digits, there are also many split numbers, and the efficiency of high-precision operations decreases.
 
-有没有办法作出一些优化呢？
+Is there a way to make some optimizations?
 
-注意到拆分数字的方式并不影响最终的结果，因此我们可以将若干个数码进行合并．
+Note that the way of splitting numbers does not affect the final result, so we can merge several digits.
 
-### 过程
+### Process
 
-还是以上面这个例子为例，如果我们每两位拆分一个数，我们可以拆分成 $(8100+92)\times 42$．
+Still using the example above, if we split one number every two digits, we can split it as $(8100+92)\times 42$.
 
-这样的拆分不影响最终结果，但是因为拆分出的数字变少了，计算效率也就提升了．
+Such splitting does not affect the final result, but because there are fewer split numbers, the calculation efficiency improves.
 
-从 [进位制](./numeral-sys/base.md) 的角度理解这一过程，我们通过在较大的进位制（上面每两位拆分一个数，可以认为是在 $100$ 进制下进行运算）下进行运算，从而达到减少参与运算的数字的位数，提升运算效率的目的．
+From the perspective of [radix](./numeral-sys/base.md), we understand this process as performing operations in a larger radix (splitting one number every two digits above can be considered as performing operations in base $100$), thereby reducing the number of digits participating in operations and improving operation efficiency.
 
-这就是 **压位高精度** 的思想．
+This is the idea of **compressed-precision high-precision**.
 
-下面我们给出压位高精度的加法代码，用于进一步阐述其实现方法：
+Below, we give the addition code for compressed-precision high-precision to further explain its implementation method:
 
-??? note "压位高精度加法参考实现"
+??? note "Compressed-Precision High-Precision Addition Reference Implementation"
     ```cpp
-    // 这里的 a,b,c 数组均为 p 进制下的数
-    // 最终输出答案时需要将数字转为十进制
+    // Here, arrays a, b, c are numbers in base p
+    // When outputting the final answer, we need to convert to decimal
     void add(int a[], int b[], int c[]) {
       clear(c);
     
       for (int i = 0; i < LEN - 1; ++i) {
         c[i] += a[i] + b[i];
-        if (c[i] >= p) {  // 在普通高精度运算下，p=10
+        if (c[i] >= p) {  // In normal high-precision operations, p=10
           c[i + 1] += 1;
           c[i] -= p;
         }
@@ -598,34 +598,34 @@ void div(int a[], int b[], int c[], int d[]) {
     }
     ```
 
-### 压位高精下的高效竖式除法
+### Efficient Long Division in Compressed-Precision
 
-在使用压位高精时，如果试商时仍然使用上文介绍的方法，由于试商次数会很多，计算常数会非常大．例如在万进制下，平均每个位需要试商 5000 次，这个巨大的常数是不可接受的．因此我们需要一个更高效的试商办法．
+When using compressed-precision, if we still use the method introduced above for trial division, since there will be many trial divisions, the calculation constant will be very large. For example, in base 10000, on average, each digit requires 5000 trial divisions, which is an unacceptable huge constant. Therefore, we need a more efficient trial division method.
 
-我们可以把 double 作为媒介．假设被除数有 4 位，是 $a_4,a_3,a_2,a_1$，除数有 3 位，是 $b_3,b_2,b_1$，那么我们只要试一位的商：使用 $base$ 进制，用式子 $\dfrac{a_4 base + a_3}{b_3 + b_2 base^{-1} + (b_1+1)base^{-2}}$ 来估商．而对于多个位的情况，就是一位的写法加个循环．由于除数使用 3 位的精度来参与估商，能保证估的商 q' 与实际商 q 的关系满足 $q-1 \le q' \le q$，这样每个位在最坏的情况下也只需要两次试商．但与此同时要求 $base^3$ 在 double 的有效精度内，即 $base^3 < 2^{53}$，所以在运用这个方法时建议不要超过 32768 进制，否则很容易因精度不足产生误差从而导致错误．
+We can use double as an intermediary. Suppose the dividend has 4 digits: $a_4,a_3,a_2,a_1$, and the divisor has 3 digits: $b_3,b_2,b_1$, then we only need to trial one digit of the quotient: using base, use the formula $\dfrac{a_4 base + a_3}{b_3 + b_2 base^{-1} + (b_1+1)base^{-2}}$ to estimate the quotient. For the case of multiple digits, it's just adding a loop to the single-digit version. Since the divisor uses 3 digits of precision to participate in the estimation, it can guarantee that the estimated quotient q' satisfies $q-1 \le q' \le q$ in relation to the actual quotient q, so each digit requires at most two trial divisions in the worst case. However, this requires $base^3$ to be within the effective precision of double, i.e., $base^3 < 2^{53}$, so when using this method, it is recommended not to exceed base 32768, otherwise precision issues can easily cause errors.
 
-另外，由于估的商总是小于等于实际商，所以还有再进一步优化的空间．绝大多数情况下每个位只估商一次，这样在下一个位估商时，虽然得到的商有可能因为前一位的误差造成试商结果大于等于 base，但这没有关系，只要在最后做统一进位便可．举个例子，假设 base 是 10，求 $395081/9876$，试商计算步骤如下：
+Additionally, since the estimated quotient is always less than or equal to the actual quotient, there is room for further optimization. In most cases, each digit only needs to be estimated once. When estimating the next digit, although the quotient obtained may be greater than or equal to base due to the error of the previous digit, it doesn't matter as long as we do a unified carry at the end. For example, suppose base is 10, compute $395081/9876$, the trial division steps are as follows:
 
-1.  首先试商计算得到 $3950/988=3$，于是 $395081-(9876 \times 3 \times 10^1) = 98801$，这一步出现了误差，但不用管，继续下一步计算．
-2.  对余数 98801 继续试商计算得到 $9880/988=10$，于是 $98801-(9876 \times 10 \times 10^0) = 41$，这就是最终余数．
-3.  把试商过程的结果加起来并处理进位，即 $3 \times 10^1 + 10 \times 10^0 = 40$ 便是准确的商．
+1.  First, trial division gives $3950/988=3$, so $395081-(9876 \times 3 \times 10^1) = 98801$, there is an error in this step, but we don't need to care, continue to the next step.
+2.  Continue trial division on remainder 98801 to get $9880/988=10$, so $98801-(9876 \times 10 \times 10^0) = 41$, this is the final remainder.
+3.  Add up the results of the trial division process and handle carries, i.e., $3 \times 10^1 + 10 \times 10^0 = 40$ is the accurate quotient.
 
-方法虽然看着简单，但具体实现上很容易进坑，所以以下提供一个经过多番验证确认没有问题的实现供大家参考，要注意的细节也写在注释当中．
+Although the method looks simple, it is easy to fall into pitfalls in actual implementation. Therefore, below is an implementation that has been verified multiple times to be correct, with the details to note also written in the comments.
 
-??? note "压位高精度高效竖式除法参考实现"
+??? note "Compressed-Precision High-Precision Efficient Long Division Reference Implementation"
     ```cpp
-    // 完整模板和实现 https://baobaobear.github.io/post/20210228-bigint1/
-    // 对b乘以mul再左移offset的结果相减，为除法服务
+    // Complete template and implementation: https://baobaobear.github.io/post/20210228-bigint1/
+    // Subtract the result of multiplying b by mul and then shifting left by offset, serving division
     BigIntSimple &sub_mul(const BigIntSimple &b, int mul, int offset) {
       if (mul == 0) return *this;
       int borrow = 0;
-      // 与减法不同的是，borrow可能很大，不能使用减法的写法
+      // Different from subtraction, borrow can be large, so we can't use the subtraction method
       for (size_t i = 0; i < b.v.size(); ++i) {
         borrow += v[i + offset] - b.v[i] * mul - BIGINT_BASE + 1;
         v[i + offset] = borrow % BIGINT_BASE + BIGINT_BASE - 1;
         borrow /= BIGINT_BASE;
       }
-      // 如果还有借位就继续处理
+      // If there is still borrow, continue processing
       for (size_t i = b.v.size(); borrow; ++i) {
         borrow += v[i + offset] - BIGINT_BASE + 1;
         v[i + offset] = borrow % BIGINT_BASE + BIGINT_BASE - 1;
@@ -639,13 +639,13 @@ void div(int a[], int b[], int c[], int d[]) {
       r = *this;
       if (absless(b)) return d;
       d.v.resize(v.size() - b.v.size() + 1);
-      // 提前算好除数的最高三位+1的倒数，若最高三位是a3,a2,a1
-      // 那么db是a3+a2/base+(a1+1)/base^2的倒数，最后用乘法估商的每一位
-      // 此法在BIGINT_BASE<=32768时可在int32范围内用
-      // 但即使使用int64，那么也只有BIGINT_BASE<=131072时可用（受double的精度限制）
-      // 能保证估计结果q'与实际结果q的关系满足q'<=q<=q'+1
-      // 所以每一位的试商平均只需要一次，只要后面再统一处理进位即可
-      // 如果要使用更大的base，那么需要更换其它试商方案
+      // Pre-calculate the reciprocal of the top three digits plus 1 of the divisor; if the top three digits are a3, a2, a1
+      // then db is the reciprocal of a3 + a2/base + (a1+1)/base^2, finally use multiplication to estimate each digit
+      // This method can be used within int32 range when BIGINT_BASE<=32768
+      // But even with int64, it only works when BIGINT_BASE<=131072 (limited by double's precision)
+      // It can guarantee that the estimated result q' satisfies q'<=q<=q'+1
+      // So the average trial division for each digit only needs once, as long as we handle carries uniformly at the end
+      // If you want to use a larger base, you need to change to other trial division schemes
       double t = (b.get((unsigned)b.v.size() - 2) +
                   (b.get((unsigned)b.v.size() - 3) + 1.0) / BIGINT_BASE);
       double db = 1.0 / (b.v.back() + t / BIGINT_BASE);
@@ -654,17 +654,17 @@ void div(int a[], int b[], int c[], int d[]) {
         int m = std::max((int)(db * rm), r.get(i + 1));
         r.sub_mul(b, m, j);
         d.v[j] += m;
-        if (!r.get(i + 1))  // 检查最高位是否已为0，避免极端情况
+        if (!r.get(i + 1))  // Check if the highest digit has become 0 to avoid extreme cases
           --i, --j;
       }
       r.trim();
-      // 修正结果的个位
+      // Correct the units digit
       int carry = 0;
       while (!r.absless(b)) {
         r.subtract(b);
         ++carry;
       }
-      // 修正每一位的进位
+      // Correct the carry for each digit
       for (size_t i = 0; i < d.v.size(); ++i) {
         carry += d.v[i];
         d.v[i] = carry % BIGINT_BASE;
@@ -687,11 +687,11 @@ void div(int a[], int b[], int c[], int d[]) {
     }
     ```
 
-## Karatsuba 乘法
+## Karatsuba Multiplication
 
-记高精度数字的位数为 $n$，那么高精度—高精度竖式乘法需要花费 $O(n^2)$ 的时间．本节介绍一个时间复杂度更为优秀的算法，由前苏联（俄罗斯）数学家 Anatoly Karatsuba 提出，是一种分治算法．
+Let the number of digits of a high-precision number be $n$. Then high-precision times high-precision vertical multiplication takes $O(n^2)$ time. This section introduces an algorithm with better time complexity, proposed by Soviet (Russian) mathematician Anatoly Karatsuba, which is a divide-and-conquer algorithm.
 
-考虑两个十进制大整数 $x$ 和 $y$，均包含 $n$ 个数码（可以有前导零）．任取 $0 < m < n$，记
+Consider two decimal integers $x$ and $y$, both containing $n$ digits (may have leading zeros). For any $0 < m < n$, denote
 
 $$
 \begin{aligned}
@@ -701,7 +701,7 @@ x \cdot y &= z_2 \cdot 10^{2m} + z_1 \cdot 10^m + z_0,
 \end{aligned}
 $$
 
-其中 $x_0, y_0, z_0, z_1 < 10^m$．可得
+where $x_0, y_0, z_0, z_1 < 10^m$. We can obtain
 
 $$
 \begin{aligned}
@@ -711,23 +711,23 @@ z_0 &= x_0 \cdot y_0.
 \end{aligned}
 $$
 
-观察知
+Observing,
 
 $$
 z_1 = (x_1 + x_0) \cdot (y_1 + y_0) - z_2 - z_0,
 $$
 
-于是要计算 $z_1$，只需计算 $(x_1 + x_0) \cdot (y_1 + y_0)$，再与 $z_0$、$z_2$ 相减即可．
+so to compute $z_1$, we only need to compute $(x_1 + x_0) \cdot (y_1 + y_0)$, then subtract $z_0$ and $z_2$.
 
-上式实际上是 Karatsuba 算法的核心，它将长度为 $n$ 的乘法问题转化为了 $3$ 个长度更小的子问题．若令 $m = \left\lceil \dfrac n 2 \right\rceil$，记 Karatsuba 算法计算两个 $n$ 位整数乘法的耗时为 $T(n)$，则有 $T(n) = 3 \cdot T \left(\left\lceil \dfrac n 2 \right\rceil\right) + O(n)$，由主定理可得 $T(n) = \Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$．
+The above formula is actually the core of the Karatsuba algorithm. It transforms a multiplication problem of length $n$ into $3$ smaller subproblems. Let $m = \left\lceil \dfrac n 2 \right\rceil$, and let $T(n)$ be the time for the Karatsuba algorithm to compute the product of two $n$-digit integers. Then $T(n) = 3 \cdot T \left(\left\lceil \dfrac n 2 \right\rceil\right) + O(n)$. By the master theorem, we get $T(n) = \Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$.
 
-整个过程可以递归实现．为清晰起见，下面的代码通过 Karatsuba 算法实现了多项式乘法，最后再处理所有的进位问题．
+The entire process can be implemented recursively. For clarity, the code below implements polynomial multiplication using the Karatsuba algorithm, and then handles all carry issues.
 
 ??? note "karatsuba_mulc.cpp"
     ```cpp
     int *karatsuba_polymul(int n, int *a, int *b) {
       if (n <= 32) {
-        // 规模较小时直接计算，避免继续递归带来的效率损失
+        // When the scale is small, compute directly to avoid efficiency loss from further recursion
         int *r = new int[n * 2 + 1]();
         for (int i = 0; i <= n; ++i)
           for (int j = 0; j <= n; ++j) r[i + j] += a[i] * b[j];
@@ -741,8 +741,8 @@ $$
       z0 = karatsuba_polymul(m - 1, a, b);
       z2 = karatsuba_polymul(n - m, a + m, b + m);
     
-      // 计算 z1
-      // 临时更改，计算完毕后恢复
+      // Compute z1
+      // Temporarily change, restore after completion
       for (int i = 0; i + m <= n; ++i) a[i] += a[i + m];
       for (int i = 0; i + m <= n; ++i) b[i] += b[i + m];
       z1 = karatsuba_polymul(m - 1, a, b);
@@ -751,7 +751,7 @@ $$
       for (int i = 0; i <= (m - 1) * 2; ++i) z1[i] -= z0[i];
       for (int i = 0; i <= (n - m) * 2; ++i) z1[i] -= z2[i];
     
-      // 由 z0、z1、z2 组合获得结果
+      // Combine z0, z1, z2 to get the result
       for (int i = 0; i <= (m - 1) * 2; ++i) r[i] += z0[i];
       for (int i = 0; i <= (m - 1) * 2; ++i) r[i + m] += z1[i];
       for (int i = 0; i <= (n - m) * 2; ++i) r[i + m * 2] += z2[i];
@@ -774,35 +774,35 @@ $$
     }
     ```
 
-??? note "关于 `new` 和 `delete`"
-    见 [内存池](../contest/common-tricks.md#内存池)．
+??? note "About `new` and `delete`"
+    See [Memory Pool](../contest/common-tricks.md#memory-pool).
 
-但是这样的实现存在一个问题：在 $b$ 进制下，多项式的每一个系数都有可能达到 $n \cdot b^2$ 量级，在压位高精度实现中可能造成整数溢出；而若在多项式乘法的过程中处理进位问题，则 $x_1 + x_0$ 与 $y_1 + y_0$ 的结果可能达到 $2 \cdot b^m$，增加一个位（如果采用 $x_1 - x_0$ 的计算方式，则不得不特殊处理负数的情况）．因此，需要依照实际的应用场景来决定采用何种实现方式．
+However, there is a problem with such an implementation: in base $b$, each coefficient of the polynomial can reach the level of $n \cdot b^2$, which may cause integer overflow in compressed-precision high-precision implementations; and if we handle carries during polynomial multiplication, the results of $x_1 + x_0$ and $y_1 + y_0$ can reach $2 \cdot b^m$, adding one digit (if using the calculation method of $x_1 - x_0$, we have to handle negative numbers specially). Therefore, we need to decide which implementation method to use based on the actual application scenario.
 
-## 基于多项式的高效大整数乘法
+## Efficient Large Integer Multiplication Based on Polynomials
 
-如果数据规模达到了 $10^{10^5}$ 或更大，普通的高精度乘法可能会超时．本节将介绍用多项式优化此类乘法的方法．
+If the data scale reaches $10^{10^5}$ or larger, ordinary high-precision multiplication may time out. This section introduces methods to optimize such multiplication using polynomials.
 
-对于一个 $n$ 位的十进制整数 $a$，可以将它看作一个每位系数均为整数且不超过 $10$ 的多项式 $A=a_{0} 10^0+a_{1} 10^1+\cdots+a_{n-1} 10^{n-1}$．这样，我们就将两个整数乘法转化为了两个多项式乘法．
+For an $n$-digit decimal integer $a$, we can regard it as a polynomial where each coefficient is an integer not exceeding $10$: $A=a_{0} 10^0+a_{1} 10^1+\cdots+a_{n-1} 10^{n-1}$. In this way, we transform the multiplication of two integers into the multiplication of two polynomials.
 
-普通的多项式乘法时间复杂度仍是 $O(n^2)$，但可以用多项式一节中的 [快速傅里叶变换](poly/fft.md)、[快速数论变换](poly/ntt.md) 等算法优化，优化后的时间复杂度是 $O(n\log n)$．
+The time complexity of ordinary polynomial multiplication is still $O(n^2)$, but it can be optimized using algorithms like [Fast Fourier Transform](poly/fft.md) and [Fast Number-Theoretic Transform](poly/ntt.md) from the polynomial section, with the optimized time complexity being $O(n\log n)$.
 
-## 封装类
+## Wrapper Class
 
-[这里](https://paste.ubuntu.com/p/7VKYzpC7dn/) 有一个封装好的高精度整数类，以及 [这里](https://github.com/Baobaobear/MiniBigInteger/blob/main/bigint_tiny.h) 支持动态长度及四则运算的超迷你实现类．
+[Here](https://paste.ubuntu.com/p/7VKYzpC7dn/) is a well-packaged high-precision integer class, and [here](https://github.com/Baobaobear/MiniBigInteger/blob/main/bigint_tiny.h) is an ultra-mini implementation class that supports dynamic length and four arithmetic operations.
 
-??? note "这里是另一个模板"
+??? note "Here's another template"
     ```cpp
     constexpr int MAXN = 9999;
-    // MAXN 是一位中最大的数字
+    // MAXN is the largest digit in one "digit"
     constexpr int MAXSIZE = 10024;
-    // MAXSIZE 是位数
+    // MAXSIZE is the number of digits
     constexpr int DLEN = 4;
     
-    // DLEN 记录压几位
+    // DLEN records how many digits are compressed
     struct Big {
       int a[MAXSIZE], len;
-      bool flag;  // 标记符号'-'
+      bool flag;  // Mark for negative sign '-'
     
       Big() {
         len = 1;
@@ -822,7 +822,7 @@ $$
       Big operator^(const int&) const;
       // TODO: Big ^ Big;
     
-      // TODO: Big 位运算;
+      // TODO: Big bit operations;
     
       int operator%(const int&) const;
       // TODO: Big ^ Big;
@@ -863,7 +863,7 @@ $$
     Big::Big(const Big& T) : len(T.len) {
       CLR(a);
       f(i, 0, len) a[i] = T.a[i];
-      // TODO:重载此处？
+      // TODO: overload here?
     }
     
     Big& Big::operator=(const Big& T) {
@@ -1010,15 +1010,15 @@ $$
     char s[100024];
     ```
 
-## 习题
+## Exercises
 
--   [NOIP 2012 国王游戏](https://loj.ac/problem/2603)
+-   [NOIP 2012 King's Game](https://loj.ac/problem/2603)
 -   [SPOJ - Fast Multiplication](http://www.spoj.com/problems/MUL/en/)
 -   [SPOJ - GCD2](http://www.spoj.com/problems/GCD2/)
 -   [UVa - Division](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1024)
 -   [UVa - Fibonacci Freeze](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=436)
 -   [Codeforces - Notepad](http://codeforces.com/contest/17/problem/D)
 
-## 参考资料与链接
+## References and Links
 
 1.  [Karatsuba algorithm - Wikipedia](https://en.wikipedia.org/wiki/Karatsuba_algorithm)

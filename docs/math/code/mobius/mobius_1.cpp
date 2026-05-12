@@ -29,7 +29,7 @@ int solve(int n, int m) {
   int res = 0;
   for (int i = 1, j; i <= min(n, m); i = j + 1) {
     j = min(n / (n / i), m / (m / i));
-    res += (mu[j] - mu[i - 1]) * (n / i) * (m / i);  // 代推出来的式子
+    res += (mu[j] - mu[i - 1]) * (n / i) * (m / i);  // Substitute into the derived formula
   }
   return res;
 }
@@ -37,14 +37,14 @@ int solve(int n, int m) {
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   int T, a, b, c, d, k;
-  init();  // 预处理mu数组
+  init();  // Preprocess the mu array
   cin >> T;
   for (int i = 1; i <= T; i++) {
     cin >> a >> b >> c >> d >> k;
-    // 根据容斥原理，1<=x<=b&&1<=y<=d范围中的答案数减去1<=x<=b&&1<=y<=c-1范围中的答案数和
-    //   1<=x<=a-1&&1<=y<=d范围中的答案数再加上1<=x<=a-1&&1<=y<=c-1范围中的答案数
-    //   即可得到a<=x<=b&&c<=y<=d范围中的答案数
-    // 这一步如果不懂可以画坐标图进行理解
+    // By inclusion-exclusion, take the answer count in 1<=x<=b&&1<=y<=d, subtract the counts in
+    //   1<=x<=b&&1<=y<=c-1 and 1<=x<=a-1&&1<=y<=d, then add the count in
+    //   1<=x<=a-1&&1<=y<=c-1 to get the answer count in a<=x<=b&&c<=y<=d
+    // If this step is unclear, drawing the coordinate diagram can help
     cout << solve(b / k, d / k) - solve(b / k, (c - 1) / k) -
                 solve((a - 1) / k, d / k) + solve((a - 1) / k, (c - 1) / k)
          << '\n';

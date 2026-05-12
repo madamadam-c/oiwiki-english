@@ -1,40 +1,40 @@
 author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Saisyc, shuzhouliu, Xeonacid, xyf007
 
-本页面将简要介绍枚举算法．
+This page briefly introduces enumeration algorithms.
 
-## 简介
+## Introduction
 
-枚举（英语：Enumerate）是基于已有知识来猜测答案的一种问题求解策略．
+Enumeration (English: Enumerate) is a problem-solving strategy that guesses answers based on existing knowledge.
 
-枚举的思想是不断地猜测，从可能的集合中一一尝试，然后再判断题目的条件是否成立．
+The idea of enumeration is to continuously guess, try one by one from the set of possibilities, and then check whether the conditions of the problem are satisfied.
 
-## 要点
+## Key Points
 
-### 给出解空间
+### Provide Solution Space
 
-建立简洁的数学模型．
+Establish a concise mathematical model.
 
-枚举的时候要想清楚：可能的情况是什么？要枚举哪些要素？
+When enumerating, think clearly: what are the possible cases? What elements need to be enumerated?
 
-### 减少枚举的空间
+### Reduce Enumeration Space
 
-枚举的范围是什么？是所有的内容都需要枚举吗？
+What is the range of enumeration? Does all content need to be enumerated?
 
-在用枚举法解决问题的时候，一定要想清楚这两件事，否则会带来不必要的时间开销．
+When using enumeration to solve problems, these two things must be thought through clearly, otherwise it will bring unnecessary time overhead.
 
-### 选择合适的枚举顺序
+### Choose Appropriate Enumeration Order
 
-根据题目判断．比如例题中要求的是最大的符合条件的素数，那自然是从大到小枚举比较合适．
+Depends on the problem. For example, in the example problem, if we are looking for the largest prime that satisfies the condition, naturally enumerating from large to small is more suitable.
 
-## 例题
+## Example Problems
 
-以下是一个使用枚举解题与优化枚举范围的例子．
+Below is an example of using enumeration to solve problems and optimizing the enumeration range.
 
-??? note "例题"
-    给定一个数组，其所有元素互不相同且均不为 $0$．求该数组中和为 $0$ 的数对个数．
+??? note "Example Problem"
+    Given an array where all elements are distinct and none are $0$. Find the number of pairs in the array whose sum is $0$.
 
-??? note "解题思路"
-    枚举两个数的代码很容易就可以写出来．
+??? note "Solution Idea"
+    The code for enumerating two numbers can be easily written.
     
     === "C++"
         ```cpp
@@ -58,9 +58,9 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
             if (a[i] + a[j] == 0) ++ans;
         ```
     
-    来看看枚举的范围如何优化．由于题中没要求数对是有序的，答案就是有序的情况的两倍（考虑如果 `(a, b)` 是答案，那么 `(b, a)` 也是答案）．对于这种情况，只需统计人为要求有顺序之后的答案，最后再乘上 $2$ 就好了．
+    Let's see how to optimize the enumeration range. Since the problem does not require the pair to be ordered, the answer is twice the ordered case (consider if `(a, b)` is an answer, then `(b, a)` is also an answer). For this situation, we only need to count the answer with order artificially required, and then multiply by $2$.
     
-    不妨要求第一个数要出现在靠后的位置．代码如下：
+    Let's require the first number to appear in a later position. The code is as follows:
     
     === "C++"
         ```cpp
@@ -87,11 +87,11 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
         ans *= 2;
         ```
     
-    不难发现这里已经减少了 $j$ 的枚举范围，减少了这段代码的时间开销．
+    It is not difficult to see that the enumeration range of $j$ has been reduced here, reducing the time overhead of this code.
     
-    我们可以在此之上进一步优化．
+    We can further optimize on this basis.
     
-    两个数是否都一定要枚举出来呢？枚举其中一个数之后，题目的条件已经确定了其他的要素（另一个数）的条件，如果能找到一种方法直接判断题目要求的那个数是否存在，就可以省掉枚举后一个数的时间了．较为进阶地，在数据范围允许的情况下，我们可以使用桶[^1]记录遍历过的数．
+    Must both numbers be enumerated? After enumerating one number, the condition of the problem has already determined the condition of other elements (the other number). If we can find a way to directly judge whether the number required by the problem exists, we can save the time of enumerating the second number. More advanced, when the data range allows, we can use a bucket[^1] to record the numbers we have traversed.
     
     === "C++"
         ```cpp
@@ -118,15 +118,15 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
         ans *= 2;
         ```
 
-### 复杂度分析
+### Complexity Analysis
 
--   时间复杂度分析：对 $a$ 数组遍历了一遍就能完成题目要求，当 $n$ 足够大的时候时间复杂度为 $O(n)$．
--   空间复杂度分析：$O(n+\max\{|x|:x\in a\})$．
+-   Time Complexity Analysis: The requirement can be completed by traversing array $a$ once. When $n$ is large enough, the time complexity is $O(n)$.
+-   Space Complexity Analysis: $O(n+\max\{|x|:x\in a\})$.
 
-## 习题
+## Practice Problems
 
--   [2811: 熄灯问题 - OpenJudge](http://bailian.openjudge.cn/practice/2811/)
+-   [2811: Lamp Off Problem - OpenJudge](http://bailian.openjudge.cn/practice/2811/)
 
-## 脚注
+## Footnotes
 
-[^1]: [桶排序](../basic/bucket-sort.md) 以及 [主元素问题](../misc/main-element.md#离线算法) 以及 [Stack Overflow 上对桶数据结构的讲解](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure)（英文）
+[^1]: [Bucket Sort](../basic/bucket-sort.md) and [Majority Element Problem](../misc/main-element.md#offline-algorithm) as well as [Explanation of bucket data structure on Stack Overflow](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure)

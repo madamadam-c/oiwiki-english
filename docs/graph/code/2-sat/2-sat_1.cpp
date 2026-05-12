@@ -21,7 +21,7 @@ void add(int x, int y) {
   head[x] = numedge;
 }
 
-void tarjan(int x) {  // 缩点看不懂请移步强连通分量上面有一个链接可以点。
+void tarjan(int x) {  // For SCC contraction details, see the linked strongly connected components section above.
   sta[++top] = x;
   instack[x] = 1;
   DFN[x] = LOW[x] = ++Index;
@@ -36,7 +36,7 @@ void tarjan(int x) {  // 缩点看不懂请移步强连通分量上面有一个�
   if (DFN[x] == LOW[x]) {
     tot++;
     do {
-      color[sta[top]] = tot;  // 染色
+      color[sta[top]] = tot;  // Color the component
       instack[sta[top]] = 0;
     } while (sta[top--] != x);
   }
@@ -71,7 +71,7 @@ int main() {
       int a1, a2, c1, c2;
       cin >> a1 >> a2 >> c1 >> c2;
       add(2 * a1 + c1, 2 * a2 + 1 - c2);
-      // 对于第 i 对夫妇，我们用 2i+1 表示丈夫，2i 表示妻子。
+      // For the i-th couple, we use 2i+1 for the husband and 2i for the wife.
       add(2 * a2 + c2, 2 * a1 + 1 - c1);
     }
     if (solve())

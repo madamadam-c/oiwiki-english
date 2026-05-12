@@ -1,30 +1,30 @@
-## 概念
+## Concepts
 
-### 割
+### Cut
 
-对于一个网络流图 $G=(V,E)$，其割的定义为一种 **点的划分方式**：将所有的点划分为 $S$ 和 $T=V-S$ 两个集合，其中源点 $s\in S$，汇点 $t\in T$．
+For a flow network $G=(V,E)$, a cut is defined as a **partition of vertices**: dividing all vertices into two sets $S$ and $T=V-S$, where the source $s\in S$ and the sink $t\in T$.
 
-### 割的容量
+### Capacity of a Cut
 
-我们的定义割 $(S,T)$ 的容量 $c(S,T)$ 表示所有从 $S$ 到 $T$ 的边的容量之和，即 $c(S,T)=\sum_{u\in S,v\in T}c(u,v)$．当然我们也可以用 $c(s,t)$ 表示 $c(S,T)$．
+The capacity of a cut $(S,T)$, denoted $c(S,T)$, is the sum of capacities of all edges from $S$ to $T$, i.e., $c(S,T)=\sum_{u\in S,v\in T}c(u,v)$. We can also use $c(s,t)$ to denote $c(S,T)$.
 
-### 最小割
+### Minimum Cut
 
-最小割就是求得一个割 $(S,T)$ 使得割的容量 $c(S,T)$ 最小．
+The minimum cut is a cut $(S,T)$ that minimizes the cut capacity $c(S,T)$.
 
-## 证明
+## Proof
 
-### 最大流最小割定理
+### Max-Flow Min-Cut Theorem
 
-参见 [最大流](max-flow.md) 页面最大流最小割定理一节．
+See the Max-Flow Min-Cut Theorem section on the [Max-Flow](max-flow.md) page.
 
-## 代码
+## Code
 
-### 最小割
+### Minimum Cut
 
-通过 **最大流最小割定理**，我们可以直接得到如下代码：
+Using the **Max-Flow Min-Cut Theorem**, we can directly obtain the following code:
 
-??? note "参考代码"
+??? note "Reference Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -91,9 +91,9 @@
     }
     ```
 
-### 方案
+### Finding the Cut
 
-我们可以通过从源点 $s$ 开始 DFS，每次走残量大于 $0$ 的边，找到所有 $S$ 点集内的点．
+We can find all vertices in set $S$ by starting a DFS from the source $s$, traversing only edges with residual capacity greater than $0$.
 
 ```cpp
 void dfs(int u) {
@@ -105,37 +105,40 @@ void dfs(int u) {
 }
 ```
 
-### 割边数量
+### Minimum Number of Cut Edges
 
-如果需要在最小割的前提下最小化割边数量，那么先求出最小割，把没有满流的边容量改成 $\infty$，满流的边容量改成 $1$，重新跑一遍最小割就可求出最小割边数量；如果没有最小割的前提，直接把所有边的容量设成 $1$，求一遍最小割就好了．
+If we need to minimize the number of cut edges under the constraint of a minimum cut, we first find the minimum cut. Then we change the capacity of non-saturated edges to $\infty$ and saturated edges to $1$, and run the minimum cut algorithm again to find the minimum number of cut edges. If there is no minimum cut constraint, simply set the capacity of all edges to $1$ and run the minimum cut algorithm.
 
-## 问题模型 1
+## Problem Model 1
 
-有 $n$ 个物品和两个集合 $A,B$，如果一个物品没有放入 $A$ 集合会花费 $a_i$，没有放入 $B$ 集合会花费 $b_i$；还有若干个形如 $u_i,v_i,w_i$ 限制条件，表示如果 $u_i$ 和 $v_i$ 同时不在一个集合会花费 $w_i$．每个物品必须且只能属于一个集合，求最小的代价．
+There are $n$ items and two sets $A$ and $B$. If an item is not placed in set $A$, it costs $a_i$; if not placed in set $B$, it costs $b_i$. There are also constraints of the form $u_i, v_i, w_i$, meaning that if $u_i$ and $v_i$ are not in the same set, it costs $w_i$. Each item must belong to exactly one set. Find the minimum total cost.
 
-这是一个经典的 **二者选其一** 的最小割题目．我们对于每个集合设置源点 $s$ 和汇点 $t$，第 $i$ 个点由 $s$ 连一条容量为 $a_i$ 的边、向 $t$ 连一条容量为 $b_i$ 的边．对于限制条件 $u,v,w$，我们在 $u,v$ 之间连容量为 $w$ 的双向边．
+This is a classic **"either-or"** minimum cut problem. For each set, we create a source $s$ and a sink $t$. For the $i$-th item, we add an edge from $s$ with capacity $a_i$ and an edge to $t$ with capacity $b_i$. For each constraint $u, v, w$, we add a bidirectional edge between $u$ and $v$ with capacity $w$.
 
-注意到当源点和汇点不相连时，代表这些点都选择了其中一个集合．如果将连向 $s$ 或 $t$ 的边割开，表示不放在 $A$ 或 $B$ 集合，如果把物品之间的边割开，表示这两个物品不放在同一个集合．
+When the source and sink are disconnected, it means all these vertices have chosen the same set. Cutting an edge connected to $s$ or $t$ means not putting the item in set $A$ or $B$. Cutting an edge between items means these two items are not in the same set.
 
-最小割就是最小花费．
+The minimum cut equals the minimum cost.
 
-## 问题模型 2
+## Problem Model 2
 
-最大权值闭合图，即给定一张有向图，每个点都有一个权值（可以为正或负或 $0$），你需要选择一个权值和最大的子图，使得子图中每个点的后继都在子图中．
+Maximum weight closure of a graph: given a directed graph where each vertex has a weight (positive, negative, or zero), select a subgraph with maximum total weight such that for every vertex in the subgraph, all its successors are also in the subgraph.
 
-做法：建立超级源点 $s$ 和超级汇点 $t$，若节点 $u$ 权值为正，则 $s$ 向 $u$ 连一条有向边，边权即为该点点权；若节点 $u$ 权值为负，则由 $u$ 向 $t$ 连一条有向边，边权即为该点点权的相反数．原图上所有边权改为 $\infty$．跑网络最大流，将所有正权值之和减去最大流，即为答案．
+Solution: Create a super source $s$ and a super sink $t$. If vertex $u$ has positive weight, add an edge from $s$ to $u$ with weight equal to the vertex weight. If vertex $u$ has negative weight, add an edge from $u$ to $t$ with weight equal to the negation of the vertex weight. Change all original edges to have weight $\infty$. Run the maximum flow algorithm. The sum of all positive weights minus the maximum flow is the answer.
 
-几个小结论来证明：
+Some key observations for the proof:
 
-1.  每一个符合条件的子图都对应流量网络中的一个割．因为每一个割将网络分为两部分，与 $s$ 相连的那部分满足没有边指向另一部分，于是满足上述条件．这个命题是充要的．
-2.  最小割所去除的边必须与 $s$ 和 $t$ 其中一者相连．因为否则边权是 $\infty$，不可能成为最小割．
-3.  我们所选择的那部分子图，权值和 $=$ 所有正权值之和 $-$ 我们未选择的正权值点的权值之和 $+$ 我们选择的负权值点的权值之和．当我们不选择一个正权值点时，其与 $s$ 的连边会被断开；当我们选择一个负权值点时，其与 $t$ 的连边会被断开．断开的边的边权之和即为割的容量．于是上述式子转化为：权值和 $=$ 所有正权值之和 $-$ 割的容量．
-4.  于是得出结论，最大权值和 $=$ 所有正权值之和 $-$ 最小割 $=$ 所有正权值之和 $-$ 最大流．
+1. Every valid subgraph corresponds to a cut in the flow network. Since any cut divides the network into two parts, the part connected to $s$ has no edges pointing to the other part, satisfying the closure condition. This is both necessary and sufficient.
 
-## 习题
+2. Edges removed by a minimum cut must be connected to either $s$ or $t$. Otherwise, the edge weight would be $\infty$, which cannot be part of a minimum cut.
 
--   [「USACO 4.4」Pollutant Control](https://www.luogu.com.cn/problem/P1344)
--   [「USACO 5.4」Telecowmunication](https://www.luogu.com.cn/problem/P1345)
--   [「Luogu 1361」小 M 的作物](https://www.luogu.com.cn/problem/P1361)
--   [「SHOI 2007」善意的投票](https://www.luogu.com.cn/problem/P2057)
--   [太空飞行计划问题](https://www.luogu.com.cn/problem/P2762)
+3. For the selected subgraph, total weight = sum of all positive weights - sum of weights of unselected positive vertices + sum of weights of selected negative vertices. When we don't select a positive vertex, its edge to $s$ is cut. When we select a negative vertex, its edge to $t$ is cut. The sum of weights of cut edges equals the cut capacity. Therefore: total weight = sum of all positive weights - cut capacity.
+
+4. Hence: maximum weight = sum of all positive weights - minimum cut = sum of all positive weights - maximum flow.
+
+## Exercises
+
+-   ["USACO 4.4" Pollutant Control](https://www.luogu.com.cn/problem/P1344)
+-   ["USACO 5.4" Telecowmunication](https://www.luogu.com.cn/problem/P1345)
+-   [Luogu 1361 - Little M's Crops](https://www.luogu.com.cn/problem/P1361)
+-   ["SHOI 2007" Voting](https://www.luogu.com.cn/problem/P2057)
+-   [Space Flight Plan Problem](https://www.luogu.com.cn/problem/P2762)

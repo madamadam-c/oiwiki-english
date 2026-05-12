@@ -1,161 +1,161 @@
-本页面将简要介绍二分查找，由二分法衍生的三分法以及二分答案．
+This page briefly introduces binary search, ternary search derived from binary search, and binary search on the answer.
 
-## 二分法
+## Binary Search
 
-### 定义
+### Definition
 
-二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法．
+Binary search (English: binary search), also known as half-interval search (English: half-interval search) or logarithmic search (English: logarithmic search), is an algorithm for finding a specific element in a sorted array.
 
-### 过程
+### Process
 
-以在一个升序数组中查找一个数为例．
+Using the example of finding an element in a sorted ascending array:
 
-它每次考察数组当前部分的中间元素，如果中间元素刚好是要找的，就结束搜索过程；如果中间元素小于所查找的值，那么左侧的只会更小，不会有所查找的元素，只需到右侧查找；如果中间元素大于所查找的值同理，只需到左侧查找．
+It examines the middle element of the current portion of the array each time. If the middle element is exactly what we're looking for, the search ends; if the middle element is less than the search value, only elements in the right side could be the target, so we search there; if the middle element is greater than the search value, we search in the left side for the same reason.
 
-### 性质
+### Properties
 
-#### 时间复杂度
+#### Time Complexity
 
-二分查找的最优时间复杂度为 $O(1)$．
+The optimal time complexity of binary search is $O(1)$.
 
-二分查找的平均时间复杂度和最坏时间复杂度均为 $O(\log n)$．因为在二分搜索过程中，算法每次都把查询的区间减半，所以对于一个长度为 $n$ 的数组，至多会进行 $O(\log n)$ 次查找．
+The average and worst-case time complexity of binary search are both $O(\log n)$. Because during the binary search process, the algorithm halves the search interval each time, for an array of length $n$, at most $O(\log n)$ searches are performed.
 
-#### 空间复杂度
+#### Space Complexity
 
-迭代版本的二分查找的空间复杂度为 $O(1)$．
+The space complexity of the iterative version of binary search is $O(1)$.
 
-递归（无尾调用消除）版本的二分查找的空间复杂度为 $O(\log n)$．
+The space complexity of the recursive version (without tail-call elimination) of binary search is $O(\log n)$.
 
-### 实现
+### Implementation
 
 ```cpp
 int binary_search(int start, int end, int key) {
-  int ret = -1;  // 未搜索到数据返回-1下标
+  int ret = -1;  // returns -1 index if not found
   int mid;
   while (start <= end) {
-    mid = start + ((end - start) >> 1);  // 直接平均可能会溢出，所以用这个算法
+    mid = start + ((end - start) >> 1);  // direct averaging may overflow, so we use this method
     if (arr[mid] < key)
       start = mid + 1;
     else if (arr[mid] > key)
       end = mid - 1;
-    else {  // 最后检测相等是因为多数搜索情况不是大于就是小于
+    else {  // check for equality last because most searches are either greater or less than
       ret = mid;
       break;
     }
   }
-  return ret;  // 单一出口
+  return ret;  // single return point
 }
 ```
 
 ???+ note "Note"
-    参考 [编译优化 #移位代替乘法](../lang/optimizations.md#移位代替乘法)，对于 $n$ 是有符号数的情况，当你可以保证 $n\ge 0$ 时，`n >> 1` 比 `n / 2` 指令数更少．
+    See [Compiler Optimizations #Shift Instead of Multiplication](../lang/optimizations.md#shift-instead-of-multiplication). For the case where $n$ is a signed number, when you can guarantee $n \ge 0$, `n >> 1` requires fewer instructions than `n / 2`.
 
-### 最大值最小化
+### Minimizing the Maximum Value
 
-注意，这里的有序是广义的有序，如果一个数组中的左侧或者右侧都满足某一种条件，而另一侧都不满足这种条件，也可以看作是一种有序（如果把满足条件看做 $1$，不满足看做 $0$，至少对于这个条件的这一维度是有序的）．换言之，二分搜索法可以用来查找满足某种条件的最大（最小）的值．
+Note that "sorted" here means in a generalized sense. If the left or right side of an array all satisfies a certain condition while the other side does not, this can also be considered sorted (if we treat satisfying the condition as $1$ and not satisfying as $0$, then at least for this condition, the array is sorted along this dimension). In other words, binary search can be used to find the maximum (minimum) value that satisfies a certain condition.
 
-要求满足某种条件的最大值的最小可能情况（最大值最小化），首先的想法是从小到大枚举这个作为答案的「最大值」，然后去判断是否合法．若答案单调，就可以使用二分搜索法来更快地找到答案．因此，要想使用二分搜索法来解这种「最大值最小化」的题目，需要满足以下三个条件：
+To find the minimum possible maximum value that satisfies a condition ("minimize the maximum"), the first approach is to enumerate this "maximum value" from smallest to largest, then check whether it is valid. If the answer is monotonic, we can use binary search to find the answer faster. Therefore, to use binary search to solve such "minimize the maximum" problems, the following three conditions must be satisfied:
 
-1.  答案在一个固定区间内；
-2.  可能查找一个符合条件的值不是很容易，但是要求能比较容易地判断某个值是否是符合条件的；
-3.  可行解对于区间满足一定的单调性．换言之，如果 $x$ 是符合条件的，那么有 $x + 1$ 或者 $x - 1$ 也符合条件．（这样下来就满足了上面提到的单调性）
+1.  The answer lies within a fixed interval;
+2.  Finding a value that satisfies the condition might not be easy, but it should be relatively easy to check whether a given value satisfies the condition;
+3.  The feasible solutions satisfy some monotonicity over the interval. In other words, if $x$ satisfies the condition, then $x + 1$ or $x - 1$ also satisfies the condition. (This establishes the monotonicity mentioned above)
 
-当然，最小值最大化是同理的．
+Of course, the opposite problem of "maximizing the minimum" is analogous.
 
-### STL 的二分查找
+### STL Binary Search
 
-C++ 标准库中实现了查找首个不小于给定值的元素的函数 [`std::lower_bound`](https://zh.cppreference.com/w/cpp/algorithm/lower_bound) 和查找首个大于给定值的元素的函数 [`std::upper_bound`](https://zh.cppreference.com/w/cpp/algorithm/upper_bound)，二者均定义于头文件 `<algorithm>` 中．
+C++ standard library provides functions for finding the first element not less than a given value [`std::lower_bound`](https://en.cppreference.com/w/cpp/algorithm/lower_bound) and finding the first element greater than a given value [`std::upper_bound`](https://en.cppreference.com/w/cpp/algorithm/upper_bound), both defined in the header `<algorithm>`.
 
-二者均采用二分实现，所以调用前必须保证元素有序．
+Both use binary search internally, so the elements must be sorted before calling these functions.
 
 ### bsearch
 
-bsearch 函数为 C 标准库实现的二分查找，定义在 `<stdlib.h>` 中．在 C++ 标准库里，该函数定义在 `<cstdlib>` 中．qsort 和 bsearch 是 C 语言中唯二的两个算法类函数．
+The bsearch function is a binary search implementation in the C standard library, defined in `<stdlib.h>`. In the C++ standard library, this function is defined in `<cstdlib>`. qsort and bsearch are the only two algorithm functions in C.
 
-bsearch 函数相比 qsort（[排序相关 STL](./stl-sort.md)）的四个参数，在最左边增加了参数「待查元素的地址」．之所以按照地址的形式传入，是为了方便直接套用与 qsort 相同的比较函数，从而实现排序后的立即查找．因此这个参数不能直接传入具体值，而是要先将待查值用一个变量存储，再传入该变量地址．
+Compared to qsort (see [STL Sorting](./stl-sort.md)), which has four parameters, bsearch has an additional leftmost parameter: the address of the element to search for. The reason for passing it in address form is to easily reuse the same comparison function as qsort, enabling immediate lookup after sorting. Therefore, this parameter cannot directly accept a value; instead, the search value must first be stored in a variable, then the address of that variable is passed.
 
-于是 bsearch 函数总共有五个参数：待查元素的地址、数组名、元素个数、元素大小、比较规则．比较规则仍然通过指定比较函数实现，详见 [排序相关 STL](./stl-sort.md)．
+Thus, the bsearch function has five parameters in total: the address of the element to search for, the array name, the number of elements, the element size, and the comparison rule. The comparison rule is still implemented by specifying a comparison function. For details, see [STL Sorting](./stl-sort.md).
 
-bsearch 函数的返回值是查找到的元素的地址，该地址为 void 类型．
+The return value of bsearch is the address of the found element, which is of void type.
 
-注意：bsearch 与上文的 lower\_bound 和 upper\_bound 有两点不同：
+Note: bsearch differs from lower_bound and upper_bound discussed above in two ways:
 
--   当符合条件的元素有重复多个的时候，会返回执行二分查找时第一个符合条件的元素，从而这个元素可能位于重复多个元素的中间部分．
--   当查找不到相应的元素时，会返回 NULL．
+-   When there are multiple elements satisfying the condition, it returns the first element satisfying the condition during binary search, so this element might be located in the middle of the multiple identical elements.
+-   When the element cannot be found, it returns NULL.
 
-用 lower\_bound 可以实现与 bsearch 完全相同的功能，所以可以使用 bsearch 通过的题目，直接改写成 lower\_bound 同样可以实现．但是鉴于上述不同之处的第二点，例如，在序列 1、2、4、5、6 中查找 3，bsearch 实现 lower\_bound 的功能会变得困难．
+You can implement the same functionality as bsearch using lower_bound, so problems that pass with bsearch can also be solved by rewriting with lower_bound. However, due to the second difference mentioned above — for example, searching for 3 in the sequence 1, 2, 4, 5, 6 — implementing lower_bound's functionality with bsearch becomes difficult.
 
-利用 bsearch 实现 lower\_bound 的功能比较困难，是否一定就不能实现？答案是否定的，存在比较 tricky 的技巧．借助编译器处理比较函数的特性：总是将第一个参数指向待查元素，将第二个参数指向待查数组中的元素，也可以用 bsearch 实现 lower\_bound 和 upper\_bound，如下文示例．只是，这要求待查数组必须是全局数组，从而可以直接传入首地址．
+Is it absolutely impossible to implement lower_bound's functionality with bsearch? The answer is no; there are some tricky techniques. By leveraging how the compiler handles comparison functions: always pointing the first parameter to the element to search and the second parameter to elements in the array, you can also implement lower_bound and upper_bound with bsearch, as shown in the example below. However, this requires the search array to be a global array so that its starting address can be directly passed.
 
 ```cpp
-int A[100005];  // 示例全局数组
+int A[100005];  // example global array
 
-// 查找首个不小于待查元素的元素的地址
+// Find the address of the first element not less than the search element
 int lower(const void *p1, const void *p2) {
   int *a = (int *)p1;
   int *b = (int *)p2;
   if ((b == A || compare(a, b - 1) > 0) && compare(a, b) > 0)
     return 1;
   else if (b != A && compare(a, b - 1) <= 0)
-    return -1;  // 用到地址的减法，因此必须指定元素类型
+    return -1;  // uses address arithmetic, so element type must be specified
   else
     return 0;
 }
 
-// 查找首个大于待查元素的元素的地址
+// Find the address of the first element greater than the search element
 int upper(const void *p1, const void *p2) {
   int *a = (int *)p1;
   int *b = (int *)p2;
   if ((b == A || compare(a, b - 1) >= 0) && compare(a, b) >= 0)
     return 1;
   else if (b != A && compare(a, b - 1) < 0)
-    return -1;  // 用到地址的减法，因此必须指定元素类型
+    return -1;  // uses address arithmetic, so element type must be specified
   else
     return 0;
 }
 ```
 
-因为现在的 OI 选手很少写纯 C，并且此方法作用有限，所以不是重点．对于新手而言，建议老老实实地使用 C++ 中的 lower\_bound 和 upper\_bound 函数．
+Since OI competitors rarely write pure C nowadays, and this method has limited use cases, it is not the focus. For beginners, it is recommended to faithfully follow the established method and use C++'s lower_bound and upper_bound functions.
 
-### 二分答案
+### Binary Search on the Answer
 
-解题的时候往往会考虑枚举答案然后检验枚举的值是否正确．若满足单调性，则满足使用二分法的条件．把这里的枚举换成二分，就变成了「二分答案」．
+When solving problems, we often consider enumerating the answer and then checking whether the enumerated value is correct. If monotonicity is satisfied, then binary search is applicable. Replacing the enumeration with binary search in this context becomes "binary search on the answer."
 
-???+ note "[Luogu P1873 砍树](https://www.luogu.com.cn/problem/P1873)"
-    伐木工人米尔科需要砍倒 $M$ 米长的木材．这是一个对米尔科来说很容易的工作，因为他有一个漂亮的新伐木机，可以像野火一样砍倒森林．不过，米尔科只被允许砍倒单行树木．
+???+ note "[Luogu P1873 Cutting Trees](https://www.luogu.com.cn/problem/P1873)"
+    Lumberjack Mirko needs to cut down $M$ meters of wood. This is an easy job for Mirko because he has a brand new woodcutting machine that can fell trees like wildfire. However, Mirko is only allowed to fell trees in a single row.
     
-    米尔科的伐木机工作过程如下：米尔科设置一个高度参数 $H$（米），伐木机升起一个巨大的锯片到高度 $H$，并锯掉所有的树比 $H$ 高的部分（当然，树木不高于 $H$ 米的部分保持不变）．米尔科就得到树木被锯下的部分．
+    Mirko's woodcutting machine works as follows: Mirko sets a height parameter $H$ (in meters), the machine raises a giant saw blade to height $H$, and cuts off all parts of trees that are higher than $H$ (of course, parts of trees not higher than $H$ meters remain unchanged). Mirko gets the cut-off parts of the trees.
     
-    例如，如果一行树的高度分别为 $20,~15,~10,~17$，米尔科把锯片升到 $15$ 米的高度，切割后树木剩下的高度将是 $15,~15,~10,~15$，而米尔科将从第 $1$ 棵树得到 $5$ 米木材，从第 $4$ 棵树得到 $2$ 米木材，共 $7$ 米木材．
+    For example, if a row of trees has heights $20, 15, 10, 17$, and Mirko raises the saw blade to a height of $15$ meters, after cutting, the remaining heights of the trees will be $15, 15, 10, 15$, and Mirko will get $5$ meters of wood from the first tree and $2$ meters from the fourth tree, totaling $7$ meters of wood.
     
-    米尔科非常关注生态保护，所以他不会砍掉过多的木材．这正是他尽可能高地设定伐木机锯片的原因．你的任务是帮助米尔科找到伐木机锯片的最大的整数高度 $H$，使得他能得到木材至少为 $M$ 米．即，如果再升高 $1$ 米锯片，则他将得不到 $M$ 米木材．
+    Mirko is very concerned about ecological conservation, so he will not cut too much wood. That's why he sets the saw blade as high as possible. Your task is to help Mirko find the maximum integer height $H$ of the saw blade so that he can get at least $M$ meters of wood. That is, if the blade is raised by just $1$ meter, he will not get $M$ meters of wood.
 
-??? note "解题思路"
-    我们可以在 $1$ 到 $10^9$ 中枚举答案，但是这种朴素写法肯定拿不到满分，因为从 $1$ 枚举到 $10^9$ 太耗时间．我们可以在 $[1,~10^9]$ 的区间上进行二分作为答案，然后检查各个答案的可行性（一般使用贪心法）．**这就是二分答案．**
+??? note "Solution Approach"
+    We could enumerate the answer between $1$ and $10^9$, but this naive approach will definitely not get full marks because enumerating from $1$ to $10^9$ is too time-consuming. We can perform binary search on the answer in the interval $[1, 10^9]$, then check the feasibility of each candidate answer (usually using a greedy approach). **This is binary search on the answer.**
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     int a[1000005];
     int n, m;
     
-    bool check(int k) {  // 检查可行性，k 为锯片高度
+    bool check(int k) {  // check feasibility, k is blade height
       long long sum = 0;
-      for (int i = 1; i <= n; i++)       // 检查每一棵树
-        if (a[i] > k)                    // 如果树高于锯片高度
-          sum += (long long)(a[i] - k);  // 累加树木长度
-      return sum >= m;                   // 如果满足最少长度代表可行
+      for (int i = 1; i <= n; i++)       // check each tree
+        if (a[i] > k)                    // if the tree is taller than blade height
+          sum += (long long)(a[i] - k);  // accumulate the length of wood cut
+      return sum >= m;                   // if minimum length is met, it's feasible
     }
     
     int find() {
-      int l = 1, r = 1e9 + 1;   // 因为是左闭右开的，所以 10^9 要加 1
-      while (l + 1 < r) {       // 如果两点不相邻
-        int mid = (l + r) / 2;  // 取中间值
-        if (check(mid))         // 如果可行
-          l = mid;              // 升高锯片高度
+      int l = 1, r = 1e9 + 1;   // since it's left-closed, right-open, 10^9 needs +1
+      while (l + 1 < r) {       // if the two points are not adjacent
+        int mid = (l + r) / 2;  // take the middle value
+        if (check(mid))         // if feasible
+          l = mid;              // increase blade height
         else
-          r = mid;  // 否则降低锯片高度
+          r = mid;  // otherwise decrease blade height
       }
-      return l;  // 返回左边值
+      return l;  // return the left value
     }
     
     int main() {
@@ -166,52 +166,52 @@ int upper(const void *p1, const void *p2) {
     }
     ```
     
-    看完了上面的代码，你肯定会有两个疑问：
+    After looking at the code above, you probably have two questions:
     
-    1.  为何搜索区间是左闭右开的？
+    1. Why is the search interval left-closed, right-open?
     
-        因为搜到最后，会这样（以合法的最大值为例）：
+        Because at the end of the search, it will look like this (using a valid maximum as example):
     
         ![](./images/binary-final-1.svg)
     
-        然后会
+        Then it will be
     
         ![](./images/binary-final-2.svg)
     
-        合法的最小值恰恰相反．
-    2.  为何返回左边值？
+        The valid minimum is the opposite.
+    2. Why return the left value?
     
-        同上．
+        Same as above.
 
-## 三分法
+## Ternary Search
 
-### 引入
+### Introduction
 
-二分法可以用于近似求出函数的零点．如果需要求出单峰函数的极值点，通常需要使用三分法（ternary search）．
+Binary search can be used to approximately find the zero of a function. If you need to find the extremum point of a unimodal function, you typically need to use ternary search.
 
-对于一个函数 $f(x)$，如果存在 $x^*$ 使得 $f(x)$ 在 $x<x^*$ 时单调递增且 $f(x)$ 在 $x>x^*$ 时单调递减，就称 $f(x)$ 为单峰函数（unimodal function）．显然，$x^*$ 就是它的最大值点，而 $f(x^*)$ 则是它的最大值．
+For a function $f(x)$, if there exists $x^*$ such that $f(x)$ is monotonically increasing for $x < x^*$ and $f(x)$ is monotonically decreasing for $x > x^*$, then $f(x)$ is called a unimodal function. Obviously, $x^*$ is its maximum point, and $f(x^*)$ is its maximum value.
 
-??? note "为什么不通过求导函数的零点来求极值点？"
-    客观上，求出导数后，通过二分法求出导数的零点（由于函数是单峰函数，其导数在同一范围内的零点是唯一的）得到单峰函数的极值点是可行的．
+??? note "Why not find the extremum point by finding the zero of the derivative?"
+    Objectively, after finding the derivative, using binary search to find the zero of the derivative (since the function is unimodal, the zero of the derivative in the same range is unique) to obtain the extremum point of the unimodal function is feasible.
     
-    但首先，对于一些函数，求导的过程和结果比较复杂．
+    But first, for some functions, the process and result of differentiation are quite complex.
     
-    其次，某些题中需要求极值点的单峰函数并非一个单独的函数，而是多个函数进行特殊运算得到的函数（如求多个单调性不完全相同的一次函数的最小值的最大值）．此时函数的导函数可能是分段函数，且在函数某些点上可能不可导．
+    Second, in some problems, the unimodal function for which we need to find the extremum point is not a single function, but rather a function derived from multiple functions with special operations (such as finding the maximum of the minimum values of multiple linear functions with not entirely identical monotonicity). In this case, the derivative function may be a piecewise function, and the function may be non-differentiable at some points.
 
-???+ warning "注意"
-    三分法既可以求出单峰函数的最大值，也可以求出「单谷函数」的最小值．为行文方便，除特殊说明外，下文中均以求单峰函数的最大值为例．
+???+ warning "Note"
+    Ternary search can find both the maximum of a unimodal function and the minimum of a "univalley function." For simplicity, unless otherwise specified, the following text uses finding the maximum of a unimodal function as an example.
 
-### 过程
+### Process
 
-三分法与二分法的基本思想类似，但每次操作需在当前区间 $[l,r]$（下图中两个橙点之间）内任取两点 $lmid < rmid$（下图中的两个蓝点）．如下图所示，如果 $f(lmid)<f(rmid)$，则在 $[l,lmid)$（下图中的红色部分）中函数必然单调递增，最大值点（下图中的绿点）必然不在这一区间内，可舍去这一区间；但是，无法排除最大值点在 $rmid$ 右侧的可能性，所以无法舍去更多区间．反之亦然．
+The basic idea of ternary search is similar to binary search, but each operation requires selecting two points $lmid < rmid$ within the current interval $[l, r]$ (between the two orange points in the figure below, the two blue points in the figure). As shown in the figure below, if $f(lmid) < f(rmid)$, then in $[l, lmid)$ (the red portion in the figure below), the function must be monotonically increasing, and the maximum point (the green point in the figure below) is definitely not in this interval, so this interval can be discarded; however, the possibility that the maximum point is to the right of $rmid$ cannot be ruled out, so we cannot discard more. The same logic applies in reverse.
 
 ![](images/ternary.svg)
 
-三分法的正确性并不依赖于 $lmid$ 和 $rmid$ 的选择，通常可以取两个三等分点．但是，它们的选择确实会影响三分法的效率．这是因为三分法的每次操作都会舍去两侧区间中的其中一个．为减少三分法的操作次数，应使两侧区间尽可能大．因此，每一次操作时的 $lmid$ 和 $rmid$ 分别取 $mid-\varepsilon$ 和 $mid+\varepsilon$ 是一个不错的选择．事实上，$mid\pm \varepsilon$ 的取法相当于求 $mid$ 处的近似导数 $\dfrac{f(mid+\varepsilon)-f(mid-\varepsilon)}{2\varepsilon}$ 判断正负以确定极值点在 $mid$ 的哪一侧．
+The correctness of ternary search does not depend on the choice of $lmid$ and $rmid$. Typically, the two trisection points can be chosen. However, their choice does affect the efficiency of ternary search. This is because each operation of ternary search discards one of the two intervals. To reduce the number of operations in ternary search, the two intervals should be as large as possible. Therefore, selecting $mid - \varepsilon$ and $mid + \varepsilon$ as $lmid$ and $rmid$ respectively in each operation is a good choice. In fact, the $mid \pm \varepsilon$ selection is equivalent to approximating the derivative $\dfrac{f(mid+\varepsilon)-f(mid-\varepsilon)}{2\varepsilon}$ at $mid$ to determine on which side of $mid$ the extremum point lies.
 
-### 实现
+### Implementation
 
-伪代码如下：
+The pseudocode is as follows:
 
 $$
 \begin{array}{l}
@@ -234,49 +234,49 @@ $$
 \end{array}
 $$
 
-???+ tip "分割点的选取"
-    代码中，分割点选取为 $mid \pm \varepsilon / 3$ 是为了保证分割点总是在当前的 $l$ 和 $r$ 之间，进而避免陷入死循环．
+???+ tip "Selection of Split Points"
+    In the code, the split points are selected as $mid \pm \varepsilon / 3$ to ensure that the split points are always between the current $l$ and $r$, thus avoiding getting stuck in an infinite loop.
 
-???+ info "整数的情形"
-    如果函数 $f(x)$ 的定义域是整数，那么上述三分法和后文的黄金分割法都应该在 $r-l$ 很小时就终止．对于 $r-l$ 很小的情形，需要通过暴力遍历的方法求得最大值点．
+???+ info "Integer Case"
+    If the domain of $f(x)$ is integers, then the above ternary search and the golden-section search discussed below should terminate when $r - l$ becomes small. For cases where $r - l$ is small, the maximum point should be found by brute force.
 
-### 优化：黄金分割法
+### Optimization: Golden-Section Search
 
-如果单次调用 $f(x)$ 的成本很高，需要进一步减少 $f(x)$ 的调用次数，可以通过黄金分割法（golden-section search）进一步改进三分法的常数．这也是华罗庚提出的优选法的重要内容．
+If the cost of a single call to $f(x)$ is very high, you need to further reduce the number of $f(x)$ calls. The golden-section search method can further improve the constant factor of ternary search. This is also an important part of the optimum-seeking method proposed by Hua Luogeng.
 
-三分法中，每轮迭代需要两次函数调用，且单轮迭代后区间长度至多缩短到原来的 $1/2$．这意味着，要达到精度 $\varepsilon$，至少需要
+In ternary search, each iteration requires two function calls, and after a single iteration, the interval length is at most reduced to $1/2$ of its original length. This means that to achieve precision $\varepsilon$, at least
 
 $$
 2\log_2\dfrac{r-l}{\varepsilon}
 $$
 
-次函数调用．这是三分法能够取得的最好的结果．如果选取其他分点，例如三等分点，那么调用次数会进一步增加，因为单轮迭代后区间缩短得更慢．
+function calls are required. This is the best result ternary search can achieve. If other split points are chosen, such as trisection points, the number of calls will increase because the interval reduction per iteration is slower.
 
-黄金分割法的改进思路是，复用前文已经计算过的分点．这样，除了第一轮迭代需要两次函数调用外，其余轮次的迭代只需要一次函数调用．设黄金分割比为
+The improvement idea of golden-section search is to reuse the split points already calculated earlier. Thus, except for the first iteration which requires two function calls, all subsequent iterations only need one function call. Let the golden-section ratio be
 
 $$
 \phi = \dfrac{\sqrt{5}-1}{2} \approx 0.618.
 $$
 
-每轮迭代时，选取的分点是左右两个黄金分割点：
+In each iteration, the selected split points are the left and right golden-section points:
 
 $$
 m^l = \phi l +(1-\phi)r,~m^r = (1-\phi)l+\phi r.
 $$
 
-黄金分割点分割线段具有自相似结构．也就是说，$m^l$ 是线段 $[l,r]$ 的左黄金分割点，也是线段 $[l,m^r]$ 的右黄金分割点．这样选取分点的好处是，第 $k>1$ 轮迭代选取的分点中，一定有一个分点是之前已经计算过的，可以直接复用之前的计算结果．
+Golden-section points divide a line segment with self-similarity. That is, $m^l$ is the left golden-section point of the segment $[l, r]$, and also the right golden-section point of the segment $[l, m^r]$. The benefit of this selection is that in the $k$-th iteration ($k > 1$), one of the selected split points must have been calculated before, so the previous computation result can be reused.
 
 ![](./images/golden-section-search.svg)
 
-这样选取分点后，要达到精度 $\varepsilon$，只需要
+After selecting split points this way, to achieve precision $\varepsilon$, only
 
 $$
 1 + \log_{\phi^{-1}}\dfrac{r-l}{\varepsilon} \approx 1 + 1.44\log_2\dfrac{r-l}{\varepsilon}
 $$
 
-次函数调用．渐近意义上，函数的调用次数更少．
+function calls are needed. Asymptotically, the number of function calls is fewer.
 
-伪代码如下：
+The pseudocode is as follows:
 
 $$
 \begin{array}{l}
@@ -308,15 +308,15 @@ $$
 \end{array}
 $$
 
-### 例题
+### Example Problems
 
-???+ note "[洛谷 P3382 - 三分](https://www.luogu.com.cn/problem/P3382)"
-    给定一个 $N$ 次函数和范围 $[l, r]$，求出使函数在 $[l, x]$ 上单调递增且在 $[x, r]$ 上单调递减的唯一的 $x$ 的值．
+???+ note "[Luogu P3382 - Ternary Search](https://www.luogu.com.cn/problem/P3382)"
+    Given an $N$-th degree function and a range $[l, r]$, find the unique value $x$ such that the function is monotonically increasing on $[l, x]$ and monotonically decreasing on $[x, r]$.
 
-??? note "解题思路"
-    本题要求求 $N$ 次函数在 $[l, r]$ 取最大值时自变量的值，显然可以使用三分法．
+??? note "Solution Approach"
+    This problem requires finding the value of the independent variable when the $N$-th degree function achieves its maximum in $[l, r]$. Obviously, ternary search can be used.
 
-??? note "参考代码"
+??? note "Reference Code"
     === "C++"
         ```cpp
         --8<-- "docs/basic/code/binary/binary_1.cpp"
@@ -327,24 +327,24 @@ $$
         --8<-- "docs/basic/code/binary/binary_1.py"
         ```
 
-### 习题
+### Practice Problems
 
 -   [UVa 1476 - Error Curves](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=447&page=show_problem&problem=4222)
 -   [UVa 10385 - Duathlon](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=15&page=show_problem&problem=1326)
--   [UOJ 162 -【清华集训 2015】灯泡测试](https://uoj.ac/problem/162)
--   [洛谷 P7579 -「RdOI R2」称重（weigh）](https://www.luogu.com.cn/problem/P7579)
+-   [UOJ 162 - [Tsinghua Training 2015] Bulb Test](https://uoj.ac/problem/162)
+-   [Luogu P7579 - [RdOI R2] Weighing](https://www.luogu.com.cn/problem/P7579)
 
-## 分数规划
+## Fractional Programming
 
-参见：[分数规划](../misc/frac-programming.md)
+See: [Fractional Programming](../misc/frac-programming.md)
 
-分数规划通常描述为下列问题：每个物品有两个属性 $c_i$，$d_i$，要求通过某种方式选出若干个，使得 $\frac{\sum{c_i}}{\sum{d_i}}$ 最大或最小．
+Fractional programming is typically described as the following problem: each item has two attributes $c_i$, $d_i$, and the goal is to select some items through a certain method such that $\frac{\sum{c_i}}{\sum{d_i}}$ is maximized or minimized.
 
-经典的例子有最优比率环、最优比率生成树等等．
+Classic examples include the optimal ratio cycle and the optimal ratio spanning tree, etc.
 
-分数规划可以用二分法来解决．
+Fractional programming can be solved using binary search.
 
-## 参考资料
+## References
 
 -   [Ternary search - Wikipedia](https://en.wikipedia.org/wiki/Ternary_search)
 -   [Golden-section search - Wikipedia](https://en.wikipedia.org/wiki/Golden-section_search)

@@ -1,23 +1,28 @@
-## 引入
+## Introduction
 
-可持久化 Trie 的方式和可持久化线段树的方式是相似的，即每次只修改被添加或值被修改的节点，而保留没有被改动的节点，在上一个版本的基础上连边，使最后每个版本的 Trie 树的根遍历所能分离出的 Trie 树都是完整且包含全部信息的．
+The persistent Trie works similarly to a persistent segment tree: each update only modifies the newly added or changed nodes and retains unchanged nodes, linking edges from the previous version so that each version's Trie root yields a complete Trie containing all information.
 
-大部分的可持久化 Trie 题中，Trie 都是以 [01-Trie](../string/trie.md#维护异或极值) 的形式出现的．
+In most persistent Trie problems, the Trie appears in the form of a [01-Trie](../string/trie.md#maintaining-xor-extremes).
 
-??? note "例题 [最大异或和](https://www.luogu.com.cn/problem/P4735)"
-    对一个长度为 $n$ 的数组 $a$ 维护以下操作：
-    
-    1.  在数组的末尾添加一个数 $x$，数组的长度 $n$ 自增 $1$．
-    2.  给出查询区间 $[l,r]$ 和一个值 $k$，求当 $l\le p\le r$ 时，$k \oplus \bigoplus^{n}_{i=p} a_i$ 的最大值．
+??? note "Example – Maximum XOR Sum"
+    For a length-$n$ array $a$, maintain the following operations:
 
-## 过程
+    1. Append a number $x$ to the end of the array, increasing its length $n$ by $1$.
+    2. Given a query interval $[l,r]$ and a value $k$, find, when $l\le p\le r$, the maximum of $k \oplus \bigoplus^{n}_{i=p} a_i$.
 
-这个求的值可能有些麻烦，利用常用的处理连续异或的方法，记 $s_x=\bigoplus_{i=1}^x a_i$，则原式等价于 $s_{p-1}\oplus s_n\oplus k$，观察到 $s_n \oplus k$ 在查询的过程中是固定的，题目的查询变化为查询在区间 $[l-1,r-1]$ 中异或定值（$s_n\oplus k$）的最大值．
+## Process
 
-继续按类似于可持久化线段树的思路，考虑每次的查询都查询整个区间．我们只需把这个区间建一棵 Trie 树，将这个区间中的每个树都加入这棵 Trie 中，查询的时候，尽量往与当前位不相同的地方跳．
+The target value can be tricky. Using the standard technique for prefix XOR, let $s_x=\bigoplus_{i=1}^x a_i$. Then the expression simplifies to $s_{p-1}\oplus s_n\oplus k$. Notice that $s_n \oplus k$ is fixed during a query, so the query reduces to finding the maximum XOR in the interval $[l-1,r-1]$ with the fixed value ($s_n\oplus k$).
 
-查询区间，只需要利用前缀和和差分的思想，用两棵前缀 Trie 树（也就是按顺序添加数的两个历史版本）相减即得到该区间的 Trie 树．再利用动态开点的思想，不添加没有计算过的点，以减少空间占用．
+Following the persistent segment-tree mindset, we build a Trie for the whole interval. We insert each prefix in the interval into this Trie, and during the query we greedily move to the child whose bit differs from the current bit of the constant to maximize the XOR.
+
+To query an interval, we use the prefix-sum/difference idea: two prefix-Trie versions (the two historical versions after each insertion) are subtracted to obtain the Trie representing the interval. Using a dynamic-node-creation approach, we avoid adding nodes that have never been accessed, reducing memory usage.
 
 ```cpp
 --8<-- "docs/ds/code/persistent-trie/persistent-trie_1.cpp"
 ```
+
+## References
+
+-   [XOR operator in LaTeX](https://en.wikipedia.org/wiki/Exclusive_or#Symbols)
+-   [Persistent Trie - CP-Algorithms](https://cp-algorithms.com/data_structures/trie.html)

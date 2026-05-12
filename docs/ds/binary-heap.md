@@ -1,64 +1,64 @@
 author: HeRaNO, Xeonacid, AzurIce
 
-## 结构
+## Structure
 
-从二叉堆的结构说起，它是一棵二叉树，并且是完全二叉树，每个结点中存有一个元素（或者说，有个权值）．
+Starting from the structure of a binary heap, it is a binary tree and a complete binary tree, with each node storing an element (or rather, a weight).
 
-堆性质：父亲的权值不小于儿子的权值（大根堆）．同样的，我们可以定义小根堆．本文以大根堆为例．
+Heap property: the parent's weight is not less than the child's weight (max-heap). Similarly, we can define a min-heap. This article takes the max-heap as an example.
 
-由堆性质，树根存的是最大值（getmax 操作就解决了）．
+By the heap property, the tree root stores the maximum value (getmax operation solves this).
 
-## 过程
+## Process
 
-### 插入操作
+### Insertion Operation
 
-插入操作是指向二叉堆中插入一个元素，要保证插入后也是一棵完全二叉树．
+Insertion operation refers to inserting an element into the binary heap, ensuring that after insertion it remains a complete binary tree.
 
-最简单的方法就是，最下一层最右边的叶子之后插入．
+The simplest method is to insert after the rightmost leaf on the bottom level.
 
-如果最下一层已满，就新增一层．
+If the bottom level is full, we add a new level.
 
-插入之后可能会不满足堆性质？
+After insertion, the heap property might be violated?
 
-**向上调整**：如果这个结点的权值大于它父亲的权值，就交换，重复此过程直到不满足或者到根．
+**Shift-up**: if this node's weight is greater than its parent's weight, swap them, repeating this process until the condition is no longer met or we reach the root.
 
-可以证明，插入之后向上调整后，没有其他结点会不满足堆性质．
+It can be proven that after insertion and shift-up, no other node will violate the heap property.
 
-向上调整的时间复杂度是 $O(\log n)$ 的．
+The time complexity of shift-up is $O(\log n)$.
 
-![二叉堆的插入操作](./images/binary_heap_insert.svg)
+![Insertion operation of binary heap](./images/binary_heap_insert.svg)
 
-### 删除操作
+### Deletion Operation
 
-删除操作指删除堆中最大的元素，即删除根结点．
+Deletion operation refers to deleting the maximum element in the heap, i.e., deleting the root node.
 
-但是如果直接删除，则变成了两个堆，难以处理．
+However, if we delete it directly, it becomes two heaps, which is difficult to handle.
 
-所以不妨考虑插入操作的逆过程，设法将根结点移到最后一个结点，然后直接删掉．
+Therefore, we can consider the reverse of the insertion operation: try to move the root node to the last node, then delete it directly.
 
-然而实际上不好做，我们通常采用的方法是，把根结点和最后一个结点直接交换．
+In practice, it's not easy to do this, so we usually adopt the method of directly swapping the root node with the last node.
 
-于是直接删掉（在最后一个结点处的）根结点，但是新的根结点可能不满足堆性质……
+Then we directly delete (at the last node's position) the root node, but the new root node may not satisfy the heap property……
 
-**向下调整**：在该结点的儿子中，找一个最大的，与该结点交换，重复此过程直到底层．
+**Shift-down**: among this node's children, find the maximum, swap with it, and repeat this process until we reach the bottom level.
 
-可以证明，删除并向下调整后，没有其他结点不满足堆性质．
+It can be proven that after deletion and shift-down, no other node will violate the heap property.
 
-时间复杂度 $O(\log n)$．
+Time complexity: $O(\log n)$.
 
-### 增加某个点的权值
+### Increasing the Weight of a Certain Point
 
-很显然，直接修改后，向上调整一次即可，时间复杂度为 $O(\log n)$．
+Obviously, after direct modification, a single shift-up suffices, with time complexity $O(\log n)$.
 
-## 实现
+## Implementation
 
-我们发现，上面介绍的几种操作主要依赖于两个核心：向上调整和向下调整．
+We find that the several operations introduced above mainly depend on two cores: shift-up and shift-down.
 
-考虑使用一个序列 $h$ 来表示堆．$h_i$ 的两个儿子分别是 $h_{2i}$ 和 $h_{2i+1}$，$1$ 是根结点：
+Consider using a sequence $h$ to represent the heap. The two children of $h_i$ are $h_{2i}$ and $h_{2i+1}$, and $1$ is the root node:
 
-![h 的堆结构](./images/binary-heap-array.svg)
+![Heap structure of h](./images/binary-heap-array.svg)
 
-参考代码：
+Reference code:
 
 ```cpp
 void up(int x) {
@@ -79,15 +79,15 @@ void down(int x) {
 }
 ```
 
-### 建堆
+### Building a Heap
 
-考虑这么一个问题，从一个空的堆开始，插入 $n$ 个元素，不在乎顺序．
+Consider this problem: starting from an empty heap, insert $n$ elements, not caring about order.
 
-直接一个一个插入需要 $O(n \log n)$ 的时间，有没有更好的方法？
+Directly inserting one by one takes $O(n \log n)$ time. Is there a better method?
 
-#### 方法一：使用 decreasekey（即，向上调整）
+#### Method 1: Using decreasekey (i.e., shift-up)
 
-从根开始，按 BFS 序进行．
+Start from the root, proceed in BFS order.
 
 ```cpp
 void build_heap_1() {
@@ -95,15 +95,15 @@ void build_heap_1() {
 }
 ```
 
-为啥这么做：对于第 $k$ 层的结点，向上调整的复杂度为 $O(k)$ 而不是 $O(\log n)$．
+Why do this: for a node at level $k$, the complexity of shift-up is $O(k)$ instead of $O(\log n)$.
 
-总复杂度：$\log 1 + \log 2 + \cdots + \log n = \Theta(n \log n)$．
+Total complexity: $\log 1 + \log 2 + \cdots + \log n = \Theta(n \log n)$.
 
-（在「基于比较的排序」中证明过）
+(This has been proven in "comparison-based sorting".)
 
-#### 方法二：使用向下调整
+#### Method 2: Using shift-down
 
-这时换一种思路，从叶子开始，逐个向下调整
+At this point, we change our approach: start from the leaves and perform shift-down one by one.
 
 ```cpp
 void build_heap_2() {
@@ -111,11 +111,11 @@ void build_heap_2() {
 }
 ```
 
-换一种理解方法，每次「合并」两个已经调整好的堆，这说明了正确性．
+Another way to understand this: each time we "merge" two already adjusted heaps, which explains correctness.
 
-注意到向下调整的复杂度，为 $O(\log n - k)$，另外注意到叶节点无需调整，因此可从序列约 $n/2$ 的位置开始调整，可减少部分常数但不影响复杂度．
+Noting that the complexity of shift-down is $O(\log n - k)$, and also noting that leaf nodes need no adjustment, we can start adjusting from approximately position $n/2$ in the sequence, which can reduce some constants but does not affect the complexity.
 
-???+ note "证明"
+???+ note "Proof"
     $$
     \begin{aligned}
     \text{总复杂度} & = n \log n - \log 1 - \log 2 - \cdots - \log n \\
@@ -126,42 +126,42 @@ void build_heap_2() {
     \end{aligned}
     $$
 
-之所以能 $O(n)$ 建堆，是因为堆性质很弱，二叉堆并不是唯一的．
+The reason we can build a heap in $O(n)$ time is because the heap property is weak, and binary heaps are not unique.
 
-要是像排序那样的强条件就难说了．
+If it were as strict a condition as sorting, it would be hard to say.
 
-## 应用
+## Applications
 
-### 对顶堆
+### Double-Ended Heap
 
 ??? note "[SPOJ RMID2 - Running Median Again](https://www.spoj.com/problems/RMID2/)"
-    维护一个序列，支持两种操作：
-    
-    1.  向序列中插入一个元素
-    2.  输出并删除当前序列的中位数（若序列长度为偶数，则输出较小的中位数）
+    Maintain a sequence supporting two operations:
 
-这个问题可以被进一步抽象成：动态维护一个序列上第 $k$ 大的数，$k$ 值可能会发生变化．
+    1.  Insert an element into the sequence
+    2.  Output and delete the current sequence's median (if the sequence length is even, output the smaller median)
 
-对于此类问题，我们可以使用 **对顶堆** 这一技巧予以解决（可以避免写权值线段树或 BST 带来的繁琐）．
+    This problem can be further abstracted as: dynamically maintain the $k$-th largest number in a sequence, where the $k$ value may change.
 
-对顶堆由一个大根堆与一个小根堆组成，小根堆维护大值即前 $k$ 大的值（包含第 k 个），大根堆维护小值即比第 $k$ 大数小的其他数．
+    For such problems, we can use the **double-ended heap** technique to solve them (avoiding the hassle of writing a value segment tree or BST).
 
-这两个堆构成的数据结构支持以下操作：
+    A double-ended heap consists of a max-heap and a min-heap, where the min-heap maintains large values, i.e., the top $k$ values (including the k-th), and the max-heap maintains small values, i.e., other numbers smaller than the $k$-th largest.
 
--   维护：当小根堆的大小小于 $k$ 时，不断将大根堆堆顶元素取出并插入小根堆，直到小根堆的大小等于 $k$；当小根堆的大小大于 $k$ 时，不断将小根堆堆顶元素取出并插入大根堆，直到小根堆的大小等于 $k$；
--   插入元素：若插入的元素大于等于小根堆堆顶元素，则将其插入小根堆，否则将其插入大根堆，然后维护对顶堆；
--   查询第 $k$ 大元素：小根堆堆顶元素即为所求；
--   删除第 $k$ 大元素：删除小根堆堆顶元素，然后维护对顶堆；
--   $k$ 值 $+1/-1$：根据新的 $k$ 值直接维护对顶堆．
+    These two heaps forming a data structure support the following operations:
 
-显然，查询第 $k$ 大元素的时间复杂度是 $O(1)$ 的．由于插入、删除或调整 $k$ 值后，小根堆的大小与期望的 $k$ 值最多相差 $1$，故每次维护最多只需对大根堆与小根堆中的元素进行一次调整，因此，这些操作的时间复杂度都是 $O(\log n)$ 的．
+    -   Maintenance: when the size of the min-heap is less than $k$, continuously extract and insert the top element of the max-heap into the min-heap until the min-heap's size equals $k$; when the size of the min-heap is greater than $k$, continuously extract and insert the top element of the min-heap into the max-heap until the min-heap's size equals $k$;
+    -   Insert element: if the inserted element is greater than or equal to the top element of the min-heap, insert it into the min-heap; otherwise, insert it into the max-heap, then maintain the double-ended heap;
+    -   Query the $k$-th largest element: the top element of the min-heap is exactly what we seek;
+    -   Delete the $k$-th largest element: delete the top element of the min-heap, then maintain the double-ended heap;
+    -   $k$ value $+1/-1$: directly maintain the double-ended heap according to the new $k$ value.
 
-??? note "参考代码"
+    Obviously, the time complexity of querying the $k$-th largest element is $O(1)$. Due to insertion, deletion, or adjustment of the $k$ value causing the min-heap's size to differ from the expected $k$ value by at most $1$, each maintenance requires at most one adjustment of elements in the max-heap and min-heap, so the time complexity of these operations is $O(\log n)$.
+
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/ds/code/binary-heap/binary-heap_1.cpp"
     ```
 
-### 习题
+### Exercises
 
 -   [SPOJ RMID - Running Median](https://www.spoj.com/problems/RMID)
--   [洛谷 P1801 黑匣子](https://www.luogu.com.cn/problem/P1801)
+-   [Luogu P1801 Black Box](https://www.luogu.com.cn/problem/P1801)

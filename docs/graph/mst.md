@@ -1,31 +1,31 @@
 author: Chrogeek, Enter-tainer, HeRaNO, Ir1d, Marcythm, ShadowsEpic, StudyingFather, Xeonacid, bear-good, billchenchina, diauweb, diauweb, greyqz, kawa-yoiko, ouuan, partychicken, sshwy, stevebraveman, zhouyuyang2002, renbaoshuo, Hszzzx, y-kx-b, toprise
 
-## 定义
+## Definition
 
-在阅读下列内容之前，请务必阅读 [图论相关概念](./concept.md) 与 [树基础](./tree-basic.md) 部分，并了解以下定义：
+Before reading the following content, please be sure to read the [Graph Theory Concepts](./concept.md) and [Tree Basics](./tree-basic.md) sections, and understand the following definitions:
 
-1.  生成子图
-2.  生成树
+1. Spanning Subgraph
+2. Spanning Tree
 
-我们定义无向连通图的 **最小生成树**（Minimum Spanning Tree，MST）为边权和最小的生成树．
+We define the **Minimum Spanning Tree** (MST) of an undirected connected graph as the spanning tree with the minimum total edge weight.
 
-注意：只有连通图才有生成树，而对于非连通图，只存在生成森林．
+Note: Only connected graphs have spanning trees; for disconnected graphs, only spanning forests exist.
 
-## Kruskal 算法
+## Kruskal's Algorithm
 
-Kruskal 算法是一种常见并且好写的最小生成树算法，由 Kruskal 发明．该算法的基本思想是从小到大加入边，是个贪心算法．
+Kruskal's algorithm is a common and easy-to-implement minimum spanning tree algorithm, invented by Kruskal. The basic idea is to add edges in increasing order of weight, which is a greedy algorithm.
 
-### 前置知识
+### Prerequisites
 
-[并查集](../ds/dsu.md)、[贪心](../basic/greedy.md)、[图的存储](./save.md)．
+[Disjoint Set Union (Union-Find)](../ds/dsu.md), [Greedy](../basic/greedy.md), [Graph Storage](./save.md).
 
-### 实现
+### Implementation
 
-图示：
+Illustration:
 
 ![](./images/mst-2.apng)
 
-伪代码：
+Pseudocode:
 
 <!--
 ```pseudo
@@ -64,40 +64,40 @@ $$
 \end{array}
 $$
 
-算法虽简单，但需要相应的数据结构来支持……具体来说，维护一个森林，查询两个结点是否在同一棵树中，连接两棵树．
+Although the algorithm is simple, it requires appropriate data structures to support it... Specifically, maintain a forest, query whether two nodes are in the same tree, and connect two trees.
 
-抽象一点地说，维护一堆 **集合**，查询两个元素是否属于同一集合，合并两个集合．
+More abstractly, maintain a bunch of **sets**, query whether two elements belong to the same set, and merge two sets.
 
-其中，查询两点是否连通和连接两点可以使用并查集维护．
+Among these, checking whether two points are connected and connecting two points can be maintained using a disjoint set union.
 
-如果使用 $O(m\log m)$ 的排序算法，并且使用 $O(m\alpha(m, n))$ 或 $O(m\log n)$ 的并查集，就可以得到时间复杂度为 $O(m\log m)$ 的 Kruskal 算法．
+If we use a sorting algorithm with $O(m\log m)$ complexity and a disjoint set union with $O(m\alpha(m, n))$ or $O(m\log n)$ complexity, we can obtain a Kruskal's algorithm with time complexity $O(m\log m)$.
 
-### 证明
+### Proof
 
-思路很简单，为了造出一棵最小生成树，我们从最小边权的边开始，按边权从小到大依次加入，如果某次加边产生了环，就扔掉这条边，直到加入了 $n-1$ 条边，即形成了一棵树．
+The idea is simple: to construct a minimum spanning tree, we start from the edge with the smallest weight, and add edges in increasing order of weight. If adding an edge creates a cycle, we discard this edge. We continue until we have added $n-1$ edges, forming a tree.
 
-证明：使用归纳法，证明任何时候 K 算法选择的边集都被某棵 MST 所包含．
+Proof: Use induction to prove that at any time, the set of edges chosen by Kruskal's algorithm is contained in some MST.
 
-基础：对于算法刚开始时，显然成立（最小生成树存在）．
+Base case: At the beginning of the algorithm, it obviously holds (the minimum spanning tree exists).
 
-归纳：假设某时刻成立，当前边集为 $F$，令 $T$ 为这棵 MST，考虑下一条加入的边 $e$．
+Induction: Assume it holds at some moment, with the current edge set being $F$, and let $T$ be this MST. Consider the next edge $e$ to be added.
 
-如果 $e$ 属于 $T$，那么成立．
+If $e$ belongs to $T$, then it holds.
 
-否则，$T+e$ 一定存在一个环，考虑这个环上不属于 $F$ 的另一条边 $f$（至少存在一条）．
+Otherwise, $T+e$ must contain a cycle. Consider another edge $f$ on this cycle that does not belong to $F$ (at least one such edge exists).
 
-首先，$f$ 的权值一定不会比 $e$ 小，不然 $f$ 会在 $e$ 之前被选取．
+First, $f$'s weight cannot be smaller than $e$'s, otherwise $f$ would have been chosen before $e$.
 
-然后，$f$ 的权值一定不会比 $e$ 大，不然 $T+e-f$ 就是一棵比 $T$ 还优的生成树了．
+Second, $f$'s weight cannot be larger than $e$'s, otherwise $T+e-f$ would be a spanning tree better than $T$.
 
-所以，$T+e-f$ 包含了 $F$，并且也是一棵最小生成树，归纳成立．
+Therefore, $T+e-f$ contains $F$ and is also a minimum spanning tree, completing the induction.
 
-### 例题
+### Example Problem
 
-???+ note "[洛谷 P1195 口袋的天空](https://www.luogu.com.cn/problem/P1195)"
-    有 $n$ 朵云，你要将它们连成 $k$ 个棉花糖，将 $X_i$ 云朵和 $Y_i$ 连接起来需要 $L_i$ 的代价，求最小代价．
+???+ note "[Luogu P1195 Sky in Pocket](https://www.luogu.com.cn/problem/P1195)"
+    There are $n$ clouds that you need to connect into $k$ marshmallows. Connecting cloud $X_i$ and cloud $Y_i$ costs $L_i$. Find the minimum cost.
 
-??? note "例题代码"
+??? note "Example Code"
     === "C++"
         ```cpp
         --8<-- "docs/graph/code/mst/mst_3.cpp"
@@ -113,29 +113,29 @@ $$
         --8<-- "docs/graph/code/mst/mst_3.java"
         ```
 
-## Prim 算法
+## Prim's Algorithm
 
-Prim 算法是另一种常见并且好写的最小生成树算法．该算法的基本思想是从一个结点开始，不断加点（而不是 Kruskal 算法的加边）．
+Prim's algorithm is another common and easy-to-implement minimum spanning tree algorithm. Its basic idea is to start from a node and continuously add nodes (instead of adding edges like Kruskal's algorithm).
 
-### 实现
+### Implementation
 
-图示：
+Illustration:
 
 ![](./images/mst-3.apng)
 
-具体来说，每次要选择距离最小的一个结点，以及用新的边更新其他结点的距离．
+Specifically, each time we select a node with the minimum distance and use the new edge to update the distances of other nodes.
 
-其实跟 Dijkstra 算法一样，每次找到距离最小的一个点，可以暴力找也可以用堆维护．
+In fact, it's the same as Dijkstra's algorithm: each time find the node with the minimum distance. We can find it by brute force or maintain it with a heap.
 
-堆优化的方式类似 Dijkstra 的堆优化，但如果使用二叉堆等不支持 $O(1)$ decrease-key 的堆，复杂度就不优于 Kruskal，常数也比 Kruskal 大．所以，一般情况下都使用 Kruskal 算法，在稠密图尤其是完全图上，暴力 Prim 的复杂度比 Kruskal 优，但 **不一定** 实际跑得更快．
+The heap-optimized approach is similar to Dijkstra's heap optimization. However, if using a binary heap or other heaps that do not support $O(1)$ decrease-key, the complexity is not better than Kruskal's, and the constant factor is larger than Kruskal's. Therefore, Kruskal's algorithm is generally used. For dense graphs, especially complete graphs, brute-force Prim's complexity is better than Kruskal's, but it is **not necessarily** faster in practice.
 
-暴力：$O(n^2+m)$．
+Brute force: $O(n^2+m)$.
 
-二叉堆：$O((n+m) \log n)$．
+Binary heap: $O((n+m) \log n)$.
 
-Fib 堆：$O(n \log n + m)$．
+Fibonacci heap: $O(n \log n + m)$.
 
-伪代码：
+Pseudocode:
 
 $$
 \begin{array}{ll}
@@ -160,11 +160,11 @@ $$
 \end{array}
 $$
 
-注意：上述代码只是求出了最小生成树的权值，如果要输出方案还需要记录每个点的 $dis$ 代表的是哪条边．
+Note: The above code only computes the total weight of the minimum spanning tree. To output the solution, we also need to record which edge each node's $dis$ represents.
 
-??? note "代码实现"
+??? note "Code Implementation"
     ```cpp
-    // 使用二叉堆优化的 Prim 算法．
+    // Prim's algorithm with binary heap optimization
     #include <cstring>
     #include <iostream>
     #include <queue>
@@ -226,54 +226,54 @@ $$
     }
     ```
 
-### 证明
+### Proof
 
-从任意一个结点开始，将结点分成两类：已加入的，未加入的．
+Starting from any node, divide nodes into two categories: added and not added.
 
-每次从未加入的结点中，找一个与已加入的结点之间边权最小值最小的结点．
+Each time, from the nodes not yet added, find the node with the minimum edge weight to the set of added nodes.
 
-然后将这个结点加入，并连上那条边权最小的边．
+Then add this node and connect it with the edge of minimum weight.
 
-重复 $n-1$ 次即可．
+Repeat $n-1$ times.
 
-证明：还是说明在每一步，都存在一棵最小生成树包含已选边集．
+Proof: As before, we show that at each step, there exists a minimum spanning tree containing the selected edge set.
 
-基础：只有一个结点的时候，显然成立．
+Base case: When there is only one node, it obviously holds.
 
-归纳：如果某一步成立，当前边集为 $F$，属于 $T$ 这棵 MST，接下来要加入边 $e$．
+Induction: If it holds at some step, with the current edge set being $F$, belonging to the MST $T$. Now we want to add edge $e$.
 
-如果 $e$ 属于 $T$，那么成立．
+If $e$ belongs to $T$, then it holds.
 
-否则考虑 $T+e$ 中环上另一条可以加入当前边集的边 $f$．
+Otherwise, consider another edge $f$ on the cycle in $T+e$ that can be added to the current edge set.
 
-首先，$f$ 的权值一定不小于 $e$ 的权值，否则就会选择 $f$ 而不是 $e$ 了．
+First, $f$'s weight is not less than $e$'s weight; otherwise $f$ would have been chosen instead of $e$.
 
-然后，$f$ 的权值一定不大于 $e$ 的权值，否则 $T+e-f$ 就是一棵更小的生成树了．
+Then, $f$'s weight is not greater than $e$'s weight; otherwise $T+e-f$ would be a smaller spanning tree.
 
-因此，$e$ 和 $f$ 的权值相等，$T+e-f$ 也是一棵最小生成树，且包含了 $F$．
+Therefore, $e$ and $f$ have equal weights, and $T+e-f$ is also a minimum spanning tree and contains $F$.
 
-## Boruvka 算法
+## Boruvka's Algorithm
 
-接下来介绍另一种求解最小生成树的算法——Boruvka 算法．该算法的思想是前两种算法的结合．它可以用于求解无向图的最小生成森林．（无向连通图就是最小生成树．）
+Next, we introduce another algorithm for solving the minimum spanning tree—Boruvka's algorithm. This algorithm combines the ideas of the first two algorithms. It can be used to find the minimum spanning forest of an undirected graph. (For an undirected connected graph, this is the minimum spanning tree.)
 
-在边具有较多特殊性质的问题中，Boruvka 算法具有优势．例如 [CF888G](https://codeforces.com/problemset/problem/888/G) 的完全图问题．
+In problems where edges have special properties, Boruvka's algorithm has advantages. For example, the complete graph problem in [CF888G](https://codeforces.com/problemset/problem/888/G).
 
-为了描述该算法，我们需要引入一些定义：
+To describe this algorithm, we need to introduce some definitions:
 
-1.  定义 $E'$ 为我们当前找到的最小生成森林的边．在算法执行过程中，我们逐步向 $E'$ 加边，定义 **连通块** 表示一个点集 $V'\subseteq V$，且这个点集中的任意两个点 $u$，$v$ 在 $E'$ 中的边构成的子图上是连通的（互相可达）．
-2.  定义一个连通块的 **最小边** 为它连向其它连通块的边中权值最小的那一条．
+1. Define $E'$ as the edges of the minimum spanning forest we have found so far. During the execution of the algorithm, we gradually add edges to $E'$. Define a **connected component** as a set of vertices $V' \subseteq V$ such that any two vertices $u, v$ in this set are connected (mutually reachable) in the subgraph formed by edges in $E'$.
+2. Define the **minimum edge** of a connected component as the edge connecting it to another connected component with the smallest weight.
 
-初始时，$E'=\varnothing$，每个点各自是一个连通块：
+Initially, $E' = \varnothing$, and each vertex is its own connected component:
 
-1.  计算每个点分别属于哪个连通块．将每个连通块都设为「没有最小边」．
-2.  遍历每条边 $(u, v)$，如果 $u$ 和 $v$ 不在同一个连通块，就用这条边的边权分别更新 $u$ 和 $v$ 所在连通块的最小边．
-3.  如果所有连通块都没有最小边，退出程序，此时的 $E'$ 就是原图最小生成森林的边集．否则，将每个有最小边的连通块的最小边加入 $E'$，返回第一步．
+1. Determine which connected component each vertex belongs to. Set each connected component to have "no minimum edge".
+2. Iterate through each edge $(u, v)$. If $u$ and $v$ are not in the same connected component, use this edge's weight to update the minimum edge for $u$'s and $v$'s connected components respectively.
+3. If all connected components have no minimum edge, exit the program. At this point, $E'$ is the edge set of the minimum spanning forest of the original graph. Otherwise, add the minimum edge of each connected component that has one to $E'$, and return to step 1.
 
-下面通过一张动态图来举一个例子（图源自 [维基百科](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm)）：
+Below is an example with a dynamic illustration (image from [Wikipedia](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm)):
 
 ![eg](./images/mst-1.apng)
 
-当原图连通时，每次迭代连通块数量至少减半，算法只会迭代不超过 $O(\log V)$ 次，而原图不连通时相当于多个子问题，因此算法复杂度是 $O(E\log V)$ 的．给出算法的伪代码：（修改自 [维基百科](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm)）
+When the original graph is connected, the number of connected components at least halves each iteration, so the algorithm iterates at most $O(\log V)$ times. When the original graph is disconnected, it corresponds to multiple subproblems. Therefore, the algorithm's complexity is $O(E \log V)$. The pseudocode of the algorithm is given below (modified from [Wikipedia](https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm)):
 
 $$
 \begin{array}{ll}
@@ -297,61 +297,61 @@ $$
 \end{array}
 $$
 
-需要注意边与边的比较通常需要第二关键字（例如按编号排序），以便当边权相同时分出边的大小．
+Note that comparing edges usually requires a secondary key (e.g., sorting by edge index) to distinguish edges when they have the same weight.
 
-## 习题
+## Exercises
 
--   [「HAOI2006」聪明的猴子](https://www.luogu.com.cn/problem/P2504)
--   [「SCOI2005」繁忙的都市](https://loj.ac/problem/2149)
+-   [「HAOI2006」Smart Monkeys](https://www.luogu.com.cn/problem/P2504)
+-   [「SCOI2005」Busy City](https://loj.ac/problem/2149)
 
-## 最小生成树的唯一性
+## Uniqueness of Minimum Spanning Tree
 
-考虑最小生成树的唯一性．如果一条边 **不在最小生成树的边集中**，并且可以替换与其 **权值相同、并且在最小生成树边集** 的另一条边．那么，这个最小生成树就是不唯一的．
+Consider the uniqueness of the minimum spanning tree. If an edge is **not in the minimum spanning tree's edge set** and can replace another edge **with equal weight that is in the minimum spanning tree edge set**, then this minimum spanning tree is not unique.
 
-对于 Kruskal 算法，只要计算为当前权值的边可以放几条，实际放了几条，如果这两个值不一样，那么就说明这几条边与之前的边产生了一个环（这个环中至少有两条当前权值的边，否则根据并查集，这条边是不能放的），即最小生成树不唯一．
+For Kruskal's algorithm, we only need to count how many edges of the current weight can be placed and how many are actually placed. If these two values are different, it indicates that these edges form a cycle with previous edges (this cycle must contain at least two edges of the current weight; otherwise, according to the union-find set, this edge cannot be placed). This means the minimum spanning tree is not unique.
 
-寻找权值与当前边相同的边，我们只需要记录头尾指针，用单调队列即可在 $O(\alpha(m))$（m 为边数）的时间复杂度里优秀解决这个问题（基本与原算法时间相同）．
+To find edges with the same weight as the current edge, we only need to record head and tail pointers and use a monotonic queue to solve this problem with $O(\alpha(m))$ time complexity (where m is the number of edges), which is excellent (basically the same as the original algorithm's time).
 
-??? note "例题：[POJ 1679](http://poj.org/problem?id=1679)"
+??? note "Example: [POJ 1679](http://poj.org/problem?id=1679)"
     ```cpp
     --8<-- "docs/graph/code/mst/mst_1.cpp"
     ```
 
-## 次小生成树
+## Second Minimum Spanning Tree
 
-### 非严格次小生成树
+### Non-Strict Second Minimum Spanning Tree
 
-#### 定义
+#### Definition
 
-在无向图中，边权和最小的满足边权和 **大于等于** 最小生成树边权和的生成树
+In an undirected graph, the spanning tree with the minimum total edge weight such that the total weight is **greater than or equal to** the weight of the minimum spanning tree.
 
-#### 求解方法
+#### Solution Method
 
--   求出无向图的最小生成树 $T$，设其权值和为 $M$
--   遍历每条未被选中的边 $e = (u,v,w)$，找到 $T$ 中 $u$ 到 $v$ 路径上边权最大的一条边 $e' = (s,t,w')$，则在 $T$ 中以 $e$ 替换 $e'$，可得一棵权值和为 $M' = M + w - w'$ 的生成树 $T'$.
--   对所有替换得到的答案 $M'$ 取最小值即可
+-   Find the minimum spanning tree $T$ of the undirected graph, and let its total weight be $M$.
+-   Iterate through each unselected edge $e = (u, v, w)$, find the edge with maximum weight $e' = (s, t, w')$ on the path from $u$ to $v$ in $T$. Then, by replacing $e'$ with $e$ in $T$, we can obtain a spanning tree $T'$ with total weight $M' = M + w - w'$.
+-   Take the minimum value among all $M'$ obtained from replacements.
 
-如何求 $u,v$ 路径上的边权最大值呢？
+How to find the maximum edge weight on the path between $u$ and $v$?
 
-我们可以使用倍增来维护，预处理出每个节点的 $2^i$ 级祖先及到达其 $2^i$ 级祖先路径上最大的边权，这样在倍增求 LCA 的过程中可以直接求得．
+We can use binary lifting to maintain, preprocessing each node's $2^i$-th ancestor and the maximum edge weight on the path to its $2^i$-th ancestor. This allows us to directly compute it during the LCA process with binary lifting.
 
-### 严格次小生成树
+### Strict Second Minimum Spanning Tree
 
-#### 定义
+#### Definition
 
-在无向图中，边权和最小的满足边权和 **严格大于** 最小生成树边权和的生成树
+In an undirected graph, the spanning tree with the minimum total edge weight such that the total weight is **strictly greater than** the weight of the minimum spanning tree.
 
-#### 求解方法
+#### Solution Method
 
-考虑刚才的非严格次小生成树求解过程，为什么求得的解是非严格的？
+Consider the non-strict second minimum spanning tree solution process. Why is the solution obtained non-strict?
 
-因为最小生成树保证生成树中 $u$ 到 $v$ 路径上的边权最大值一定 **不大于** 其他从 $u$ 到 $v$ 路径的边权最大值．换言之，当我们用于替换的边的权值与原生成树中被替换边的权值相等时，得到的次小生成树是非严格的．
+Because the minimum spanning tree guarantees that the maximum edge weight on the path between $u$ and $v$ in the tree is **not greater than** the maximum edge weight on any other path from $u$ to $v$. In other words, when the edge used for replacement has the same weight as the edge being replaced in the original tree, the obtained second minimum spanning tree is non-strict.
 
-解决的办法很自然：我们维护到 $2^i$ 级祖先路径上的最大边权的同时维护 **严格次大边权**，当用于替换的边的权值与原生成树中路径最大边权相等时，我们用严格次大值来替换即可．
+The solution is natural: while maintaining the maximum edge weight on the path to the $2^i$-th ancestor, also maintain the **strictly second maximum** edge weight. When the edge used for replacement has the same weight as the maximum edge weight on the path in the original tree, we use the strictly second maximum value for replacement.
 
-这个过程可以用倍增求解，复杂度 $O(m \log m)$．
+This process can be solved with binary lifting, with complexity $O(m \log m)$.
 
-??? note "代码实现"
+??? note "Code Implementation"
     ```cpp
     #include <algorithm>
     #include <iostream>
@@ -381,9 +381,9 @@ $$
     
       int pnt[100010][22];
       int dpth[100010];
-      // 到祖先的路径上边权最大的边
+      // Maximum edge weight on the path to the ancestor
       int maxx[100010][22];
-      // 到祖先的路径上边权次大的边，若不存在则为 -INF
+      // Strictly second maximum edge weight on the path to the ancestor, -INF if none
       int minn[100010][22];
     
      public:
@@ -405,10 +405,10 @@ $$
           pnt[now][i] = pnt[pnt[now][i - 1]][i - 1];
           int kk[4] = {maxx[now][i - 1], maxx[pnt[now][i - 1]][i - 1],
                        minn[now][i - 1], minn[pnt[now][i - 1]][i - 1]};
-          // 从四个值中取得最大值
+          // Get the maximum value from four values
           std::sort(kk, kk + 4);
           maxx[now][i] = kk[3];
-          // 取得严格次大值
+          // Get strictly second maximum value
           int ptr = 2;
           while (ptr >= 0 && kk[ptr] == kk[3]) ptr--;
           minn[now][i] = (ptr == -1 ? -INF : kk[ptr]);
@@ -495,110 +495,110 @@ $$
       for (int i = 1; i <= m; i++) {
         if (!used[i]) {
           int _lca = tr.lca(e[i].u, e[i].v);
-          // 找到路径上不等于 e[i].val 的最大边权
+          // Find the maximum edge weight on the path that is not equal to e[i].val
           long long tmpa = tr.query(e[i].u, _lca, e[i].val);
           long long tmpb = tr.query(e[i].v, _lca, e[i].val);
-          // 这样的边可能不存在，只在这样的边存在时更新答案
+          // Such edge may not exist, only update answer when such edge exists
           if (std::max(tmpa, tmpb) > -INF)
             ans = std::min(ans, sum - std::max(tmpa, tmpb) + e[i].val);
         }
       }
-      // 次小生成树不存在时输出 -1
+      // Output -1 if second minimum spanning tree does not exist
       std::cout << (ans == INF64 ? -1 : ans) << '\n';
       return 0;
     }
     ```
 
-## 瓶颈生成树
+## Bottleneck Spanning Tree
 
-### 定义
+### Definition
 
-无向图 $G$ 的瓶颈生成树是这样的一个生成树，它的最大的边权值在 $G$ 的所有生成树中最小．
+A bottleneck spanning tree of an undirected graph $G$ is a spanning tree such that its maximum edge weight is minimum among all spanning trees of $G$.
 
-### 性质
+### Properties
 
-**最小生成树是瓶颈生成树的充分不必要条件．** 即最小生成树一定是瓶颈生成树，而瓶颈生成树不一定是最小生成树．
+**The minimum spanning tree is a sufficient but not necessary condition for being a bottleneck spanning tree.** That is, the minimum spanning tree is always a bottleneck spanning tree, but a bottleneck spanning tree is not necessarily a minimum spanning tree.
 
-关于最小生成树一定是瓶颈生成树这一命题，可以运用反证法证明：我们设最小生成树中的最大边权为 $w$，如果最小生成树不是瓶颈生成树的话，则瓶颈生成树的所有边权都小于 $w$，我们只需删去原最小生成树中的最长边，用瓶颈生成树中的一条边来连接删去边后形成的两棵树，得到的新生成树一定比原最小生成树的权值和还要小，这样就产生了矛盾．
+Regarding the proposition that the minimum spanning tree is a bottleneck spanning tree, we can prove it by contradiction: Let the maximum edge weight in the minimum spanning tree be $w$. If the minimum spanning tree is not a bottleneck spanning tree, then all edge weights in the bottleneck spanning tree are less than $w$. We only need to delete the longest edge in the original minimum spanning tree and connect the two resulting trees with an edge from the bottleneck spanning tree. The new spanning tree must have a smaller total weight than the original minimum spanning tree, which leads to a contradiction.
 
-### 例题
+### Example Problem
 
 ???+ note "POJ 2395 Out of Hay"
-    给出 n 个农场和 m 条边，农场按 1 到 n 编号，现在有一人要从编号为 1 的农场出发到其他的农场去，求在这途中他最多需要携带的水的重量，注意他每到达一个农场，可以对水进行补给，且要使总共的路径长度最小．
-    题目要求的就是瓶颈树的最大边，可以通过求最小生成树来解决．
+    Given n farms and m edges, farms are numbered from 1 to n. A person needs to travel from farm 1 to other farms. Find the maximum amount of water he needs to carry during the journey. Note that he can restock water at each farm, and the total path length should be minimized.
+    The problem asks for the maximum edge weight of the bottleneck tree, which can be solved by finding the minimum spanning tree.
 
-## 最小瓶颈路
+## Minimum Bottleneck Path
 
-### 定义
+### Definition
 
-无向图 $G$ 中 x 到 y 的最小瓶颈路是这样的一类简单路径，满足这条路径上的最大的边权在所有 x 到 y 的简单路径中是最小的．
+In an undirected graph $G$, a minimum bottleneck path from $x$ to $y$ is a simple path such that the maximum edge weight on this path is minimum among all simple paths from $x$ to $y$.
 
-### 性质
+### Properties
 
-根据最小生成树定义，x 到 y 的最小瓶颈路上的最大边权等于最小生成树上 x 到 y 路径上的最大边权．虽然最小生成树不唯一，但是每种最小生成树 x 到 y 路径的最大边权相同且为最小值．也就是说，每种最小生成树上的 x 到 y 的路径均为最小瓶颈路．
+According to the definition of minimum spanning tree, the maximum edge weight on the minimum bottleneck path from $x$ to $y$ equals the maximum edge weight on the path from $x$ to $y$ on the minimum spanning tree. Although the minimum spanning tree is not unique, all minimum spanning trees have the same maximum edge weight on the path between $x$ and $y$, and this is the minimum value. That is, every path from $x$ to $y$ on every minimum spanning tree is a minimum bottleneck path.
 
-但是，并不是所有最小瓶颈路都存在一棵最小生成树满足其为树上 x 到 y 的简单路径．
+However, not all minimum bottleneck paths correspond to a simple path between $x$ and $y$ on some minimum spanning tree.
 
-例如下图：
-
-![](./images/mst5.png)
-
-1 到 4 的最小瓶颈路显然有以下两条：1-2-3-4．1-3-4．
-
-但是，1-2 不会出现在任意一种最小生成树上．
-
-### 应用
-
-由于最小瓶颈路不唯一，一般情况下会询问最小瓶颈路上的最大边权．
-
-也就是说，我们需要求最小生成树链上的 max．
-
-倍增、树剖都可以解决，这里不再展开．
-
-## Kruskal 重构树
-
-### 定义
-
-在跑 Kruskal 的过程中我们会从小到大加入若干条边．现在我们仍然按照这个顺序．
-
-首先新建 $n$ 个集合，每个集合恰有一个节点，点权为 $0$．
-
-每一次加边会合并两个集合，我们可以新建一个点，点权为加入边的边权，同时将两个集合的根节点分别设为新建点的左儿子和右儿子．然后我们将两个集合和新建点合并成一个集合．将新建点设为根．
-
-不难发现，在进行 $n-1$ 轮之后我们得到了一棵恰有 $n$ 个叶子的二叉树，同时每个非叶子节点恰好有两个儿子．这棵树就叫 Kruskal 重构树．
-
-举个例子：
+For example, in the following graph:
 
 ![](./images/mst5.png)
 
-这张图的 Kruskal 重构树如下：
+The minimum bottleneck paths from node 1 to node 4 are obviously: 1-2-3-4 and 1-3-4.
+
+But 1-2 does not appear on any minimum spanning tree.
+
+### Application
+
+Since the minimum bottleneck path is not unique, generally the maximum edge weight on the minimum bottleneck path is queried.
+
+That is, we need to find the maximum on the path in the minimum spanning tree.
+
+Both binary lifting and heavy-light decomposition can solve this; we will not elaborate further here.
+
+## Kruskal Reconstruction Tree
+
+### Definition
+
+During the execution of Kruskal's algorithm, we add several edges in increasing order of weight. Now we follow this order.
+
+First, create $n$ sets, each containing exactly one node, with node weight $0$.
+
+Each time we add an edge, we merge two sets. We can create a new node with weight equal to the weight of the added edge, and set the root nodes of the two sets as the left and right children of the new node. Then we merge the two sets and the new node into one set, and set the new node as the root.
+
+It is not difficult to find that after $n-1$ rounds, we obtain a binary tree with exactly $n$ leaves, and each non-leaf node has exactly two children. This tree is called the Kruskal reconstruction tree.
+
+For example:
+
+![](./images/mst5.png)
+
+The Kruskal reconstruction tree of this graph is:
 
 ![](./images/mst6.png)
 
-### 性质
+### Properties
 
-不难发现，原图中两个点之间的所有简单路径上最大边权的最小值 = 最小生成树上两个点之间的简单路径上的最大值 = Kruskal 重构树上两点之间的 LCA 的权值．
+It is not difficult to find that the minimum value of the maximum edge weight among all simple paths between two points in the original graph equals the maximum edge weight on the simple path between the two points on the minimum spanning tree equals the weight of the LCA of the two points on the Kruskal reconstruction tree.
 
-也就是说，到点 $x$ 的简单路径上最大边权的最小值 $\leq val$ 的所有点 $y$ 均在 Kruskal 重构树上的某一棵子树内，且恰好为该子树的所有叶子节点．
+That is, all points $y$ such that the minimum value of the maximum edge weight on the simple path to point $x$ is $\le val$ are all in a subtree of the Kruskal reconstruction tree, and exactly all leaf nodes of that subtree.
 
-我们在 Kruskal 重构树上找到 $x$ 到根的路径上权值 $\leq val$ 的最浅的节点．显然这就是所有满足条件的节点所在的子树的根节点．
+We find the shallowest node on the path from $x$ to the root in the Kruskal reconstruction tree whose weight is $\le val$. Obviously, this is the root of the subtree containing all points satisfying the condition.
 
-如果需要求原图中两个点之间的所有简单路径上最小边权的最大值，则在跑 Kruskal 的过程中按边权大到小的顺序加边．
+If we need to find the maximum value of the minimum edge weight among all simple paths between two points in the original graph, we add edges in decreasing order of weight during Kruskal's algorithm.
 
-??? note "[「LOJ 137」最小瓶颈路 加强版](https://loj.ac/problem/137)"
+??? note "[「LOJ 137」Enhanced Minimum Bottleneck Path](https://loj.ac/problem/137)"
     ```cpp
     --8<-- "docs/graph/code/mst/mst_2.cpp"
     ```
 
-??? note "[NOI 2018 归程](https://uoj.ac/problem/393)"
-    首先预处理出来每一个点到根节点的最短路．
+??? note "[NOI 2018 Return Journey](https://uoj.ac/problem/393)"
+    First, preprocess the shortest distance from each node to the root.
     
-    我们构造出来根据海拔的最大生成树．显然每次询问可以到达的节点是在最大生成树中和询问点的路径上最小边权 $> p$ 的节点．
+    We construct a maximum spanning tree based on elevation. Obviously, for each query, the nodes that can be reached are those on the path from the query node in the maximum spanning tree where the minimum edge weight is $> p$.
     
-    根据 Kruskal 重构树的性质，这些节点满足均在一棵子树内同时为其所有叶子节点．
+    According to the properties of the Kruskal reconstruction tree, these nodes all belong to a subtree and are all its leaf nodes.
     
-    也就是说，我们只需要求出 Kruskal 重构树上每一棵子树叶子的权值 min 就可以支持子树询问．
+    That is, we only need to find the minimum weight among the leaves of each subtree on the Kruskal reconstruction tree to support subtree queries.
     
-    询问的根节点可以使用 Kruskal 重构树上倍增的方式求出．
+    The root node for the query can be found using binary lifting on the Kruskal reconstruction tree.
     
-    时间复杂度 $O((n+m+Q) \log n)$．
+    Time complexity $O((n+m+Q) \log n)$.

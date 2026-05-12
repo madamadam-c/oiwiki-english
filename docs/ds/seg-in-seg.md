@@ -1,31 +1,31 @@
 author: Chrogeek, HeRaNO, Dev-XYS, Dev-jqe
 
-## 常见用途
+## Common Uses
 
-在算法竞赛中，我们有时需要维护多维度信息．在这种时候，我们经常需要树套树来记录信息．
+In algorithm competitions, we sometimes need to maintain multi-dimensional information. In such cases, we often need tree-of-tree structures to record information.
 
-## 实现原理
+## Implementation Principle
 
-我们考虑用树套树如何实现在二维平面上进行单点修改，区域查询．我们考虑外层的线段树，最底层的 $1$ 到 $n$ 个节点的子树，分别代表第 $1$ 到第 $n$ 行的线段树．那么这些底层的节点对应的父节点，就代表其两个子节点的子树所在的一片区域．
+Consider how to use a tree-of-tree structure to perform point updates and rectangle queries on a two-dimensional plane. For the outer segment tree, the subtrees of the bottom-level nodes $1$ to $n$ represent the segment trees for rows $1$ to $n$, respectively. The parent nodes corresponding to these bottom-level nodes represent the region covered by the subtrees of their two children.
 
-## 性质
+## Properties
 
-### 空间复杂度
+### Space Complexity
 
-通常情况下，我们不可能对于外层线段树的每一个结点都建立一颗子线段树，空间需求过大．树套树一般采取动态开点的策略．单次修改，我们会涉及到外层线段树的 $\log{n}$ 个节点，且对于每个节点的子树涉及 $\log{n}$ 个节点，所以单次修改产生的空间最多为 $\log^2{n}$．
+Normally, we cannot build an inner segment tree for every node of the outer segment tree, because this requires too much space. Tree-of-tree structures usually use dynamic node allocation. For a single update, we touch $\log{n}$ nodes in the outer segment tree, and for each node's inner tree we touch $\log{n}$ nodes, so the maximum additional space produced by one update is $\log^2{n}$.
 
-### 时间复杂度
+### Time Complexity
 
-对于询问操作，我们考虑我们在外层线段树上进行 $\log{n}$ 次操作，每次操作会在一个内层线段树上进行 $\log{n}$ 次操作，所以时间复杂度为 $\log^2{n}$．
-修改操作，与询问操作复杂度相同，也为 $\log^2{n}$．
+For a query operation, we perform $\log{n}$ operations on the outer segment tree, and each operation performs $\log{n}$ operations on an inner segment tree. Therefore, the time complexity is $\log^2{n}$.
+An update operation has the same complexity as a query operation, also $\log^2{n}$.
 
-## 经典例题
+## Classic Example
 
-[陌上花开](https://www.luogu.com.cn/problem/P3810) 将第一维排序处理，然后用树套树维护第二维和第三维．
+[Flowers Blooming](https://www.luogu.com.cn/problem/P3810): sort by the first dimension, then use a tree-of-tree structure to maintain the second and third dimensions.
 
-## 示例代码
+## Example Code
 
-第二维查询
+Second-dimension query:
 
 ```cpp
 int tree_query(int k, int l, int r, int x) {
@@ -38,7 +38,7 @@ int tree_query(int k, int l, int r, int x) {
 }
 ```
 
-第二维修改
+Second-dimension update:
 
 ```cpp
 void tree_insert(int &k, int l, int r, int x) {
@@ -53,7 +53,7 @@ void tree_insert(int &k, int l, int r, int x) {
 }
 ```
 
-第三维查询
+Third-dimension query:
 
 ```cpp
 int vec_query(int k, int l, int r, int x, int y) {
@@ -66,7 +66,7 @@ int vec_query(int k, int l, int r, int x, int y) {
 }
 ```
 
-第三维修改
+Third-dimension update:
 
 ```cpp
 void vec_insert(int &k, int l, int r, int loc) {
@@ -79,6 +79,6 @@ void vec_insert(int &k, int l, int r, int loc) {
 }
 ```
 
-## 相关算法
+## Related Algorithms
 
-面对多维度信息的题目时，如果题目没有要求强制在线，我们还可以考虑 **CDQ 分治**，或者 **整体二分** 等分治算法，来避免使用高级数据结构，减少代码实现难度．
+When facing problems with multi-dimensional information, if the problem does not require forced online processing, we can also consider divide-and-conquer algorithms such as **CDQ Divide and Conquer** or **Overall Binary Search** to avoid using advanced data structures and reduce implementation difficulty.

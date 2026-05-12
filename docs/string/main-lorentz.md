@@ -1,116 +1,116 @@
-## 重串
+## Tandem Repetitions
 
-### 定义
+### Definition
 
-给定一个长度为 $n$ 的字符串 $s$．
+Given a string $s$ of length $n$.
 
-我们将一个字符串连续写两遍所产生的新字符串称为 **重串 (tandem repetition)**．下文中，为了表述精准，我们将被重复的这个字符串称为原串．换言之，一个重串等价于一对下标 $(i, j)$，其使得 $s[i \dots j]$ 是两个相同字符串拼接而成的．
+We call the new string obtained by writing a string consecutively twice a **tandem repetition**. In the following text, for precise wording, we call the string being repeated the original string. In other words, a tandem repetition is equivalent to a pair of indices $(i, j)$ such that $s[i \dots j]$ is formed by concatenating two identical strings.
 
-你的目标是找出给定的字符串 $s$ 中所有的重串．或者，解决一个较为简单的问题：找到字符串 $s$ 中任意重串或者最长的一个重串．
+Your goal is to find all tandem repetitions in the given string $s$. Or, solve a simpler problem: find any tandem repetition in $s$, or the longest one.
 
-下文的算法由 Michael Main 和 Richard J. Lorentz 在 1982 年提出．
+The algorithm below was proposed by Michael Main and Richard J. Lorentz in 1982.
 
-???+ note "约定"
-    下文所有的字符串下标从 $0$ 开始．
+???+ note "Convention"
+    All string indices in the following text start from $0$.
     
-    下文中，记 $\overline{s}$ 为 $s$ 的反串．如 $\overline{\tt abc} = \tt cba$．
+    In the following text, let $\overline{s}$ denote the reverse of $s$. For example, $\overline{\tt abc} = \tt cba$.
 
-### 解释
+### Explanation
 
-考虑字符串 $\tt acababaee$，这个字符串包括三个重串，分别是：
+Consider the string $\tt acababaee$, which contains three tandem repetitions:
 
 -   $s[2 \dots 5] = \tt abab$
 -   $s[3 \dots 6] = \tt baba$
 -   $s[7 \dots 8] = \tt ee$
 
-下面是另一个例子，考虑字符串 $\tt abaaba$，这个字符串只有两个重串：
+Here is another example, consider the string $\tt abaaba$, which has only two tandem repetitions:
 
 -   $s[0 \dots 5] = \tt abaaba$
 -   $s[2 \dots 3] = \tt aa$
 
-### 重串的个数
+### Number of Tandem Repetitions
 
-一个长度为 $n$ 的字符串可能有高达 $O(n^2)$ 个重串，一个显然的例子就是 $n$ 个字母全部相同的字符串，这种情况下，只要其子串长度为偶数，这个子串就是重串．多数情况下，一个周期比较小的周期字符串会有很多重串．
+A string of length $n$ can have up to $O(n^2)$ tandem repetitions. An obvious example is a string where all $n$ characters are the same; in this case, any substring with even length is a tandem repetition. In most cases, a periodic string with a small period will have many tandem repetitions.
 
-但这并不影响我们在 $O(n \log n)$ 的时间内计算出重串数量．因为这个算法通过某种压缩形式来表达一个重串，使得我们可以将多个重串压缩为一个．
+However, this does not prevent us from computing the number of tandem repetitions in $O(n \log n)$ time. This is because the algorithm represents tandem repetitions in some compressed form, allowing us to compress multiple tandem repetitions into one.
 
-这里有一些关于重串数量的有趣结论：
+Here are some interesting facts about the number of tandem repetitions:
 
--   如果一个重串的原串不是重串，则我们称这个重串为 **本原重串 (primitive repetition)**．可以证明，本原重串最多有 $O(n \log n)$ 个．
--   如果我们把一个重串用 Crochemore 三元组 $(i, p, r)$ 进行压缩，其中 $i$ 是重串的起始位置，$p$ 是该重串某个循环节的长度（注意不是原串长度！），$r$ 为这个循环节重复的次数．则某字符串的所有重串可以被 $O(n \log n)$ 个 Crochemore 三元组表示．
--   Fibonacci 字符串定义如下：
+-   If the original string of a tandem repetition is not itself a tandem repetition, we call this a **primitive repetition**. It can be proven that there are at most $O(n \log n)$ primitive repetitions.
+-   If we compress a tandem repetition using a Crochemore triple $(i, p, r)$, where $i$ is the starting position of the tandem repetition, $p$ is the length of one period of this repetition (note: not the length of the original string!), and $r$ is the number of times this period repeats. Then all tandem repetitions of a string can be represented by $O(n \log n)$ Crochemore triples.
+-   Fibonacci strings are defined as follows:
 
 $$
 \begin{align} t_0 &= a, \\ t_1 &= b, \\ t_i &= t_{i-1} + t_{i-2}, \end{align}
 $$
 
-可以发现 Fibonacci 字符串具有高度的周期性．对于长度为 $f_i$ 的 Fibonacci 字符串 $t_i$，即使用 Crochemore 三元组压缩，也有 $O(f_i \log f_i)$ 个三元组．其本原重串的数量也有 $O(f_i \log f_i)$ 个．
+It can be observed that Fibonacci strings have high periodicity. For a Fibonacci string $t_i$ of length $f_i$, even when compressed with Crochemore triples, there are $O(f_i \log f_i)$ triples. The number of primitive repetitions is also $O(f_i \log f_i)$.
 
-## Main–Lorentz 算法
+## Main–Lorentz Algorithm
 
-### 解释
+### Explanation
 
-Main–Lorentz 算法的核心思想是 **分治**．
+The core idea of the Main–Lorentz algorithm is **divide and conquer**.
 
-这个算法将字符串分为左、右两部分，首先计算完全处于字符串左部（或右部）的重串数量，然后计算起始位置在左部，终止在右部的重串数量．（下文中，我们将这种重串称为 **交叉重串**）
+This algorithm divides the string into left and right parts, first computes the number of tandem repetitions that are entirely in the left part (or right part), then computes the number of tandem repetitions that start in the left part and end in the right part. (In the following text, we call such tandem repetitions **crossing tandem repetitions**)
 
-计算交叉重串的数量是 Main–Lorentz 算法的关键点，我们将在下文详细探讨．
+Computing the number of crossing tandem repetitions is the key point of the Main–Lorentz algorithm, which we will discuss in detail below.
 
-### 过程
+### Process
 
-#### 寻找交叉重串
+#### Finding Crossing Tandem Repetitions
 
-我们记某字符串的左部为 $u$，右部为 $v$．则 $s = u + v$，且 $u, v$ 的长度大约等于 $s$ 长度的一半．
+Let the left part of a string be $u$ and the right part be $v$. Then $s = u + v$, and the lengths of $u$ and $v$ are approximately half the length of $s$.
 
-对于任意一个重串，我们考虑其中间字符．此处我们将一个重串右半边的第一个字符称为其中间字符，换言之，若 $s[i...j]$ 为重串，则其中间字符为 $s[(i + j + 1)/2]$．如果一个重串的中间字符在 $u$ 中，则称这个重串 **左偏 (left)**，反之则称其 **右偏 (right)**．
+For any tandem repetition, consider its middle character. Here we call the first character of the right half of a tandem repetition its middle character. In other words, if $s[i...j]$ is a tandem repetition, then its middle character is $s[(i + j + 1)/2]$. If a tandem repetition's middle character is in $u$, we call it **left-biased**, otherwise **right-biased**.
 
-接下来，我们将会探讨如何找到所有的左偏重串．
+Next, we will explore how to find all left-biased tandem repetitions.
 
-我们记一个左边重串的长度为 $2l$．考虑该重串第一个落入 $v$ 的字符（即 $s[|u|]$），这个字符一定与 $u$ 中的某个字符 $u[\textit{cntr}]$ 一致．
+Let the length of a left-biased tandem repetition be $2l$. Consider its first character that falls into $v$ (i.e., $s[|u|]$), this character must be identical to some character $u[\textit{cntr}]$ in $u$.
 
-我们考虑固定 $\textit{cntr}$，并找到所有符合条件的重串．举个例子：对于字符串 $\tt c \; \underset{\textit{cntr}}{a} \; c \; | \; a \; d \; a$（这个 $\tt |$ 是用于分辨左右两部分的），固定 $cntr = 1$，则我们可以发现重串 $\tt caca$ 符合要求．
+We consider fixing $\textit{cntr}$ and finding all qualifying tandem repetitions. For example: for the string $\tt c \; \underset{\textit{cntr}}{a} \; c \; | \; a \; d \; a$ (the $\tt |$ is used to distinguish the two parts), fixing $cntr = 1$, we can find the tandem repetition $\tt caca$ satisfies the condition.
 
-显然，我们一旦固定了 $\textit{cntr}$，那我们同时也固定了 $l$ 的取值．我们一旦知道如何找到所有重串，我们就可以从 $0$ 到 $|u| - 1$ 枚举 $\textit{cntr}$ 的取值，然后找到所有符合条件的重串．
+Obviously, once we fix $\textit{cntr}$, we also fix the value of $l$. Once we know how to find all tandem repetitions, we can enumerate $\textit{cntr}$ from $0$ to $|u| - 1$ and find all qualifying tandem repetitions.
 
-#### 左偏重串的判定
+#### Determining Left-biased Tandem Repetitions
 
-即使固定 $\textit{cntr}$ 后，仍然可能会有多个符合条件的重串，我们怎么找到所有符合条件的重串呢？
+Even after fixing $\textit{cntr}$, there may still be multiple qualifying tandem repetitions. How do we find all of them?
 
-我们再来举一个例子，对于字符串 $\tt abcabcac$ 中的重串 $\overbrace{\tt a}^{l_1} \overbrace{\underset{\textit{cntr}}{\tt b} \tt c}^{l_2} \overbrace{\tt a}^{l_1}  \; | \; \overbrace{\tt b \; \tt c}^{l_2}$，我们记 $l_1$ 为该重串的首字符到 $s[\textit{cntr} - 1]$ 所组成的子串的长度，记 $l_2$ 为 $s[\textit{cntr}]$ 到该重串左边原串的末字符所组成的子串的长度．
+Let's give another example: for the tandem repetition in string $\tt abcabcac$, $\overbrace{\tt a}^{l_1} \overbrace{\underset{\textit{cntr}}{\tt b} \tt c}^{l_2} \overbrace{\tt a}^{l_1}  \; | \; \overbrace{\tt b \; \tt c}^{l_2}$, we denote $l_1$ as the length of the substring from the first character of this tandem repetition to $s[\textit{cntr} - 1]$, and $l_2$ as the length of the substring from $s[\textit{cntr}]$ to the last character of the left original string of this tandem repetition.
 
-于是，我们可以给出某个长度为 $2l = 2(l_1 + l_2) = 2(|u| - \textit{cntr})$ 的子串是重串的 **充分必要条件**：
+Thus, we can give a **necessary and sufficient condition** for a substring of length $2l = 2(l_1 + l_2) = 2(|u| - \textit{cntr})$ to be a tandem repetition:
 
-记 $k_1$ 为满足 $u[\textit{cntr} - k_1 \dots \textit{cntr} - 1] = u[|u| - k_1 \dots |u| - 1]$ 的最大整数，记 $k_2$ 为满足 $u[\textit{cntr} \dots \textit{cntr} + k_2 - 1] = v[0 \dots k_2 - 1]$ 的最大整数．则对于任意满足 $l_1 \leq k_1$，$l_2 \leq k_2$ 的二元组 $(l_1, l_2)$，我们都能恰好找到一个与之对应的重串．
+Let $k_1$ be the maximum integer satisfying $u[\textit{cntr} - k_1 \dots \textit{cntr} - 1] = u[|u| - k_1 \dots |u| - 1]$, and let $k_2$ be the maximum integer satisfying $u[\textit{cntr} \dots \textit{cntr} + k_2 - 1] = v[0 \dots k_2 - 1]$. Then for any pair $(l_1, l_2)$ satisfying $l_1 \le k_1$ and $l_2 \le k_2$, we can find exactly one corresponding tandem repetition.
 
-总结一下，即有：
+Summarizing:
 
--   固定一个 $\textit{cntr}$．
--   那么我们此时要找的重串长度均为 $2l = 2(|u| - \textit{cntr})$．此时可能仍有多个符合条件的重串，取决于 $l_1$ 与 $l_2$ 的取值．
--   计算上文提到的 $k_1$，$k_2$．
--   则所有符合条件的重串符合条件：
+-   Fix a $\textit{cntr}$.
+-   Then the length of all tandem repetitions we need to find is $2l = 2(|u| - \textit{cntr})$. There may still be multiple qualifying tandem repetitions, depending on the values of $l_1$ and $l_2$.
+-   Compute the $k_1$, $k_2$ mentioned above.
+-   Then all qualifying tandem repetitions satisfy:
 
 $$
 \begin{align} l_1 + l_2 &= l = |u| - \textit{cntr} \\ l_1 &\le k_1, \\ l_2 &\le k_2. \\ \end{align}
 $$
 
-接下来，只需要考虑如何快速算出 $k_1$ 与 $k_2$ 了．借助 [Z 函数](./z-func.md)，我们可以 $O(1)$ 计算它们：
+Next, we only need to consider how to quickly compute $k_1$ and $k_2$. Using the [Z-function](./z-func.md), we can compute them in $O(1)$:
 
--   计算 $k_1$：只需计算 $\overline{u}$ 的 Z 函数即可．
--   计算 $k_2$：只需计算 $v + \# + u$ 的 Z 函数即可，其中 $\#$ 是一个 $u$，$v$ 中均没有的字符．
+-   To compute $k_1$: just compute the Z-function of $\overline{u}$.
+-   To compute $k_2$: just compute the Z-function of $v + \# + u$, where $\#$ is a character that does not appear in either $u$ or $v$.
 
-#### 右偏重串
+#### Right-biased Tandem Repetitions
 
-计算右偏重串的方法与计算左偏重串的方法几乎一致．考虑该重串第一个落入 $u$ 的字符（即 $s[|u| - 1]$），则其一定与 $v$ 中的某个字符一致，记这个字符在 $v$ 中的位置为 $\textit{cntr}$．
+The method for computing right-biased tandem repetitions is almost the same as for left-biased ones. Consider its first character that falls into $u$ (i.e., $s[|u| - 1]$), it must be identical to some character in $v$. Let the position of this character in $v$ be $\textit{cntr}$.
 
-令 $k_1$ 为满足 $v[\textit{cntr} - k_1 + 1 \dots \textit{cntr}] = u[|u| - k_1 \dots |u| - 1]$ 的最大整数，$k_2$ 为满足 $v[\textit{cntr} + 1 \dots \textit{cntr} + k_2] = v[0 \dots k_2 - 1]$ 的最大整数．则我们可以分别通过计算 $\overline{u} + \# + \overline{v}$ 和 $v$ 的 Z 函数来得出 $k_1$ 与 $k_2$．
+Let $k_1$ be the maximum integer satisfying $v[\textit{cntr} - k_1 + 1 \dots \textit{cntr}] = u[|u| - k_1 \dots |u| - 1]$, and $k_2$ be the maximum integer satisfying $v[\textit{cntr} + 1 \dots \textit{cntr} + k_2] = v[0 \dots k_2 - 1]$. Then we can obtain $k_1$ and $k_2$ by computing the Z-functions of $\overline{u} + \# + \overline{v}$ and $v$ respectively.
 
-枚举 $\textit{cntr}$，用相仿的方法寻找右偏重串即可．
+Enumerate $\textit{cntr}$ and use a similar method to find right-biased tandem repetitions.
 
-### 实现
+### Implementation
 
-Main–Lorentz 算法以四元组 $(\textit{cntr}, l, k_1, k_2)$ 的形式给出所有重串．如果你只需要计算重串的数量，或者只需要找到最长的一个重串，这个四元组给的信息是足够的．由 [主定理](../basic/complexity.md#主定理-master-theorem) 可得，Main–Lorentz 算法的时间复杂度为 $O(n \log n)$．
+The Main–Lorentz algorithm outputs all tandem repetitions in the form of quadruples $(\textit{cntr}, l, k_1, k_2)$. If you only need to count the number of tandem repetitions, or only need to find the longest one, the information provided by these quadruples is sufficient. By the [Master Theorem](../basic/complexity.md#master-theorem-master-theorem), the time complexity of the Main–Lorentz algorithm is $O(n \log n)$.
 
-请注意，如果你想通过这些四元组来找到所有重串的起始位置与终止位置，则最坏时间复杂度会达到 $O(n^2)$．我们在下面的程序中实现了这一点，将所有重串的起始位置与终止位置存于 `repetitions` 中．
+Note that if you want to find all starting and ending positions of tandem repetitions from these quadruples, the worst-case time complexity will reach $O(n^2)$. We have implemented this in the program below, storing all starting and ending positions of tandem repetitions in `repetitions`.
 
 ```cpp
 vector<int> z_function(string const& s) {
@@ -181,4 +181,4 @@ void find_repetitions(string s, int shift = 0) {
 }
 ```
 
-**本页面主要译自博文 [Поиск всех тандемных повторов в строке. Алгоритм Мейна-Лоренца](http://e-maxx.ru/algo/string_tandems) 与其英文翻译版 [Finding repetitions](https://cp-algorithms.com/string/main_lorentz.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the blog post [Поиск всех тандемных повторов в строке. Алгоритм Мейна-Лоренца](http://e-maxx.ru/algo/string_tandems) and its English translation [Finding repetitions](https://cp-algorithms.com/string/main_lorentz.html). The Russian version is in the Public Domain + Leave a Link; the English version is under CC-BY-SA 4.0.**

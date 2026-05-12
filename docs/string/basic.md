@@ -1,61 +1,61 @@
 author: Ir1d, ouuan, qinggniq, i-Yirannn, minghu6
 
-## 定义
+## Definition
 
-### 字符集
+### Character Set
 
-一个 **字符集** $\Sigma$ 是一个建立了 [全序](../math/order-theory.md#偏序集) 关系的集合，也就是说，$\Sigma$ 中的任意两个不同的元素 $\alpha$ 和 $\beta$ 都可以比较大小，要么 $\alpha<\beta$，要么 $\beta<\alpha$．字符集 $\Sigma$ 中的元素称为字符．
+A **character set** $\Sigma$ is a set with a [total order](../math/order-theory.md#偏序集) relation established, that is, any two different elements $\alpha$ and $\beta$ in $\Sigma$ can be compared in size, either $\alpha<\beta$, or $\beta<\alpha$. The elements in character set $\Sigma$ are called characters.
 
-### 字符串
+### String
 
-一个 **字符串**  $S$ 是将 $n$ 个字符顺次排列形成的序列，$n$ 称为 $S$ 的长度，表示为 $|S|$．
+A **string** $S$ is a sequence formed by arranging $n$ characters in order, where $n$ is called the length of $S$, denoted as $|S|$.
 
-如果字符串下标从 $1$ 开始计算，$S$ 的第 $i$ 个字符表示为 $S[i]$；
+If the string index starts from $1$, the $i$-th character of $S$ is denoted as $S[i]$;
 
-如果字符串下标从 $0$ 开始计算，$S$ 的第 $i$ 个字符表示为 $S[i-1]$．
+If the string index starts from $0$, the $i$-th character of $S$ is denoted as $S[i-1]$.
 
-### 子串
+### Substring
 
-字符串 $S$ 的 **子串**  $S[i..j]，i≤j$，表示 $S$ 串中从 $i$ 到 $j$ 这一段，也就是顺次排列 $S[i],S[i+1],\ldots,S[j]$ 形成的字符串．
+The **substring** $S[i..j], i\le j$ of string $S$ represents the segment from position $i$ to $j$ in $S$, that is, the string formed by arranging $S[i], S[i+1], \ldots, S[j]$ sequentially.
 
-有时也会用 $S[i..j]$，$i>j$ 来表示空串．
+Sometimes $S[i..j], i>j$ is also used to represent the empty string.
 
-### 子序列
+### Subsequence
 
-字符串 $S$ 的 **子序列** 是从 $S$ 中将若干元素提取出来并不改变相对位置形成的序列，即 $S[p_1],S[p_2],\ldots,S[p_k]$，$1\le p_1< p_2<\cdots< p_k\le|S|$．
+A **subsequence** of string $S$ is a sequence formed by extracting several elements from $S$ without changing their relative positions, namely $S[p_1], S[p_2], \ldots, S[p_k]$, where $1\le p_1< p_2<\cdots< p_k\le|S|$.
 
-### 后缀
+### Suffix
 
-**后缀** 是指从某个位置 $i$ 开始到整个串末尾结束的一个特殊子串．字符串 $S$ 的从 $i$ 开头的后缀表示为 $\textit{Suffix(S,i)}$，也就是 $\textit{Suffix(S,i)}=S[i..|S|-1]$．
+A **suffix** is a special substring that starts from some position $i$ and ends at the end of the string. The suffix starting from $i$ of string $S$ is denoted as $\textit{Suffix(S,i)}$, which is $\textit{Suffix(S,i)}=S[i..|S|-1]$.
 
-**真后缀** 指除了 $S$ 本身的 $S$ 的后缀．
+**Proper suffix** refers to suffixes of $S$ other than $S$ itself.
 
-举例来说，字符串 `abcabcd` 的所有后缀为 `{d, cd, bcd, abcd, cabcd, bcabcd, abcabcd}`，而它的真后缀为 `{d, cd, bcd, abcd, cabcd, bcabcd}`．
+For example, all suffixes of string `abcabcd` are `{d, cd, bcd, abcd, cabcd, bcabcd, abcabcd}`, and its proper suffixes are `{d, cd, bcd, abcd, cabcd, bcabcd}`.
 
-### 前缀
+### Prefix
 
-**前缀** 是指从串首开始到某个位置 $i$ 结束的一个特殊子串．字符串 $S$ 的以 $i$ 结尾的前缀表示为 $\textit{Prefix(S,i)}$，也就是 $\textit{Prefix(S,i)}=S[0..i]$．
+A **prefix** is a special substring that starts from the beginning of the string and ends at some position $i$. The prefix ending at position $i$ of string $S$ is denoted as $\textit{Prefix(S,i)}$, which is $\textit{Prefix(S,i)}=S[0..i]$.
 
-**真前缀** 指除了 $S$ 本身的 $S$ 的前缀．
+**Proper prefix** refers to prefixes of $S$ other than $S$ itself.
 
-举例来说，字符串 `abcabcd` 的所有前缀为 `{a, ab, abc, abca, abcab, abcabc, abcabcd}`, 而它的真前缀为 `{a, ab, abc, abca, abcab, abcabc}`．
+For example, all prefixes of string `abcabcd` are `{a, ab, abc, abca, abcab, abcabc, abcabcd}`, and its proper prefixes are `{a, ab, abc, abca, abcab, abcabc}`.
 
-### 字典序
+### Lexicographic Order
 
-以第 $i$ 个字符作为第 $i$ 关键字进行大小比较，空字符小于字符集内任何字符（即：$a< aa$）．
+Compare by the $i$-th character as the $i$-th key, and the empty character is less than any character in the character set (that is: $a< aa$).
 
-### 回文串
+### Palindrome
 
-**回文串** 是正着写和倒着写相同的字符串，即满足 $\forall 1\le i\le|s|, s[i]=s[|s|+1-i]$ 的 $s$．
+A **palindrome** is a string that is the same when read forward and backward, i.e., a string $s$ that satisfies $\forall 1\le i\le|s|, s[i]=s[|s|+1-i]$.
 
-### 汉明距离
+### Hamming Distance
 
-**汉明距离** 是两个等长字符串之间的距离，它表示两个长度相同的字符串对应位字符不同的数量．
+**Hamming distance** is the distance between two strings of equal length, representing the number of positions where the corresponding characters differ between two strings of the same length.
 
-我们可以简单的认为对两个串进行异或运算，结果为 $1$ 的数量就是两个串的汉明距离．
+We can simply consider that performing XOR on two strings, the number of positions where the result is $1$ is the Hamming distance between the two strings.
 
-## 字符串的存储
+## String Storage
 
--   使用 `char` 数组存储，用空字符 `\0` 表示字符串的结尾（C 风格字符串）．
--   使用 C++ 标准库提供的 [`string` 类](../lang/csl/string.md)．
--   字符串常量可以用字符串字面量（用双引号括起来的字符串）表示．
+-   Use a `char` array to store, using the null character `\0` to indicate the end of the string (C-style string).
+-   Use the [`string` class](../lang/csl/string.md) provided by the C++ standard library.
+-   String constants can be represented by string literals (strings enclosed in double quotes).

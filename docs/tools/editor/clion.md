@@ -1,32 +1,32 @@
-## 简介
+## Introduction
 
-CLion 是一款由 JetBrains 公司开发的功能丰富且强大的跨平台 C/C++ 集成开发环境（IDE）．
+CLion is a feature-rich and powerful cross-platform C/C++ integrated development environment (IDE) developed by JetBrains.
 
 ![Clion](./images/clion.png)
 
-## 官方教程
+## Official Tutorial
 
-在官方网站中给出了 [学习 CLion](https://www.jetbrains.com/clion/learn/) 的教程．
+The official website provides a tutorial for [Learning CLion](https://www.jetbrains.com/clion/learn/).
 
-## 安装
+## Installation
 
-参见 [Download CLion](https://www.jetbrains.com/clion/download/)．
+See [Download CLion](https://www.jetbrains.com/clion/download/).
 
-## 配置
+## Configuration
 
-### 工具链安装
+### Toolchain Installation
 
-CLion 默认不带编译器，构建工具和调试工具，需要手动进行安装．
+CLion does not come with a compiler, build tools, or debugging tools by default. They need to be installed manually.
 
 #### Windows
 
-参见 [Tutorial: Configure CLion on Windows | CLion Documentation](https://www.jetbrains.com/help/clion/quick-tutorial-on-configuring-clion-on-windows.html)．
+See [Tutorial: Configure CLion on Windows | CLion Documentation](https://www.jetbrains.com/help/clion/quick-tutorial-on-configuring-clion-on-windows.html).
 
-值得一提的是 CLion 的 Windows 版本中自带了 MinGW，所以可以不用额外安装 MinGW 工具链．
+It is worth noting that the Windows version of CLion comes with MinGW, so you don't need to install a MinGW toolchain separately.
 
 #### Linux
 
-##### Debian/Ubuntu 及其衍生发行版
+##### Debian/Ubuntu and derivative distributions
 
 ```bash
 sudo apt install make cmake # build tools
@@ -34,7 +34,7 @@ sudo apt install gcc g++ gdb # compiler and debugger
 sudo apt install clang clang++ llvm lldb # you can also choose to use clang toolchain
 ```
 
-##### Arch Linux 及其衍生发行版
+##### Arch Linux and derivative distributions
 
 ```bash
 sudo pacman -S make cmake # build tools
@@ -52,69 +52,69 @@ sudo dnf install clang clang++ llvm lldb # you can also choose to use clang tool
 
 #### macOS
 
-参见 [Tutorial: Configure CLion on macOS | CLion Documentation](https://www.jetbrains.com/help/clion/quick-tutorial-on-configuring-clion-on-macos.html)．
+See [Tutorial: Configure CLion on macOS | CLion Documentation](https://www.jetbrains.com/help/clion/quick-tutorial-on-configuring-clion-on-macos.html).
 
-### 工具链设置
+### Toolchain Settings
 
-#### 手动设置工具链
+#### Manually Setting Toolchains
 
-新安装的 CLion 会自动检测系统中的 C/C++ 开发工具链，如果已安装的工具链无法自动检测到，可在 `Settings` 中找到 `Build, Execution, Deployment`>`Toolchains` 进行手动配置．
+A newly installed CLion will automatically detect C/C++ development toolchains in the system. If installed toolchains cannot be automatically detected, you can manually configure them in `Settings` -> `Build, Execution, Deployment` > `Toolchains`.
 
 ![Config Toolchains](./images/clion-toolchain.png)
 
-### 编译、运行和调试
+### Compiling, Running, and Debugging
 
-虽然 CLion 诞生之初是面向多文件的复杂 C/C++ 项目诞生的，早些时候的 CLion 默认使用 [CMake](https://cmake.org/) 作为构建工具，但是自 CLion 2022.3 版本起，CLion 已经支持 [C, C++ 单文件运行](https://www.jetbrains.com/help/clion/run-single-file.html)．
+Although CLion was originally created for multi-file complex C/C++ projects, and earlier CLion used [CMake](https://cmake.org/) as the build tool by default, since CLion version 2022.3, CLion has supported [C, C++ single file running](https://www.jetbrains.com/help/clion/run-single-file.html).
 
-有多种方式来运行一个 C++ 程序，一个简单的流程如下：
+There are multiple ways to run a C++ program. A simple process is as follows:
 
-1.  创建一个 C/C++ 项目：`New -> Project -> C++ Executable`，选择合适的地址和语言标准版本，点击 `Create`．
-2.  打开项目，此时的项目目录下应当存在一个 `cmake-build-debug` 目录、一个 `CMakeLists.txt` 文件和一个 `main.cpp` 文件．因为我们不需要使用 CMake 来管理项目，因此我们可以删去 `CMakeLists.txt` 文件和 `cmake-build-debug` 目录及其内所有文件．
-3.  点击打开 `main.cpp` 文件，并在编辑区右键单击，可以看到 `Run 'main.cpp'` 选项．选择此选项后，CLion 可以自动创建一个运行配置并运行程序．
+1.  Create a C/C++ project: `New -> Project -> C++ Executable`, select a suitable address and language standard version, click `Create`.
+2.  Open the project. The project directory should contain a `cmake-build-debug` directory, a `CMakeLists.txt` file, and a `main.cpp` file. Since we don't need to use CMake to manage the project, we can delete the `CMakeLists.txt` file and the `cmake-build-debug` directory and all its contents.
+3.  Open the `main.cpp` file, and right-click in the editing area. You can see the `Run 'main.cpp'` option. After selecting this option, CLion can automatically create a run configuration and run the program.
 
 ![C++ Single File Execution](./images/clion-single-file-execution.png)
 
-如需调试程序，可以编辑区打好断点，在编辑区右键单击，选择 `Debug 'main.cpp'` 选项．
+If you need to debug the program, set breakpoints in the editing area, right-click in the editing area, and select `Debug 'main.cpp'` option.
 
-### 通过 CMake 编译、运行和调试
+### Compiling, Running, and Debugging via CMake
 
-#### 设置
+#### Settings
 
-CLion 也可使用 [CMake](https://cmake.org/) 作为构建工具，关于 CMake 的设置可以在 `Build, Execution, Deployment -> Toolchains -> CMake` 中修改．
+CLion can also use [CMake](https://cmake.org/) as the build tool. CMake settings can be modified in `Build, Execution, Deployment -> Toolchains -> CMake`.
 
 ![CMake Settings](./images/clion-cmake.png)
 
-#### 编译选项
+#### Compile Options
 
-CMake 默认使用项目根目录下的 `CMakeList.txt` 作为构建项目的配置文件，可以使用 `add_compile_options` 命令来增加编译选项，例如：
+CMake uses `CMakeList.txt` in the project root directory as the configuration file for building projects. You can use the `add_compile_options` command to add compile options, for example:
 
 ```cmake
 add_compile_options(-std=c++17 -DDEBUG)
 ```
 
-其他 CMake 的功能请参考 [CMake 官方文档](https://cmake.org/documentation/)．
+For other CMake features, please refer to [CMake Official Documentation](https://cmake.org/documentation/).
 
-## 免费获取 CLion IDE 许可证
+## Getting CLion IDE License for Free
 
-CLion 为付费产品，但是可以通过教育邮箱或开源项目申请特殊许可证．申请之后不仅可以免费使用正版 CLion IDE，还可以免费使用 JetBrains 公司开发的其他付费产品．
+CLion is a paid product, but you can apply for a special license through an educational email or open source project. After application, you can not only use the genuine CLion IDE for free, but also get free access to other paid products developed by JetBrains.
 
 ???+ note "Note"
-    [自 2025 年 5 月起，CLion 对非商业用途免费．](https://blog.jetbrains.com/clion/2025/05/clion-is-now-free-for-non-commercial-use)
+    [Starting from May 2025, CLion is free for non-commercial use.](https://blog.jetbrains.com/clion/2025/05/clion-is-now-free-for-non-commercial-use)
     
-    根据 Toolbox 非商业用途订阅协议中的定义，商业产品是指有偿分发或提供或者作为您的商业活动的一部分使用的产品．但某些类别被明确排除在这一定义之外．常见的非商业用例包括学习和自我教育、任何形式的内容创作、开源代码和业余爱好开发．
+    According to the definition in the Toolbox non-commercial subscription agreement, commercial products are those distributed or provided for compensation or used as part of your commercial activities. However, certain categories are explicitly excluded from this definition. Common non-commercial use cases include learning and self-education, any form of content creation, open source code, and hobby development.
 
-### 使用教育邮箱获取
+### Using Educational Email
 
-进入官网的 [Free Educational Licenses 页面](https://www.jetbrains.com/community/education/#students), 点击 `Apply` 按钮，填写相关信息即可申请．
+Go to the official website's [Free Educational Licenses page](https://www.jetbrains.com/community/education/#students), click the `Apply` button, fill in the relevant information to apply.
 
 ![Educational Licenses](./images/clion-edu.png)
 
-注意：在注册时于邮箱选项请填如 @edu.cn 后缀的教育邮箱，特殊许可证需要邮箱验证后方可拿到．
+Note: When registering, in the email option, please fill in an educational email with @edu.cn suffix. The special license can only be obtained after email verification.
 
-你可以到所在高校的教务中心官网去申请教育邮箱，如果申请不到需要使用 [学信网](https://www.chsi.com.cn) 进行认证（仅中国大陆）．
+You can go to your university's academic affairs center官网 to apply for an educational email. If you cannot apply and need to verify, you can use [Xuexin.cn](https://www.chsi.com.cn) for verification (only for Mainland China).
 
-### 使用开源项目获取
+### Using Open Source Project
 
-如果您是某个开源项目的核心开发者或维护者之一，您可以尝试申请开源开发许可证 (Open Source Development License). 申请流程与教育许可证类似，但需要填写开源项目的仓库地址．
+If you are a core developer or maintainer of an open source project, you can try to apply for an Open Source Development License. The application process is similar to the educational license, but you need to fill in the repository address of the open source project.
 
 ![Open Source Development License](./images/clion-oss.png)

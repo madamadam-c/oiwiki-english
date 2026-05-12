@@ -1,20 +1,20 @@
 author: codewasp942
 
-??? tip "提示"
-    本篇与「线性代数」分类下的其他篇目关联不大．但笔者认为，讲讲线性代数的本质，追溯概念的根源与联系，让读者对于线性代数有一个初步但是成体系的认识，确实有其必要性．
+??? tip "Tip"
+    This article has relatively little connection with other articles in the "Linear Algebra" category. However, the author believes it is necessary to discuss the essence of linear algebra, trace the origins and connections of concepts, and give readers a preliminary but systematic understanding of linear algebra.
 
-早在几千年前，就有古人应用线性方程组解决问题，而如今，线性代数仍然应用广泛．
+As early as thousands of years ago, ancient people used systems of linear equations to solve problems, and today, linear algebra is still widely applied.
 
-线性代数源于人们的观察．人们发现，很多对象都拥有相似的性质，比如：
+Linear algebra originates from people's observations. People discovered that many objects share similar properties, such as:
 
--   力可以被分解、合成．
+-   Force can be decomposed and combined.
 
--   对于任意的 $k,x_0$，$k \sin (x-x_0)$ 可以分解成 $k_1\sin x + k_2\cos x$．
+-   For any $k,x_0$, $k \sin (x-x_0)$ can be decomposed into $k_1\sin x + k_2\cos x$.
 
-这些性质与所描述对象的 **缩放**、**分解**、**叠加** 等有关．线性代数把这些性质从具体对象中抽象出来，作为一个独立的学科来研究．在 OI 中，线性代数的知识可以直接用来解决问题，也可以用于优化算法、数据结构等．例如：
+These properties relate to **scaling**, **decomposition**, and **superposition** of the described objects. Linear algebra abstracts these properties from concrete objects and studies them as an independent discipline. In OI, linear algebra knowledge can be directly used to solve problems, or to optimize algorithms and data structures. For example:
 
--   用树剖维护线性基求链上最大异或和
+-   Use tree decomposition to maintain a linear basis for finding the maximum XOR sum on a chain.
 
--   利用矩阵树定理把图的生成树计数问题转化为求矩阵的行列式
+-   Use the Matrix-Tree Theorem to transform the problem of counting spanning trees in a graph into computing the determinant of a matrix.
 
--   用矩阵快速幂优化递推
+-   Use matrix exponentiation to optimize recurrence relations.

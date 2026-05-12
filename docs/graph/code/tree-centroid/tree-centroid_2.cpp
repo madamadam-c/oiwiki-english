@@ -8,24 +8,24 @@ using namespace std;
 const int MAXN = 50005;
 
 int n;
-// 这份代码默认节点编号从 1 开始，即 i ∈ [1,n]
-int siz[MAXN],  // 这个节点的「大小」（所有子树上节点数 + 该节点）
-    weight[MAXN];  // 这个节点的「重量」，即所有子树「大小」的最大值
-vector<int> centroids;  // 用于记录树的重心（存的是节点编号）
+// This code assumes node indices start from 1, i.e., i in [1,n]
+int siz[MAXN],  // The size of this node: all subtree nodes plus the node itself
+    weight[MAXN];  // The weight of this node, i.e., the maximum size among all subtrees
+vector<int> centroids;  // Records tree centroids by node index
 vector<int> g[MAXN];
 
-void dfs(int cur, int fa) {  // cur 表示当前节点 (current)
+void dfs(int cur, int fa) {  // cur denotes the current node
   siz[cur] = 1;
   weight[cur] = 0;
   for (int v : g[cur]) {
-    if (v != fa) {  // v 表示这条有向边所通向的节点
+    if (v != fa) {  // v denotes the node this directed edge points to
       dfs(v, cur);
       siz[cur] += siz[v];
       weight[cur] = max(weight[cur], siz[v]);
     }
   }
   weight[cur] = max(weight[cur], n - siz[cur]);
-  if (weight[cur] <= n / 2) {  // 依照树的重心的定义统计
+  if (weight[cur] <= n / 2) {  // Count according to the definition of a tree centroid
     centroids.push_back(cur);
   }
 }

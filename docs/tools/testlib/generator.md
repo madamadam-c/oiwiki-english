@@ -1,8 +1,8 @@
-Generator，即数据生成器．当数据很大，手造会累死的时候，我们就需要它来帮助我们自动造数据．
+Generator, i.e., data generator. When the data is large and manually creating it would be exhausting, we need it to help us automatically generate data.
 
-## 简单的例子
+## Simple Example
 
-生成两个 $[1,n]$ 范围内的整数：
+Generate two integers in the range $[1,n]$:
 
 ```cpp
 // clang-format off
@@ -20,32 +20,32 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 为什么要使用 Testlib？
+## Why Use Testlib?
 
-有人说写 generator 不需要用 Testlib，它在这没什么用．实际上这是个不正确的想法．一个好的 generator 应该满足这一点：**在任何环境下对于相同输入它给出相同输出**．写 generator 就避免不了生成随机值，平时我们用的 `rand()` 或 C++11 的 `mt19937/uniform_int_distribution`，当操作系统不同、使用不同编译器编译、不同时间运行等，它们的输出都可能不同（对于非常常用的 `srand(time(nullptr))`，这是显然的），而这就会给生成数据带来不确定性．
+Some say writing a generator doesn't need Testlib; it's not useful here. Actually, this is incorrect. A good generator should satisfy this: **for the same input, it produces the same output in any environment**. Writing a generator inevitably involves generating random values. The `rand()` we normally use or C++11's `mt19937/uniform_int_distribution` may produce different outputs when the operating system is different, compiled with different compilers, run at different times, etc. (For the very commonly used `srand(time(nullptr))`, this is obvious), and this brings uncertainty to data generation.
 
-需要注意的是，一旦使用了 Testlib，就不能再使用标准库中的 `srand()`，`rand()` 等随机数函数，否则在编译时会报错．因此，**请确保所有与随机相关的函数均使用 Testlib 而非标准库提供的．**
+Note that once Testlib is used, you can no longer use `srand()`, `rand()`, or other random number functions from the standard library, otherwise compilation will fail. Therefore, **please make sure all random-related functions use Testlib instead of the standard library.**
 
-而 Testlib 中的随机值生成函数则保证了相同调用会输出相同值，与 generator 本身或平台均无关．另外．它给生成各种要求的随机值提供了很大便利，如 `rnd.next("[a-z]{1,10}")` 会生成一个长度在 $[1,10]$ 范围内的串，每个字符为 `a` 到 `z`，很方便吧！
+The random value generation functions in Testlib guarantee the same output for the same call, regardless of the generator itself or the platform. Additionally, it provides great convenience for generating random values with various requirements. For example, `rnd.next("[a-z]{1,10}")` will generate a string with length in $[1,10]$, each character being `a` to `z`. Convenient, right?
 
-## Testlib 能做什么？
+## What Can Testlib Do?
 
-在一切之前，先执行 `registerGen(argc, argv, 1)` 初始化 Testlib（其中 `1` 是使用的 generator 版本，通常保持不变），然后我们就可以使用 `rnd` 对象来生成随机值．随机数种子取自命令行参数的哈希值，对于某 generator `g.cpp`，`g 100`(Unix-Like) 和 `g.exe "100"`(Windows) 将会有相同的输出，而 `g 100 0` 则与它们不同．
+Before everything, first execute `registerGen(argc, argv, 1)` to initialize Testlib (where `1` is the generator version, usually keep it unchanged). Then we can use the `rnd` object to generate random values. The random seed comes from the hash of command line arguments. For a generator `g.cpp`, `g 100` (Unix-like) and `g.exe "100"` (Windows) will have the same output, while `g 100 0` will be different from them.
 
-`rnd` 对象的类型为 `random_t`，你可以建立一个新的随机值生成对象，不过通常你不需要这么做．
+The type of `rnd` object is `random_t`. You can create a new random value generation object, but usually you don't need to.
 
-该对象有许多有用的成员函数，下面是一些例子：
+This object has many useful member functions. Here are some examples:
 
-| 调用                                           | 含义                                                                                                                                                                                                                                                      |
+| Call                                           | Meaning                                                                                                                                                                                                                                                      |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rnd.next(4)`                                | 等概率生成一个 $[0,4)$ 范围内的整数                                                                                                                                                                                                                                  |
-| `rnd.next(4, 100)`                           | 等概率生成一个 $[4,100]$ 范围内的整数                                                                                                                                                                                                                                |
-| `rnd.next(10.0)`                             | 等概率生成一个 $[0,10.0)$ 范围内的浮点数                                                                                                                                                                                                                              |
-| <code>rnd.next("one \| two \| three")</code> | 等概率从 `one`,`two`,`three` 三个串中返回一个                                                                                                                                                                                                                       |
-| `rnd.wnext(4, t)`                            | `wnext()` 是一个生成不等分布（具有偏移期望）的函数[^note1]，$t$ 表示调用 `next()` 的次数，并取生成值的最大值．例如 `rnd.wnext(3, 1)` 等同于 `max({rnd.next(3), rnd.next(3)})`；`rnd.wnext(4, 2)` 等同于 `max({rnd.next(4), rnd.next(4), rnd.next(4)})`．如果 $t<0$，则为调用 $-t$ 次，取最小值；如果 $t=0$，等同于 `next()`． |
-| `rnd.any(container)`                         | 等概率返回一个具有随机访问迭代器（如 `std::vector` 和 `std::string`）的容器内的某一元素的引用                                                                                                                                                                                           |
+| `rnd.next(4)`                                | Generate an integer in $[0,4)$ with equal probability                                                                                                                                                                                                                                  |
+| `rnd.next(4, 100)`                           | Generate an integer in $[4,100]$ with equal probability                                                                                                                                                                                                                                |
+| `rnd.next(10.0)`                             | Generate a floating-point number in $[0,10.0)$ with equal probability                                                                                                                                                                                                                              |
+| <code>rnd.next("one \| two \| three")</code> | Return one of `one`, `two`, `three` with equal probability                                                                                                                                                                                                                       |
+| `rnd.wnext(4, t)`                            | `wnext()` is a function that generates non-uniform distribution (with shifted expectation)[^note1], $t$ represents the number of times `next()` is called, and takes the maximum of the generated values. For example, `rnd.wnext(3, 1)` is equivalent to `max({rnd.next(3), rnd.next(3)})`; `rnd.wnext(4, 2)` is equivalent to `max({rnd.next(4), rnd.next(4), rnd.next(4)})`. If $t<0$, call $-t$ times and take the minimum; if $t=0`, equivalent to `next()`. |
+| `rnd.any(container)`                         | Return a reference to a randomly selected element in a container with random access iterator (like `std::vector` and `std::string`) with equal probability                                                                                                                                                                                           |
 
-附：关于 `rnd.wnext(i,t)` 的形式化定义：
+Note: Formal definition of `rnd.wnext(i,t)`:
 
 $$
 \operatorname{wnext}(i,t)=
@@ -56,11 +56,11 @@ $$
 \end{cases}
 $$
 
-另外，不要使用 `std::random_shuffle()`，请使用 Testlib 中的 `shuffle()`，它同样接受一对迭代器．它使用 `rnd` 来打乱序列，即满足如上「好的 generator」的要求．
+Also, don't use `std::random_shuffle()`. Use `shuffle()` from Testlib instead; it also accepts a pair of iterators. It uses `rnd` to shuffle the sequence, satisfying the "good generator" requirement above.
 
-## 示例：生成一棵树
+## Example: Generate a Tree
 
-下面是生成一棵树的主要代码，它接受两个参数——顶点数和伸展度．例如，当 $n=10,t=1000$ 时，可能会生成链；当 $n=10,t=-1000$ 时，可能会生成菊花．
+Below is the main code to generate a tree. It accepts two parameters - the number of vertices and the spread degree. For example, when $n=10,t=1000$, it may generate a path; when $n=10,t=-1000$, it may generate a star.
 
 ```cpp
 #define forn(i, n) for (int i = 0; i < int(n); i++)
@@ -72,17 +72,17 @@ int t = atoi(argv[2]);
 
 vector<int> p(n);
 
-/* 为节点 1..n-1 设置父亲 */
+/* Set parent for nodes 1..n-1 */
 forn(i, n) if (i > 0) p[i] = rnd.wnext(i, t);
 
 printf("%d\n", n);
 
-/* 打乱节点 1..n-1 */
+/* Shuffle nodes 1..n-1 */
 vector<int> perm(n);
 forn(i, n) perm[i] = i;
 shuffle(perm.begin() + 1, perm.end());
 
-/* 根据打乱的节点顺序加边 */
+/* Add edges according to shuffled node order */
 vector<pair<int, int>> edges;
 for (int i = 1; i < n; i++)
   if (rnd.next(2))
@@ -90,35 +90,35 @@ for (int i = 1; i < n; i++)
   else
     edges.push_back(make_pair(perm[p[i]], perm[i]));
 
-/* 打乱边 */
+/* Shuffle edges */
 shuffle(edges.begin(), edges.end());
 
 for (int i = 0; i + 1 < n; i++)
   printf("%d %d\n", edges[i].first + 1, edges[i].second + 1);
 ```
 
-## 一次性生成多组数据
+## Generate Multiple Sets of Data at Once
 
-跟不使用 Testlib 编写的时候一样，每次输出前重定向输出流就好，不过 Testlib 提供了一个辅助函数 `startTest(test_index)`，它帮助你将输出流重定向到 `test_index` 文件．
+Just like when writing without Testlib, redirect the output stream before each output. However, Testlib provides a helper function `startTest(test_index)` that helps you redirect the output stream to the `test_index` file.
 
-## 一些注意事项
+## Some Precautions
 
--   严格遵循题目的格式要求，如空格和换行，注意文件的末尾应有一个换行．
--   对于大数据首选 `printf` 而非 `cout`，以提高性能．（不建议在使用 Testlib 时关闭流同步）
--   不使用 UB（Undefined Behavior，未定义行为），如本文开头的那个示例，输出如果写成 `cout << rnd.next(1, n) << " " << rnd.next(1, n) << endl;`，则 `rnd.next()` 的调用顺序没有定义．
+-   Strictly follow the problem's format requirements, such as spaces and newlines. Note that there should be a newline at the end of the file.
+-   For large data, prefer `printf` over `cout` for better performance. (It's not recommended to disable stream synchronization when using Testlib)
+-   Don't use UB (Undefined Behavior). As in the example at the beginning of this article, if the output is written as `cout << rnd.next(1, n) << " " << rnd.next(1, n) << endl;`, the call order of `rnd.next()` is undefined.
 
-## 新特性：解析命令行参数
+## New Feature: Parse Command Line Arguments
 
-在之前，我们通常使用类似 `int n = atoi(argv[3]);` 的代码，但是这样并不好．有以下几点原因：
+Previously, we usually used code like `int n = atoi(argv[3]);`, but this is not good. Here are the reasons:
 
--   不存在第三个命令行参数的时候是不安全的；
--   第三个命令行参数可能不是有效的 32 位整数．
+-   It is unsafe when the third command line argument doesn't exist;
+-   The third command line argument may not be a valid 32-bit integer.
 
-现在，你可以这样写：`int n = opt<int>(3)`．与此同时，你也可以使用 `int64_t m = opt<int64_t>(1);`，`bool t = opt<bool>(2);` 和 `string s = opt(4);` 等．
+Now, you can write: `int n = opt<int>(3)`. At the same time, you can also use `int64_t m = opt<int64_t>(1);`, `bool t = opt<bool>(2);` and `string s = opt(4);`, etc.
 
-另外，testlib 同时也支持命名参数．如果有很多参数，这样 `g 10 20000 a true` 的可读性就会比 `g -n10 -m200000 -t=a -increment` 差．
+Additionally, testlib also supports named arguments. If there are many parameters, `g 10 20000 a true` will be less readable than `g -n10 -m200000 -t=a -increment`.
 
-在这种情况下，现在你可以在 generator 中使用以下代码：
+In this case, you can now use the following code in the generator:
 
 ```cpp
 int n = opt<int>("n");
@@ -127,16 +127,16 @@ string t = opt("t");
 bool increment = opt<bool>("increment");
 ```
 
-你可以自由地混合使用按下标和按名称读取参数的方式．
+You can freely mix using arguments by index and by name.
 
-支持的用于编写命名参数的方案有以下几种：
+Supported schemes for writing named arguments are:
 
--   `--key=value` 或 `-key=value`；
--   `--key value` 或 `-key value`——如果 `value` 不是新参数的开头（不以连字符 `-` 开头或一个/两个连字符后没有跟随字母）；
--   `--k12345` 或 `-k12345`——如果 key `k` 是一个字母，且后面是一个数字；
--   `-prop` 或 `--prop`——启用 bool 属性．
+-   `--key=value` or `-key=value`;
+-   `--key value` or `-key value` - if `value` is not the start of a new argument (doesn't start with a hyphen or one/two hyphens followed by no letter);
+-   `--k12345` or `-k12345` - if key `k` is a letter followed by a number;
+-   `-prop` or `--prop` - enable bool property.
 
-下面是一些例子：
+Here are some examples:
 
 ```text
 g1 -n1
@@ -145,10 +145,10 @@ g3 -inc -shuffle -n=5
 g4 --length 5 --total 21 -ord
 ```
 
-## 更多示例
+## More Examples
 
-可以在 [GitHub](https://github.com/MikeMirzayanov/testlib/tree/master/generators) 中找到．
+Can be found at [GitHub](https://github.com/MikeMirzayanov/testlib/tree/master/generators).
 
-**本文主要翻译自 [Генераторы на testlib.h - Codeforces](https://codeforces.com/blog/entry/18291)．新特性翻译自 [Testlib: Opts—parsing command line options](https://codeforces.com/blog/entry/72702)．`testlib.h` 的 GitHub 存储库为 [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)．**
+**This article is mainly translated from [Генераторы на testlib.h - Codeforces](https://codeforces.com/blog/entry/18291). New feature translated from [Testlib: Opts—parsing command line options](https://codeforces.com/blog/entry/72702). The GitHub repository for `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**
 
-[^note1]: 事实上，当 `i` 为浮点数时，`rnd.wnext(i, t)` 服从 $[0,i)$ 上的 [Beta 分布](https://en.wikipedia.org/wiki/Beta_distribution)：当 $t>0$ 时，服从 $i\cdot \mathrm{Beta}(t+1,1)$；当 $t<0$ 时，服从 $i\cdot \mathrm{Beta}(1,t+1)$．
+[^note1]: Actually, when `i` is a floating-point number, `rnd.wnext(i, t)` follows a [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) on $[0,i)$: when $t>0$, it follows $i\cdot \mathrm{Beta}(t+1,1)$; when $t<0$, it follows $i\cdot \mathrm{Beta}(1,t+1)$.

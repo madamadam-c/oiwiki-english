@@ -1,54 +1,54 @@
-研究线性映射是研究线性空间之间的映射．
+Linear mappings study maps between linear spaces.
 
-线性映射可以表示为矩阵的形式，所以在线性映射中矩阵中的大量概念都可以找到对应关系．
+A linear mapping can be represented in matrix form. Therefore, many concepts from matrices have corresponding relationships in linear mappings.
 
-## 线性映射与线性变换
+## Linear Mappings and Linear Transformations
 
-设 $V$ 和 $W$ 是域 $F$ 上的两个线性空间，$T$ 是 $V$ 到 $W$ 的一个映射．
+Let $V$ and $W$ be two linear spaces over field $F$, and $T$ be a map from $V$ to $W$.
 
-如果对于 $W$ 中任意的向量 $x$ 和 $y$，域 $F$ 中任意的标量 $k$ 和 $l$，有：
+If for any vectors $x, y$ in $W$ and any scalars $k, l$ in field $F$, we have:
 
 $$
 T(kx+ly)=kTx+lTy
 $$
 
-称 $T$ 是 $V$ 到 $W$ 的一个线性映射．如果 $W=V$，则称 $T$ 是 $V$ 上的一个线性变换．
+Then $T$ is called a linear mapping from $V$ to $W$. If $W=V$, then $T$ is called a linear transformation on $V$.
 
-例如，恒等变换 $T_e$ 保持空间不变，零变换 $T_0$ 将空间映射至零空间．
+For example, the identity transformation $T_e$ keeps the space unchanged, and the zero transformation $T_0$ maps the space to the zero space.
 
-可以记 $L(V,W)$ 为所有 $V$ 到 $W$ 的线性映射构成的集合．对于全体线性变换 $L(V,V)$，也记为 $L(V)$．
+We can denote $L(V,W)$ as the set of all linear mappings from $V$ to $W$. For all linear transformations $L(V,V)$, we also write $L(V)$.
 
-### 性质
+### Properties
 
--   线性映射将零向量映射到零向量．
--   线性映射保持线性运算形式不变，即，线性运算的线性映射，等于线性映射的线性运算．
--   线性映射保持线性相关性，即，映射前线性相关，映射后也线性相关．
+-   A linear mapping maps the zero vector to the zero vector.
+-   A linear mapping preserves linear operation forms, i.e., the linear mapping of a linear operation equals the linear operation of the mappings.
+-   A linear mapping preserves linear dependence, i.e., if vectors are linearly dependent before mapping, they are also linearly dependent after mapping.
 
-但是线性映射不保持线性无关性．映射前线性无关，映射后不一定线性无关．
+However, a linear mapping does not preserve linear independence. Vectors linearly independent before mapping may not be linearly independent after mapping.
 
-## 线性映射的矩阵表示
+## Matrix Representation of Linear Mappings
 
-设 $V$ 的维数是 $n$，$V$ 的一组基为 $\alpha_1,\cdots,\alpha_n$，$W$ 的维数是 $m$，$W$ 的一组基为 $\beta_1,\cdots,\beta_m$，$T$ 是 $V$ 到 $W$ 的一个线性映射．
+Let the dimension of $V$ be $n$, with a basis $\alpha_1,\cdots,\alpha_n$, and the dimension of $W$ be $m$, with a basis $\beta_1,\cdots,\beta_m$. Let $T$ be a linear mapping from $V$ to $W$.
 
-将每个 $\alpha$ 经由 $T$ 映射后的向量用 $\beta$ 表示：
+Express the image of each $\alpha$ under $T$ using $\beta$:
 
 $$
 T\alpha_j=a_{1j}\beta_1+\cdots+a_{mj}\beta_m
 $$
 
-采用矩阵记法：
+Using matrix notation:
 
 $$
 T(\alpha_1,\cdots,\alpha_n)=(T\alpha_1,\cdots,T\alpha_n)=(\beta_1,\cdots,\beta_m)A
 $$
 
-称矩阵 $A$ 为线性映射 $T$ 在这两组基下的矩阵表示．
+Matrix $A$ is called the matrix representation of linear mapping $T$ with respect to these two bases.
 
-## 线性映射的核空间与像空间
+## Kernel Space and Image Space of Linear Mappings
 
-这里的核空间与像空间是站在线性映射的视角下叙述的．借助矩阵表示可以看出，线性映射的核空间与像空间与矩阵的核空间与像空间是一致的．
+The kernel space and image space here are described from the perspective of linear mappings. Through the matrix representation, we can see that the kernel space and image space of a linear mapping are consistent with those of a matrix.
 
-设 $T$ 是由空间 $V$ 到空间 $W$ 的线性映射，令：
+Let $T$ be a linear mapping from space $V$ to space $W$. Define:
 
 $$
 N(T)=\{x\in V|Tx=0\}
@@ -58,43 +58,43 @@ $$
 R(T)=Im(T)=\{y\in W|y=Tx,Vx\in V\}
 $$
 
-易验证 $N(T)$ 为 $V$ 的子空间，$R(T)$ 为 $W$ 的子空间，称 $N(T)$ 及 $R(T)$ 为 $V$ 的核空间和像空间，并称 $N(T)$ 的维数为 $T$ 的 **零度** 或 **亏**，$R(T)$ 的维数为 $T$ 的 **秩**．
+It is easy to verify that $N(T)$ is a subspace of $V$, and $R(T)$ is a subspace of $W$. $N(T)$ and $R(T)$ are called the kernel space and image space of $V$. The dimension of $N(T)$ is called the **nullity** or **defect** of $T$, and the dimension of $R(T)$ is called the **rank** of $T$.
 
-定理：设 $T$ 是由空间 $V$ 到空间 $W$ 的线性映射，$V$ 的维数有限，则 $N(T)$ 及 $R(T)$ 均为有限维，且有：
+**Theorem:** Let $T$ be a linear mapping from space $V$ to space $W$, with $V$ of finite dimension. Then $N(T)$ and $R(T)$ are both finite-dimensional, and:
 
 $$
 \operatorname{dim} N(T)+\operatorname{dim} R(T)=\operatorname{dim} V
 $$
 
-即 $T$ 的亏加秩等于其定义域 $V$ 的维数．
+That is, the defect plus rank of $T$ equals the dimension of its domain $V$.
 
-## 线性变换的矩阵表示
+## Matrix Representation of Linear Transformations
 
-设 $V$ 的维数是 $n$，$V$ 的一组基为 $\alpha_1,\cdots,\alpha_n$，$T$ 是 $V$ 上的一个线性变换，则有：
+Let the dimension of $V$ be $n$, with a basis $\alpha_1,\cdots,\alpha_n$. Let $T$ be a linear transformation on $V$. Then:
 
 $$
 T\alpha_j=a_{1j}\alpha_1+\cdots+a_{nj}\alpha_n
 $$
 
-采用矩阵记法：
+Using matrix notation:
 
 $$
 T(\alpha_1,\cdots,\alpha_n)=(T\alpha_1,\cdots,T\alpha_n)=(\alpha_1,\cdots,\alpha_n)A
 $$
 
-称矩阵 $A$ 为线性变换 $T$ 在这组基下的矩阵表示．
+Matrix $A$ is called the matrix representation of linear transformation $T$ with respect to this basis.
 
-由空间结构和 $T$ 的线性性质，$T$ 由 $T\alpha_1,\cdots,T\alpha_n$ 完全确定，故由 $T$ 唯一确定一个矩阵 $A$．
+From the space structure and linearity of $T$, $T$ is completely determined by $T\alpha_1,\cdots,T\alpha_n$. Hence, $T$ uniquely determines a matrix $A$.
 
-定理：设 $V$ 的维数是 $n$，$\alpha_1,\cdots,\alpha_n$ 为 $V$ 的一组基，任取 $n$ 阶方阵 $A$，有且仅有一个从 $V$ 到 $V$ 的线性变换 $T$，使得 $T$ 的矩阵恰好为 $A$．
+**Theorem:** Let $V$ have dimension $n$, and $\alpha_1,\cdots,\alpha_n$ be a basis of $V$. For any $n \times n$ matrix $A$, there exists exactly one linear transformation $T$ from $V$ to $V$ such that the matrix of $T$ is exactly $A$.
 
-推论：在 $L(V,V)$ 和全体 $n$ 阶方阵之间存在一一对应关系．
+**Corollary:** There is a one-to-one correspondence between $L(V,V)$ and all $n \times n$ matrices.
 
-例如：零变换对应零矩阵，恒等变换对应单位矩阵．
+For example: the zero transformation corresponds to the zero matrix, and the identity transformation corresponds to the identity matrix.
 
-## 线性变换构成的空间
+## The Space Formed by Linear Transformations
 
-定理：$L(V)$ 也可以构成线性空间，引入 $L(V)$ 中的运算：对于 $L(V)$ 中任意的 $T_1$ 与 $T_2$，$V$ 中任意的 $x$，域 $F$ 中任意的 $k$，有：
+**Theorem:** $L(V)$ can also form a vector space. Define operations in $L(V)$: for any $T_1, T_2$ in $L(V)$, any $x$ in $V$, and any $k$ in field $F$:
 
 $$
 (T_1+T_2)x=T_1x+T_2x
@@ -104,191 +104,191 @@ $$
 (kT_1)x=k(T_1x)
 $$
 
-容易验证 $L(V)$ 是 $F$ 上的一个线性空间，即线性变换空间．
+It is easy to verify that $L(V)$ is a vector space over $F$, called the linear transformation space.
 
-对于 $L(V)$ 中的线性变换 $T_1$ 与 $T_2$，定义 $T_1$ 与 $T_2$ 的乘积 $T_1T_2$ 为：
+For linear transformations $T_1$ and $T_2$ in $L(V)$, define the product $T_1T_2$ as:
 
 $$
 (T_1T_2)x=T_2(T_1x)
 $$
 
-可以验证 $(T_1T_2)$ 也是 $L(V)$ 中的线性变换，并且线性变换的乘积满足结合律，而不满足交换律，与矩阵的乘积类似．
+It can be verified that $(T_1T_2)$ is also a linear transformation in $L(V)$. The product of linear transformations satisfies the associative law but not the commutative law, similar to matrix multiplication.
 
-对于 $L(V)$ 中的线性变换 $T_1$，如果 $L(V)$ 中的线性变换 $T_2$，使得对于 $V$ 中任意的向量 $x$，有：
+For linear transformation $T_1$ in $L(V)$, if there exists linear transformation $T_2$ in $L(V)$ such that for any vector $x$ in $V$:
 
 $$
 (T_1T_2)x=T_1(T_2x)=x
 $$
 
-则称 $T_2$ 是 $T_1$ 的逆变换，记作：
+Then $T_2$ is called the inverse of $T_1$, denoted:
 
 $$
 T_2=T_1^{-1}
 $$
 
-且有：
+And:
 
 $$
 T_1T_2=T_2T_1=T_e
 $$
 
-定理：设 $V$ 的维数为 $n$，$\alpha_1,\cdots,\alpha_n$ 为 $V$ 的一组基，在这组基下线性变换 $T_1$ 的矩阵为 $A$，$T_2$ 的矩阵为 $B$，则：
+**Theorem:** Let $V$ have dimension $n$, and $\alpha_1,\cdots,\alpha_n$ be a basis of $V$. Under this basis, the matrix of linear transformation $T_1$ is $A$, and the matrix of $T_2$ is $B$. Then:
 
--   线性变换 $T_1+T_2$ 的矩阵为 $A+B$
--   线性变换的数乘 $kT_1$ 的矩阵为 $kA$
--   线性变换的乘积 $T_1T_2$ 的矩阵为 $AB$
--   线性变换 $T_1$ 的逆变换若存在，矩阵为 $A^{-1}$
+-   The matrix of linear transformation $T_1+T_2$ is $A+B$
+-   The matrix of scalar multiplication $kT_1$ is $kA$
+-   The matrix of product $T_1T_2$ is $AB$
+-   If the inverse of linear transformation $T_1$ exists, its matrix is $A^{-1}$
 
-## 坐标
+## Coordinates
 
-设 $n$ 个向量 $x$ 是 $n$ 维空间 $V$ 的一个基，对于 $V$ 中任意的向量 $y$，令 $y$ 为：
+Let the $n$ vectors $x$ be a basis of $n$-dimensional space $V$. For any vector $y$ in $V$, let:
 
 $$
 y=a_1x_1+a_2x_2+\cdots+a_nx_n=(x_1,x_2,\cdots,x_n)\begin{pmatrix}a_1\\a_2\\\vdots\\a_n\end{pmatrix}
 $$
 
-称列向量：
+The column vector:
 
 $$
 \begin{pmatrix}a_1\\a_2\\\vdots\\a_n\end{pmatrix}
 $$
 
-为向量 $y$ 在基 $x_1,x_2,\cdots,x_n$ 下的 **坐标**．
+is called the **coordinate** of vector $y$ with respect to basis $x_1,x_2,\cdots,x_n$.
 
-可见，坐标是由域中的标量构成的列向量，与阿贝尔群中的向量应当进行区分．
+As you can see, coordinates are column vectors composed of scalars from the field, which should be distinguished from vectors in the Abelian group.
 
-## 坐标变换公式
+## Coordinate Transformation Formula
 
-设 $V$ 的维数为 $n$，$L(V)$ 中有变换 $T$，$T$ 在基 $\alpha_1,\cdots,\alpha_n$ 下的矩阵为 $A$．设：
+Let $V$ have dimension $n$. Let $T$ be a transformation in $L(V)$, with matrix $A$ under basis $\alpha_1,\cdots,\alpha_n$. Let:
 
 $$
 \xi=(\alpha_1,\cdots,\alpha_n)\begin{pmatrix}x_1\\x_2\\\vdots\\x_n\end{pmatrix}
 $$
 
-且有：
+And:
 
 $$
 T\xi=T(\alpha_1,\cdots,\alpha_n)\begin{pmatrix}y_1\\y_2\\\vdots\\y_n\end{pmatrix}
 $$
 
-则有：
+Then:
 
 $$
 T\xi=T(\alpha_1,\cdots,\alpha_n)\begin{pmatrix}y_1\\y_2\\\vdots\\y_n\end{pmatrix}=(\alpha_1,\cdots,\alpha_n)A\begin{pmatrix}x_1\\x_2\\\vdots\\x_n\end{pmatrix}
 $$
 
-空间 $V$ 中的列向量点本质上都是「基乘坐标」的形式．空间 $V$ 中的列向量点 $x$，本身用了单位阵 $I$ 作为基，即 $x=Ix$．
+Column vectors in space $V$ are essentially all in the form "basis times coordinate". A column vector $x$ in space $V$ itself uses identity matrix $I$ as the basis, i.e., $x=Ix$.
 
-只有同一个基，基不动的时候，单纯的线性变换 $T$，就是坐标左乘普通矩阵．
+Only when the same basis is fixed, and we consider a pure linear transformation $T$, the coordinate is simply left-multiplied by a regular matrix.
 
-把线性变换 $T$ 看成对于空间 $V$ 的一个观测滤镜．线性变换 $T$ 的作用对象是空间 $V$，将空间 $V$ 扭曲了．加了滤镜之后，点本身的位置没有变．
+Consider linear transformation $T$ as a "filter" observing space $V$. The action of $T$ is on space $V$, distorting it. After applying the filter, the point itself doesn't change position.
 
-这个定理也说明，对于列向量基的线性变换 $T$，等价于对于基右乘一个过渡矩阵．
+This theorem also shows that for a linear transformation $T$ on a column vector basis, it is equivalent to right-multiplying the basis by a transition matrix.
 
-于是，在不同的基之间，坐标关系是左乘过渡矩阵的逆矩阵．
+Therefore, between different bases, coordinates are related by left-multiplying by the inverse of the transition matrix.
 
-## 过渡矩阵
+## Transition Matrix
 
-设 $n$ 个向量 $x$ 与 $n$ 个向量 $y$ 是空间 $V$ 的两组基．对于 $1\leq i\leq n$，令每个向量 $y_i$ 在基 $x_1,x_2,\cdots,x_n$ 下的坐标为：
+Let the $n$ vectors $x$ and $n$ vectors $y$ be two bases of space $V$. For $1\leq i\leq n$, let each vector $y_i$ have coordinate:
 
 $$
 y_i=(x_1,x_2,\cdots,x_n)\begin{pmatrix}a_{1i}\\a_{2i}\\\vdots\\a_{ni}\end{pmatrix}
 $$
 
-于是 $n$ 个向量 $y$ 排成等式左边的矩阵，$n$ 个坐标排成等式右边的矩阵 $A$：
+Then the $n$ vectors $y$ form the matrix on the left side of the equation, and the $n$ coordinates form the matrix $A$ on the right side:
 
 $$
 (y_1,y_2,\cdots,y_n)=(x_1,x_2,\cdots,x_n)A
 $$
 
-矩阵 $A$ 称为由基 $x_1,x_2\cdots,x_n$ 到基 $y_1,y_2\cdots,y_n$ 的 **过渡矩阵**，也称为变换矩阵．
+Matrix $A$ is called the **transition matrix** from basis $x_1,x_2\cdots,x_n$ to basis $y_1,y_2\cdots,y_n$, also called the change of basis matrix.
 
-显然过渡矩阵可逆．对于上式，由基 $y_1,y_2\cdots,y_n$ 到基 $x_1,x_2\cdots,x_n$ 的过渡矩阵为 $A^{-1}$．
+Clearly, the transition matrix is invertible. From the above, the transition matrix from basis $y_1,y_2\cdots,y_n$ to basis $x_1,x_2\cdots,x_n$ is $A^{-1}$.
 
-可见，过渡矩阵是由域中的标量构成的矩阵，并非阿贝尔群中的向量排成的矩阵，应当予以区分．
+As noted earlier, the transition matrix is composed of scalars from the field, not vectors from the Abelian group arranged as a matrix. They should be distinguished.
 
-设 $n$ 个向量 $x$ 与 $n$ 个向量 $y$ 是空间 $V$ 的两组基．对于空间 $V$ 中的同一个向量 $z$，有：
+Let the $n$ vectors $x$ and $n$ vectors $y$ be two bases of space $V$. For the same vector $z$ in space $V$, we have:
 
 $$
 z=(x_1,x_2,\cdots,x_n)\begin{pmatrix}\xi_1\\\xi_2\\\vdots\\\xi_n\end{pmatrix}=(y_1,y_2\cdots,y_n)\begin{pmatrix}\eta_1\\\eta_2\\\vdots\\\eta_n\end{pmatrix}
 $$
 
-代入上文的
+Substituting from earlier:
 
 $$
 (y_1,y_2\cdots,y_n)=(x_1,x_2\cdots,x_n)A
 $$
 
-由唯一性，得到：
+By uniqueness, we get:
 
 $$
 \begin{pmatrix}\xi_1\\\xi_2\\\vdots\\\xi_n\end{pmatrix}=A\begin{pmatrix}\eta_1\\\eta_2\\\vdots\\\eta_n\end{pmatrix}
 $$
 
-或者
+Or:
 
 $$
 \begin{pmatrix}\eta_1\\\eta_2\\\vdots\\\eta_n\end{pmatrix}=A^{-1}\begin{pmatrix}\xi_1\\\xi_2\\\vdots\\\xi_n\end{pmatrix}
 $$
 
-这是纯粹坐标之间的变换，坐标变换公式均在标量域中．由于前文做了区分，线性空间与阿贝尔群中的向量是「抽象的向量」，而坐标与过渡矩阵的元素均在标量域中，视为「具体的向量」，两种向量应当视为「不同的东西」．
+This is purely a transformation between coordinates. All coordinate transformation formulas are in the scalar field. As distinguished earlier, vectors in linear spaces and Abelian groups are "abstract vectors", while coordinates and elements of transition matrices are in the scalar field, considered as "concrete vectors". The two types should be considered "different things".
 
-矩阵可以对整个空间，即全体坐标进行变换，列向量 $x$ 作为坐标遍布整个空间．
+A matrix can transform the entire space, i.e., all coordinates. Column vector $x$ as a coordinate ranges over the entire space.
 
-单位矩阵 $I$ 由单位向量构成．矩阵 $A$ 会将单位矩阵 $I$ 变换到矩阵 $A$ 的每个列向量，即将单位向量变换到矩阵 $A$ 的每个列向量．因此左乘矩阵 $A$，也可以视为将空间做了这样的变换．
+Identity matrix $I$ is composed of unit vectors. Matrix $A$ transforms identity matrix $I$ to each column vector of matrix $A$, i.e., transforms unit vectors to each column vector of matrix $A$. Therefore, left-multiplying by matrix $A$ can also be seen as performing such a transformation on the space.
 
-向量左乘矩阵，也可以视为坐标左乘向量组．用坐标的观点看待就是：
+Left-multiplying a vector by a matrix can also be seen as left-multiplying coordinates by a vector set. Using the coordinate perspective:
 
 $$
 Iy=Xa
 $$
 
-同一个列向量 $y$，在「正常」的空间，单位矩阵 $I$ 代表的空间下，坐标为 $y$，在变换后新的空间里，坐标将记为 $a$．这样一来，矩阵 $X$ 不仅是正常空间下的一组基，也是从向量组 $I$ 到向量组 $X$ 的过渡矩阵．
+The same column vector $y$, in the "normal" space with identity matrix $I$ as the basis, has coordinate $y$, but in the new transformed space, the coordinate will be recorded as $a$. In this way, matrix $X$ is not only a basis in the normal space but also the transition matrix from vector set $I$ to vector set $X$.
 
-线性变换 $T$ 会将一个基映射为另一个基，于是坐标也被映射为另一个坐标．
+Linear transformation $T$ maps one basis to another, so coordinates are also mapped to other coordinates.
 
-如果将基 $\alpha$ 映射到 $\beta$ 对应的线性变换 $T$ 的过渡矩阵是 $A$，那么对应的基矩阵就有 $\beta=\alpha A$．
+If the linear transformation $T$ that maps basis $\alpha$ to $\beta$ has transition matrix $A$, then the corresponding basis matrix satisfies $\beta=\alpha A$.
 
-于是坐标的关系恰好反过来．假设线性变换 $T$ 映射后的坐标是 $b$，即加滤镜后观察到坐标 $b$，于是点在 $V$ 的表示就是 $\beta b$．还原的办法就是用过渡矩阵，把点在 $V$ 的表示写成 $\alpha Ab$．于是坐标变换为左乘过渡矩阵的逆矩阵的看法就明显了．
+Thus, the coordinate relationship is exactly reversed. Suppose after linear transformation $T$, the coordinate is $b$, i.e., after applying the filter, we observe coordinate $b$. Then the point's representation in $V$ is $\beta b$. The way to restore it is using the transition matrix, writing the point's representation in $V$ as $\alpha Ab$. Then the coordinate transformation by left-multiplying by the inverse of the transition matrix is now clear.
 
-## 线性变换与矩阵相似
+## Linear Transformations and Matrix Similarity
 
-在空间 $V$ 中的一个线性变换 $T$ 对于空间 $V$ 的基 $\alpha$ 的关系：
+Consider a linear transformation $T$ on space $V$ with respect to basis $\alpha$ of $V$:
 
-线性变换 $T$ 作用于基 $\alpha$，将基 $\alpha$ 映射到了 $T(\alpha)$，相当于在基 $\alpha$ 右乘一个 $A$，即 $T(\alpha)=\alpha A$．
+Linear transformation $T$ acts on basis $\alpha$, mapping $\alpha$ to $T(\alpha)$, which is equivalent to right-multiplying $\alpha$ by $A$, i.e., $T(\alpha)=\alpha A$.
 
-矩阵相似考虑的问题是：同一个线性变换 $T$，在基 $\beta$ 的空间 $V$ 中描述为矩阵 $B$，在基 $\alpha$ 的空间 $V$ 中描述为矩阵 $A$．
+Matrix similarity considers the question: same linear transformation $T$, described as matrix $B$ in space $V$ with basis $\beta$, and as matrix $A$ in space $V$ with basis $\alpha$.
 
-如果过渡矩阵为 $C$，即 $\beta=\alpha C$，那么两个描述 $B$ 和 $A$ 之间有怎样的联系．
+If the transition matrix is $C$, i.e., $\beta=\alpha C$, what is the relationship between the two descriptions $B$ and $A$?
 
-由于是同一个变换 $T$，可以发现一个事实，变换前后的过渡矩阵关系始终成立，即：
+Since it is the same transformation $T$, we find that the relationship of the transition matrix always holds before and after transformation:
 
 $$
 T(\beta)=T(\alpha)C=\alpha AC
 $$
 
-线性变换 $T$ 在基 $\beta$ 视角下仍旧为右乘，基 $\beta$ 转化到基 $\alpha$ 再右乘一个 $C$，变换前后保持过渡矩阵 $C$ 的关系：
+Linear transformation $T$ from the perspective of basis $\beta$ is still right-multiplication. Basis $\beta$ transforms to basis $\alpha$ then right-multiplies by $C$. Before and after transformation, the relationship of transition matrix $C$ is maintained:
 
 $$
 T(\beta)=\beta B=\alpha CB
 $$
 
-于是问题得到解决：
+Thus the problem is solved:
 
 $$
 B=C^{-1}AC
 $$
 
-定理：设 $L(V)$ 中有变换 $T$，则 $T$ 在不同基下的矩阵 **相似**．
+**Theorem:** Let $T$ be a transformation in $L(V)$. Then $T$ is **similar** under different bases.
 
-对于方阵 $A$ 和方阵 $B$，如果存在可逆矩阵 $C$ 使得 $B=C^{-1}AC$，则 $A$ 和 $B$ 相似．
+For square matrices $A$ and $B$, if there exists an invertible matrix $C$ such that $B=C^{-1}AC$, then $A$ and $B$ are similar.
 
-矩阵相似保持秩不变，因此矩阵相似可以推出矩阵等价．但是，等价的两个矩阵未必相似．
+Matrix similarity preserves rank, so matrix similarity implies matrix equivalence. However, two equivalent matrices are not necessarily similar.
 
-由于矩阵相似与形状密切相关，因此矩阵相似和向量组等价、方程组同解之间没有关系．
+Since matrix similarity is closely related to shape, there is no relationship between matrix similarity and vector set equivalence or system equivalence.
 
-回过头来，矩阵相似的解释就是 4 个等式：$\beta=\alpha C$、$T(\alpha)=\alpha A$、$T(\beta)=\beta B$、$T(\beta)=T(\alpha)C$．
+Looking back, the interpretation of matrix similarity involves four equations: $\beta=\alpha C$, $T(\alpha)=\alpha A$, $T(\beta)=\beta B$, $T(\beta)=T(\alpha)C$.
 
-## 参考资料
+## References
 
--   [【官方双语/合集】线性代数的本质 - 系列合集 P13 09 - 基变换](https://www.bilibili.com/video/BV1Ls411b7r2)
+-   [【Official Bilingual/Collection】Essence of Linear Algebra - Series Collection P13 09 - Basis Change](https://www.bilibili.com/video/BV1Ls411b7r2)

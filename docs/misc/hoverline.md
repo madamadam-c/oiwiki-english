@@ -1,65 +1,65 @@
 author: mwsht, sshwy, ouuan, Ir1d, Henry-ZHR, hsfzLZH1
 
-## 引入
+## Introduction
 
-悬线法的适用范围是单调栈的子集．具体来说，悬线法可以应用于满足以下条件的题目：
+The hoverline method applies to a subset of monotonic-stack problems. Specifically, the hoverline method can be applied to problems satisfying the following conditions:
 
--   需要在扫描序列时维护单调的信息；
--   可以使用单调栈解决；
--   不需要在单调栈上二分．
+-   Monotonic information must be maintained while scanning a sequence;
+-   The problem can be solved with a monotonic stack;
+-   Binary search on the monotonic stack is not needed.
 
-看起来悬线法可以被替代，用处不大，但是悬线法概念比单调栈简单，更适合初学 OI 的选手理解并解决最大子矩阵等问题．
+It may seem that the hoverline method can be replaced and is not very useful, but its concept is simpler than a monotonic stack and is more suitable for beginning OI contestants to understand and solve problems such as maximum submatrix.
 
-## 例题
+## Examples
 
 ???+ note "[SPOJ HISTOGRA - Largest Rectangle in a Histogram](https://www.spoj.com/problems/HISTOGRA)"
-    大意：在一条水平线上有 $n$ 个宽为 $1$ 的矩形，求包含于这些矩形的最大子矩形面积．
+    Summary: on a horizontal line there are $n$ rectangles of width $1$; find the area of the largest subrectangle contained in these rectangles.
 
-悬线，就是一条竖线，这条竖线有初始位置和高度两个性质，可以在其上端点不超过当前位置的矩形高度的情况下左右移动．
+A hoverline is a vertical line. This vertical line has two properties: initial position and height. It can move left and right as long as its upper endpoint does not exceed the height of the rectangle at the current position.
 
-对于一条悬线，我们在这条上端点不超过当前位置的矩形高度且不移出边界的前提下，将这条悬线左右移动，求出其最多能向左和向右扩展到何处，此时这条悬线扫过的面积就是包含这条悬线的尽可能大的矩形．容易发现，最大子矩形必定是包含一条初始位置为 $i$，高度为 $h_i$ 的悬线．枚举实现这个过程的时间复杂度为 $O(n ^ 2)$，但是我们可以用悬线法将其优化到 $O(n)$．
+For a hoverline, under the premise that its upper endpoint does not exceed the current rectangle height and it does not move outside the boundary, we move it left and right to find the farthest positions it can expand to on both sides. The area swept by this hoverline is then the largest possible rectangle containing this hoverline. It is easy to see that the maximum subrectangle must contain a hoverline whose initial position is $i$ and whose height is $h_i$. Enumerating this process has time complexity $O(n ^ 2)$, but the hoverline method optimizes it to $O(n)$.
 
-我们考虑如何快速找到悬线可以到达的最左边的位置．
+Consider how to quickly find the leftmost position a hoverline can reach.
 
-### 过程
+### Procedure
 
-定义 $l_i$ 为当前找到的 $i$ 位置的悬线能扩展到的最左边的位置，容易得到 $l_i$ 初始为 $i$，我们需要进一步判断还能不能进一步往左扩展．
+Define $l_i$ as the current leftmost position to which the hoverline at position $i$ can expand. Clearly, $l_i$ is initially $i$, and we need to further determine whether it can continue expanding left.
 
--   如果当前 $l_i = 1$，则已经扩展到了边界，不可以．
--   如果当前 $a_i > a_{l_i - 1}$，则从当前悬线扩展到的位置不能再往左扩展了．
--   如果当前 $a_i \le a_{l_i - 1}$，则从当前悬线还可以往左扩展，并且 $l_i - 1$ 位置的悬线能向左扩展到的位置，$i$ 位置的悬线一定也可以扩展到，于是我们将 $l_i$ 更新为 $l_{l_i - 1}$，并继续执行判断．
+-   If the current $l_i = 1$, it has already expanded to the boundary and cannot continue.
+-   If the current $a_i > a_{l_i - 1}$, then the current expansion position of the hoverline cannot continue expanding left.
+-   If the current $a_i \le a_{l_i - 1}$, then the current hoverline can continue expanding left, and any position reachable by the hoverline at $l_i - 1$ must also be reachable by the hoverline at position $i$. Therefore, we update $l_i$ to $l_{l_i - 1}$ and continue the check.
 
-通过摊还分析，可以证明每个 $l_i$ 最多会被其他的 $l_j$ 遍历到一次，因此时间复杂度为 $O(n)$．
+By amortized analysis, each $l_i$ is visited by other $l_j$ at most once, so the time complexity is $O(n)$.
 
-### 实现
+### Implementation
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/misc/code/hoverline/hoverline_1.cpp"
     ```
 
-???+ note "[UVa1619 感觉不错 Feel Good](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4494)"
-    对于一个长度为 $n$ 的数列，找出一个子区间，使子区间内的最小值与子区间内元素和的乘积最大，要求在满足舒适值最大的情况下最小化长度，最小化长度的情况下最小化左端点序号．
+???+ note "[UVa1619 Feel Good](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4494)"
+    For a sequence of length $n$, find a subinterval that maximizes the product of the minimum value in the subinterval and the sum of elements in the subinterval. Among intervals with maximum comfort value, minimize the length; among those, minimize the left endpoint index.
 
-本题中我们可以考虑枚举最小值，将每个位置的数 $a_i$ 当作最小值，并考虑从 $i$ 向左右扩展，找到满足 $\min\limits _ {j = l} ^ r a_j = a_i$ 的尽可能向左右扩展的区间 $[l, r]$．这样本题就被转化成了悬线法模型．
+In this problem, we can enumerate the minimum value: treat the number $a_i$ at each position as the minimum, and expand from $i$ left and right to find the interval $[l, r]$ that expands as far as possible while satisfying $\min\limits _ {j = l} ^ r a_j = a_i$. This transforms the problem into the hoverline model.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/misc/code/hoverline/hoverline_2.cpp"
     ```
 
-## 最大子矩形
+## Maximum Submatrix
 
-???+ note "[P4147 玉蟾宫](https://www.luogu.com.cn/problem/P4147)"
-    给定一个 $n \times m$ 的包含 `'F'` 和 `'R'` 的矩阵，求其面积最大的子矩阵的面积 $\times 3$，使得这个子矩阵中的每一位的值都为 `'F'`．
+???+ note "[P4147 Jade Palace](https://www.luogu.com.cn/problem/P4147)"
+    Given an $n \times m$ matrix containing `'F'` and `'R'`, find the area of the largest submatrix $\times 3$ such that every value in the submatrix is `'F'`.
 
-我们会发现本题的模型和第一题的模型很像．仔细分析，发现如果我们每次只考虑某一行的所有元素，将位置 $(x, y)$ 的元素尽可能向上扩展的距离作为该位置的悬线长度，那最大子矩阵一定是这些悬线向左右扩展得到的尽可能大的矩形中的一个．
+We will find that this problem's model is very similar to the first problem. After careful analysis, if each time we only consider all elements in one row and use the distance that the element at position $(x, y)$ can expand upward as the hoverline length at that position, then the maximum submatrix must be one of the largest possible rectangles obtained by expanding these hoverlines left and right.
 
-??? note "参考代码"
+??? note "Reference Code"
     ```cpp
     --8<-- "docs/misc/code/hoverline/hoverline_3.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [P1169「ZJOI2007」棋盘制作](https://www.luogu.com.cn/problem/P1169)
+-   [P1169「ZJOI2007」Chessboard Making](https://www.luogu.com.cn/problem/P1169)

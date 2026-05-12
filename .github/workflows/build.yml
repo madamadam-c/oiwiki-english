@@ -1,5 +1,8 @@
 name: Build
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -59,11 +62,13 @@ jobs:
         with:
           skip_external: true
       - name: Fetch old site
+        continue-on-error: true
         uses: actions/checkout@v6
         with:
           ref: gh-pages
           path: old-site
       - name: Check _redirects
+        if: ${{ hashFiles('old-site/**') != '' }}
         run: uv run python scripts/post-build/redirect/check-redirects.py
       - name: Deploy to gh-pages
         if: ${{ github.event_name == 'push' }}
